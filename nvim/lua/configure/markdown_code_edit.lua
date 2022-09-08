@@ -1,0 +1,30 @@
+local plugin = {}
+
+plugin.core = {
+    "Chandlercjy/vim-markdown-edit-code-block",
+    opt_marker = "从gabrielelana/vim-markdown中提取MarkdownEditBlock命令",
+   opt_enable = true,
+
+
+    ft = { "markdown", "vimwiki" },
+    setup = function() -- Specifies code to run before this plugin is loaded.
+    end,
+
+    config = function() -- Specifies code to run after this plugin is loaded
+
+    end
+}
+
+plugin.mapping = function()
+    local mappings = require('core.mapping')
+    mappings.register({
+        mode = "n",
+        key = { "<leader>", "c", "e" },
+        action = ':MarkdownEditBlock<cr>',
+        short_desc = "Code Edit(markdown)",
+        silent = true
+    })
+
+end
+
+return plugin

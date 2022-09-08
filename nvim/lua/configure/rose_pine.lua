@@ -1,0 +1,41 @@
+local plugin = {}
+
+plugin.core = {
+    "rose-pine/neovim",
+   opt_marker = "一个主题插件",
+   opt_enable = false,
+
+    as = 'rose-pine',
+
+    setup = function()  -- Specifies code to run before this plugin is loaded.
+
+    end,
+
+    config = function() -- Specifies code to run after this plugin is loaded
+
+    end,
+}
+
+plugin.mapping = function()
+
+end
+
+plugin.light = function()
+    vim.g.rose_pine_variant = 'dawn'
+    vim.cmd("colorscheme rose-pine")
+end
+
+plugin.dark = function ()
+    vim.g.rose_pine_variant = 'moon'
+    vim.cmd("colorscheme rose-pine")
+end
+
+plugin.setup = function (style)
+    vim.cmd("packadd rose-pine")
+    if style == "light" then
+        plugin.light()
+    else
+        plugin.dark()
+    end
+end
+return plugin

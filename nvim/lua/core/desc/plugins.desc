@@ -1,0 +1,122 @@
+PHSix/faster.nvim  -- 使用j和k快速的移动
+stevearc/aerial.nvim  -- 基于LSP的outline工具
+cstsunfu/asynctasks.vim -- 异步执行工具,依赖于skywind3000/asyncrun.vim
+vim-scripts/auto_mkdir --save的时候自动创建目录
+vim-scripts/Auto-Pairs -- 格式化插入括号等
+moll/vim-bbye -- 退出buffer的时候,保持当前的窗口等状态,常用在分隔屏的时候
+max397574/better-escape.nvim -- 按键的时候减少命令触发的延迟
+scr1pt0r/crease.vim -- 更加简单的stateline定义,基本和printf一致
+jlanzarotta/bufexplorer -- buffer列表的查看工具
+akinsho/bufferline.nvim -- tab上buffer name的定义工具   基于kyazdani42/nvim-web-devicons
+itchyny/calendar.vim -- 日期选择插件
+ekickx/clipboard-image.nvim  --图片处理插件,粘贴的时候自动插入图片的地址
+neoclide/coc.nvim -- 代码片段和文本编辑支持,完整的LSP支持,外加额外插件加载能力
+norcalli/nvim-colorizer.lua -- 没有外部依赖基于luajit的高亮显示
+dyng/ctrlsf.vim -- 完整的CUI的文件,历史信息等支持插件
+mfussenegger/nvim-dap-python -- nvim-dap的扩展，为python和调试单个测试方法或类的方法提供默认配置。
+rcarriga/nvim-dap-ui --nvim-dap调试器的用户界面提供了很好的开箱即用配置。  beat版本,不稳定,基于 mfussenegger/nvim-dap  theHamsta/nvim-dap-virtual-text
+glepnir/dashboard-nvim -- nvim的开屏大盘界面
+sindrets/diffview.nvim  -- git的diff在vim中的展现。基于nvim-lua/plenary.nvim
+rlane/pounce.nvim -- 类似于EasyMotion 但是具有更强的功能
+houtsnip/vim-emacscommandline -- 通过添加emacs的按键映射,使命令行更强bash的命令行,类似的插件有:vim-rsi 
+terryma/vim-expand-region -- 块状编辑文本
+cstsunfu/symbols-outline.nvim -- 使用LSP在nvim中树状展现一个符号的outline
+kyazdani42/nvim-tree.lua -- nvim中一个文件floder管理器
+glacambre/firenvim -- 把你的浏览器变成Neovim客户端
+pierreglaser/folding-nvim -- 基于LSP的折叠插件
+tpope/vim-fugitive -- 号称git的nvim首选插件
+lewis6991/gitsigns.nvim -- lua实现的git的展现信息接口  基于plenary.nvim
+ellisonleao/glow.nvim -- 直接在nvim的终端中预览markdown
+sainnhe/gruvbox-material -- Gruvbox Material是Gruvbox的改进版本，为了保护开发者的眼睛，对比度被调整得更柔和。
+lukas-reineke/headlines.nvim  -- 这个插件为文本文件类型添加高亮显示，如markdown, orgmode和neorg。
+Pocco81/HighStr.nvim -- 高亮显示选择的文本
+hjson/vim-hjson -- 高亮显示json文件
+kevinhwang91/nvim-hlslens -- 高亮显示匹配信息,并且可以在匹配之间跳转
+lukas-reineke/indent-blankline.nvim -- 展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个
+jupyter-vim/jupyter-vim -- 讲python代码按照text的方式发送到jupyter执行
+GutenYe/json5.vim -- json5的高亮显示
+luk400/vim-jukit -- REPL插件和Jupyter-Notebook替代Vim和Neovim
+AndrewRadev/linediff.vim -- linediff插件提供了一个简单的命令:linediff，用于区分两个独立的文本块中展现不一样的text
+onsails/lspkind.nvim -- 这个小插件为neovim内置lsp添加了类似vcode的象形图:
+ray-x/lsp_signature.nvim -- 基于LSP展现函数的签名  包括注释和参数  使用"nvim-lspconfig", "hrsh7th/nvim-cmp"
+nvim-lualine/lualine.nvim -- 用Lua编写的一个快速且容易配置的Neovim状态线。
+Chandlercjy/vim-markdown-edit-code-block -- 从gabrielelana/vim-markdown中提取MarkdownEditBlock命令
+iamcco/markdown-preview.nvim --markdown的预览
+marko-cerovac/material.nvim -- 一个用Lua编写的快速而现代的配色方案，它支持NeoVim添加的许多新特性，如内置的LSP和TreeSitter
+cstsunfu/md-bullets.nvim -- org-bullets的clone代码,几乎所有的代码都是clone的,用来支持markdown
+terryma/vim-multiple-cursors -- 多光标选择文本对象,并可以进行编辑
+jbyuki/nabla.nvim -- 在nvim中类似于LaTex一样支持公式
+ray-x/navigator.lua -- 基于LSP的源码分析和导航工具
+danymat/neogen --  更方便的添加函数注释插件
+preservim/nerdcommenter -- 代码注释插件
+shaunsingh/nord.nvim -- nvim的主题插件
+rcarriga/nvim-notify -- nvim的通知插件, 可以提示启动和任务到期等等
+jose-elias-alvarez/null-ls.nvim -- LSP的扩展插件,可以完成诊断,格式化代码等等功能
+hrsh7th/nvim-cmp -- 基于LSP的代码智能提示完成引擎, 依赖:quangnguyen30192/cmp-nvim-ultisnips  hrsh7th/cmp-nvim-lsp hrsh7th/cmp-buffer  hrsh7th/cmp-path hrsh7th/cmp-cmdline 
+--dmitmel/cmp-cmdline-history hrsh7th/cmp-calc  hrsh7th/cmp-emoji  rcarriga/cmp-dap
+navarasu/onedark.nvim -- dark主题,TreeSitter显示高亮
+olimorris/onedarkpro.nvim -- 高度可定制的Neovim主题。支持自定义颜色，样式和文件类型突出显示 支持Treesitter、LSP和各种插件灵感来自VS Code的《One Dark Pro》
+akinsho/org-bullets.nvim  -- orgmode的插件,展示unicode字符
+kristijanhusak/orgmode.nvim -- orgmode插件,不用提了吧
+nvim-lua/plenary.nvim  --不需要重复写function,只适用于neovim函数
+nvim-lua/popup.nvim -- popup在nvim中的实现
+Chaitanyabsprip/present.nvim -- 使用lua为nvim编写的ppt插件
+tpope/vim-jdaddy -- 一个json的插件,为最外面的object添加一个key,具体的作用还没探明
+eddiebergman/nvim-treesitter-pyfold -- python的折叠
+francoiscabrol/ranger.vim --一个常用的文件管理器,依赖于rbgrouleff/bclose.vim
+zenbro/mirror.vim -- 使用netrw来简化远程不用环境下的开发工作,比如有dev,online等环境,可以通过配置文件快速进去远程的环境
+tpope/vim-repeat -- vim的重复命令插件
+rose-pine/neovim -- 一个主题插件
+karb94/neoscroll.nvim -- 使用lua编写的平滑滚动插件,看上去还行
+cstsunfu/vim-snippets -- 各种代码的文件片段
+edluffy/specs.nvim -- lua编写的动态光标的功能
+windwp/nvim-spectre -- 一个搜索插件
+tpope/vim-speeddating -- 一个时间插件,可以通过c-x正确的加减日期
+tpope/vim-surround -- 更改一个被引号,括号等包围的符号
+dhruvasagar/vim-table-mode -- nvim中table模式的插件
+nvim-telescope/telescope.nvim -- 一个高度可扩展的列表模糊查找工具
+akinsho/toggleterm.nvim -- nvim的终端插件
+iberianpig/tig-explorer.vim  -- tig的vim插件,可以在vim中调用tig
+folke/todo-comments.nvim -- 突出显示和搜索todo注释，如todo, HACK, BUG在你的代码库中。
+voldikss/vim-translator -- 异步翻译插件
+nvim-treesitter/nvim-treesitter -- Neovim的树结构和抽象层。
+folke/trouble.nvim -- 一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。
+mfussenegger/nvim-ts-hint-textobject --  使用文档的抽象语法树提示提供区域选择的插件。这将用于挂起的操作符映射。
+SirVer/ultisnips -- 代码片段的终极解决方案。它有很多特点，速度就是其中之一。
+mbbill/undotree -- undo操作tree
+tpope/vim-unimpaired -- [ ] 开头的快捷键,vim缺失的快捷键
+vimwiki/vimwiki  --wiki的vim插件
+liuchengxu/vista.vim  -- 查看和搜索Vim/NeoVim中的LSP符号、标签。
+Mofiqul/vscode.nvim  --vscode主题
+kyazdani42/nvim-web-devicons  --nvim的web icons
+folke/which-key.nvim  --按键绑定
+folke/zen-mode.nvim -- 一个更好的窗口管理器
+
+
+---
+easymotion/vim-easymotion  -- 更简单的定位
+vim-scripts/ZoomWin
+trotter/autojump.vim 
+bronson/vim-trailing-whitespace  -- 快速去行尾空格 [, + <Space>]
+vim-scripts/FencView.vim  --多字节支持
+Yggdroot/indentLine  -- indent显示,vim和nvim都支持
+vim-scripts/a.vim  --头文件切换
+
+Shougo/vimproc
+Shougo/unite.vim
+ervandew/supertab
+Yggdroot/LeaderF
+junegunn/fzf.vim
+hotoo/pangu.vim --"中文排版"
+will133/vim-dirdiff
+pboettch/vim-cmake-syntax   --"cmake的提示
+pboettch/vim-highlight-cursor-words  --"光标下的单词高亮"
+luochen1990/rainbow -- "括号对齐颜色
+wellle/context.vim
+vim-scripts/lemon.vim
+xvhfeng/nerdtree 
+jistr/vim-nerdtree-tabs     --" enhance nerdtree's tabs
+ryanoasis/vim-devicons       --" add beautiful icons besides files
+Xuyuanp/nerdtree-git-plugin  --" display git status within Nerdtree
+tiagofumo/vim-nerdtree-syntax-highlight  --" enhance devicons
+mg979/vim-visual-multi

@@ -1,0 +1,126 @@
+递归与非递归映射, 默认的map就是递归的
+    :map j gg   // gg被映射微j键
+    :map Q j  // j又被递归映射微Q键，也就是 gg被映射为Q键
+    :noremap w j  //j被映射为w键，但是gg没有被映射为w键  因为前面又nore 也就是no-recursively非递归
+
+同Vim下的其他命令一样，命令的名字往往由好几段组成。前缀作为命令本身的修饰符，微调命令的效果。
+对于map而言，可能有这么几种前缀
+
+nore 表示非递归，见下面的介绍
+n 表示在普通模式下生效
+v 表示在可视模式下生效
+i 表示在插入模式下生效
+c 表示在命令行模式下生效
+
+映射mode
+n ：仅正常
+v ：视觉和选择
+o ：运营商待定
+x ：仅视觉
+s ：仅选择
+i ：插入
+c ：命令行
+l ：insert，命令行，regexp-search（以及其他。集体称为“Lang-Arg”伪模式）
+
+unmap后面跟着一个按键组合，表示删除这个映射。
+
+mapclear
+mapclear直接清除相关模式下的所有映射。同样，mapclear可以加各种前缀，表示影响到的模式。
+: mapclear <buffer>  清除映射
+
+:map :noremap :unmap :mapclear
+:nmap :nnoremap :nunmap :nmapclear
+:vmap :vnoremap :vunmap :vmapclear
+:imap :inoremap :iunmap :imapclear
+:cmap :cnoremap :cunmap :cmapclear
+
+
+"<buffer>"， 如果这些命令的第一个参数是 "<buffer>"，映射将只局限于当前的缓冲区内,局部缓冲区映射在全局映射之前被应用
+"<nowait>"， 按键不需要等待长时间输入,直接匹配到映射即可使用,一般用在多键前缀一样的情况下
+"<silent>"， 一个映射时不在命令行上回显该映射,可以使用 "<silent>" 作为第一个参数,不过被执行命令的信息仍然会。要把它也关掉，可以在执行的命令里加入一个 ":silent": 
+             :map <silent> ,h :exe ":silent normal /Header\r"<CR>
+"<special>"、定义映射时，特殊键可用 <> 记法，即使 'cpoptions' 包含了 "<" 标志位也没问题。这可用于不希望看到设置 'cpoptions' 时出现的副作用的场合
+                :map <special> <F12> /Header<CR>
+"<script>"、如果给用于定义新映射或缩写的命令的第一个参数是 "<script>"，该映射只使用通过以"<SID>" 开头来定义的的脚本局部映射来重映射 {rhs} 中的字符。
+
+"<expr>" 如果给用于定义新映射或缩写的命令的第一个参数是 "<expr>"，那么参数会作为表达式来进行计算，结果作为实际使用的 {rhs}.在 RHS用 <SID> 确保可以找到映射定义所在的脚本
+    :inoremap <expr> . <SID>InsertDot()   先计算InsertDot()这个函数,然后把这个函数的返回值作为map时rhs的部分绑定给lhs
+"<unique>"  如果给用于定义新映射或缩写的命令的第一个参数是 "<unique>" 并且它该映射或缩写已经存在，则该命令会失败。 该映射只有一个,冲突报错
+
+<Cmd> 开始一种 "命令映射"，它直接执行命令而不切换模式。以前你在映射的{rhs} 可用 ": ...<CR>" 的地方，现在可用 "<Cmd>...<CR>"。 
+    noremap x <Cmd>echo mode(1)<CR>
+    和 <expr> 映射不同，<Cmd> 命令上没有特殊限制: 执行方式如同调用 (无限制的)autocommand
+
+<ScriptCmd> 类似于 <Cmd>，但命令执行期间，上下文设为映射定义所在的脚本。<Cmd> 和 <ScriptCmd> 里的命令必须终止，亦即，在映射定义的 {rhs} 里它们必须后跟
+<CR>。从不进入  Command-line  模式。<Cmd> 和 <ScriptCmd> 里的命令只能有普通字符，不能包含函数键这样的特殊字符。
+
+<Plug> 叫做 "<Plug>" 的特殊关键字可以用于一个内部映射，它不与任何键的序列匹配。这在插件中有用  using-<Plug> 。
+
+
+
+关于每个映射命令对应的工作模式的概况。详情见下。
+     命 令                       模 式 
+:map   :noremap  :unmap     普通、可视、选择、操作符等待
+:nmap  :nnoremap :nunmap    普通
+:vmap  :vnoremap :vunmap    可视与选择
+:smap  :snoremap :sunmap    选择
+:xmap  :xnoremap :xunmap    可视
+:omap  :onoremap :ounmap    操作符等待
+:map!  :noremap! :unmap!    插入与命令行
+:imap  :inoremap :iunmap    插入
+:lmap  :lnoremap :lunmap    插入、命令行、Lang-Arg
+:cmap  :cnoremap :cunmap    命令行
+:tmap  :tnoremap :tunmap    终端作业
+
+同样的信息用表格总结一下:
+                                                         map-table 
+         模式  | Norm | Ins | Cmd | Vis | Sel | Opr | Term | Lang | 
+命令           +------+-----+-----+-----+-----+-----+------+------+ 
+[nore]map      | yes  |  -  |  -  | yes | yes | yes |  -   |  -   |
+n[nore]map     | yes  |  -  |  -  |  -  |  -  |  -  |  -   |  -   |
+[nore]map!     |  -   | yes | yes |  -  |  -  |  -  |  -   |  -   |
+i[nore]map     |  -   | yes |  -  |  -  |  -  |  -  |  -   |  -   |
+c[nore]map     |  -   |  -  | yes |  -  |  -  |  -  |  -   |  -   |
+v[nore]map     |  -   |  -  |  -  | yes | yes |  -  |  -   |  -   |
+x[nore]map     |  -   |  -  |  -  | yes |  -  |  -  |  -   |  -   |
+s[nore]map     |  -   |  -  |  -  |  -  | yes |  -  |  -   |  -   |
+o[nore]map     |  -   |  -  |  -  |  -  |  -  | yes |  -   |  -   |
+t[nore]map     |  -   |  -  |  -  |  -  |  -  |  -  | yes  |  -   |
+l[nore]map     |  -   | yes | yes |  -  |  -  |  -  |  -   | yes  |
+
+
+    命 令                                     模 式 
+                                        普通    可视+选择       操作符等待 
+:map   :noremap   :unmap   :mapclear    是      是              是
+:nmap  :nnoremap  :nunmap  :nmapclear   是      -               -
+:vmap  :vnoremap  :vunmap  :vmapclear   -       是              -
+:omap  :onoremap  :ounmap  :omapclear   -       -               是
+
+修道院之外也有 :nunmap (译者注: nun，修女)。
+                                                 mapmode-x   mapmode-s 
+有的命令能同时用于可视和选择模式，有的只能用于其中一个。注意 很常见的情况是提
+到 "可视" 的时候实际同时适用可视和选择两种模式。 Select-mode-mapping 
+备注: 在选择模式映射可显示字符容易引起用户的混淆。最好直接用 :xmap 和 :smap 来
+映射可显示字符。或者在定义映射后使用 :sunmap。
+
+    命 令                                     模 式 
+                                        可视    选择 
+:vmap  :vnoremap  :vunmap  :vmapclear   是      是
+:xmap  :xnoremap  :xunmap  :xmapclear   是      -
+:smap  :snoremap  :sunmap  :smapclear   -       是
+
+                         mapmode-ic   mapmode-i   mapmode-c   mapmode-l 
+有的命令同时支持插入模式和命令行模式，有的不是:
+
+    命 令                                     模 式 
+                                        插入    命令行  Lang-Arg 
+:map!  :noremap!  :unmap!  :mapclear!   是      是      -
+:imap  :inoremap  :iunmap  :imapclear   是      -       -
+:cmap  :cnoremap  :cunmap  :cmapclear   -       是      -
+:lmap  :lnoremap  :lunmap  :lmapclear   是*     是*     是*
+
+
+在一个全局插件里应该使用 <Leader> 而在一个文件类型插件里应该用 <LocalLeader>。
+"mapleader" 和 "maplocalleader" 可以是相同的。尽管如此，如果你把它们设为不同，
+全局插件和文件类型插件的映射冲突的机会是不是会小一点呢？例如，你可以保持把
+"mapleader" 设置为缺省的反斜杠，而设置 "maplocalleader" 为下划线。
