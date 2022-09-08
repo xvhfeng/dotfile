@@ -2,15 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "onsails/lspkind.nvim",
-    disable = false,
-    opt=false,
-
-
-    --as = "lspkind-nvim",
-    setup = function()  -- Specifies code to run before this plugin is loaded.
-
-    end,
-
     config = function() -- Specifies code to run after this plugin is loaded
         require('lspkind').init({
             -- DEPRECATED (use mode instead): enables text annotations
@@ -64,7 +55,4 @@ plugin.core = {
     end,
 }
 
-plugin.mapping = function()
-
-end
 return plugin

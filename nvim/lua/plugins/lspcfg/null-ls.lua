@@ -2,14 +2,7 @@ local plugin = {}
 
 plugin.core = {
     "jose-elias-alvarez/null-ls.nvim", -- TODO: currently, this plugin is WIP, so will update this when this plugin provide more sources
-    disable = false,
-    opt=false,
-
     requires = { "nvim-lua/plenary.nvim" },
-
-    setup = function() -- Specifies code to run before this plugin is loaded.
-        
-    end,
 
     config = function() -- Specifies code to run after this plugin is loaded
         local null_ls = require("null-ls")

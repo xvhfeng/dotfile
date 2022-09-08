@@ -2,18 +2,10 @@ local plugin = {}
 
 plugin.core = {
     "windwp/nvim-spectre",
-    disable = false,
-    opt=false,
-
-    --as = "nvim-spectre",
     requires = {
         {"nvim-lua/popup.nvim"},
         {"nvim-lua/plenary.nvim"},
-        
     },
-    setup = function()  -- Specifies code to run before this plugin is loaded.
-
-    end,
 
     config = function() -- Specifies code to run after this plugin is loaded
         if not packer_plugins['plenary.nvim'].loaded then

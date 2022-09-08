@@ -2,13 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "akinsho/toggleterm.nvim",
-    disable = false,
-    opt=false,
-
-    setup = function()  -- Specifies code to run before this plugin is loaded.
-
-    end,
-
     config = function() -- Specifies code to run after this plugin is loaded
         require("toggleterm").setup{
             -- size can be a number or function which is passed the current terminal

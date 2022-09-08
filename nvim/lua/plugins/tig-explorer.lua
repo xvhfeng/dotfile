@@ -2,21 +2,10 @@ local plugin = {}
 
 plugin.core = {
     "iberianpig/tig-explorer.vim",
-    disable = false,
-    opt=false,
 
     requires = {
         {"rbgrouleff/bclose.vim"},
     },
-
-    setup = function() -- Specifies code to run before this plugin is loaded.
-       -- ranger_replace_netrw = 1,
-    end,
-
-    config = function() -- Specifies code to run after this plugin is loaded
-        
-    end,
-
 }
 
 plugin.mapping = function()

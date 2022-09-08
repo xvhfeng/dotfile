@@ -2,9 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "hrsh7th/nvim-cmp",
-    disable = false,
-    opt=false,
-
 
     after = {
         "nvim-lspconfig"
@@ -21,8 +18,6 @@ plugin.core = {
         { "lukas-reineke/cmp-rg", disable = vim.g.lspcfg ~= "builtin" },
         { "rcarriga/cmp-dap", disable = vim.g.lspcfg ~= "builtin" },
     },
-    setup = function() -- Specifies code to run before this plugin is loaded.
-    end,
 
     config = function() -- Specifies code to run after this plugin is loaded
         local kind_icons = {
@@ -203,6 +198,4 @@ plugin.core = {
     end
 }
 
-plugin.mapping = function()
-end
 return plugin

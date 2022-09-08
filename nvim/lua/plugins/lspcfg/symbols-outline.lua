@@ -2,9 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "cstsunfu/symbols-outline.nvim", -- when the original repo fix all the bugs, we will change back to the original repo. https://github.com/simrat39/symbols-outline.nvim/issues/134
-    disable = false,
-    opt=false,
-
 
     as = "symbols-outline",
     cmd = { "SymbolsOutline" },
@@ -98,9 +95,6 @@ plugin.core = {
                 TypeParameter = {icon = " ", hl = "TSType"}
             }
         }
-    end,
-
-    config = function() -- Specifies code to run after this plugin is loaded
     end,
 
 }

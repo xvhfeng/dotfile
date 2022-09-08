@@ -2,9 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "neoclide/coc.nvim",
-    disable = false,
-    opt=false,
-
 
     as = "coc",
     branch = 'release',

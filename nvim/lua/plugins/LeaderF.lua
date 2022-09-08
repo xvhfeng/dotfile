@@ -2,19 +2,13 @@ local plugin = {}
 
 plugin.core = {
     'Yggdroot/LeaderF',
-    disable = false,
-    opt = false,
     run = ':LeaderfInstallCExtension',
     as = "leaderf",
-    -- run = ":LeaderfInstallCExtension",
-    -- cmd = { "LeaderF" },
     setup = function() -- Specifies code to run before this plugin is loaded.
         vim.g.Lf_WindowPosition = "fullScreen"
         vim.g.Lf_PreviewInPopup = 1
-        --[===[
         vim.cmd([[
             let g:Lf_WorkingDirectoryMode = 'F'
-            -- let g:Lf_WindowPosition = 'popup'
             let g:Lf_PreviewInPopup = 1
             let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2", 'font': "DejaVu Sans Mono for Powerline" }
             "自动生成tags
@@ -32,10 +26,10 @@ plugin.core = {
             let g:Lf_ShortcutF = "<leader>ff"
 
         ]])
-        --]===]
     end,
 
     config = function() -- Specifies code to run after this plugin is loaded
+
         --[===[
         vim.cmd([[
             nnoremap <c-c><c-f> :Leaderf rg <SPACE>

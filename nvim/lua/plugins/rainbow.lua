@@ -3,8 +3,6 @@ local plugin = {}
 plugin.core = {
     "luochen1990/rainbow",
     as = "rainbow",
-    disable = false,
-    opt=false,
 
     setup = function() -- Specifies code to run before this plugin is loaded.
         vim.cmd [[
@@ -17,8 +15,5 @@ plugin.core = {
   --      vim.api.nvim_set_keymap('n', 'k', '<Plug>(faster_move_k)', { noremap = false, silent = true })
     end
 }
-
-plugin.mapping = function()
-end
 
 return plugin

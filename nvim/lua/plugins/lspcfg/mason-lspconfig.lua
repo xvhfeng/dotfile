@@ -2,17 +2,12 @@ local plugin = {}
 
 plugin.core = {
     "williamboman/mason-lspconfig.nvim",
-    disable = false,
-    opt=false,
 
     as = "mason-lspconfig",
-    setup = function()  -- Specifies code to run before this plugin is loaded.
-
-    end,
 
     config = function() -- Specifies code to run after this plugin is loaded
         require("mason-lspconfig").setup({
-            ensure_installed = { 
+            ensure_installed = {
                 "bashls",
                 "clangd",
                 "cmake",
@@ -21,10 +16,10 @@ plugin.core = {
                 "jdtls",
                 "tsserver",
                 "ltex",
-                "sumneko_lua", 
-                "marksman", 
-                "pyright", 
-                "sqlls", 
+                "sumneko_lua",
+                "marksman",
+                "pyright",
+                "sqlls",
                 "rust_analyzer" }
         })
     end,

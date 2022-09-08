@@ -4,9 +4,6 @@ plugin.core = {
 
     --"skywind3000/asynctasks.vim",
     "cstsunfu/asynctasks.vim", --FIXME: when this buf fix, change to the default repo. https://github.com/skywind3000/asynctasks.vim/issues/92
-    disable = false,
-    opt = false,
-
     as = "asynctasks",
     cmd = { "AsyncTask" },
 
@@ -14,21 +11,17 @@ plugin.core = {
         "skywind3000/asyncrun.vim",
         as = "asyncrun",
     }
-    },
+},
 
-    setup = function() -- Specifies code to run before this plugin is loaded.
+config = function() -- Specifies code to run after this plugin is loaded
+    if not packer_plugins['asyncrun'].loaded then
+        vim.cmd [[packadd asyncrun]]
+    end
+    vim.g.asynctasks_extra_config = { vim.g.CONFIG .. 'tasks.ini' }
+    vim.g.asyncrun_open = 8
+    vim.g.asyncrun_bell = 1
 
-    end,
-
-    config = function() -- Specifies code to run after this plugin is loaded
-        if not packer_plugins['asyncrun'].loaded then
-            vim.cmd [[packadd asyncrun]]
-        end
-        vim.g.asynctasks_extra_config = { vim.g.CONFIG .. 'tasks.ini' }
-        vim.g.asyncrun_open = 8
-        vim.g.asyncrun_bell = 1
-
-    end,
+end,
 }
 
 plugin.mapping = function()

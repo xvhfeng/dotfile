@@ -2,25 +2,16 @@ local plugin = {}
 
 plugin.core = {
     "williamboman/mason.nvim",
-    disable = false,
-    opt=false,
-
     as = "mason",
-    setup = function()  -- Specifies code to run before this plugin is loaded.
-
-    end,
-
-    config = function() -- Specifies code to run after this plugin is loaded
-        require("mason").setup({
-            ui = {
-                icons = {
-                    package_installed = "✓",
-                    package_pending = "➜",
-                    package_uninstalled = "✗"
-                }
+    require("mason").setup({
+        ui = {
+            icons = {
+                package_installed = "✓",
+                package_pending = "➜",
+                package_uninstalled = "✗"
             }
-        })
-    end,
+        }
+    })
 }
 
 plugin.mapping = function()

@@ -2,12 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "stevearc/aerial.nvim",
-    disable = false,
-    opt=false,
-
-    setup = function() -- Specifies code to run before this plugin is loaded.
-    end,
-
     config = function() -- Specifies code to run after this plugin is loaded
         -- Call the setup function to change the default behavior
         require("aerial").setup({

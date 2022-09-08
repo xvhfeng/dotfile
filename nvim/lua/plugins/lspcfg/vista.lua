@@ -2,9 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "liuchengxu/vista.vim",
-    disable = false,
-    opt=false,
-
     as = "vista",
     cmd = { "Vista" },
     setup = function() -- Specifies code to run before this plugin is loaded.
@@ -53,9 +50,6 @@ plugin.core = {
 
     end,
 
-    config = function() -- Specifies code to run after this plugin is loaded
-
-    end,
 }
 
 plugin.mapping = function()

@@ -2,15 +2,8 @@ local plugin = {}
 
 plugin.core = {
     "nvim-treesitter/nvim-treesitter",
-    disable = false,
-    opt=false,
-
     --as = "nvim-treesitter",
     run = ':TSUpdate',
-
-    setup = function()  -- Specifies code to run before this plugin is loaded.
-
-    end,
 
     config = function() -- Specifies code to run after this plugin is loaded
         require'nvim-treesitter.configs'.setup {
@@ -68,9 +61,5 @@ plugin.core = {
         }
     end,
 }
-
-plugin.mapping = function()
-
-end
 
 return plugin

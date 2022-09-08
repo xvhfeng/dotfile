@@ -2,9 +2,6 @@ local plugin = {}
 
 plugin.core = {
    "francoiscabrol/ranger.vim",
-   event = 'VimEnter',
-
-    --- "kevinhwang91/rnvimr",
     requires = {
         {"rbgrouleff/bclose.vim"},
     },
@@ -21,11 +18,6 @@ plugin.core = {
        --vim.cmd("let g:ranger_command_override = 'ranger --cmd \"set show_hidden=true\"'")
        
     end,
-
-    config = function() -- Specifies code to run after this plugin is loaded
-       -- vim.g.granger_replace_netrw = 1
-    end,
-
 }
 
 plugin.mapping = function()

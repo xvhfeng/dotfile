@@ -2,14 +2,7 @@ local plugin = {}
 
 plugin.core = {
     "folke/trouble.nvim",
-    disable = false,
-    opt=false,
-
     --requires = { { 'kyazdani42/nvim-web-devicons' } },
-    setup = function() -- Specifies code to run before this plugin is loaded.
-
-    end,
-
     config = function() -- Specifies code to run after this plugin is loaded
         require("trouble").setup  {
             position = "bottom", -- position of the list can be: bottom, top, left, right
