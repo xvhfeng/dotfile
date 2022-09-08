@@ -3,7 +3,6 @@ local plugin = {}
 plugin.core = {
     "windwp/nvim-spectre",
     requires = {
-        {"nvim-lua/popup.nvim"},
         {"nvim-lua/plenary.nvim"},
     },
 
