@@ -10,12 +10,12 @@ plugin.core = {
         { "tami5/sql.nvim", opt = true },
         {
             "nvim-telescope/telescope-frecency.nvim",
-            opt = true,
+            opt = false,
             after = 'telescope.nvim',
         },
         {
             'nvim-telescope/telescope-project.nvim',
-            opt = true,
+            opt = false,
             after = 'telescope.nvim',
         },
         {
@@ -152,7 +152,7 @@ plugin.core = {
 }
 
 plugin.mapping = function()
-    local mappings = require('core.mapping')
+    local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
         key = { "<leader>", "f", "f" },

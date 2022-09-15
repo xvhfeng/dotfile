@@ -13,7 +13,7 @@ local used = {
     t = {}, -- Terminal
     [""] = {} -- map
 }
-local myplugins = require('core.myplugins')
+local myplugins = require('core.plugins')
 
 local json = require("util.json")
 local tbl = require("util.tbl")
@@ -89,8 +89,7 @@ global_mapping.register = function(new_map)
     end
 
     local option = {}
-    if new_map['noremap'] ~= nil then
-        option['noremap'] = new_map.noremap
+    if new_map['noremap'] ~= nil then option['noremap'] = new_map.noremap
     end
     if new_map['expr'] ~= nil then
         option['expr'] = new_map['expr']
@@ -202,7 +201,7 @@ global_mapping.register({
     action = "<C-\\><C-n>",
 })
 
-
+--[===[
 global_mapping.register({
     mode = "i",
     key = { "k", "j" },
@@ -221,6 +220,7 @@ global_mapping.register({
     action = "<esc>",
     short_desc = "ESC"
 })
+--]===]
 
 
 -- quickfix
@@ -486,9 +486,26 @@ global_mapping.register({
     short_desc = "<alt-b>Go to Previous Buffer"
 })
 
+global_mapping.register({
+    mode = "n",
+    key = {"j"},
+    action = 'gj',
+    short_desc = "Treat long lines as break lines in j"
+})
 
+global_mapping.register({
+    mode = "n",
+    key = {"k"},
+    action = 'gk',
+    short_desc = "Treat long lines as break lines in k"
+})
 
-
+global_mapping.register({
+    mode = "n",
+    key = {"K"},
+    action = 'i<cr><esc>',
+    short_desc = "insert new line symbols"
+})
 -- x exit, exec
 
 global_mapping.register({

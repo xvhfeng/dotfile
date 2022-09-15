@@ -47,7 +47,7 @@ plugin.core = {
 }
 
 plugin.mapping = function()
-    local mappings = require('core.mapping')
+    local mappings = require('core.keymapping')
 
     --vim.g.UltiSnipsExpandTrigger = "<leader><tab>" -- confilict
     vim.api.nvim_set_keymap("i", "<cr>", "pumvisible () ? coc#_select_confirm() : '<C-g>u<cr><C-r>=coc#on_enter()<CR>'", { expr = true, silent = true })

@@ -3,7 +3,7 @@ local plugin = {}
 plugin.core = {
     "williamboman/nvim-lsp-installer",
     requires = {
-        { "neovim/nvim-lspconfig", disable = vim.g.feature_groups.lsp ~= "builtin" },
+        { "neovim/nvim-lspconfig", disable = vim.g.lspcfg ~= "builtin" },
         --{"brymer-meneses/grammar-guard.nvim", disable = vim.g.feature_groups.lsp ~= "builtin"}, -- FIXIT: when this plugin provide fix feature https://github.com/brymer-meneses/grammar-guard.nvim/issues/11
     },
     setup = function() -- Specifies code to run before this plugin is loaded.

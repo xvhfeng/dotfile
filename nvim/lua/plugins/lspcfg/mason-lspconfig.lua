@@ -2,7 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "williamboman/mason-lspconfig.nvim",
-
     as = "mason-lspconfig",
 
     config = function() -- Specifies code to run after this plugin is loaded

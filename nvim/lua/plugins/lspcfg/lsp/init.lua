@@ -3,7 +3,7 @@ local plugin = {}
 plugin.core = {
     "williamboman/nvim-lsp-installer",
     requires = {
-        { "neovim/nvim-lspconfig", disable = vim.g.lspcfg ~= "builtin" },
+        { "neovim/nvim-lspconfig", disable = vim.g.feature_groups.lsp ~= "builtin" },
         --{"brymer-meneses/grammar-guard.nvim", disable = vim.g.feature_groups.lsp ~= "builtin"}, -- FIXIT: when this plugin provide fix feature https://github.com/brymer-meneses/grammar-guard.nvim/issues/11
     },
     setup = function() -- Specifies code to run before this plugin is loaded.
@@ -17,6 +17,11 @@ plugin.core = {
                 "pyright", -- python
                 "ltex", -- grammar
                 "sqlls", -- sql
+                "clangd",
+                "cmake",
+                "golangci_lint_ls",
+                "jsonls",
+                "rust_analyzer",
             },
             automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
             ui = {
@@ -29,7 +34,7 @@ plugin.core = {
         })
 
         local lspconfig = require("lspconfig")
-        require('configure.lsp_config.default_setting')
+        require('configure.lspcfg.lsp.default_setting')
         local util = require("lspconfig.util")
 
         lspconfig.sumneko_lua.setup {
@@ -107,7 +112,7 @@ plugin.core = {
 }
 
 plugin.mapping = function()
-    local mappings = require('core.mapping')
+    local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
         key = { "g", "d" },

@@ -99,7 +99,7 @@ plugin.core = {
 
 }
 plugin.mapping = function()
-    local mappings = require('core.mapping')
+    local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
         key = { "<leader>", "t", "l" },

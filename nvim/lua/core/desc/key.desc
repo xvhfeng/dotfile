@@ -124,3 +124,8 @@ l[nore]map     |  -   | yes | yes |  -  |  -  |  -  |  -   | yes  |
 "mapleader" 和 "maplocalleader" 可以是相同的。尽管如此，如果你把它们设为不同，
 全局插件和文件类型插件的映射冲突的机会是不是会小一点呢？例如，你可以保持把
 "mapleader" 设置为缺省的反斜杠，而设置 "maplocalleader" 为下划线。
+
+Ctrl + w, Shift + h: 将当前缓冲区置于终端最左侧，并占据整个终端高度；
+Ctrl + w, Shift + k: 将当前缓冲区置于终端最顶部，并占据整个终端宽度。
+使用这两个快捷键，我们就能在 VIM 中切换横竖分屏了。
+

@@ -109,7 +109,7 @@ plugin.setup = function(style)
         vim.o.fillchars = "fold:-,eob: ,vert: ,diff: "   -- fillchars , fold for fold fillchars, eob for the end file begin fillchars, vert for vert split
         vim.cmd("hi! DiffDelete guibg=#A6647A")
     end))
-    local mappings = require('core.mapping')
+    local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
         key = { "<leader>", "c", "<tab>" },

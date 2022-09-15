@@ -68,7 +68,7 @@ plugin.mapping = function()
     -- keymap("n", "<Leader>sg", [[':<C-u>%s/\<' . expand('<cword>') . '\>//g<Left><Left>']], { noremap = true, silent = false, expr = true })
     -- vim.fn.expand("<cword>")
 
-    local keymap = require('core.mapping')
+    local keymap = require('core.keymapping')
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","s"},
@@ -87,7 +87,7 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","l","m"},
+        key = {"<leader>","n","n"},
         action = ':LeaderfMru<CR>',
         short_desc = "Open Mru",
     })
