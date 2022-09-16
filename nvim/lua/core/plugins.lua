@@ -15,6 +15,7 @@ plugins_configure.plugins_groups[1] = {
     ["subpath"] = "",
     ["plugins"] = {
         { name="material", enable = true, desc="一个用Lua编写的快速而现代的配色方案，它支持NeoVim添加的许多新特性，如内置的LSP和TreeSitter"},
+        { name="vimdoc", enable = true, desc="中文的vimdoc帮助"},
         -- { name="toggleterm", enable = true, desc="nvim的终端插件"},
         { name="auto_mkdir", enable = true, desc="save的时候自动创建目录"},
         { name="autojump", enable = true, desc="集成autojump工具在vim中"},
@@ -32,7 +33,6 @@ plugins_configure.plugins_groups[1] = {
         { name="spectre", enable = true, desc="一个搜索与替换插件"},
         { name="telescope", enable = true, desc="一个高度可扩展的列表模糊查找工具"},
         { name="floaterm", enable = true, desc="nvim的float term插件"},
-        { name="tig-explorer", enable = true, desc="git在vim中的查看"},
         { name="trouble", enable = true, desc="一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"},
         { name="undotree", enable = true, desc="undo操作tree"},
         { name="vim-airline", enable = true, desc="vim的状态栏"},
@@ -49,6 +49,11 @@ plugins_configure.plugins_groups[1] = {
         { name="nvim-hlslens", enable = true, desc="高亮显示匹配信息,并且可以在匹配之间跳转"},
         { name="vim-easymotion", enable = true, desc="快速移动插件"},
         { name="vim-visual-multi", enable = true, desc="多光标插件,可同时编辑选中的多出统一word"},
+        { name="far", enable = true, desc="查找和替换插件"},
+        -- git
+        { name="tig-explorer", enable = true, desc="git在vim中的查看"},
+        { name="lazygit", enable = true, desc="git的一款plugin"},
+        { name="diffview", enable = true, desc="git的diff在vim中的展现"},
     }
 }
 

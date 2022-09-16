@@ -15,6 +15,7 @@ local used = {
 }
 local myplugins = require('core.plugins')
 
+
 local json = require("util.json")
 local tbl = require("util.tbl")
 
@@ -367,62 +368,90 @@ global_mapping.register({
     short_desc = "format code style"
 })
 
+global_mapping.register({
+    mode = "n",
+    key = { "f","m","t" },
+    action = 'gg=G',
+    short_desc = "format code style"
+})
 -- window
 
 global_mapping.register({
     mode = "n",
-    key = { "<leader>", "w", "s" },
+    key = {"w", "s" },
     action = ':split<cr>',
     short_desc = "Split Window"
 })
 global_mapping.register({
     mode = "n",
-    key = { "<leader>", "w", "v" },
+    key = { "w", "v" },
     action = ':vsplit<cr>',
     short_desc = "Vertical Split Window"
 })
 global_mapping.register({
     mode = "n",
-    key = { "<leader>", "w", "d" },
-    action = ':q<cr>',
-    short_desc = "Close Current Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "w", "o" },
+    key = { "w", "o" },
     action = ':only<cr>',
     short_desc = "Only Reserve Current Window"
 })
 global_mapping.register({
     mode = "n",
-    key = { "<leader>", "w", "w" },
+    key = { "w", "n" },
     action = '<c-w><c-w>',
     short_desc = "Goto Next Window"
 })
 global_mapping.register({
     mode = "n",
-    key = { "<leader>", "w", "j" },
+    key = { "w", "j" },
     action = '<c-w><c-j>',
     short_desc = "Goto The Down Window"
 })
 global_mapping.register({
     mode = "n",
-    key = { "<leader>", "w", "k" },
+    key = { "w", "k" },
     action = '<c-w><c-k>',
     short_desc = "Goto The Above Window"
 })
 global_mapping.register({
     mode = "n",
-    key = { "<leader>", "w", "h" },
+    key = { "w", "h" },
     action = '<c-w><c-h>',
     short_desc = "Goto The Left Window"
 })
 global_mapping.register({
     mode = "n",
-    key = { "<leader>", "w", "l" },
+    key = { "w", "l" },
     action = '<c-w><c-l>',
     short_desc = "Goto The Right Window"
 })
+
+
+global_mapping.register({
+    mode = "n",
+    key = { "w", "J" },
+    action = '<c-w>J',
+    short_desc = "Change The Bottom Window"
+})
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "K" },
+    action = '<c-w>K',
+    short_desc = "Change The Top Window"
+})
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "H" },
+    action = '<c-w>H',
+    short_desc = "Change The Leftest Window"
+})
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "L" },
+    action = '<c-w>L',
+    short_desc = "Change The Rightest Window"
+})
+
+
 
 global_mapping.register({
     mode = "n",
@@ -475,13 +504,13 @@ global_mapping.register({
 })
 global_mapping.register({
     mode = { "n", "v", "i", "t" },
-    key = { "<A-f>" },
+    key = { "]","b" },
     action = '<esc>:bnext<cr>',
     short_desc = "<alt-f>Go to Next Buffer"
 })
 global_mapping.register({
     mode = { "n", "v", "i", "t" },
-    key = { "<A-b>" },
+    key = { "[","b" },
     action = '<esc>:bprevious<cr>',
     short_desc = "<alt-b>Go to Previous Buffer"
 })
@@ -515,8 +544,19 @@ global_mapping.register({
     short_desc = "Close Current Window"
 })
 
+global_mapping.register({
+    mode = "n",
+    key = { "[", "t" },
+    action = '<ESC>:split term://bash<cr>',
+    short_desc = "Split window and open term"
+})
 
-
+global_mapping.register({
+    mode = "n",
+    key = { "]", "t" },
+    action = '<ESC>:vsplit term://bash<cr>',
+    short_desc = "Split window and open term"
+})
 -- buffer configure at bufferline plugin
 
 --[===[

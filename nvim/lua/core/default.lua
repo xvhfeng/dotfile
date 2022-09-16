@@ -267,6 +267,10 @@ for key, value in pairs(default_setting['global']) do
     vim.g[key] = value
 end
 
+vim.cmd [[
+set showmatch matchtime=0 matchpairs+=<:>,《:》,（:）,【:】,“:”,‘:’
+]]
+
 
 
 --[===[
