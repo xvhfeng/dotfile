@@ -16,7 +16,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "<leader>", "m", "m" },
+        key = { "m", "m" },
         action = ":Ranger<CR>",
         short_desc = "Open file-exp by Ranger.",
         silent = true

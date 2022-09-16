@@ -87,7 +87,7 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","n","n"},
+        key = {"n","n"},
         action = ':LeaderfMru<CR>',
         short_desc = "Open Mru",
     })
