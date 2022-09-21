@@ -2,10 +2,12 @@ local plugin = {}
 
 plugin.core = {
     'Yggdroot/LeaderF',
+    'tamago324/LeaderF-filer',
     run = ':LeaderfInstallCExtension',
     as = "leaderf",
     vim.cmd([[
-    let g:Lf_WindowPosition = 'fullScreen'
+    "let g:Lf_WindowPosition = 'fullScreen'
+    let g:Lf_WindowPosition = 'popup'
     let g:Lf_WorkingDirectoryMode = 'F'
     let g:Lf_PreviewInPopup = 1
     let g:Lf_PreviewInPopup = 1
@@ -110,10 +112,30 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","l","h"},
+        key = {"<leader>","l","l"},
         action = ':Leaderf! rg --recall<CR>',
         short_desc = "List Buffers",
     })
+
+
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","h"},
+        action = ':Leaderf! filer<CR>',
+        short_desc = "List Buffers",
+    })
+
+    --[===[
+    --leaderf filer command
+    H	history_backward	Go backwards in history.
+    L	history_forward	Go forwards in history.
+    K	mkdir	Create a directory.
+        See g:Lf_FilerMkdirAutoChdir
+    O	create_file	Create a file.
+    R	rename	Rename files and directories.
+    C	copy	Copy files and directories under cursor.
+    P	paste	Paste the file or directory copied by the copy command to cwd of LeaderF-filer.
+    --]===]
 
 end
 

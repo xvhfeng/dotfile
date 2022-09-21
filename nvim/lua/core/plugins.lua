@@ -54,6 +54,7 @@ plugins_configure.plugins_groups[1] = {
         { name="tig-explorer", enable = true, desc="git在vim中的查看"},
         { name="lazygit", enable = true, desc="git的一款plugin"},
         { name="diffview", enable = true, desc="git的diff在vim中的展现"},
+        { name="nvim-tree", enable = true, desc="lua写的floder"},
     }
 }
 

@@ -394,6 +394,20 @@ global_mapping.register({
     action = ':only<cr>',
     short_desc = "Only Reserve Current Window"
 })
+
+global_mapping.register({
+    mode = "n",
+    key = { "w", "x" },
+    action = '<c-w>x',
+    short_desc = "change context in the window"
+})
+global_mapping.register({
+    mode = "n",
+    key = { "w", "r" },
+    action = '<c-w>r',
+    short_desc = "change window context"
+})
+
 global_mapping.register({
     mode = "n",
     key = { "w", "n" },
@@ -425,6 +439,12 @@ global_mapping.register({
     short_desc = "Goto The Right Window"
 })
 
+global_mapping.register({
+    mode = "n",
+    key = { "w", "c" },
+    action = '<c-w>c',
+    short_desc = "Close current window"
+})
 
 global_mapping.register({
     mode = "n",
@@ -451,7 +471,25 @@ global_mapping.register({
     short_desc = "Change The Rightest Window"
 })
 
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "=" },
+    action = '<c-w>=',
+    short_desc = "Resize window"
+})
 
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "t","h" },
+    action = '<c-w>t<c-w>K',
+    short_desc = "change window  vertically to horizonally"
+})
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "t","v" },
+    action = '<c-w>t<c-w>H',
+    short_desc = "change window horizonally to vertically"
+})
 
 global_mapping.register({
     mode = "n",
