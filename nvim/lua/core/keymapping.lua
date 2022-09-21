@@ -419,6 +419,7 @@ global_mapping.register({
     key = { "w", "j" },
     action = '<c-w><c-j>',
     short_desc = "Goto The Down Window"
+
 })
 global_mapping.register({
     mode = "n",
@@ -595,6 +596,15 @@ global_mapping.register({
     action = '<ESC>:vsplit term://bash<cr>',
     short_desc = "Split window and open term"
 })
+
+--global_mapping.register({
+--    mode = "n",
+--    key = { "z", "f" },
+--    action = '<ESC>zf%',
+--    short_desc = "folding"
+--})
+
+
 -- buffer configure at bufferline plugin
 
 --[===[

@@ -82,7 +82,7 @@ default_setting['opt'] = {
     guicursor = 'n-v:block-Cursor,i-ci-ve-c:ver25-Cursor', --block for normal visual mode, vertical for insert command mode. highlight set to Cursor
     relativenumber = true,
     --fillchars = "fold:-,eob: ,vert: ",          -- fillchars , fold for fold fillchars, eob for the end file begin fillchars, vert for vert split
-    fillchars = "fold:-,eob: ,vert:▕,diff: ", -- fillchars , fold for fold fillchars, eob for the end file begin fillchars, vert for vert split
+    -- fillchars = "fold:-,eob: ,vert:▕,diff: ", -- fillchars , fold for fold fillchars, eob for the end file begin fillchars, vert for vert split
     --"│⎟⎜⎜⎢⎜▏▊▋▉▕   ref: https://unicode-table.com/en
     updatetime = 250, -- CursorHold
     undofile = true, -- use undo file
@@ -91,12 +91,14 @@ default_setting['opt'] = {
 
     path = vim.o.path .. ",./**",
     omnifunc = 'v:lua.vim.lsp.omnifunc', -- for default lsp
-    conceallevel = 2,
-    concealcursor = '', -- if set to nc, char will always fold except in insert mode
-    foldlevel = 99, -- disable fold for opened file
-    foldminlines = 2, -- 0 means even the child is only one line, fold always works
-    foldnestmax = 5, -- max fold nest
-    foldexpr = "nvim_treesitter#foldexpr()",
+    -- conceallevel = 2,
+    -- concealcursor = '', -- if set to nc, char will always fold except in insert mode
+    -- foldenable=true,
+    -- foldlevel = 99, -- disable fold for opened file
+    -- foldminlines = 2, -- 0 means even the child is only one line, fold always works
+    -- foldnestmax = 5, -- max fold nest
+    -- foldmethod=marker,
+    --foldexpr = "nvim_treesitter#foldexpr()",
     --completeopt = "menu,menuone,noselect",
     --t_ut = " ",                               -- disable Backgroud color Erase（BCE）
     termguicolors = true, -- TODO
@@ -201,7 +203,8 @@ default_setting['opt'] = {
      --  " syntax    使用语法定义折叠
      --  " diff      对没有更改的文本进行折叠
      --  " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
-     foldmethod="marker",
+     foldmethod="manual",
+     foldlevel=1,
  
      -- " 缩进配置
      smartindent = true, --  " Smart indent
