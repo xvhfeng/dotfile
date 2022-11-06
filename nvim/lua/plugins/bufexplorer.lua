@@ -16,7 +16,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "b", "v" },
+        key = { "b", "j" },
         action = ':BufExplorerVerticalSplit<cr>',
         short_desc = "VShow Buffers",
     })

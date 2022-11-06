@@ -202,7 +202,6 @@ global_mapping.register({
     action = "<C-\\><C-n>",
 })
 
---[===[
 global_mapping.register({
     mode = "i",
     key = { "k", "j" },
@@ -221,8 +220,6 @@ global_mapping.register({
     action = "<esc>",
     short_desc = "ESC"
 })
---]===]
-
 
 -- quickfix
 global_mapping.register({
@@ -481,13 +478,13 @@ global_mapping.register({
 
 global_mapping.register({
     mode = "n",
-    key = {  "w", "t","h" },
+    key = {  "w", "[" },
     action = '<c-w>t<c-w>K',
     short_desc = "change window  vertically to horizonally"
 })
 global_mapping.register({
     mode = "n",
-    key = {  "w", "t","v" },
+    key = {  "w", "]" },
     action = '<c-w>t<c-w>H',
     short_desc = "change window horizonally to vertically"
 })
@@ -608,8 +605,10 @@ zd	删除当前折叠
 zE	删除所有折叠
 zj	移动至下一个折叠
 zk	移动至上一个折叠
+
 zn	禁用折叠
 zN	启用折叠
+
 --]===]
 global_mapping.register({
     mode = "n",
@@ -618,6 +617,12 @@ global_mapping.register({
     short_desc = "folding"
 })
 
+global_mapping.register({
+    mode = "n",
+    key = {"<SPACE>"},
+    action = 'za',
+    short_desc = "toggle folding"
+})
 
 -- buffer configure at bufferline plugin
 
@@ -865,4 +870,5 @@ global_mapping.setup = function()
 
 end
 return global_mapping
+
 

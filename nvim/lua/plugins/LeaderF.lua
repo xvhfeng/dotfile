@@ -6,8 +6,8 @@ plugin.core = {
     run = ':LeaderfInstallCExtension',
     as = "leaderf",
     vim.cmd([[
-    "let g:Lf_WindowPosition = 'fullScreen'
-    let g:Lf_WindowPosition = 'popup'
+    let g:Lf_WindowPosition = 'fullScreen'
+    "let g:Lf_WindowPosition = 'popup'
     let g:Lf_WorkingDirectoryMode = 'F'
     let g:Lf_PreviewInPopup = 1
     let g:Lf_PreviewInPopup = 1
