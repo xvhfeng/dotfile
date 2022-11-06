@@ -187,16 +187,6 @@ global_mapping.register({
 
 -- common mappings
 global_mapping.register({
-    mode = "x",
-    key = { "<" },
-    action = "<gv",
-})
-global_mapping.register({
-    mode = "x",
-    key = { ">" },
-    action = ">gv",
-})
-global_mapping.register({
     mode = "t",
     key = { "<esc>" },
     action = "<C-\\><C-n>",
@@ -208,6 +198,7 @@ global_mapping.register({
     action = "<esc>",
     short_desc = "ESC"
 })
+
 global_mapping.register({
     mode = "c",
     key = { "k", "j" },
@@ -571,6 +562,22 @@ global_mapping.register({
     action = 'i<cr><esc>',
     short_desc = "insert new line symbols"
 })
+
+
+global_mapping.register({
+    mode = "v",
+    key = {"J"},
+    action = ":move '>+1<CR>gv-gv",
+    short_desc = "move selected ranger up",
+})
+
+global_mapping.register({
+    mode = "v",
+    key = {"K"},
+    action = ":move '<-2<CR>gv-gv",
+    short_desc = "move selected range down",
+})
+
 -- x exit, exec
 
 global_mapping.register({
@@ -624,6 +631,8 @@ global_mapping.register({
     short_desc = "toggle folding"
 })
 
+
+
 -- buffer configure at bufferline plugin
 
 --[===[
@@ -644,63 +653,63 @@ global_mapping.register({
 :imap <c-e><c-b> <END><Left>
 
 global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "p" },
-    action = '"+p',
-    short_desc = "Paste From Clipboard"
+mode = "n",
+key = { "<leader>", "p" },
+action = '"+p',
+short_desc = "Paste From Clipboard"
 })
 global_mapping.register({
-    mode = "i",
-    key = { "<leader>", "p" },
-    action = '<esc>"+p',
-    short_desc = "Paste From Clipboard"
+mode = "i",
+key = { "<leader>", "p" },
+action = '<esc>"+p',
+short_desc = "Paste From Clipboard"
 })
 
 -- quit
 global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "q", "q" },
-    action = ':qa<cr>',
-    short_desc = "Directly Quit"
+mode = "n",
+key = { "<leader>", "q", "q" },
+action = ':qa<cr>',
+short_desc = "Directly Quit"
 })
 
 global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "q", "w" },
-    action = ':qaw<cr>',
-    short_desc = "Directly Quit After Write"
+mode = "n",
+key = { "<leader>", "q", "w" },
+action = ':qaw<cr>',
+short_desc = "Directly Quit After Write"
 })
 
 
 -- read
 global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "r", "d" },
-    action = ':read !date <cr>',
-    short_desc = "Read Date From System"
+mode = "n",
+key = { "<leader>", "r", "d" },
+action = ':read !date <cr>',
+short_desc = "Read Date From System"
 })
 
 --save/space
 
 global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "s", "<space>" },
-    action = ':%s/\\s\\+$//<cr>',
-    short_desc = "Remove Tail Space"
+mode = "n",
+key = { "<leader>", "s", "<space>" },
+action = ':%s/\\s\\+$//<cr>',
+short_desc = "Remove Tail Space"
 })
 
 global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "s", "s" },
-    action = ':w<cr>',
-    short_desc = "Save Current Buffer"
+mode = "n",
+key = { "<leader>", "s", "s" },
+action = ':w<cr>',
+short_desc = "Save Current Buffer"
 })
 
 global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "s", "a" },
-    action = ':wa<cr>',
-    short_desc = "Save All Buffers"
+mode = "n",
+key = { "<leader>", "s", "a" },
+action = ':wa<cr>',
+short_desc = "Save All Buffers"
 })
 
 -- tab configure at bufferline plugin
@@ -711,119 +720,119 @@ local system_info = system_info:read("*all")
 local has_wsl = string.find(system_info, 'Microsoft')
 
 if has_wsl ~= nil then
-    global_mapping.register({
-        mode = "v",
-        key = { "<leader>", "y" },
-        action = ':w !clip.exe<cr><cr>',
-        silent = true,
-        short_desc = "Yank to Clipboard"
-    })
+global_mapping.register({
+mode = "v",
+key = { "<leader>", "y" },
+action = ':w !clip.exe<cr><cr>',
+silent = true,
+short_desc = "Yank to Clipboard"
+})
 else
-    global_mapping.register({
-        mode = "v",
-        key = { "<leader>", "y" },
-        action = '"+y',
-        short_desc = "Yank to Clipboard"
-    })
+global_mapping.register({
+mode = "v",
+key = { "<leader>", "y" },
+action = '"+y',
+short_desc = "Yank to Clipboard"
+})
 end
 
 -- Alt
 if vim.fn.has('mac') == 1 then
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "¬" },
-        action = '<esc>:wincmd l<cr>',
-        short_desc = "<alt-l>Goto Right Window"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "˚" },
-        action = '<esc>:wincmd k<cr>',
-        short_desc = "<alt-k>Goto Above Window"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "˙" },
-        action = '<esc>:wincmd h<cr>',
-        short_desc = "<alt-h>Goto Left Window"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "∆" },
-        action = '<esc>:wincmd j<cr>',
-        short_desc = "<alt-j>Goto Below Window"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "ƒ" },
-        action = '<esc>:bnext<cr>',
-        short_desc = "<alt-f>Go to Next Buffer"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "∫" },
-        action = '<esc>:bprevious<cr>',
-        short_desc = "<alt-b>Go to Previous Buffer"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "∑" },
-        action = '<esc>:resize +5<cr>',
-        short_desc = "<alt-w>Size +5"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "ß" },
-        action = '<esc>:resize -5<cr>',
-        short_desc = "<alt-s>Size -5"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "å" },
-        action = '<esc>:vertical resize -5<cr>',
-        short_desc = "<alt-a>Vertical Size -5"
-    })
-    global_mapping.register({
-        mode = { "n", "v", "i", "t" },
-        key = { "∂" },
-        action = '<esc>:vertical resize +5<cr>',
-        short_desc = "<alt-d>Vertical Size +5"
-    })
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "¬" },
+action = '<esc>:wincmd l<cr>',
+short_desc = "<alt-l>Goto Right Window"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "˚" },
+action = '<esc>:wincmd k<cr>',
+short_desc = "<alt-k>Goto Above Window"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "˙" },
+action = '<esc>:wincmd h<cr>',
+short_desc = "<alt-h>Goto Left Window"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "∆" },
+action = '<esc>:wincmd j<cr>',
+short_desc = "<alt-j>Goto Below Window"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "ƒ" },
+action = '<esc>:bnext<cr>',
+short_desc = "<alt-f>Go to Next Buffer"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "∫" },
+action = '<esc>:bprevious<cr>',
+short_desc = "<alt-b>Go to Previous Buffer"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "∑" },
+action = '<esc>:resize +5<cr>',
+short_desc = "<alt-w>Size +5"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "ß" },
+action = '<esc>:resize -5<cr>',
+short_desc = "<alt-s>Size -5"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "å" },
+action = '<esc>:vertical resize -5<cr>',
+short_desc = "<alt-a>Vertical Size -5"
+})
+global_mapping.register({
+mode = { "n", "v", "i", "t" },
+key = { "∂" },
+action = '<esc>:vertical resize +5<cr>',
+short_desc = "<alt-d>Vertical Size +5"
+})
 else
 end
 
 -- ctrl
 global_mapping.register({
-    mode = "n",
-    key = { "<C-j>" },
-    action = '5j',
-    short_desc = "5j"
+mode = "n",
+key = { "<C-j>" },
+action = '5j',
+short_desc = "5j"
 })
 global_mapping.register({
-    mode = "n",
-    key = { "<C-k>" },
-    action = '5k',
-    short_desc = "5k"
+mode = "n",
+key = { "<C-k>" },
+action = '5k',
+short_desc = "5k"
 })
 global_mapping.register({
-    mode = "v",
-    key = { "<C-j>" },
-    action = '5j',
-    short_desc = "5j"
+mode = "v",
+key = { "<C-j>" },
+action = '5j',
+short_desc = "5j"
 })
 global_mapping.register({
-    mode = "v",
-    key = { "<C-k>" },
-    action = '5k',
-    short_desc = "5k"
+mode = "v",
+key = { "<C-k>" },
+action = '5k',
+short_desc = "5k"
 })
 
 -- space
 global_mapping.register({
-    mode = "n",
-    key = { "<space>", "<enter>" },
-    action = ':nohlsearch<cr>',
-    short_desc = "No Search Highlight"
+mode = "n",
+key = { "<space>", "<enter>" },
+action = ':nohlsearch<cr>',
+short_desc = "No Search Highlight"
 })
 
 --]===]
