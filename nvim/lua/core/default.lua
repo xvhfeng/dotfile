@@ -81,9 +81,6 @@ global_func.augroup('empty_message', {
 default_setting['opt'] = {
     guicursor = 'n-v:block-Cursor,i-ci-ve-c:ver25-Cursor', --block for normal visual mode, vertical for insert command mode. highlight set to Cursor
     relativenumber = true,
-    --fillchars = "fold:-,eob: ,vert: ",          -- fillchars , fold for fold fillchars, eob for the end file begin fillchars, vert for vert split
-    -- fillchars = "fold:-,eob: ,vert:▕,diff: ", -- fillchars , fold for fold fillchars, eob for the end file begin fillchars, vert for vert split
-    --"│⎟⎜⎜⎢⎜▏▊▋▉▕   ref: https://unicode-table.com/en
     updatetime = 250, -- CursorHold
     undofile = true, -- use undo file
     maxmempattern = 2000, -- max match pattern
@@ -91,22 +88,9 @@ default_setting['opt'] = {
 
     path = vim.o.path .. ",./**",
     omnifunc = 'v:lua.vim.lsp.omnifunc', -- for default lsp
-    -- conceallevel = 2,
-    -- concealcursor = '', -- if set to nc, char will always fold except in insert mode
-    -- foldenable=true,
-    -- foldlevel = 99, -- disable fold for opened file
-    -- foldminlines = 2, -- 0 means even the child is only one line, fold always works
-    -- foldnestmax = 5, -- max fold nest
-    -- foldmethod=marker,
-    --foldexpr = "nvim_treesitter#foldexpr()",
-    --completeopt = "menu,menuone,noselect",
-    --t_ut = " ",                               -- disable Backgroud color Erase（BCE）
     termguicolors = true, -- TODO
     colorcolumn = "99999", -- FIXED: for https://github.com/lukas-reineke/indent-blankline.nvim/issues/59
-
-
     compatible = false,
-
 
     switchbuf="useopen",
     -- 设置光标可以到最后一个字面后
@@ -260,6 +244,8 @@ default_setting['opt'] = {
     splitbelow = true,
 
     helplang="cn",
+
+    clipboard="unnamed",
 }
 
 for key, value in pairs(default_setting['opt']) do
@@ -274,104 +260,3 @@ vim.cmd [[
 set showmatch matchtime=0 matchpairs+=<:>,《:》,（:）,【:】,“:”,‘:’
 ]]
 
-
-
---[===[
-
-    -- 设置移动命令在行首或者行尾时依然有效 
-    whichwrap={ method="append",val="b,s,<,>,[,]"},
-    whichwrap={ method = "append",val = "<,>,h,l"},
-    --    "设置鼠标可以选择文本
-    -- selectmode={method = "append",val="mouse"},
-
-    -- "与windows共享剪贴板
-    --clipboard={method = "append",val = "pbpaste"},
-
-    --  "打开时忽略文件名后缀
-    wildignore={method = "append",val="*.o,*.obj,*.pyc,*.db,*.swp,*.bak,*.class"},
-
-    viminfo={method = "push",val = "%"},
-
-    -- " For regular expressions turn magic on
-    -- "带有如下符号的单词不要被换行分割
-    iskeyword={method="append",val = "_,$,@,%,#"},
-
- 
-    filetyle = {method="cmd",val = [[
-    filetype on
-    filetype indent on
-    filetype plugin on
-    filetype plugin indent on
-    ]]},
-
-    
-  
-
-    --"设置标记一列的背景颜色和数字一行颜色一致
-    --"" for error highlight，防止错误整行标红导致看不清
-    highlight = { method = "cmd", val = [[
-    hi! link SignColumn   LineNr
-    hi! link ShowMarksHLl DiffAdd
-    hi! link ShowMarksHLu DiffChange
-
-    highlight clear SpellBad
-    highlight SpellBad term=standout ctermfg=1 term=underline cterm=underline
-    highlight clear SpellCap
-    highlight SpellCap term=underline cterm=underline
-    highlight clear SpellRare
-    highlight SpellRare term=underline cterm=underline
-    highlight clear SpellLocal
-    highlight SpellLocal term=underline cterm=underline
-    ]] },
-
-
-    -- "离开插入模式后自动关闭预览窗口
-    my_pclose = { method = "cmd",val = [[
-    autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-    ]] },
-
-    -- " if this not work ,make sure .viminfo is writable for you
-    my_wviminfo  = {method = "cmd",val = [[
-    au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-    ]] },
-
-
-    my_chdirs =  { method = "cmd",val = [[
-    augroup AutoChdir
-    autocmd!
-    autocmd BufEnter * if &buftype !=# 'terminal' | lchdir %:p:h | endif
-    augroup END
-    ]] },
-
-
-    --当终端支持颜色显示时打开彩色显示
-    my_syntax_enable = { method= "cmd", val = [[
-    if &t_Co > 1
-        syntax enable
-        endif
-        ]] },
-
-    
-
-
-    for key,value in pairs(default_setting['opt']) do
-        if type(value) == "table" then
-
-            local method = string.lower(value['method'])
-            local val = value['val']
-		    local sep = value['sep'] or ','
-
-            if(method == "append") then
-                vim.o[key] = (vim.o[key] or '')  .. sep .. val
-            elseif(method == "push") then
-                vim.o[key] = val .. sep .. (vim.o[key] or '')
-            elseif(method == "cmd") then
-                vim.cmd(val)
-            end
-
-        else
-            vim.o[key] = value
-        end
-    end
-
- ]===]

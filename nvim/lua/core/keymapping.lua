@@ -90,7 +90,8 @@ global_mapping.register = function(new_map)
     end
 
     local option = {}
-    if new_map['noremap'] ~= nil then option['noremap'] = new_map.noremap
+    if new_map['noremap'] ~= nil then
+        option['noremap'] = new_map.noremap
     end
     if new_map['expr'] ~= nil then
         option['expr'] = new_map['expr']
@@ -120,7 +121,6 @@ global_mapping.register = function(new_map)
             table.insert(key_list, key)
         end
     end
-    --print(new_map['mode'] .. '     ' .. uni_key_string .. '     ' .. new_map['short_desc'])
 
     -- 检测key的冲突性
     if used[new_map['mode']][uni_key_string] then
@@ -129,8 +129,6 @@ global_mapping.register = function(new_map)
     else
         used[new_map['mode']][uni_key_string] = new_map['short_desc']
     end
-    --local prefix = key_list[1]
-    --if plugins_groups['default']['which_key'] and plugins_groups['default']['which_key']['disable'] == false and key_list[1] == "<leader>" and new_map.mode == 'n' then
     if myplugins.all_loaded_module['which_key'] and #key_list > 1 and new_map.mode == 'n' then
         local prefix = key_list[1]
         if #key_list > 1 then
@@ -142,7 +140,6 @@ global_mapping.register = function(new_map)
         end
         -- key 拆成 prefix= k1..k2,tail = k3..k4......
         if mapping_prefix[prefix] == nil then
-            --print(prefix, new_map['short_desc'])
             mapping_prefix[prefix] = {}
             mapping_prefix[prefix]['name'] = new_map['short_desc']
         end
@@ -356,12 +353,6 @@ global_mapping.register({
     short_desc = "format code style"
 })
 
-global_mapping.register({
-    mode = "n",
-    key = { "f","m","t" },
-    action = 'gg=G',
-    short_desc = "format code style"
-})
 -- window
 
 global_mapping.register({
@@ -466,6 +457,34 @@ global_mapping.register({
     action = '<c-w>=',
     short_desc = "Resize window"
 })
+
+
+
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "," },
+    action = ":vertical resize -10<CR>",
+    short_desc = "Left Resize window"
+})
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "." },
+    action = ":vertical resize +10<CR>", 
+    short_desc = "Right Resize window"
+})
+global_mapping.register({
+    mode = "n",
+    key = {  "w", ";" },
+    action = ":resize +10<CR>", 
+    short_desc = "Up Resize window"
+})
+global_mapping.register({
+    mode = "n",
+    key = {  "w", "'" },
+    action = ":resize -10<CR>", 
+    short_desc = "Down Resize window"
+})
+
 
 global_mapping.register({
     mode = "n",
@@ -632,211 +651,6 @@ global_mapping.register({
 })
 
 
-
--- buffer configure at bufferline plugin
-
---[===[
--- paste
-
-:imap <C-e> <END>
-:imap <C-a> <HOME>
-:imap <C-b> <Left>
-:imap <C-n> <Down>
-:imap <C-p> <Up>
-:imap <C-f> <Right>
-:imap <C-v> <PageDown>
-:imap <C-u> <PageUp>
-:imap <C-d> <Delete>
-:imap <C-r> <BackSpace>
-:imap <c-w><c-b> <s-left>
-:imap <c-w> <s-right>
-:imap <c-e><c-b> <END><Left>
-
-global_mapping.register({
-mode = "n",
-key = { "<leader>", "p" },
-action = '"+p',
-short_desc = "Paste From Clipboard"
-})
-global_mapping.register({
-mode = "i",
-key = { "<leader>", "p" },
-action = '<esc>"+p',
-short_desc = "Paste From Clipboard"
-})
-
--- quit
-global_mapping.register({
-mode = "n",
-key = { "<leader>", "q", "q" },
-action = ':qa<cr>',
-short_desc = "Directly Quit"
-})
-
-global_mapping.register({
-mode = "n",
-key = { "<leader>", "q", "w" },
-action = ':qaw<cr>',
-short_desc = "Directly Quit After Write"
-})
-
-
--- read
-global_mapping.register({
-mode = "n",
-key = { "<leader>", "r", "d" },
-action = ':read !date <cr>',
-short_desc = "Read Date From System"
-})
-
---save/space
-
-global_mapping.register({
-mode = "n",
-key = { "<leader>", "s", "<space>" },
-action = ':%s/\\s\\+$//<cr>',
-short_desc = "Remove Tail Space"
-})
-
-global_mapping.register({
-mode = "n",
-key = { "<leader>", "s", "s" },
-action = ':w<cr>',
-short_desc = "Save Current Buffer"
-})
-
-global_mapping.register({
-mode = "n",
-key = { "<leader>", "s", "a" },
-action = ':wa<cr>',
-short_desc = "Save All Buffers"
-})
-
--- tab configure at bufferline plugin
-
--- y yank
-local system_info = io.popen('uname -a')
-local system_info = system_info:read("*all")
-local has_wsl = string.find(system_info, 'Microsoft')
-
-if has_wsl ~= nil then
-global_mapping.register({
-mode = "v",
-key = { "<leader>", "y" },
-action = ':w !clip.exe<cr><cr>',
-silent = true,
-short_desc = "Yank to Clipboard"
-})
-else
-global_mapping.register({
-mode = "v",
-key = { "<leader>", "y" },
-action = '"+y',
-short_desc = "Yank to Clipboard"
-})
-end
-
--- Alt
-if vim.fn.has('mac') == 1 then
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "¬" },
-action = '<esc>:wincmd l<cr>',
-short_desc = "<alt-l>Goto Right Window"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "˚" },
-action = '<esc>:wincmd k<cr>',
-short_desc = "<alt-k>Goto Above Window"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "˙" },
-action = '<esc>:wincmd h<cr>',
-short_desc = "<alt-h>Goto Left Window"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "∆" },
-action = '<esc>:wincmd j<cr>',
-short_desc = "<alt-j>Goto Below Window"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "ƒ" },
-action = '<esc>:bnext<cr>',
-short_desc = "<alt-f>Go to Next Buffer"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "∫" },
-action = '<esc>:bprevious<cr>',
-short_desc = "<alt-b>Go to Previous Buffer"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "∑" },
-action = '<esc>:resize +5<cr>',
-short_desc = "<alt-w>Size +5"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "ß" },
-action = '<esc>:resize -5<cr>',
-short_desc = "<alt-s>Size -5"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "å" },
-action = '<esc>:vertical resize -5<cr>',
-short_desc = "<alt-a>Vertical Size -5"
-})
-global_mapping.register({
-mode = { "n", "v", "i", "t" },
-key = { "∂" },
-action = '<esc>:vertical resize +5<cr>',
-short_desc = "<alt-d>Vertical Size +5"
-})
-else
-end
-
--- ctrl
-global_mapping.register({
-mode = "n",
-key = { "<C-j>" },
-action = '5j',
-short_desc = "5j"
-})
-global_mapping.register({
-mode = "n",
-key = { "<C-k>" },
-action = '5k',
-short_desc = "5k"
-})
-global_mapping.register({
-mode = "v",
-key = { "<C-j>" },
-action = '5j',
-short_desc = "5j"
-})
-global_mapping.register({
-mode = "v",
-key = { "<C-k>" },
-action = '5k',
-short_desc = "5k"
-})
-
--- space
-global_mapping.register({
-mode = "n",
-key = { "<space>", "<enter>" },
-action = ':nohlsearch<cr>',
-short_desc = "No Search Highlight"
-})
-
---]===]
-
 global_mapping.setup = function()
     if myplugins.all_loaded_module['indent-blankline'] ~= nil then
         global_mapping.register({
@@ -863,16 +677,6 @@ global_mapping.setup = function()
     if myplugins.all_loaded_module['which_key'] then
         vim.cmd("packadd which-key")
         local wk = require("which-key")
-
-        --log.setup("trace",log.OnlyFile,"/Users/xuhaifeng/works/nvim-log/log.log")
-
-        -- jstr = json.encode(mapping_prefix or {} )
-        --tstr = DataDumper(mapping_prefix)
-        -- print(tstr)
-        --log.trace(tstr)
-
-        -- jstr = json_encode(mapping_prefix)
-        --print(jstr)
         wk.register(mapping_prefix)
     end
 

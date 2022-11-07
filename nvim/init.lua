@@ -41,7 +41,6 @@ if not packer_ok then
 end
 
 packer.init {
-    ---[===[
     config = {
         max_jobs = nil,
         opt_default = false,
@@ -68,44 +67,10 @@ packer.init {
             open_fn = require('packer.util').float,
           },
         
-          --[===[
-        display = {
-            non_interactive = false,
-            open_fn = nil,
-            open_cmd = '65vnew \\[packer\\]',
-            working_sym = '⟳',
-            error_sym = '✗',
-            done_sym = '✓',
-            removed_sym = '-',
-            moved_sym = '→',
-            header_sym = '━',
-            show_all_info = true,
-            prompt_border = 'double',
-            keybindings = {
-                quit = 'q',
-                toggle_info = '<CR>',
-                diff = 'd',
-                prompt_revert = 'r'
-            }
-        },
-        --]===]
         luarocks = {python_cmd = 'python'},
         log = {level = 'warn'},
         profile = {enable = false, threshold = 1}
     }
-    --]===]
-
-    --[==[
-    config = {
-        max_jobs = 20,
-    },
-    git = {
-        depth = 1, -- Git clone depth
-        clone_timeout = 600, -- Timeout, in seconds, for git clones
-        max_jobs=10,
-        --default_url_format = 'https://github.com/%s' -- Lua format string used for "aaa/bbb" style plugins
-    }
-    --]==]
 }
 
 require("core")

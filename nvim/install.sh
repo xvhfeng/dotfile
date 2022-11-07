@@ -1,14 +1,4 @@
 #!/bin/bash
-# File              : install.sh
-# Author            : Sun Fu <cstsunfu@gmail.com>
-# Date              : 21.07.2018
-# Last Modified Date: 2021-08-20
-# Last Modified By  : Sun Fu <cstsunfu@gmail.com>
-
-#printf "\033[32m SUCCESS \033[0m\n";
-#printf "\033[33m WARNING \033[0m\n";
-#printf "\033[31m ERROR \033[0m\n"
-
 install_config() {
     
     if [ ! -e "$HOME/.config/nvim" ];then
