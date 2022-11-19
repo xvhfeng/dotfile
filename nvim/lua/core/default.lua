@@ -188,6 +188,7 @@ default_setting['opt'] = {
      --  " diff      对没有更改的文本进行折叠
      --  " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
      foldmethod="marker",
+     -- foldmethod="indent",
      foldlevel=1,
  
      -- " 缩进配置

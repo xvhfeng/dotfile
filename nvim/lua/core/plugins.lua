@@ -55,6 +55,7 @@ plugins_configure.plugins_groups[1] = {
         { name="lazygit", enable = true, desc="git的一款plugin"},
         { name="diffview", enable = true, desc="git的diff在vim中的展现"},
         { name="nvim-tree", enable = true, desc="lua写的floder"},
+        { name="vim-templates", enable = true, desc="文件模版,提供c语言的h,c文件等模版功能"},
     }
 }
 
