@@ -27,14 +27,14 @@ plugin.core = {
         plugin.mapping = function()
 
             vim.cmd[[
-            map <Leader> <Plug>(easymotion-prefix)
+            map <Leader>p <Plug>(easymotion-prefix)
 
             " <Leader>f{char} to move to {char}
             map  <Leader>f <Plug>(easymotion-bd-f)
             nmap <Leader>f <Plug>(easymotion-overwin-f)
 
             " s{char}{char} to move to {char}{char}
-            nmap s <Plug>(easymotion-overwin-f2)
+            nmap F <Plug>(easymotion-overwin-f2)
 
             " Move to line
             map <Leader>L <Plug>(easymotion-bd-jk)
@@ -45,7 +45,7 @@ plugin.core = {
             nmap <Leader>w <Plug>(easymotion-overwin-w)
 
             " Gif config
-            " nmap s <Plug>(easymotion-s2)
+            " nmap F <Plug>(easymotion-s2)
             " nmap t <Plug>(easymotion-t2)
 
             " Gif config
@@ -75,7 +75,7 @@ plugin.core = {
             " Require tpope/vim-repeat to enable dot repeat support
             " Jump to anywhere with only `s{char}{target}`
             " `s<CR>` repeat last find motion.
-            nmap s <Plug>(easymotion-s)
+            nmap F <Plug>(easymotion-s)
             " Bidirectional & within line 't' motion
             " omap t <Plug>(easymotion-bd-tl)
             " Use uppercase target labels and type as a lower case

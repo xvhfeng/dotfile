@@ -20,18 +20,22 @@ local json = require("util.json")
 local tbl = require("util.tbl")
 
 local mapping_prefix = {
-    ["<leader><TAB>"] = { name = "+ Toggle fold" },
-    ["<leader>b"] = { name = "+ Buffer" },
-    ["<leader>c"] = { name = "+ Comment/Change" },
-    ["<leader>d"] = { name = "+ Debug" },
-    ["<leader>e"] = { name = "+ Eval" },
-    ["<leader>f"] = { name = "+ File" },
-    ["<leader>g"] = { name = "+ Git/Generator" },
-    --["<leader>G"] = {name = "+ Git"},
+    ["<leader>f"] = { name = "+ Find/Repalce" },
+    ["<leader>b"] = { name = "+ Buffer/File Exploer" },
+    ["<leader>c"] = { name = "+ Comment" },
+    ["<leader>e"] = { name = "+ Edit" },
+    ["<leader>g"] = { name = "+ Git"},
+    ["<leader>m"] = { name = "+ Marks" },
+    ["<leader>n"] = { name = "+ navigation" },
+    ["<leader>z"] = { name = "+ Folding" },
+    ["<leader>w"] = { name = "+ Windows" },
+
+
+
+    --[==[ 
     ["<leader>h"] = { name = "+ History" },
     ["<leader>j"] = { name = "+ Json/Jupyter" },
     ["<leader>l"] = { name = "+ Line" },
-    ["<leader>m"] = { name = "+ Move" },
     ["<leader>n"] = { name = "+ New/Note" },
     ["<leader>o"] = { name = "+ Org" },
     ["<leader>p"] = { name = "+ Paste" },
@@ -52,6 +56,7 @@ local mapping_prefix = {
     ["<leader>7"] = { name = "+ Go buffer 7" },
     ["<leader>8"] = { name = "+ Go buffer 8" },
     ["<leader>9"] = { name = "+ Go buffer 9" }
+    --]==]
 }
 
 
@@ -355,15 +360,18 @@ global_mapping.register({
 
 -- window
 
+
+
 global_mapping.register({
     mode = "n",
-    key = {"w", "s" },
+    key = {"<Leader>","w", "s" },
     action = ':split<cr>',
     short_desc = "Split Window"
 })
+
 global_mapping.register({
     mode = "n",
-    key = { "w", "v" },
+    key = { "<Leader>", "w", "v" },
     action = ':vsplit<cr>',
     short_desc = "Vertical Split Window"
 })
@@ -484,7 +492,12 @@ global_mapping.register({
     action = ":resize -10<CR>", 
     short_desc = "Down Resize window"
 })
-
+global_mapping.register({
+    mode = "n",
+    key = { "<Leader>", "w", "'" },
+    action = ":resize -10<CR>", 
+    short_desc = "Down Resize window"
+})
 
 global_mapping.register({
     mode = "n",
@@ -674,8 +687,8 @@ global_mapping.setup = function()
     inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<tab>"
     inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
     ]])
-    if myplugins.all_loaded_module['which_key'] then
-        vim.cmd("packadd which-key")
+    if myplugins.all_loaded_module['which-key'] then
+        -- vim.cmd("packadd which-key")
         local wk = require("which-key")
         wk.register(mapping_prefix)
     end

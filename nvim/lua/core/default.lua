@@ -96,7 +96,7 @@ default_setting['opt'] = {
     -- 设置光标可以到最后一个字面后
     virtualedit="onemore",
     -- 设置快捷键等待时间
-    --ttimeoutlen=80,
+    ttimeoutlen=80,
     -- "设置退格键为删除键
     backspace="indent,eol,start",
     -- 设置历史命令保存数
