@@ -1,12 +1,16 @@
-
 local plugin = {}
+-- brew install ack 
+-- brew install ripgrep
+-- not use ag, because install many deps-pkgs
 
 plugin.core = {
     "mileszs/ack.vim",
     as = "ack",
     vim.cmd([[
         if executable('ag')
-            let g:ackprg = 'ag --vimgrep --nogroup --column'
+            " let g:ackprg = 'ag --vimgrep --nogroup --column '
+             "let g:ackprg = 'ack  '
+            let g:ackprg = 'rg --vimgrep --smart-case --column ' 
         endif
 
         " 高亮搜索关键词
@@ -16,14 +20,12 @@ plugin.core = {
 
 plugin.mapping = function()
     local mappings = require('core.keymapping')
-    --[==[
     mappings.register({
         mode = "n",
-        key = { "a" },
+        key = { "f","g" },
         action = ':Ack! <space>',
         short_desc = "grep keywords",
     })
- --]==]
 end
 return plugin
 --[==[

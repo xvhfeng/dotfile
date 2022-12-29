@@ -588,13 +588,14 @@ global_mapping.register({
     short_desc = "Treat long lines as break lines in k"
 })
 
+--[==[
 global_mapping.register({
     mode = "n",
     key = {"K"},
     action = 'i<cr><esc>',
     short_desc = "insert new line symbols"
 })
-
+--]==]
 
 global_mapping.register({
     mode = "v",
@@ -609,6 +610,38 @@ global_mapping.register({
     action = ":move '<-2<CR>gv-gv",
     short_desc = "move selected range down",
 })
+
+global_mapping.register({
+    mode = "n",
+    key = {"J"},
+    action = ":<c-u>execute 'move +'. v:count1<cr>",
+    short_desc = "move currnet line up",
+})
+
+global_mapping.register({
+    mode = "n",
+    key = {"K"},
+    action = ":<c-u>execute 'move -1-'. v:count1<cr>",
+    short_desc = "move currnet line down",
+})
+
+global_mapping.register({
+    mode = "n",
+    key = {"[" , "<SPACE>"},
+    action = "::<c-u>put! =repeat(nr2char(10), v:count1)<cr>",
+    short_desc = "insert blank line up",
+})
+
+global_mapping.register({
+    mode = "n",
+    key = {"]","<SPACE>"},
+    action = ":<c-u>put =repeat(nr2char(10), v:count1)<cr>",
+    short_desc = "insert blank line down",
+})
+
+
+
+        
 
 -- x exit, exec
 
@@ -631,6 +664,34 @@ global_mapping.register({
     key = { "]", "t" },
     action = '<ESC>:vsplit term://bash<cr>',
     short_desc = "Split window and open term"
+})
+
+global_mapping.register({
+    mode = "n",
+    key = { "<leader>", "U" },
+    action = 'mQviwU`Q',
+    short_desc = "Upper the word"
+})
+
+global_mapping.register({
+    mode = "n",
+    key = { "<leader>", "u" },
+    action = 'mQviwu`Q',
+    short_desc = "Lower the word"
+})
+
+global_mapping.register({
+    mode = "n",
+    key = { "<leader>", "U" ,"c"},
+    action = 'mQgewvU`Q',
+    short_desc = "Upper the first char of word"
+})
+
+global_mapping.register({
+    mode = "n",
+    key = { "<leader>", "u","c" },
+    action = 'mQgewvu`Q',
+    short_desc = "Lower the first char of word"
 })
 
 --[===[
@@ -663,6 +724,28 @@ global_mapping.register({
     short_desc = "toggle folding"
 })
 
+global_mapping.register({
+    mode = "n",
+    key = { "<c-[>" },
+    action = '<c-O>',
+    short_desc = "jump to better last postion"
+})
+
+global_mapping.register({
+    mode = "n",
+    key = { "<c-]>" },
+    action = '<c-I>',
+    short_desc = "jump to better new postion"
+})
+
+--[==[
+"``"在跳转时会精确到列，
+"''"不会回到跳转时光标所在的那一列，而是把光标放在第一个非空白字符上。
+
+如果想回到更老的跳转位置，使用命令"CTRL-O"；与它相对应的，是"CTRL-I"，它跳转到更新的跳转位置(:help CTRL-O和:help CTRL-I)。这两个命令前面可以加数字来表示倍数。
+
+使用命令":jumps"可以查看跳转表(:help :jumps)。    
+--]==]
 
 global_mapping.setup = function()
     if myplugins.all_loaded_module['indent-blankline'] ~= nil then

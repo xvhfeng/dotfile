@@ -34,7 +34,6 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="vim-repeat", enable = true, desc="vim的重复命令插件"},
         { name="nvim-web-devicons", enable = true, desc="nvim的web icons"},
         { name="asynctasks", enable = true, desc="异步执行工具,依赖于skywind3000/asyncrun.vim"},
-        { name="vim-kickfix", enable = true, desc="filter for quickfix"},
         { name="vim-lastplace", enable = true, desc="打开文件的时候,回到上一次编辑的地方"},
         { name="which-key", enable = true, desc="vim的操作快捷键映射"},
     }
@@ -65,8 +64,9 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="vifm", enable = true, desc="一个文件控制器,好用,推荐"},
         { name="ranger", enable = true, desc="floder管理器"},
         { name="rename", enable = true, desc="重名当前打开的文件"},
+        { name="qf-helper", enable = true, desc="一个更好的quickfix的替代品"},
+        { name="vim-kickfix", enable = true, desc="filter for quickfix"},
         { name="window", enable = true, desc="只是对于windows的key mapping的操作"},
-
     }
 }
 
@@ -76,10 +76,11 @@ plugins_configure.plugins_groups[group_idx] = {
     ["subpath"] = "finder",
     ["plugins"] = {
         { name="ack", enable = true, desc="like grep plugin"},
-        { name="far", enable = true, desc="查找和替换插件"},
+        { name="far", enable = true, desc="查找和替换插件,多文件搜索替换"},
         { name="LeaderF", enable = true, desc="模糊查询插件"},
         { name="spectre", enable = true, desc="一个搜索与替换插件"},
         { name="telescope", enable = true, desc="一个高度可扩展的列表模糊查找工具"},
+        { name="any-jump", enable = true, desc="在定义的标记间跳转"},
        
     }
 }
@@ -120,6 +121,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="mason", enable = true, desc="第三方插件管理器"},
         { name="aerial", enable = true, desc="基于LSP的outline工具"},
         { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
+        { name="nvim-cmp", enable = true, desc="基于LSP的代码智能提示完成引擎"},
         { name="lsp_signature", enable = true, desc="基于LSP展现函数的签名  包括注释和参数"},
         { name="lspkind", enable = true, desc="这个小插件为neovim内置lsp添加了类似vcode的象形图"},
         { name="navigator", enable = true, desc="基于LSP的源码分析和导航工具"},
