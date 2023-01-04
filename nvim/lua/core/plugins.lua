@@ -27,7 +27,8 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="plenary", enable = true, desc="不需要重复写function,只适用于neovim函数"},
         { name="popup", enable = true, desc="popup在nvim中的实现"},
         { name="rainbow", enable = true, desc="括号颜色匹配"},
-        { name="floaterm", enable = true, desc="nvim的float term插件"},
+     --   { name="floaterm", enable = true, desc="nvim的float term插件"},
+        { name="neoterm", enable = true, desc="nvim的终端插件"},
         { name="vim-airline", enable = true, desc="vim的状态栏"},
         { name="vim-emacscommandline", enable = true, desc="vim的命令中绑定emacs按键模式"},
         { name="vim-highlight-cursor-words", enable = true, desc="高亮当前光标下的word"},
@@ -67,6 +68,8 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="qf-helper", enable = true, desc="一个更好的quickfix的替代品"},
         { name="vim-kickfix", enable = true, desc="filter for quickfix"},
         { name="window", enable = true, desc="只是对于windows的key mapping的操作"},
+        { name="rnvimr", enable = true, desc="Ranger的包装器"},
+     --   { name="windows", enable = true, desc="自动伸缩选中的buffer"},
     }
 }
 
@@ -154,6 +157,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="orgmode", enable = true, desc="一个采用org格式进行记录的笔记插件，好处是写的笔记支持emacs进行编辑"},
         { name="telekasten", enable = true, desc="用于使用基于文本的Markdown Zettelkasten/Wiki,支持与telescope 插件的整合"},
         { name="mind", enable = true, desc="快速将笔记挂载到树上的插件，通过树将日记，笔记，wiki和任务管理等通过工作流实现"},
+        -- { name="todo", enable = true, desc="一个todo插件"},
     }
 }
 
