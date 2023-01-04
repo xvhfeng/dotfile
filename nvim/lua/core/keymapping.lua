@@ -69,6 +69,7 @@ global_mapping.register = function(new_map)
     --  desc = "",                    default = short_desc
     --  expr = nil,                   default = nil
     --  silent = nil,                 default = nil
+    --  del_first = false              default = false
 
     -- default
     if new_map['mode'] == nil then
@@ -103,6 +104,11 @@ global_mapping.register = function(new_map)
     end
     if new_map['silent'] ~= nil then
         option['silent'] = new_map['silent']
+    end
+
+    local del_first = false
+    if new_map['del_first'] ~= nil then
+        del_first = new_map['del_first']
     end
 
     local uni_key_string = ""
@@ -169,6 +175,10 @@ global_mapping.register = function(new_map)
         end
     else
         if new_map.action ~= nil then
+            if del_first then
+                print(uni_key_string)
+                vim.api.nvim_del_keymap(new_map.mode,uni_key_string)
+            end
             vim.api.nvim_set_keymap(new_map.mode, uni_key_string, new_map.action, option)
         end
     end
@@ -724,16 +734,17 @@ global_mapping.register({
     short_desc = "toggle folding"
 })
 
+
 global_mapping.register({
     mode = "n",
-    key = { "<c-[>" },
+    key = { "<leader>", "[" },
     action = '<c-O>',
     short_desc = "jump to better last postion"
 })
 
 global_mapping.register({
     mode = "n",
-    key = { "<c-]>" },
+    key = { "<leader>", "]" },
     action = '<c-I>',
     short_desc = "jump to better new postion"
 })
