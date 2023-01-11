@@ -1,3 +1,4 @@
+
 local plugin = {}
 
 plugin.core = {
@@ -41,7 +42,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "n", "n" },
+        key = { "<leader>", "f", "n" },
         action = ":RnvimrToggle<CR>",
         short_desc = "Open file-exp by Ranger.",
         silent = true

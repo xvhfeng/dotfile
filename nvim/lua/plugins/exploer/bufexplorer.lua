@@ -1,3 +1,4 @@
+
 local plugin = {}
 
 plugin.core = {
@@ -9,23 +10,23 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "b", "e" },
+        key = { "<leader>", "b", "e" },
         action = ':ToggleBufExplorer<cr>',
         short_desc = "Show Buffers",
     })
 
     mappings.register({
         mode = "n",
-        key = { "b", "j" },
+        key = { "<leader>", "b", "j" },
         action = ':BufExplorerVerticalSplit<cr>',
         short_desc = "VShow Buffers",
     })
 
     mappings.register({
         mode = "n",
-        key = { "b", "h" },
+        key = { "<leader>", "b", "s" },
         action = ':BufExplorerHorizontalSplit<cr>',
-        short_desc = "VShow Buffers",
+        short_desc = "Show Buffers",
     })
 end
 return plugin

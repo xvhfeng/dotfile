@@ -73,7 +73,7 @@ plugin.mapping = function()
     local keymap = require('core.keymapping')
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","l","s"},
+        key = {"<leader>","r","c"},
         action = [[':<C-u>Leaderf!  --popup  rg -e ']],
         short_desc = "Search CurrentWord",
         expr = true
@@ -81,7 +81,7 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","l","w"},
+        key = {"<leader>","r","w"},
         action = [[':<C-u>Leaderf! rg -e ' . expand('<cword>')]],
         short_desc = "Search CurrentWord",
         expr = true
@@ -89,7 +89,7 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"m","n"},
+        key = {"<leader>","b","h"},
         action = ':LeaderfMru<CR>',
         short_desc = "Open Mru",
     })
@@ -97,14 +97,14 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","l","f"},
+        key = {"<leader>","r","f"},
         action = ':LeaderfFunction<CR>',
         short_desc = "List Functions",
     })
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","l","b"},
+        key = {"<leader>","b","b"},
         action = ':Leaderf! buffer<CR>',
         short_desc = "List Buffers",
     })
@@ -112,7 +112,7 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","l","l"},
+        key = {"<leader>","b","r"},
         action = ':Leaderf! rg --recall<CR>',
         short_desc = "List Buffers",
     })
@@ -120,7 +120,7 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","l","h"},
+        key = {"<leader>","b","c"},
         action = ':Leaderf! filer<CR>',
         short_desc = "List Buffers",
     })

@@ -1,4 +1,5 @@
 
+
 local plugin = {}
 
 --[==[
@@ -16,21 +17,21 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = {"n","v"},
-        key = { "<leader>","j" },
+        key = { "<leader>","r","j" },
         action = ':AnyJump<CR>',
         short_desc = "Jump to definition under cursor",
     })
 
     mappings.register({
         mode = "n",
-        key = { "<leader>","a","b" },
+        key = { "<leader>","r","b" },
         action = ':AnyJumpBack<CR>',
         short_desc = "open previous opened file (after jump)",
     })
 
     mappings.register({
         mode = "n",
-        key = { "<leader>","a" ,"l"},
+        key = { "<leader>","r" ,"l"},
         action = '::AnyJumpLastResults<CR>',
         short_desc = "open last closed search window again",
     })

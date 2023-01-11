@@ -22,28 +22,28 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = { "n", "v" },
-        key = { "<leader>", "c", "c" },
+        key = { "<leader>", "e", "c" ,"c" },
         action = "<Plug>NERDCommenterAlignBoth",
         short_desc = "Comment",
         silent = true,
     })
     mappings.register({
         mode = { "n", "v" },
-        key = { "<leader>", "c", "a" },
+        key = { "<leader>", "e", "c", "a" },
         action = "<Plug>NERDCommenterAltDelims",
         short_desc = "Comment Alt Format",
         silent = true,
     })
     mappings.register({
         mode = { "n", "v" },
-        key = { "<leader>", "c", "A" },
+        key = { "<leader>", "e", "c", "A" },
         action = "<Plug>NERDCommenterAppend",
         short_desc = "Comment Append",
         silent = true,
     })
     mappings.register({
         mode = { "n", "v" },
-        key = { "<leader>", "c", "u" },
+        key = { "<leader>", "e", "c", "u" },
         action = "<Plug>NERDCommenterUncomment",
         short_desc = "UnComment",
         silent = true,

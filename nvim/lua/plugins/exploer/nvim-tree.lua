@@ -1,3 +1,4 @@
+
 local plugin = {}
 
 plugin.core = {
@@ -16,7 +17,7 @@ plugin.mapping = function()
     local keymap = require('core.keymapping')
     keymap.register({
         mode = {"n"},
-        key = {"<leader>", "f","o" },
+        key = {"<leader>", "f","t" },
         action = ':NvimTreeToggle <CR>',
         short_desc = "Open Floder Tree",
     })

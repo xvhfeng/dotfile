@@ -20,7 +20,7 @@ plugin.mapping = function()
     --nnoremap <leader>S :lua require('spectre').open()<CR>
     mappings.register({
         mode = "n",
-        key = {"<leader>", "s", "r"},
+        key = {"<leader>", "r", "s","r"},
         action = ":lua require('spectre').open()<CR>",
         short_desc = "Search By Reg Exp.",
         silent = true
@@ -29,7 +29,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = {"<leader>", "s", "c"},
+        key = {"<leader>", "r","s", "c"},
         action = ":lua require('spectre').open_visual({select_word=true})<CR>",
         short_desc = "Search By Reg Exp.",
         silent = true
@@ -38,7 +38,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = {"<leader>", "s", "w"},
+        key = {"<leader>","r", "s", "w"},
         action = ":lua require('spectre').open_visual()<CR>",
         short_desc = "Search By Reg Exp.",
         silent = true
@@ -47,7 +47,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = {"<leader>", "s", "f"},
+        key = {"<leader>","r", "s", "f"},
         action = ":lua require('spectre').open_file_search()<cr>",
         short_desc = "Search By Reg Exp.",
         silent = true

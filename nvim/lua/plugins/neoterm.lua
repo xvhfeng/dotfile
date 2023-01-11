@@ -1,3 +1,4 @@
+
 local plugin = {}
 
 plugin.core = {
@@ -26,7 +27,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = {"<leader>", "t","q"},
+        key = {"<leader>", "t","e"},
         action = ':NeotermExit<cr>',
         short_desc = "NeotermExit",
         silent = true

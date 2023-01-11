@@ -1,3 +1,4 @@
+
 local plugin = {}
 
 plugin.core = {
@@ -13,7 +14,7 @@ plugin.mapping = function()
     -- quit
     mappings.register({
         mode = "n",
-        key = { "<leader>", "t" ,"f"},
+        key = { "<leader>", "g" ,"f"},
         action = ":TigOpenCurrentFile<CR>",
         short_desc = "Open Current File.",
         silent = true
@@ -21,7 +22,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "t" ,"d"},
+        key = { "<leader>", "g" ,"d"},
         action = ":TigOpenProjectRootDir<CR>",
         short_desc = "Open Current Folder.",
         silent = true
@@ -29,7 +30,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "t" ,"r"},
+        key = { "<leader>", "g" ,"r"},
         action = ":TigGrepResume<CR>",
         short_desc = "Git Grep Resume.",
         silent = true
@@ -37,7 +38,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "t", "g" },
+        key = { "<leader>", "g", "g" },
         action = ":TigGrep<CR>",
         short_desc = "Git Grep.",
         silent = true
@@ -45,7 +46,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "t", "b" },
+        key = { "<leader>", "g", "b" },
         action = ":TigBlame<CR>",
         short_desc = "Git Blame.",
         silent = true
@@ -53,7 +54,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "t", "t" },
+        key = { "<leader>", "g", "t" },
         action = ":Tig<CR>",
         short_desc = "Git Blame.",
         silent = true

@@ -1,3 +1,4 @@
+
 local plugin = {}
 
 plugin.core = {
@@ -16,7 +17,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "m", "m" },
+        key = { "<leader>", "f", "w" },
         action = ":Ranger<CR>",
         short_desc = "Open file-exp by Ranger.",
         silent = true

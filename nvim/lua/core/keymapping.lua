@@ -20,13 +20,15 @@ local json = require("util.json")
 local tbl = require("util.tbl")
 
 local mapping_prefix = {
-    ["<leader>f"] = { name = "+ Find/Repalce" },
-    ["<leader>b"] = { name = "+ Buffer/File Exploer" },
+    ["<leader>f"] = { name = "+ File Exploer" },
+    ["<leader>b"] = { name = "+ Buffer" },
     ["<leader>c"] = { name = "+ Comment" },
     ["<leader>e"] = { name = "+ Edit" },
     ["<leader>g"] = { name = "+ Git"},
     ["<leader>m"] = { name = "+ Marks" },
     ["<leader>n"] = { name = "+ navigation" },
+    ["<leader>r"] = { name = "+ Find/Repalce" },
+    ["<leader>t"] = { name = "+ Telescope" },
     ["<leader>z"] = { name = "+ Folding" },
     ["<leader>w"] = { name = "+ Windows" },
 
@@ -224,36 +226,9 @@ global_mapping.register({
     short_desc = "ESC"
 })
 
--- quickfix
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "q", "c" },
-    action = ':cclose<cr>',
-    short_desc = "QuickFix Close"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "q", "o" },
-    action = ':copen<cr>',
-    short_desc = "QuickFix Open"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "q", "p" },
-    action = ':cprevious<cr>',
-    short_desc = "QuickFix Previous Item"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "q", "n" },
-    action = ':cnext<cr>',
-    short_desc = "QuickFix Next Item"
-})
 
 
+--[==[ 
 global_mapping.register({
     mode = "n",
     key = { "t" },
@@ -267,322 +242,7 @@ global_mapping.register({
     action = '<esc>O<esc>',
     short_desc = "New Spaceline up"
 })
-
-
--- emacs key binding for insert mode
-global_mapping.register({
-    mode = "i",
-    key = { "<C-w>" },
-    action = '<C-[>diwa',
-    short_desc = "Delete Prior Word"
-})
-global_mapping.register({
-    mode = "i",
-    key = { "<C-h>" },
-    action = '<BS>',
-    short_desc = "Delete Prior Char"
-})
-global_mapping.register({
-    mode = "i",
-    key = { "<C-d>" },
-    action = '<Del>',
-    short_desc = "Delete Next Char"
-})
-global_mapping.register({
-    mode = "i",
-    key = { "<C-b>" },
-    action = '<Left>',
-    short_desc = "Go Left"
-})
-global_mapping.register({
-    mode = "i",
-    key = { "<C-f>" },
-    action = '<Right>',
-    short_desc = "Go Right"
-})
-global_mapping.register({
-    mode = "i",
-    key = { "<C-a>" },
-    action = '<ESC>^i',
-    short_desc = "Go To The Begin and Insert"
-})
-global_mapping.register({
-    mode = "i",
-    key = { "<C-e>" },
-    action = '<ESC>$a',
-    short_desc = "Go To The End and Append"
-})
-global_mapping.register({
-    mode = "i",
-    key = { "<C-O>" },
-    action = '<Esc>o',
-    short_desc = "New Line and Insert"
-})
-
-global_mapping.register({
-    mode = "i",
-    key = { "<C-n>" },
-    action = '<Down>',
-    short_desc = "Move Down"
-})
-
-global_mapping.register({
-    mode = "i",
-    key = { "<C-p>" },
-    action = '<Up>',
-    short_desc = "Move up"
-})
-
-global_mapping.register({
-    mode = "i",
-    key = { "<C-v>" },
-    action = '<PageDown>',
-    short_desc = "Move PageDown"
-})
-
-global_mapping.register({
-    mode = "i",
-    key = { "<C-u>" },
-    action = '<PageUp>',
-    short_desc = "Move PageUp"
-})
-
-
-global_mapping.register({
-    mode = "i",
-    key = { "<A-k>" },
-    action = '<ESC>d$i',
-    short_desc = "Delete To The End"
-})
-global_mapping.register({
-    mode = "i",
-    key = { "<A-u>" },
-    action = '<ESC>d^i',
-    short_desc = "Delete To The Begin"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<Leader>","f","m","t" },
-    action = '<ESC>=a{',
-    short_desc = "format code style"
-})
-
--- window
-
-
-
-global_mapping.register({
-    mode = "n",
-    key = {"<Leader>","w", "s" },
-    action = ':split<cr>',
-    short_desc = "Split Window"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<Leader>", "w", "v" },
-    action = ':vsplit<cr>',
-    short_desc = "Vertical Split Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "w", "o" },
-    action = ':only<cr>',
-    short_desc = "Only Reserve Current Window"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "w", "x" },
-    action = '<c-w>x',
-    short_desc = "change context in the window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "w", "r" },
-    action = '<c-w>r',
-    short_desc = "change window context"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "w", "n" },
-    action = '<c-w><c-w>',
-    short_desc = "Goto Next Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "w", "j" },
-    action = '<c-w><c-j>',
-    short_desc = "Goto The Down Window"
-
-})
-global_mapping.register({
-    mode = "n",
-    key = { "w", "k" },
-    action = '<c-w><c-k>',
-    short_desc = "Goto The Above Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "w", "h" },
-    action = '<c-w><c-h>',
-    short_desc = "Goto The Left Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "w", "l" },
-    action = '<c-w><c-l>',
-    short_desc = "Goto The Right Window"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "w", "c" },
-    action = '<c-w>c',
-    short_desc = "Close current window"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "w", "J" },
-    action = '<c-w>J',
-    short_desc = "Change The Bottom Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "K" },
-    action = '<c-w>K',
-    short_desc = "Change The Top Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "H" },
-    action = '<c-w>H',
-    short_desc = "Change The Leftest Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "L" },
-    action = '<c-w>L',
-    short_desc = "Change The Rightest Window"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "=" },
-    action = '<c-w>=',
-    short_desc = "Resize window"
-})
-
-
-
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "," },
-    action = ":vertical resize -10<CR>",
-    short_desc = "Left Resize window"
-})
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "." },
-    action = ":vertical resize +10<CR>", 
-    short_desc = "Right Resize window"
-})
-global_mapping.register({
-    mode = "n",
-    key = {  "w", ";" },
-    action = ":resize +10<CR>", 
-    short_desc = "Up Resize window"
-})
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "'" },
-    action = ":resize -10<CR>", 
-    short_desc = "Down Resize window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "<Leader>", "w", "'" },
-    action = ":resize -10<CR>", 
-    short_desc = "Down Resize window"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "[" },
-    action = '<c-w>t<c-w>K',
-    short_desc = "change window  vertically to horizonally"
-})
-global_mapping.register({
-    mode = "n",
-    key = {  "w", "]" },
-    action = '<c-w>t<c-w>H',
-    short_desc = "change window horizonally to vertically"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "w", "J" },
-    action = '<c-w><c-J>',
-    short_desc = "Goto The Bottom Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "w", "K" },
-    action = '<c-w><c-K>',
-    short_desc = "Goto The Top Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "w", "H" },
-    action = '<c-w><c-H>',
-    short_desc = "Goto The Leftest Window"
-})
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "w", "L" },
-    action = '<c-w><c-L>',
-    short_desc = "Goto The Rightest Window"
-})
-
-global_mapping.register({
-    mode = { "n", "v", "i", "t" },
-    key = { "<A-a>" },
-    action = '<esc>:wincmd h<cr>',
-    short_desc = "<alt-h>Goto Left Window"
-})
-global_mapping.register({
-    mode = { "n", "v", "i", "t" },
-    key = { "<A-d>" },
-    action = '<esc>:wincmd l<cr>',
-    short_desc = "<alt-l>Goto Right Window"
-})
-global_mapping.register({
-    mode = { "n", "v", "i", "t" },
-    key = { "<A-w>" },
-    action = '<esc>:wincmd k<cr>',
-    short_desc = "<alt-k>Goto Above Window"
-})
-global_mapping.register({
-    mode = { "n", "v", "i", "t" },
-    key = { "<A-j>" },
-    action = '<esc>:wincmd j<cr>',
-    short_desc = "<alt-j>Goto Below Window"
-})
-global_mapping.register({
-    mode = { "n", "v", "i", "t" },
-    key = { "]","b" },
-    action = '<esc>:bnext<cr>',
-    short_desc = "<alt-f>Go to Next Buffer"
-})
-global_mapping.register({
-    mode = { "n", "v", "i", "t" },
-    key = { "[","b" },
-    action = '<esc>:bprevious<cr>',
-    short_desc = "<alt-b>Go to Previous Buffer"
-})
+--]==]
 
 global_mapping.register({
     mode = "n",
@@ -606,103 +266,11 @@ global_mapping.register({
     short_desc = "insert new line symbols"
 })
 --]==]
-
-global_mapping.register({
-    mode = "v",
-    key = {"J"},
-    action = ":move '>+1<CR>gv-gv",
-    short_desc = "move selected ranger up",
-})
-
-global_mapping.register({
-    mode = "v",
-    key = {"K"},
-    action = ":move '<-2<CR>gv-gv",
-    short_desc = "move selected range down",
-})
-
-global_mapping.register({
-    mode = "n",
-    key = {"J"},
-    action = ":<c-u>execute 'move +'. v:count1<cr>",
-    short_desc = "move currnet line up",
-})
-
-global_mapping.register({
-    mode = "n",
-    key = {"K"},
-    action = ":<c-u>execute 'move -1-'. v:count1<cr>",
-    short_desc = "move currnet line down",
-})
-
-global_mapping.register({
-    mode = "n",
-    key = {"[" , "<SPACE>"},
-    action = "::<c-u>put! =repeat(nr2char(10), v:count1)<cr>",
-    short_desc = "insert blank line up",
-})
-
-global_mapping.register({
-    mode = "n",
-    key = {"]","<SPACE>"},
-    action = ":<c-u>put =repeat(nr2char(10), v:count1)<cr>",
-    short_desc = "insert blank line down",
-})
-
-
-
-        
-
 -- x exit, exec
 
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "x" },
-    action = ':close<cr>',
-    short_desc = "Close Current Window"
-})
 
-global_mapping.register({
-    mode = "n",
-    key = { "[", "t" },
-    action = '<ESC>:split term://bash<cr>',
-    short_desc = "Split window and open term"
-})
 
-global_mapping.register({
-    mode = "n",
-    key = { "]", "t" },
-    action = '<ESC>:vsplit term://bash<cr>',
-    short_desc = "Split window and open term"
-})
 
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "U" },
-    action = 'mQviwU`Q',
-    short_desc = "Upper the word"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "u" },
-    action = 'mQviwu`Q',
-    short_desc = "Lower the word"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "U" ,"c"},
-    action = 'mQgewvU`Q',
-    short_desc = "Upper the first char of word"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "u","c" },
-    action = 'mQgewvu`Q',
-    short_desc = "Lower the first char of word"
-})
 
 --[===[
 zc	关闭当前打开的折叠
@@ -789,6 +357,11 @@ global_mapping.setup = function()
 
 
 end
+
+global_mapping.add_mapping_prefix = function(name,prefix)
+    mapping_prefix[name] = prefix
+end
+
 return global_mapping
 
 

@@ -1,3 +1,4 @@
+
 local plugin = {}
 -- brew install ack 
 -- brew install ripgrep
@@ -22,7 +23,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "f","g" },
+        key = { "<leader>", "r","a" },
         action = ':Ack! <space>',
         short_desc = "grep keywords",
     })

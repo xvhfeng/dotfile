@@ -37,6 +37,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="asynctasks", enable = true, desc="异步执行工具,依赖于skywind3000/asyncrun.vim"},
         { name="vim-lastplace", enable = true, desc="打开文件的时候,回到上一次编辑的地方"},
         { name="which-key", enable = true, desc="vim的操作快捷键映射"},
+      --  { name="test", enable = true, desc="测试插件"},
     }
 }
 group_idx = group_idx + 1
@@ -52,6 +53,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="vim-templates", enable = true, desc="文件模版,提供c语言的h,c文件等模版功能"},
         { name="vim-trailing-whitespace", enable = true, desc="快速删除行尾空格"},
         { name="vim-visual-multi", enable = true, desc="多光标插件,可同时编辑选中的多出统一word"},
+        { name="editor", enable = true, desc="编辑类key-mapping"},
     }
 }
 
@@ -69,7 +71,6 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="vim-kickfix", enable = true, desc="filter for quickfix"},
         { name="window", enable = true, desc="只是对于windows的key mapping的操作"},
         { name="rnvimr", enable = true, desc="Ranger的包装器"},
-     --   { name="windows", enable = true, desc="自动伸缩选中的buffer"},
     }
 }
 

@@ -155,7 +155,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "f" },
+        key = { "<leader>", "t", "f" },
         action = "<cmd>lua require('telescope.builtin').find_files()<cr>",
         short_desc = "Find files",
         silent = true,
@@ -163,7 +163,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "q" },
+        key = { "<leader>","t", "q" },
         action = "<cmd>lua require('telescope.builtin').live_grep()<cr>",
         short_desc = "Find Query",
         silent = true
@@ -171,7 +171,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "l" },
+        key = { "<leader>","t", "l" },
         action = "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({skip_empty_lines=true})<cr>",
         short_desc = "Find Lines",
         silent = true
@@ -179,7 +179,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "b" },
+        key = { "<leader>","t", "b" },
         action = "<cmd>lua require('telescope.builtin').buffers()<cr>",
         short_desc = "Find Buffers",
         silent = true
@@ -187,7 +187,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "c" },
+        key = { "<leader>", "t", "c" },
         action = "<cmd>lua require('telescope.builtin').command_history()<cr>",
         short_desc = "Find Command History",
         silent = true,
@@ -195,7 +195,7 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "w" },
+        key = { "<leader>", "t", "w" },
         action = "<cmd>lua require 'telescope.builtin'.find_files{ cwd = vim.g.HOME_PATH .. '/org/wiki'}<cr>",
         short_desc = "Find Wiki",
         silent = true
@@ -203,14 +203,14 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "j" },
+        key = { "<leader>","t", "j" },
         action = "<cmd>lua require 'telescope.builtin'.find_files{ cwd = vim.g.HOME_PATH .. '/org/work'}<cr>",
         short_desc = "Find Wiki",
         silent = true
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "h" },
+        key = { "<leader>", "t", "h" },
         action = "<Cmd>lua require('telescope').extensions.frecency.frecency{ sorter = require('telescope.config').values.file_sorter()}<CR>",
         short_desc = "Find Recent/History",
         silent = true,
@@ -218,7 +218,7 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "p" },
+        key = { "<leader>", "t", "p" },
         action = "<Cmd>lua require'telescope'.extensions.project.project{}<CR>",
         short_desc = "Find Project",
         silent = true,
@@ -226,7 +226,7 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", "m" },
+        key = { "<leader>", "t", "k" },
         action = "<cmd>lua require('telescope.builtin').keymaps()<cr>",
         short_desc = "Find All Mappings",
         silent = true,
@@ -234,7 +234,7 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";" },
+        key = { "<leader>", "t", ";" },
         action = nil,
         short_desc = "Find More",
         silent = true,
@@ -242,7 +242,7 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";", "r" },
+        key = { "<leader>", "t", "r" },
         action = "<cmd>lua require('telescope.builtin').registers()<cr>",
         short_desc = "Find Registers",
         silent = true,
@@ -250,7 +250,7 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";", "h" },
+        key = { "<leader>", "t", "i" },
         action = "<cmd>lua require('telescope.builtin').highlights()<cr>",
         short_desc = "Find Highlights",
         silent = true,
@@ -258,7 +258,7 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";", "t" },
+        key = { "<leader>", "t", "s" },
         action = "<cmd>lua require('telescope.builtin').colorscheme()<cr>",
         short_desc = "Find Themes",
         silent = true,
@@ -267,7 +267,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";", "p" },
+        key = { "<leader>","t", "z" },
         action = "<cmd>lua require('telescope.builtin').planets()<cr>",
         short_desc = "Find Planets",
         silent = true,
@@ -276,7 +276,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";", "g" },
+        key = { "<leader>", "t", "g" },
         action = "<cmd>lua require('telescope.builtin').git_commits()<cr>",
         short_desc = "Find Git Commits",
         silent = true,
@@ -285,7 +285,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";", "G" },
+        key = { "<leader>", "t", "G" },
         action = "<cmd>lua require('telescope.builtin').git_bcommits()<cr>",
         short_desc = "Find Git Commits(buffer)",
         silent = true,
@@ -294,7 +294,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";", "j" },
+        key = { "<leader>", "t", "j" },
         action = "<cmd>lua require('telescope.builtin').jumplist()<cr>",
         short_desc = "Find Jump List",
         silent = true,
@@ -302,7 +302,7 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = { "<leader>", "f", ";", "m" },
+        key = { "<leader>", "t", "m" },
         action = "<cmd>lua require('telescope.builtin').marks()<cr>",
         short_desc = "Find Marks",
         silent = true,

@@ -137,7 +137,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "<leader>", "g", "v" },
+        key = { "<leader>", "g", "d","v" },
         action = ":DiffviewOpen<cr>",
         short_desc = "Git Diff View",
         noremap = true,

@@ -1,3 +1,4 @@
+
 local plugin = {}
 
 plugin.core = {
@@ -11,7 +12,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "m", "b" },
+        key = { "<leader>","f", "e" },
         action = ":EditVifm<CR>",
         short_desc = "Open file-exp by vifm.",
         silent = true
@@ -19,21 +20,21 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "n", "m" },
+        key = { "<leader>","f", "p" },
         action = ":PeditVifm<CR>",
         short_desc = "Open file-exp by vifm in preview mode.",
         silent = true
     })
     mappings.register({
         mode = "n",
-        key = { "n", "h" },
+        key = { "<leader>","f", "s" },
         action = ":SplitVifm<CR>",
         short_desc = "Split window for vifm.",
         silent = true
     })
     mappings.register({
         mode = "n",
-        key = { "n", "v" },
+        key = { "<leader>","f", "v" },
         action = ":VsplitVifm<CR>",
         short_desc = "vertically split window for vim",
         silent = true
