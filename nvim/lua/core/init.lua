@@ -1,3 +1,6 @@
+
+local xlog = require("util.xlog")
+xlog.trace("NVim Core init ...")
 --[===[
 vim.g.feature_groups = {
     default = true,

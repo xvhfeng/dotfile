@@ -107,10 +107,10 @@ plugins_configure.plugins_groups[group_idx] = {
     ["plugins"] = {
         { name="nvim-hlslens", enable = true, desc="高亮显示匹配信息,并且可以在匹配之间跳转"},
         { name="vim-easymotion", enable = true, desc="快速移动插件"},
-        { name="vim-signature", enable = true, desc="标记插件"},
+        { name="marks", enable = true, desc="标记插件"},
         { name="vim-unimpaired", enable = true, desc="[ ] 开头的快捷键,vim缺失的快捷键"}, 
         { name="trouble", enable = true, desc="一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"},
-       
+        { name="nav", enable = true, desc="navigation的key-mapping。"},
     }
 }
 

@@ -1,5 +1,12 @@
 local global_mapping = {}
 
+local myplugins = require('core.plugins')
+local json = require("util.json")
+local xlog = require("util.xlog")
+require "util.tbl"
+
+xlog.trace("global key mapping")
+
 local used = {
     n = {}, --Normal
     v = {}, -- Visual and Select
@@ -13,11 +20,6 @@ local used = {
     t = {}, -- Terminal
     [""] = {} -- map
 }
-local myplugins = require('core.plugins')
-
-
-local json = require("util.json")
-local tbl = require("util.tbl")
 
 local mapping_prefix = {
     ["<leader>f"] = { name = "+ File Exploer" },
@@ -142,7 +144,9 @@ global_mapping.register = function(new_map)
     else
         used[new_map['mode']][uni_key_string] = new_map['short_desc']
     end
-    if myplugins.all_loaded_module['which_key'] and #key_list > 1 and new_map.mode == 'n' then
+
+    if  #key_list > 1 and new_map.mode == 'n' then
+    -- if myplugins.all_loaded_module['which_key'] and #key_list > 1 and new_map.mode == 'n' then
         local prefix = key_list[1]
         if #key_list > 1 then
             prefix = prefix .. key_list[2]
@@ -175,15 +179,15 @@ global_mapping.register = function(new_map)
                 mapping_prefix[prefix]['noremap'] = new_map['noremap']
             end
         end
-    else
-        if new_map.action ~= nil then
-            if del_first then
-                print(uni_key_string)
-                vim.api.nvim_del_keymap(new_map.mode,uni_key_string)
-            end
-            vim.api.nvim_set_keymap(new_map.mode, uni_key_string, new_map.action, option)
-        end
     end
+   -- else
+    if new_map.action ~= nil then
+        if del_first then
+            vim.api.nvim_del_keymap(new_map.mode,uni_key_string)
+        end
+        vim.api.nvim_set_keymap(new_map.mode, uni_key_string, new_map.action, option)
+    end
+   -- end
 
 end
 
@@ -226,107 +230,9 @@ global_mapping.register({
     short_desc = "ESC"
 })
 
-
-
---[==[ 
-global_mapping.register({
-    mode = "n",
-    key = { "t" },
-    action = '<esc>o<esc>',
-    short_desc = "New Spaceline under"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "T" },
-    action = '<esc>O<esc>',
-    short_desc = "New Spaceline up"
-})
---]==]
-
-global_mapping.register({
-    mode = "n",
-    key = {"j"},
-    action = 'gj',
-    short_desc = "Treat long lines as break lines in j"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = {"k"},
-    action = 'gk',
-    short_desc = "Treat long lines as break lines in k"
-})
-
---[==[
-global_mapping.register({
-    mode = "n",
-    key = {"K"},
-    action = 'i<cr><esc>',
-    short_desc = "insert new line symbols"
-})
---]==]
--- x exit, exec
-
-
-
-
-
---[===[
-zc	关闭当前打开的折叠
-zo	打开当前的折叠
-zm	关闭所有折叠
-zM	关闭所有折叠及其嵌套的折叠
-zr	打开所有折叠
-zR	打开所有折叠及其嵌套的折叠
-zd	删除当前折叠
-zE	删除所有折叠
-zj	移动至下一个折叠
-zk	移动至上一个折叠
-
-zn	禁用折叠
-zN	启用折叠
-
---]===]
-global_mapping.register({
-    mode = "n",
-    key = { "z", "f" },
-    action = 'zf%',
-    short_desc = "folding"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = {"<SPACE>"},
-    action = 'za',
-    short_desc = "toggle folding"
-})
-
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "[" },
-    action = '<c-O>',
-    short_desc = "jump to better last postion"
-})
-
-global_mapping.register({
-    mode = "n",
-    key = { "<leader>", "]" },
-    action = '<c-I>',
-    short_desc = "jump to better new postion"
-})
-
---[==[
-"``"在跳转时会精确到列，
-"''"不会回到跳转时光标所在的那一列，而是把光标放在第一个非空白字符上。
-
-如果想回到更老的跳转位置，使用命令"CTRL-O"；与它相对应的，是"CTRL-I"，它跳转到更新的跳转位置(:help CTRL-O和:help CTRL-I)。这两个命令前面可以加数字来表示倍数。
-
-使用命令":jumps"可以查看跳转表(:help :jumps)。    
---]==]
-
 global_mapping.setup = function()
+    xlog.trace("global key mapping setup")
+
     if myplugins.all_loaded_module['indent-blankline'] ~= nil then
         global_mapping.register({
             mode = "n",
@@ -351,10 +257,20 @@ global_mapping.setup = function()
     ]])
     if myplugins.all_loaded_module['which-key'] then
         -- vim.cmd("packadd which-key")
+
+        --log.setup("trace",log.OnlyFile,"/Users/xuhaifeng/works/nvim-log/log.log")
+      --  local jstr = json.encode(mapping_prefix or {} )
+        local tstr = DataDumper(mapping_prefix)
+        -- print(tstr)
+      --  xlog.trace("mapping prefix json\n  %s", jstr )
+        xlog.trace("mapping prefix tbl\n  %s",tstr )
+
+        -- jstr = json_encode(mapping_prefix)
+        --print(jstr)
+
         local wk = require("which-key")
         wk.register(mapping_prefix)
     end
-
 
 end
 

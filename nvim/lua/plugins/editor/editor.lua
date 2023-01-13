@@ -5,16 +5,34 @@ plugin.core = {only_keymapping}
 plugin.mapping = function()
     local mappings = require('core.keymapping')
 
-    mappings.register({
-        mode = "i",
-        key = {"<leader>", "e", "d", "e"},
-        action = '<ESC>d$i',
-        short_desc = "Delete To The End"
+    mappings.add_mapping_prefix("<leader>ed", {
+        name = "+ Deleting in line"
     })
+
+    mappings.add_mapping_prefix("<leader>eu", {
+        name = "+ Lower"
+    })
+
+    mappings.add_mapping_prefix("<leader>eU", {
+        name = "+ Super"
+    })
+
+    mappings.add_mapping_prefix("<leader>ef", {
+        name = "+ Formating"
+    })
+
     mappings.register({
-        mode = "i",
+        mode = "n",
+        key = {"<leader>", "e", "d", "e"},
+        action = 'd$',
+        short_desc = "Delete To The End",
+        noremap = true,
+    })
+    
+    mappings.register({
+        mode = "n",
         key = {"<leader>", "e", "d", "b"},
-        action = '<ESC>d^i',
+        action = 'd^',
         short_desc = "Delete To The Begin"
     })
 
@@ -23,6 +41,34 @@ plugin.mapping = function()
         key = {"<Leader>", "e", "f", "t"},
         action = '<ESC>=a{',
         short_desc = "format code style"
+    })
+
+    mappings.register({
+        mode = "n",
+        key = {"<leader>", "e", "U", "w"},
+        action = 'mQviwU`Q',
+        short_desc = "Upper the word"
+    })
+
+    mappings.register({
+        mode = "n",
+        key = {"<leader>", "e", "u", "w"},
+        action = 'mQviwu`Q',
+        short_desc = "Lower the word"
+    })
+
+    mappings.register({
+        mode = "n",
+        key = {"<leader>", "e", "U", "f"},
+        action = 'mQgewvU`Q',
+        short_desc = "Upper the first char of word"
+    })
+
+    mappings.register({
+        mode = "n",
+        key = {"<leader>", "e", "u", "f"},
+        action = 'mQgewvu`Q',
+        short_desc = "Lower the first char of word"
     })
 
     mappings.register({
@@ -65,34 +111,6 @@ plugin.mapping = function()
         key = {"]", "<SPACE>"},
         action = ":<c-u>put =repeat(nr2char(10), v:count1)<cr>",
         short_desc = "insert blank line down"
-    })
-
-    mappings.register({
-        mode = "n",
-        key = {"<leader>", "e", "U", "w"},
-        action = 'mQviwU`Q',
-        short_desc = "Upper the word"
-    })
-
-    mappings.register({
-        mode = "n",
-        key = {"<leader>", "e", "u", "w"},
-        action = 'mQviwu`Q',
-        short_desc = "Lower the word"
-    })
-
-    mappings.register({
-        mode = "n",
-        key = {"<leader>", "e", "U", "f"},
-        action = 'mQgewvU`Q',
-        short_desc = "Upper the first char of word"
-    })
-
-    mappings.register({
-        mode = "n",
-        key = {"<leader>", "e", "u", "f"},
-        action = 'mQgewvu`Q',
-        short_desc = "Lower the first char of word"
     })
 
     -- emacs key binding for insert mode
@@ -167,11 +185,34 @@ plugin.mapping = function()
         short_desc = "Move PageUp"
     })
 
-    mappings.add_mapping_prefix("<leader>eu", {
-        name = "+ Lower"
+    --[===[
+zc	关闭当前打开的折叠
+zo	打开当前的折叠
+zm	关闭所有折叠
+zM	关闭所有折叠及其嵌套的折叠
+zr	打开所有折叠
+zR	打开所有折叠及其嵌套的折叠
+zd	删除当前折叠
+zE	删除所有折叠
+zj	移动至下一个折叠
+zk	移动至上一个折叠
+
+zn	禁用折叠
+zN	启用折叠
+
+--]===]
+    mappings.register({
+        mode = "n",
+        key = {"z", "f"},
+        action = 'zf%',
+        short_desc = "folding"
     })
-    mappings.add_mapping_prefix("<leader>euw", {
-        name = "+ Lower the word"
+
+    mappings.register({
+        mode = "n",
+        key = {"<SPACE>"},
+        action = 'za',
+        short_desc = "toggle folding"
     })
 end
 

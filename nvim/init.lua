@@ -1,3 +1,4 @@
+
 if vim.fn.has('mac') == 1 then
     vim.g.HOME_PATH = "/Users/" .. vim.fn.expand('$USER')
     vim.cmd ([[
