@@ -106,11 +106,12 @@ plugins_configure.plugins_groups[group_idx] = {
     ["subpath"] = "navigation",
     ["plugins"] = {
         { name="nvim-hlslens", enable = true, desc="高亮显示匹配信息,并且可以在匹配之间跳转"},
-        { name="vim-easymotion", enable = true, desc="快速移动插件"},
+        { name="hop", enable = true, desc="快速移动插件"},
         { name="marks", enable = true, desc="标记插件"},
         { name="vim-unimpaired", enable = true, desc="[ ] 开头的快捷键,vim缺失的快捷键"}, 
         { name="trouble", enable = true, desc="一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"},
         { name="nav", enable = true, desc="navigation的key-mapping。"},
+        --  { name="lightspeed", enable = true, desc="基于数个字符在行间进行跳转"},
     }
 }
 
@@ -122,6 +123,7 @@ plugins_configure.plugins_groups[group_idx] = {
     ["subpath"] = "lspcfg",
     ["plugins"] = {
         -- 必须保证mason, mason-lspconfig,nvim-lspconfig 依次加载的顺序
+        { name="treesitter", enable = true, desc="Neovim的树结构和抽象层"},
         { name="mason", enable = true, desc="第三方插件管理器"},
         { name="aerial", enable = true, desc="基于LSP的outline工具"},
         { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
@@ -132,7 +134,6 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="null-ls", enable = true, desc="LSP的扩展插件,可以完成诊断,格式化代码等等功能"},
         { name="nvim-dap", enable = true, desc="debug转换协议"},
         { name="symbols-outline", enable = true, desc="使用LSP在nvim中树状展现一个符号的outline"},
-        { name="treesitter", enable = true, desc="Neovim的树结构和抽象层"},
         { name="vista", enable = true, desc="查看和搜索Vim/NeoVim中的LSP符号、标签"},
     }
 }

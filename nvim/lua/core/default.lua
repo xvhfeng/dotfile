@@ -116,99 +116,101 @@ default_setting['opt'] = {
     -- " 启动的时候不显示那个援助索马里儿童的提示
     shortmess="atI",
 
-     -- " 不让vim发出讨厌的滴滴声
-     visualbell         = false,
-     errorbells = false,
-     -- "自动切换当前目录为当前文件所在目录
-     autochdir = true,
-     -- "默认就是全buffer搜索
-     gdefault = true,
-     -- "切换到当前tab打开文件的路径下
- 
-     -- "create undo file
-     undolevels=1000,         --  " How many undos,
-     undoreload=10000,        -- " number of lines to save for undo
-     -- " No annoying sound on errors
-     title = true,                -- " change the terminal's title
-     tm=500,
-     --" Remember info about open buffers on close"
- 
-     magic = true,
- 
-     -- 高亮显示匹配的括号
-     showmatch = true,
-     -- "中文折行不断字
-     fo="tqmMB",
-     --  "设置一行字数
-     textwidth=80,
-     -- "折行
-     lbr = true,
- 
-     --ambiwidth="double",
+    -- " 不让vim发出讨厌的滴滴声
+    visualbell         = false,
+    errorbells = false,
+    -- "自动切换当前目录为当前文件所在目录
+    autochdir = true,
+    -- "默认就是全buffer搜索
+    gdefault = true,
+    -- "切换到当前tab打开文件的路径下
 
-     -- "开启行号显示
-     number = true,
-     -- "显示当前的行号列号：
-     ruler = true,
-     -- ""在状态栏显示正在输入的命令
+    -- "create undo file
+    undolevels=1000,         --  " How many undos,
+    undoreload=10000,        -- " number of lines to save for undo
+    -- " No annoying sound on errors
+    title = true,                -- " change the terminal's title
+    tm=500,
+    --" Remember info about open buffers on close"
 
-     showcmd = true,
-     -- " Show current mode
-     showmode = true,
-     -- " Set 7 lines to the cursor - when moving vertically using j/k 上下滚动,始终在中间
-     scrolloff=7,
-     -- " 命令行（在状态行下）的高度，默认为1，这里是2
-     -- set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
-     -- " Always show the status line
-     laststatus=2,
-     --  " How many tenths of a second to blink when matching brackets
-     mat=2,
-     -- " 突出显示当前行等
-     cursorline = true,
- 
-     -- "设置文内智能搜索提示
-     -- " 高亮search命中的文本。
-     hlsearch = true,
-     -- " 搜索时忽略大小写
-     ignorecase = true,
-     -- " 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索）
-     incsearch = true,
-     -- " 有一个或以上大写字母时仍大小写敏感
-     -- " 这句千万不能要，要了命令行大小写敏感了
-     -- "set smartcase     " ignore case if search pattern is all lowercase, case-sensitive otherwise
- 
- 
-     -- " 代码折叠
-     foldenable =true,
-     --  " 折叠方法
-     --  " manual    手工折叠
-     --  " indent    使用缩进表示折叠
-     --  " expr      使用表达式定义折叠
-     --  " syntax    使用语法定义折叠
-     --  " diff      对没有更改的文本进行折叠
-     --  " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
-     foldmethod="marker",
-     -- foldmethod="indent",
-     foldlevel=1,
- 
-     -- " 缩进配置
-     smartindent = true, --  " Smart indent
-     autoindent = true, --    " always set autoindenting on
-     -- "c程序可以在v模式中按=格式化
-     cin = true,
- 
-     -- " tab相关变更
-     tabstop=4, --      " 设置Tab键的宽度        [等同的空格个数]
-     shiftwidth=4 , --  " number of spaces to use for autoindenting
-     softtabstop=4 , --" 按退格键时可以一次删掉 4 个空格
-     smarttab   = true, --" insert tabs on the start of a line according to shiftwidth, not tabstop 按退格键时可以一次删掉 4 个空格
-     expandtab     = true, -- " 将Tab自动转化成空格    [需要输入真正的Tab键时，使用 Ctrl+V + Tab]
-     shiftround     = true, -- " use multiple of shiftwidth when indenting with '<' and '>'
-     -- cindent shiftwidth=4,
-     -- autoindent shiftwidth=4,
-     listchars="tab:>-,trail:-" , -- "每行起始的tab显示为“>----”；结尾的空格显示为"-"
+    magic = true,
 
-      -- " A buffer becomes hidden when it is abandoned
+    -- 高亮显示匹配的括号
+    showmatch = true,
+    -- "中文折行不断字
+    fo="tqmMB",
+    --  "设置一行字数
+    textwidth=80,
+    -- "折行
+    lbr = true,
+
+    --ambiwidth="double",
+
+    -- "开启行号显示
+    number = true,
+    -- "显示当前的行号列号：
+    ruler = true,
+    -- ""在状态栏显示正在输入的命令
+
+    showcmd = true,
+    -- " Show current mode
+    showmode = true,
+    -- " Set 7 lines to the cursor - when moving vertically using j/k 上下滚动,始终在中间
+    scrolloff=7,
+    -- " 命令行（在状态行下）的高度，默认为1，这里是2
+    -- set statusline=%<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
+    -- " Always show the status line
+    laststatus=2,
+    --  " How many tenths of a second to blink when matching brackets
+    mat=2,
+    -- " 突出显示当前行等
+    cursorline = true,
+
+    -- "设置文内智能搜索提示
+    -- " 高亮search命中的文本。
+    hlsearch = true,
+    -- " 搜索时忽略大小写
+    ignorecase = true,
+    -- " 在搜索时，输入的词句的逐字符高亮（类似firefox的搜索）
+    incsearch = true,
+    -- " 有一个或以上大写字母时仍大小写敏感
+    -- " 这句千万不能要，要了命令行大小写敏感了
+    -- "set smartcase     " ignore case if search pattern is all lowercase, case-sensitive otherwise
+
+    -- 光标在行首尾时<Left><Right>可以跳到下一行
+    whichwrap = "<,>,[,]",
+
+    -- " 代码折叠
+    foldenable =true,
+    --  " 折叠方法
+    --  " manual    手工折叠
+    --  " indent    使用缩进表示折叠
+    --  " expr      使用表达式定义折叠
+    --  " syntax    使用语法定义折叠
+    --  " diff      对没有更改的文本进行折叠
+    --  " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
+    foldmethod="marker",
+    -- foldmethod="indent",
+    foldlevel=1,
+
+    -- " 缩进配置
+    smartindent = true, --  " Smart indent
+    autoindent = true, --    " always set autoindenting on
+    -- "c程序可以在v模式中按=格式化
+    cin = true,
+
+    -- " tab相关变更
+    tabstop=4, --      " 设置Tab键的宽度        [等同的空格个数]
+    shiftwidth=4 , --  " number of spaces to use for autoindenting
+    softtabstop=4 , --" 按退格键时可以一次删掉 4 个空格
+    smarttab   = true, --" insert tabs on the start of a line according to shiftwidth, not tabstop 按退格键时可以一次删掉 4 个空格
+    expandtab     = true, -- " 将Tab自动转化成空格    [需要输入真正的Tab键时，使用 Ctrl+V + Tab]
+    shiftround     = true, -- " use multiple of shiftwidth when indenting with '<' and '>'
+    -- cindent shiftwidth=4,
+    -- autoindent shiftwidth=4,
+    listchars="tab:>-,trail:-" , -- "每行起始的tab显示为“>----”；结尾的空格显示为"-"
+
+    -- " A buffer becomes hidden when it is abandoned
     -- " 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
     hidden = true,
     autowrite = true,
@@ -233,8 +235,8 @@ default_setting['opt'] = {
     -- " 下面这句只影响普通模式 (非图形界面) 下的 Vim。
     termencoding="utf-8",
 
-      -- " Use Unix as the standard file type
-      ffs="unix,dos,mac",
+    -- " Use Unix as the standard file type
+    ffs="unix,dos,mac",
 
     fileencodings="utf-8,chinese,latin-1",
 
@@ -247,6 +249,15 @@ default_setting['opt'] = {
     helplang="cn",
 
     clipboard="unnamed",
+
+    -- 样式
+    termguicolors = true,
+    termguicolors = true,
+    -- 是否显示不可见字符
+    list = false,
+    -- 不可见字符的显示，这里只把空格显示为一个点
+    listchars = "space:·,tab:··",
+
 }
 
 for key, value in pairs(default_setting['opt']) do

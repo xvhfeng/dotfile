@@ -20,116 +20,116 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = {"w", "o"},
+        key = {"<Leader>", "w", "o"},
         action = ':only<cr>',
         short_desc = "Only Reserve Current Window"
     })
 
     mappings.register({
         mode = "n",
-        key = {"w", "x"},
+        key = {"<Leader>", "w", "x"},
         action = '<c-w>x',
         short_desc = "change context in the window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "r"},
+        key = {"<Leader>", "w", "r"},
         action = '<c-w>r',
         short_desc = "change window context"
     })
 
     mappings.register({
         mode = "n",
-        key = {"w", "n"},
+        key = {"<Leader>", "w", "n"},
         action = '<c-w><c-w>',
         short_desc = "Goto Next Window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "j"},
+        key = {"<Leader>", "w", "j"},
         action = '<c-w><c-j>',
         short_desc = "Goto The Down Window"
 
     })
     mappings.register({
         mode = "n",
-        key = {"w", "k"},
+        key = {"<Leader>", "w", "k"},
         action = '<c-w><c-k>',
         short_desc = "Goto The Above Window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "h"},
+        key = {"<Leader>", "w", "h"},
         action = '<c-w><c-h>',
         short_desc = "Goto The Left Window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "l"},
+        key = {"<Leader>", "w", "l"},
         action = '<c-w><c-l>',
         short_desc = "Goto The Right Window"
     })
 
     mappings.register({
         mode = "n",
-        key = {"w", "c"},
+        key = {"<Leader>", "w", "c"},
         action = '<c-w>c',
         short_desc = "Close current window"
     })
 
     mappings.register({
         mode = "n",
-        key = {"w", "J"},
+        key = {"<Leader>", "w", "J"},
         action = '<c-w>J',
         short_desc = "Change The Bottom Window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "K"},
+        key = {"<Leader>", "w", "K"},
         action = '<c-w>K',
         short_desc = "Change The Top Window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "H"},
+        key = {"<Leader>", "w", "H"},
         action = '<c-w>H',
         short_desc = "Change The Leftest Window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "L"},
+        key = {"<Leader>", "w", "L"},
         action = '<c-w>L',
         short_desc = "Change The Rightest Window"
     })
 
     mappings.register({
         mode = "n",
-        key = {"w", "="},
+        key = {"<Leader>", "w", "="},
         action = '<c-w>=',
         short_desc = "Resize window"
     })
 
     mappings.register({
         mode = "n",
-        key = {"w", ","},
+        key = {"<Leader>", "w", ","},
         action = ":vertical resize -10<CR>",
         short_desc = "Left Resize window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "."},
+        key = {"<Leader>", "w", "."},
         action = ":vertical resize +10<CR>",
         short_desc = "Right Resize window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", ";"},
+        key = {"<Leader>", "w", ";"},
         action = ":resize +10<CR>",
         short_desc = "Up Resize window"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "'"},
+        key = {"<Leader>", "w", "'"},
         action = ":resize -10<CR>",
         short_desc = "Down Resize window"
     })
@@ -142,13 +142,13 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = {"w", "["},
+        key = {"<Leader>", "w", "["},
         action = '<c-w>t<c-w>K',
         short_desc = "change window  vertically to horizonally"
     })
     mappings.register({
         mode = "n",
-        key = {"w", "]"},
+        key = {"<Leader>", "w", "]"},
         action = '<c-w>t<c-w>H',
         short_desc = "change window horizonally to vertically"
     })
@@ -224,14 +224,14 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = {"[", "t"},
+        key = {"<Leader>", "[", "t"},
         action = '<ESC>:split term://bash<cr>',
         short_desc = "Split window and open term"
     })
 
     mappings.register({
         mode = "n",
-        key = {"]", "t"},
+        key = {"<Leader>", "]", "t"},
         action = '<ESC>:vsplit term://bash<cr>',
         short_desc = "Split window and open term"
     })

@@ -12,7 +12,7 @@ let g:rnvimr_enable_ex = 1
 let g:rnvimr_enable_picker = 1
 
 " Replace `$EDITOR` candidate with this command to open the selected file
-let g:rnvimr_edit_cmd = 'drop'
+let g:rnvimr_edit_cmd = 'edit'
 
 " Disable a border for floating window
 let g:rnvimr_draw_border = 0
@@ -40,7 +40,7 @@ highlight link RnvimrNormal CursorLine
 
 plugin.mapping = function()
     local mappings = require('core.keymapping')
-    mappings.register({
+    mappings.register({ 
         mode = "n",
         key = { "<leader>", "f", "n" },
         action = ":RnvimrToggle<CR>",
