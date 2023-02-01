@@ -19,6 +19,9 @@ plugin.dark = {
 plugin.setup = function(style)
 
     vim.cmd("packadd material")
+    vim.g.material_style = 'palenight'
+    vim.cmd 'colorscheme material'
+    vim.cmd("hi clear Cursor")
 
     require('material').setup({
         contrast = {
@@ -29,35 +32,6 @@ plugin.setup = function(style)
             cursor_line = false, -- Enable darker background for the cursor line
             non_current_windows = false, -- Enable darker background for non-current windows
             popup_menu = false, -- Enable lighter background for the popup menu
-        },
-
-        italics = {
-            comments = false, -- Enable italic comments
-            keywords = false, -- Enable italic keywords
-            functions = false, -- Enable italic functions
-            strings = false, -- Enable italic strings
-            variables = false -- Enable italic variables
-        },
-
-        contrast_filetypes = { -- Specify which filetypes get the contrasted (darker) background
-            --"terminal", -- Darker terminal background
-            "packer", -- Darker packer background
-            "NvimTree",
-            "ctrlsf",
-            "calendar",
-            "undotree",
-            "toggleterm",
-            "DiffviewFiles",
-            "diff",
-            "Outline",
-            "vista",
-            "vista_kind",
-            "dapui_stacks",
-            "dapui_breakpoints",
-            "dapui_watches",
-            "dapui_scopes",
-            "vista_markdown",
-            "qf" -- Darker qf list background
         },
 
         high_visibility = {
@@ -74,8 +48,6 @@ plugin.setup = function(style)
 
         lualine_style = "stealth", -- Lualine style ( can be 'stealth' or 'default' )
 
-        async_loading = true, -- Load parts of the theme asyncronously for faster startup (turned on by default)
-
         custom_highlights = {
             --WinSeparator = { link = "NormalContrast" },
             DapUIValue = { link = "NormalContrast" },
@@ -86,19 +58,6 @@ plugin.setup = function(style)
 
 
 
-    if vim.g.style == "light" then
-        vim.g.material_style = 'lighter'
-    elseif vim.g.style == "oceanic" then
-        vim.g.material_style = 'oceanic'
-    elseif vim.g.style == 'palenight' then
-        vim.g.material_style = 'palenight'
-    elseif vim.g.style == 'deep ocean' then
-        vim.g.material_style = 'deep ocean'
-    else
-        vim.g.material_style = 'darker'
-    end
-    vim.cmd 'colorscheme material'
-    vim.cmd("hi clear Cursor")
 
     local timer = vim.loop.new_timer()
     timer:start(vim.g.after_schedule_time_start + 100, 0, vim.schedule_wrap(function()

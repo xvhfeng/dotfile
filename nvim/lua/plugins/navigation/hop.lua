@@ -12,6 +12,13 @@ plugin.core = {
 plugin.mapping = function()
 
     local mappings = require('core.keymapping')
+    mappings.add_mapping_prefix("<leader>nw", {
+        name = "+ Move by Word"
+    })
+    mappings.add_mapping_prefix("<leader>nl", {
+        name = "+ Move by Line"
+    })
+
     mappings.register({ 
         mode = "n",
         key = { "<leader>", "n" ,"w","l"},
