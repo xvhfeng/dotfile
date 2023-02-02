@@ -1,7 +1,9 @@
 local plugin = {}
 
 plugin.core = {
-    "kyazdani42/nvim-web-devicons",
+    'nvim-tree/nvim-web-devicons'
+    require'nvim-web-devicons'.setup {}
+
 }
 
 return plugin

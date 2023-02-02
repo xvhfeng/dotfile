@@ -2,14 +2,20 @@
 local plugin = {}
 
 plugin.core = {
-    'kyazdani42/nvim-tree.lua',
+    'nvim-tree/nvim-tree.lua',
     requires = {
-        'kyazdani42/nvim-web-devicons', -- optional, for file icons
+        --[[
+            brew tap homebrew/cask-fonts
+            brew install font-hack-nerd-font
+            -- choose iterm text font to font-hack-nerd-font
+        --]]
+        'nvim-tree/nvim-web-devicons', -- optional, for file icons
     },
 
-
+    -- empty setup using defaults
     require("nvim-tree").setup({
-         sync_root_with_cwd = true,
+        sync_root_with_cwd = true,
+        sort_by = "case_sensitive",
     })
 }
 

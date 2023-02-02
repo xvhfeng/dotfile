@@ -33,7 +33,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="vim-emacscommandline", enable = true, desc="vim的命令中绑定emacs按键模式"},
         { name="vim-highlight-cursor-words", enable = true, desc="高亮当前光标下的word"},
         { name="vim-repeat", enable = true, desc="vim的重复命令插件"},
-        { name="nvim-web-devicons", enable = true, desc="nvim的web icons"},
+        -- { name="nvim-web-devicons", enable = true, desc="nvim的web icons"},
         { name="asynctasks", enable = true, desc="异步执行工具,依赖于skywind3000/asyncrun.vim"},
         { name="vim-lastplace", enable = true, desc="打开文件的时候,回到上一次编辑的地方"},
         { name="which-key", enable = true, desc="vim的操作快捷键映射"},

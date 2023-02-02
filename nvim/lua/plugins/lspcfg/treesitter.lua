@@ -9,15 +9,6 @@ plugin.core = {
             enable = true, -- false will disable the whole extension
             additional_vim_regex_highlighting = false,
         },
-        incremental_selection = {
-            enable = true,
-            keymaps = {
-                init_selection = "<CR>", -- set to `false` to disable one of the mappings
-                node_incremental = "<CR>",
-                scope_incremental = "<BS>",
-                node_decremental = "<TAB>",
-            },
-        },
         indent = {
             enable = true
         },
