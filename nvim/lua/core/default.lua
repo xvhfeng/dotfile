@@ -181,7 +181,7 @@ default_setting['opt'] = {
     whichwrap = "<,>,[,]",
 
     -- " 代码折叠
-    foldenable =true,
+    foldenable =expr,
     --  " 折叠方法
     --  " manual    手工折叠
     --  " indent    使用缩进表示折叠
