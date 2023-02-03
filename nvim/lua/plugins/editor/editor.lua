@@ -73,31 +73,70 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "v",
-        key = {"J"},
+        key = {"<c-j>"},
         action = ":move '>+1<CR>gv-gv",
         short_desc = "move selected ranger up"
     })
 
     mappings.register({
         mode = "v",
-        key = {"K"},
+        key = {"<c-k>"},
         action = ":move '<-2<CR>gv-gv",
         short_desc = "move selected range down"
     })
 
     mappings.register({
         mode = "n",
-        key = {"J"},
+        key = {"<c-j>"},
         action = ":<c-u>execute 'move +'. v:count1<cr>",
         short_desc = "move currnet line up"
     })
 
     mappings.register({
         mode = "n",
-        key = {"K"},
+        key = {"<c-k>"},
         action = ":<c-u>execute 'move -1-'. v:count1<cr>",
         short_desc = "move currnet line down"
     })
+
+
+    mappings.register({
+        mode = "n",
+        key = {"j"},
+        action = "gj",
+        short_desc = "the same as j when long line"
+    })
+
+    mappings.register({
+        mode = "n",
+        key = {"k"},
+        action = "gk",
+        short_desc = "the same as k when long line"
+    })
+
+
+    mappings.register({
+        mode = "n",
+        key = {"E"},
+        action = "el",
+        short_desc = "Move the word tail"
+    })
+
+    mappings.register({
+        mode = "n",
+        key = {"B"},
+        action = "Bh",
+        short_desc = "Move to word head"
+    })
+
+
+    mappings.register({
+        mode = "n",
+        key = {"K"},
+        action = "i<CR><ESC>",
+        short_desc = "Split current line to two line"
+    })
+
 
     mappings.register({
         mode = "n",

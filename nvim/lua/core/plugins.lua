@@ -71,6 +71,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="vim-kickfix", enable = true, desc="filter for quickfix"},
         { name="window", enable = true, desc="只是对于windows的key mapping的操作"},
         { name="rnvimr", enable = true, desc="Ranger的包装器"},
+        { name="bufferline", enable = true, desc="buffer的显示栏"},
     }
 }
 
