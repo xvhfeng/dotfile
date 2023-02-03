@@ -1,4 +1,3 @@
-
 local plugin = {}
 
 plugin.core = {
@@ -10,7 +9,6 @@ plugin.core = {
 
 
 plugin.mapping = function()
-
     local mappings = require('core.keymapping')
     mappings.add_mapping_prefix("<leader>nw", {
         name = "+ Move by Word"

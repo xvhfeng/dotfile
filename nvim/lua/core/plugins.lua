@@ -97,6 +97,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="tig-explorer", enable = true, desc="git在vim中的查看"},
         { name="lazygit", enable = true, desc="git的一款plugin"},
         { name="diffview", enable = true, desc="git的diff在vim中的展现"},
+        { name="project", enable = true, desc="项目管理"},
     }
 }
 
@@ -110,6 +111,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="marks", enable = true, desc="标记插件"},
         { name="vim-unimpaired", enable = true, desc="[ ] 开头的快捷键,vim缺失的快捷键"}, 
         { name="trouble", enable = true, desc="一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"},
+        { name="preview", enable = true, desc="预览定义"},
         { name="nav", enable = true, desc="navigation的key-mapping。"},
         --  { name="lightspeed", enable = true, desc="基于数个字符在行间进行跳转"},
     }
