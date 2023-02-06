@@ -1,11 +1,43 @@
 local plugin = {}
 
+
+local opts = { noremap=true, silent=true }
+vim.keymap.set('n', 'ge', vim.diagnostic.open_float, opts)
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+vim.keymap.set('n', 'gq', vim.diagnostic.setloclist, opts)
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+    -- Enable completion triggered by <c-x><c-o>
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    -- Mappings.
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    local bufopts = { noremap=true, silent=true, buffer=bufnr }
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+    vim.keymap.set('n', 'gh', vim.lsp.buf.hover, bufopts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    vim.keymap.set('n', 'gs', vim.lsp.buf.signature_help, bufopts)
+    vim.keymap.set('n', 'gwa', vim.lsp.buf.add_workspace_folder, bufopts)
+    vim.keymap.set('n', 'gwr', vim.lsp.buf.remove_workspace_folder, bufopts)
+    vim.keymap.set('n', 'gwl', function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, bufopts)
+    vim.keymap.set('n', 'gtD', vim.lsp.buf.type_definition, bufopts)
+    vim.keymap.set('n', 'grn', vim.lsp.buf.rename, bufopts)
+    vim.keymap.set('n', 'gca', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', 'gmt', function() vim.lsp.buf.format { async = true } end, bufopts)
+end
+
+
 plugin.core = {
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
     "neovim/nvim-lspconfig",
-    -- 'WhoIsSethDaniel/mason-tool-installer.nvim',
-
 
     require("mason").setup({
         ui = {
@@ -41,133 +73,57 @@ plugin.core = {
     require("mason-lspconfig").setup({
         ensure_installed = {
             "sumneko_lua",
+            "clangd",
+            "gopls",
+            "golangci_lint_ls",
             "rust_analyzer",
             "awk_ls",
             "clangd",
-            "gopls",
             "jsonls",
-            "marksman",
-            "pyright",
-            "sqlls",
             "bashls",
-            "tsserver"
+            "tsserver",
+            "sqlls",
+            "pyright",
         },
     }),
 
-
-
-    --[==[
-    config = function()
-    require("mason").setup({
-    ui = {
-    icons = {
-    package_installed = "✓",
-    package_pending = "➜",
-    package_uninstalled = "✗"
+    require'lspconfig'.clangd.setup{
+        on_attach = on_attach,
+        flags = lsp_flags,
     }
-    },
-
-    keymaps = {
-    -- Keymap to expand a package
-    toggle_package_expand = "<CR>",
-    -- Keymap to install the package under the current cursor position
-    install_package = "i",
-    -- Keymap to reinstall/update the package under the current cursor position
-    update_package = "u",
-    -- Keymap to check for new version for the package under the current cursor position
-    check_package_version = "c",
-    -- Keymap to update all installed packages
-    update_all_packages = "U",
-    -- Keymap to check which installed packages are outdated
-    check_outdated_packages = "C",
-    -- Keymap to uninstall a package
-    uninstall_package = "X",
-    -- Keymap to cancel a package installation
-    cancel_installation = "<C-c>",
-    -- Keymap to apply language filter
-    apply_language_filter = "<C-f>",
-    },
-    install_root_dir = path.concat { vim.fn.stdpath "data", "mason" },
-    })
-
-    require("mason-lspconfig").setup({
-    ensure_installed = {
-    "sumneko_lua",
-    "rust_analyzer",
-    "awk_ls",
-    "clangd",
-    "gopls",
-    "jsonls",
-    "marksman",
-    "pyright",
-    "sqlls",
-    "bashls",
-    "tsserver"
-    },
-    })
-
-    --        require "mason-lspconfig" .setup()
-    require('mason-tool-installer').setup {
-
-    -- a list of all tools you want to ensure are installed upon
-    -- start; they should be the names Mason uses for each tool
-    ensure_installed = {
-
-    -- you can pin a tool to a particular version
-    { 'golangci-lint', version = '1.47.0' },
-
-    -- you can turn off/on auto_update per tool
-    { 'bash-language-server', auto_update = true },
-
-    'lua-language-server',
-    'vim-language-server',
-    'gopls',
-    'stylua',
-    'shellcheck',
-    'editorconfig-checker',
-    'gofumpt',
-    'golines',
-    'gomodifytags',
-    'gotests',
-    'impl',
-    'json-to-struct',
-    'luacheck',
-    'misspell',
-    'revive',
-    'shellcheck',
-    'shfmt',
-    'staticcheck',
-    'vint',
-    },
-
-    -- if set to true this will check each tool for updates. If updates
-    -- are available the tool will be updated. This setting does not
-    -- affect :MasonToolsUpdate or :MasonToolsInstall.
-    -- Default: false
-    auto_update = false,
-
-    -- automatically install / update on startup. If set to false nothing
-    -- will happen on startup. You can use :MasonToolsInstall or
-    -- :MasonToolsUpdate to install tools and check for updates.
-    -- Default: true
-    run_on_start = true,
-
-    -- set a delay (in ms) before the installation starts. This is only
-    -- effective if run_on_start is set to true.
-    -- e.g.: 5000 = 5 second delay, 10000 = 10 second delay, etc...
-    -- Default: 0
-    start_delay = 3000, -- 3 second delay
+    require'lspconfig'.gopls.setup{
+        on_attach = on_attach,
+        flags = lsp_flags,
     }
-    end,
-    --]==]
+    require'lspconfig'.awk_ls.setup{},
+    require'lspconfig'.bashls.setup{},
+    require'lspconfig'.golangci_lint_ls.setup{
+        on_attach = on_attach,
+        flags = lsp_flags,
+    }
+    require'lspconfig'.jsonls.setup{},
+    require'lspconfig'.sqlls.setup{
+        on_attach = on_attach,
+        flags = lsp_flags,
+    }
+    require'lspconfig'.sumneko_lua.setup{
+        on_attach = on_attach,
+        flags = lsp_flags,
+    }
+    require'lspconfig'.tsserver.setup{}
+    require'lspconfig'.pyright.setup{
+        on_attach = on_attach,
+        flags = lsp_flags,
+    }
+
 }
 
 return plugin
 
 --[===[
-:Mason - opens a graphical status window
-:MasonInstall <package> ... - installs/reinstalls the provided packages
-:MasonUninstall <package> ... - uninstalls the provided packages
-:MasonUninstallAll - uninstalls all packages
-:MasonLog - opens the mason.nvim log file in a new tab window
+    :Mason - opens a graphical status window
+    :MasonInstall <package> ... - installs/reinstalls the provided packages
+    :MasonUninstall <package> ... - uninstalls the provided packages
+    :MasonUninstallAll - uninstalls all packages
+    :MasonLog - opens the mason.nvim log file in a new tab window
 --]===]

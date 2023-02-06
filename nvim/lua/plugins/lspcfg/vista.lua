@@ -9,8 +9,8 @@ plugin.core = {
         -- This could make the display more compact or more spacious.
         -- e.g., more compact: ["▸ ", ""]
         -- Note: this option only works for the kind renderer, not the tree renderer.
-        --vim.g.vista_icon_indent = { "╰─▸ ", "├─▸ " }
-        vim.g.vista_icon_indent = { " ", " " }
+        vim.g.vista_icon_indent = { "╰─▸ ", "├─▸ " }
+        --vim.g.vista_icon_indent = { " ", " " }
 
         -- Executive used when opening vista sidebar without specifying it.
         -- See all the avaliable executives via `:echo g:vista#executives`.
@@ -38,7 +38,7 @@ plugin.core = {
         -- The elements of g:vista_fzf_preview will be passed as arguments to fzf#vim#with_preview()
         -- For example:
         --vim.g.vista_fzf_preview = {'right:30%'}
-        vim.g.vista_sidebar_position = "vertical topleft"
+        vim.g.vista_sidebar_position = "vertical topright"
         vim.g.vista_sidebar_width = 36
         vim.g.vista_disable_statusline = true
         --vim.g["vista#renderer#icons"] = {}

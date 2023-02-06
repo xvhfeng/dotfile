@@ -2,7 +2,7 @@ local plugin = {}
 
 plugin.core = {
     "nvim-telescope/telescope.nvim",
-    event = { "VimEnter" },
+    --event = { "VimEnter" },
     requires = {
         { "nvim-lua/popup.nvim" },
         { "nvim-lua/plenary.nvim" },
@@ -74,7 +74,7 @@ plugin.core = {
                 prompt_prefix = " ",
                 selection_caret = "➤ ",
                 entry_prefix = "  ",
-                initial_mode = "insert",
+                -- initial_mode = "insert",
                 selection_strategy = "reset",
                 sorting_strategy = "descending",
                 layout_strategy = "horizontal",

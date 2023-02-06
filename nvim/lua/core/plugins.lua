@@ -24,8 +24,8 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="FencView", enable = true, desc="多字节支持"},
         { name="genutils", enable = true, desc="vim的工具函数集合"},
         { name="indent-blankline", enable = true, desc="展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"},
-        { name="plenary", enable = true, desc="不需要重复写function,只适用于neovim函数"},
-        { name="popup", enable = true, desc="popup在nvim中的实现"},
+        -- { name="plenary", enable = true, desc="不需要重复写function,只适用于neovim函数"},
+        -- { name="popup", enable = true, desc="popup在nvim中的实现"},
         { name="rainbow", enable = true, desc="括号颜色匹配"},
      --   { name="floaterm", enable = true, desc="nvim的float term插件"},
         { name="neoterm", enable = true, desc="nvim的终端插件"},
@@ -51,7 +51,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="vim-expand-region", enable = true, desc="块状编辑文本"},
         { name="vim-surround", enable = true, desc="快速加入修改环绕字符"},
         { name="vim-templates", enable = true, desc="文件模版,提供c语言的h,c文件等模版功能"},
-        { name="vim-trailing-whitespace", enable = true, desc="快速删除行尾空格"},
+        -- { name="vim-trailing-whitespace", enable = true, desc="快速删除行尾空格"},
         { name="vim-visual-multi", enable = true, desc="多光标插件,可同时编辑选中的多出统一word"},
         { name="editor", enable = true, desc="编辑类key-mapping"},
     }
@@ -84,23 +84,12 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="far", enable = true, desc="查找和替换插件,多文件搜索替换"},
         { name="LeaderF", enable = true, desc="模糊查询插件"},
         { name="spectre", enable = true, desc="一个搜索与替换插件"},
-        { name="telescope", enable = true, desc="一个高度可扩展的列表模糊查找工具"},
+        -- { name="telescope", enable = true, desc="一个高度可扩展的列表模糊查找工具"},
         { name="any-jump", enable = true, desc="在定义的标记间跳转"},
        
     }
 }
 
-group_idx = group_idx + 1
-plugins_configure.plugins_groups[group_idx] = {
-    ["name"] = "git",
-    ["subpath"] = "git",
-    ["plugins"] = {
-        { name="tig-explorer", enable = true, desc="git在vim中的查看"},
-        { name="lazygit", enable = true, desc="git的一款plugin"},
-        { name="diffview", enable = true, desc="git的diff在vim中的展现"},
-        { name="project", enable = true, desc="项目管理"},
-    }
-}
 
 group_idx = group_idx + 1
 plugins_configure.plugins_groups[group_idx] = {
@@ -128,15 +117,15 @@ plugins_configure.plugins_groups[group_idx] = {
         -- 必须保证mason, mason-lspconfig,nvim-lspconfig 依次加载的顺序
         { name="treesitter", enable = true, desc="Neovim的树结构和抽象层"},
         { name="mason", enable = true, desc="第三方插件管理器"},
-        { name="aerial", enable = true, desc="基于LSP的outline工具"},
-        { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
-        { name="nvim-cmp", enable = true, desc="基于LSP的代码智能提示完成引擎"},
-        { name="lsp_signature", enable = true, desc="基于LSP展现函数的签名  包括注释和参数"},
-        { name="lspkind", enable = true, desc="这个小插件为neovim内置lsp添加了类似vcode的象形图"},
-        { name="navigator", enable = true, desc="基于LSP的源码分析和导航工具"},
-        { name="null-ls", enable = true, desc="LSP的扩展插件,可以完成诊断,格式化代码等等功能"},
-        { name="nvim-dap", enable = true, desc="debug转换协议"},
-        { name="symbols-outline", enable = true, desc="使用LSP在nvim中树状展现一个符号的outline"},
+         { name="aerial", enable = true, desc="基于LSP的outline工具"},
+        -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
+        -- { name="nvim-cmp", enable = true, desc="基于LSP的代码智能提示完成引擎"},
+         { name="lsp_signature", enable = true, desc="基于LSP展现函数的签名  包括注释和参数"},
+        -- { name="lspkind", enable = true, desc="这个小插件为neovim内置lsp添加了类似vcode的象形图"},
+         { name="navigator", enable = true, desc="基于LSP的源码分析和导航工具"},
+         { name="null-ls", enable = true, desc="LSP的扩展插件,可以完成诊断,格式化代码等等功能"},
+        -- { name="nvim-dap", enable = true, desc="debug转换协议"},
+         { name="symbols-outline", enable = true, desc="使用LSP在nvim中树状展现一个符号的outline"},
         { name="vista", enable = true, desc="查看和搜索Vim/NeoVim中的LSP符号、标签"},
     }
 }
@@ -163,6 +152,18 @@ plugins_configure.plugins_groups[group_idx] = {
         { name="telekasten", enable = true, desc="用于使用基于文本的Markdown Zettelkasten/Wiki,支持与telescope 插件的整合"},
         { name="mind", enable = true, desc="快速将笔记挂载到树上的插件，通过树将日记，笔记，wiki和任务管理等通过工作流实现"},
         -- { name="todo", enable = true, desc="一个todo插件"},
+    }
+}
+
+group_idx = group_idx + 1
+plugins_configure.plugins_groups[group_idx] = {
+    ["name"] = "git",
+    ["subpath"] = "git",
+    ["plugins"] = {
+        { name="tig-explorer", enable = true, desc="git在vim中的查看"},
+        -- { name="lazygit", enable = true, desc="git的一款plugin"},
+        { name="diffview", enable = true, desc="git的diff在vim中的展现"},
+        -- { name="project", enable = true, desc="项目管理"},
     }
 }
 

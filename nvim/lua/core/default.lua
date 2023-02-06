@@ -181,7 +181,7 @@ default_setting['opt'] = {
     whichwrap = "<,>,[,]",
 
     -- " 代码折叠
-    foldenable =expr,
+    foldenable =true,
     --  " 折叠方法
     --  " manual    手工折叠
     --  " indent    使用缩进表示折叠
@@ -189,7 +189,7 @@ default_setting['opt'] = {
     --  " syntax    使用语法定义折叠
     --  " diff      对没有更改的文本进行折叠
     --  " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
-    foldmethod="marker",
+    foldmethod="expr",
     -- foldmethod="indent",
     foldlevel=1,
 
