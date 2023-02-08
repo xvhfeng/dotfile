@@ -32,8 +32,8 @@ plugin.core = {
                 close_folds = {"zM", "zm"}, -- close all folds
                 open_folds = {"zR", "zr"}, -- open all folds
                 toggle_fold = {"zA", "za"}, -- toggle fold of current file
-                previous = "k", -- preview item
-                next = "j" -- next item
+                previous = "<c-p>", -- preview item
+                next = "<c-n>" -- next item
             },
             indent_lines = true, -- add an indent guide below the fold icons
             auto_open = false, -- automatically open the list when you have diagnostics

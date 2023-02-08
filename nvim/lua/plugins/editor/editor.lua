@@ -99,11 +99,11 @@ plugin.mapping = function()
         short_desc = "move currnet line down"
     })
 
-
     mappings.register({
         mode = "n",
         key = {"j"},
         action = "gj",
+        noremap = true,
         short_desc = "the same as j when long line"
     })
 
@@ -111,6 +111,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"k"},
         action = "gk",
+        noremap = true,
         short_desc = "the same as k when long line"
     })
 
