@@ -134,7 +134,7 @@ plugins_configure.plugins_groups[group_idx] = {
         --{ name = "null-ls",       enable = true, desc = "LSP的扩展插件,可以完成诊断,格式化代码等等功能" },
         -- { name="nvim-dap", enable = true, desc="debug转换协议"},
         --{ name = "symbols-outline", enable = true, desc = "使用LSP在nvim中树状展现一个符号的outline" },
-        { name = "vista",         enable = true, desc = "查看和搜索Vim/NeoVim中的LSP符号、标签" },
+        -- { name = "vista",         enable = true, desc = "查看和搜索Vim/NeoVim中的LSP符号、标签" },
         -- {name = "ccls",enable=true,desc = "使用ccls实现智能提示,跳转tree"},
     }
 }
