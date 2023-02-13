@@ -2,7 +2,6 @@ local plugin = {}
 
 plugin.core = {
     "neoclide/coc.nvim",
-
     as = "coc",
     branch = 'release',
     setup = function() -- Specifies code to run before this plugin is loaded.
@@ -11,6 +10,12 @@ plugin.core = {
             hjson = "json",
             vimwiki = "markdown"
         }
+        --[[
+        ? means invalid extension
+        * means extension is activated
+        + means extension is loaded
+        - means extension is disabled
+        --]]
         vim.g['coc_global_extensions'] = {
             "coc-json", -- for coc config
             "coc-pyright", -- for python
@@ -25,14 +30,29 @@ plugin.core = {
             'coc-docker', -- for dockerfile
             'coc-emoji', -- for emoji start with `=`
             'coc-highlight', -- for emoji start with `=`
+            'coc-clang',
+            'coc-diagnostic',
+            'coc-fzf-preview',
+            'coc-git',
+            'coc-go',
+            'coc-goline',
+            'coc-java',
+            'coc-lists',
+            'coc-lua',
+            'coc-markdownlint',
+            'coc-markmap',
+            'coc-omnisharp',
+            'coc-tsserver',
+            'coc-vimlsp',
+            'coc-yaml',
             --'coc-symbol-line',                           -- TODO: winbar for navigator the code, https://github.com/neovim/neovim/pull/17336
         }
         vim.g.NERDCustomDelimiters = { hjson = { left = '// ' }, json = { left = '// ' } }
     end,
-
     config = function() -- Specifies code to run after this plugin is loaded
         --vim.g.coc_config_home = vim.g.CONFIG
-        vim.cmd("autocmd FileType python let b:coc_root_patterns = ['.git', '.env', 'venv', '.venv', 'setup.cfg', 'setup.py', 'pyproject.toml', 'pyrightconfig.json']")
+        vim.cmd(
+            "autocmd FileType python let b:coc_root_patterns = ['.git', '.env', 'venv', '.venv', 'setup.cfg', 'setup.py', 'pyproject.toml', 'pyrightconfig.json']")
         vim.cmd [[
             highlight! DiagnosticSignError guibg=None guifg=#ec5f67 gui=bold
             highlight! DiagnosticSignWarn guibg=None guifg=#FF8800 gui=bold
@@ -41,7 +61,7 @@ plugin.core = {
             highlight FloatBorder guifg=#7B68EE guibg=#None
             highlight CocBorderHighlight guifg=#7B68EE guibg=#None
 
-        ]]
+            ]]
         --autocmd! ColorScheme * highlight FloatBorder guifg=#7B68EE guibg=None
     end,
 }
@@ -50,13 +70,13 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
 
     --vim.g.UltiSnipsExpandTrigger = "<leader><tab>" -- confilict
-    vim.api.nvim_set_keymap("i", "<cr>", "pumvisible () ? coc#_select_confirm() : '<C-g>u<cr><C-r>=coc#on_enter()<CR>'", { expr = true, silent = true })
-    vim.api.nvim_set_keymap("i", "<C-o>", "coc#refresh()", { expr = true, silent = true })
-    vim.api.nvim_set_keymap("i", "<C-f>", "coc#float#has_scroll() ? '<C-r>=coc#float#scroll(1)<CR>':'<Right>'", { expr = true, silent = true })
-    vim.api.nvim_set_keymap("i", "<C-b>", "coc#float#has_scroll() ? '<C-r>=coc#float#scroll(0)<CR>':'<Left>'", { expr = true, silent = true })
+    -- vim.api.nvim_set_keymap("i", "<cr>", "pumvisible () ? coc#_select_confirm() : '<C-g>u<cr><C-r>=coc#on_enter()<CR>'", { expr = true, silent = true })
+    -- vim.api.nvim_set_keymap("i", "<C-o>", "coc#refresh()", { expr = true, silent = true })
+    -- vim.api.nvim_set_keymap("i", "<C-f>", "coc#float#has_scroll() ? '<C-r>=coc#float#scroll(1)<CR>':'<Right>'", { expr = true, silent = true })
+    -- vim.api.nvim_set_keymap("i", "<C-b>", "coc#float#has_scroll() ? '<C-r>=coc#float#scroll(0)<CR>':'<Left>'", { expr = true, silent = true })
     -- use tab to confirm
-    vim.api.nvim_set_keymap("i", "<TAB>", "pumvisible() ? '\\<C-n>':'\\<tab>'", { expr = true, silent = true, noremap = true })
-    vim.api.nvim_set_keymap("i", "<S-TAB>", "pumvisible() ? '\\<C-p>':'\\<c-h>'", { expr = true, silent = true, noremap = true })
+    -- vim.api.nvim_set_keymap("i", "<TAB>", "pumvisible() ? '\\<C-n>':'\\<tab>'", { expr = true, silent = true, noremap = true })
+    -- vim.api.nvim_set_keymap("i", "<S-TAB>", "pumvisible() ? '\\<C-p>':'\\<c-h>'", { expr = true, silent = true, noremap = true })
 
 
     mappings.register({

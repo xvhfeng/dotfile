@@ -14,21 +14,28 @@ plugin.core = {
 
         -- Executive used when opening vista sidebar without specifying it.
         -- See all the avaliable executives via `:echo g:vista#executives`.
-        if vim.g.lspcfg == 'coc' then
-            vim.g.vista_default_executive = 'coc'
-        elseif vim.g.lspcfg == 'builtin' then
-            vim.g.vista_default_executive = 'nvim_lsp'
-        end
+        --if vim.g.lspcfg == 'coc' then
+        --vim.g.vista_default_executive = 'coc'
+        --elseif vim.g.lspcfg == 'builtin' then
+        --vim.g.vista_default_executive = 'nvim_lsp'
+        --end
         --vim.g.vista_default_executive = 'vim_lsc'
+        vim.g.vista_default_executive = 'ctags'
         vim.g.vista_executive_for = {
-            vimwiki = 'toc',
-            pandoc = 'toc',
-            markdown = 'toc'
+            --vimwiki = 'toc',
+            --pandoc = 'toc',
+            --markdown = 'toc',
+            cpp = 'ctags',
+            c = 'ctags'
+        }
+
+        vim.g.vista_ctags_cmd = {
+            haskell =  'ctags -x -o - -c'
         }
         vim.g.vista_stay_on_open = 0 -- keep cursor current window when opening the vista sidebar
         vim.g.vista_update_on_text_changed = 1
-        vim.g.vista_vimwiki_executive = 'markdown'
-        vim.g.vista_markdown_executive = 'toc'
+        --vim.g.vista_vimwiki_executive = 'markdown'
+        --vim.g.vista_markdown_executive = 'toc'
 
         -- Set the executive for some filetypes explicitly. Use the explicit executive
         -- instead of the default one for these filetypes when using `:Vista` without
@@ -37,15 +44,16 @@ plugin.core = {
         -- To enable fzf's preview window set g:vista_fzf_preview.
         -- The elements of g:vista_fzf_preview will be passed as arguments to fzf#vim#with_preview()
         -- For example:
-        --vim.g.vista_fzf_preview = {'right:30%'}
-        vim.g.vista_sidebar_position = "vertical topright"
-        vim.g.vista_sidebar_width = 36
+        -- vim.g.vista_fzf_preview = {'right:30%'}
+         vim.g.vista_sidebar_position = "vertical topright"
+         vim.g.vista_sidebar_width = 60
+        vim.g.vista_sidebar_open_cmd = '60vsplit'
         vim.g.vista_disable_statusline = true
         --vim.g["vista#renderer#icons"] = {}
         vim.g.vista_enable_markdown_extension = 1
         vim.cmd([[
             let g:vista#renderer#icons = { "function": "  ", "functions": "  ", "variable": "  ", "variables": "  ", "maps": "  ", "members ": "  ", "classes": "  ", "autocommand groups": " 祐 "}
-        ]])
+            ]])
         --vim.cmd([[]])
 
     end,

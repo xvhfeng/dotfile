@@ -2,6 +2,7 @@ local plugin = {}
 
 plugin.core = {
     "kevinhwang91/nvim-hlslens",
+    require('hlslens').setup()
 }
 
 plugin.mapping = function()

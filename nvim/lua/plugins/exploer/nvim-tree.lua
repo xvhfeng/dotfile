@@ -22,6 +22,14 @@ plugin.core = {
             enable = true,
             -- update_root = true,
         },
+
+        actions = {
+        open_file = {
+          window_picker = {
+            chars = "123456789abcdefg",
+          },
+        },
+      },
     })
 }
 

@@ -2,30 +2,28 @@ local plugin = {}
 
 plugin.core = {
     "williamboman/mason-lspconfig.nvim",
-    as = "mason-lspconfig",
 
-    config = function() -- Specifies code to run after this plugin is loaded
         require("mason-lspconfig").setup({
             ensure_installed = {
-                "bashls",
-                "clangd",
-                "cmake",
-                "gopls",
-                "jsonls",
-                "jdtls",
-                "tsserver",
-                "ltex",
                 "sumneko_lua",
-                "marksman",
-                "pyright",
+                "clangd",
+                "gopls",
+                "golangci_lint_ls",
+                "rust_analyzer",
+                "awk_ls",
+                "clangd",
+                "jdtls",
+                "jsonls",
+                "bashls",
+                "tsserver",
                 "sqlls",
-                "rust_analyzer" }
+                "pyright",
+            },
         })
-    end,
 }
 
 plugin.mapping = function()
---[===[
+    --[===[
     :Mason - opens a graphical status window
     :MasonInstall <package> ... - installs/reinstalls the provided packages
     :MasonUninstall <package> ... - uninstalls the provided packages
