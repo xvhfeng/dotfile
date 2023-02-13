@@ -3,6 +3,8 @@ local plugin = {}
 plugin.core = {
     'Yggdroot/LeaderF',
     'tamago324/LeaderF-filer',
+    'Yggdroot/LeaderF-marks',
+
     run = ':LeaderfInstallCExtension',
     as = "leaderf",
     vim.cmd([[
@@ -112,6 +114,12 @@ plugin.mapping = function()
         key = {"<leader>","l","b"},
         action = ':LeaderfBuffer<CR>',
         short_desc = "已打开Buffer列表",
+    })
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","k"},
+        action = ':LeaderfMarks<CR>',
+        short_desc = "列出Marks",
     })
 
     keymap.register({
