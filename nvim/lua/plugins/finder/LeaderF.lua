@@ -7,7 +7,7 @@ plugin.core = {
 
     run = ':LeaderfInstallCExtension',
     as = "leaderf",
-    vim.cmd([[
+    vim.cmd([==[
     let g:Lf_WindowPosition = 'fullScreen'
     "let g:Lf_WindowPosition = 'popup'
     let g:Lf_WorkingDirectoryMode = 'F'
@@ -27,7 +27,16 @@ plugin.core = {
     let g:Lf_StlColorscheme = 'powerline'
     let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
     let g:Lf_ShortcutF = "<leader>ff"
-    ]]),
+    let g:Lf_NormalMap = {
+    \ "File":   [["<ESC>", ':exec g:Lf_py "fileExplManager.quit()"<CR>']],
+    \ "Buffer": [["<ESC>", ':exec g:Lf_py "bufExplManager.quit()"<CR>']],
+    \ "Mru":    [["<ESC>", ':exec g:Lf_py "mruExplManager.quit()"<CR>']],
+    \ "Tag":    [["<ESC>", ':exec g:Lf_py "tagExplManager.quit()"<CR>']],
+    \ "Function":    [["<ESC>", ':exec g:Lf_py "functionExplManager.quit()"<CR>']],
+    \ "Colorscheme":    [["<ESC>", ':exec g:Lf_py "colorschemeExplManager.quit()"<CR>']],
+    \ }
+
+    ]==]),
 
     config = function() -- Specifies code to run after this plugin is loaded
 
@@ -99,39 +108,39 @@ plugin.mapping = function()
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","f"},
-        action = ':LeaderfFunction<CR>',
+        action = ':LeaderfFunction!<CR>',
         short_desc = "当前Buffer的Functions列表",
     })
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","F"},
-        action = ':LeaderfFunctionAll<CR>',
+        action = ':LeaderfFunctionAll!<CR>',
         short_desc = "已打开Buffer的Functions列表",
     })
 
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","b"},
-        action = ':LeaderfBuffer<CR>',
+        action = ':LeaderfBuffer!<CR>',
         short_desc = "已打开Buffer列表",
     })
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","k"},
-        action = ':LeaderfMarks<CR>',
+        action = ':LeaderfMarks!<CR>',
         short_desc = "列出Marks",
     })
 
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","t"},
-        action = ':LeaderfBufTag<CR>',
+        action = ':LeaderfBufTag!<CR>',
         short_desc = "当前Buffer的Tags列表",
     })
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","T"},
-        action = ':LeaderfBufTagAll<CR>',
+        action = ':LeaderfBufTagAll!<CR>',
         short_desc = "已打开Buffer的Tags列表",
     })
 
