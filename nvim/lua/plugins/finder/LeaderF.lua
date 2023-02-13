@@ -73,56 +73,104 @@ plugin.mapping = function()
     local keymap = require('core.keymapping')
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","r","c"},
-        action = [[':<C-u>Leaderf!  --popup  rg -e ']],
-        short_desc = "Search CurrentWord",
+        key = {"<leader>","l","s"},
+        action = [[:LeaderfFile<CR>]],
+        short_desc = "Search Files",
         expr = true
     })
 
-    keymap.register({
-        mode = {"n"},
-        key = {"<leader>","r","w"},
-        action = [[':<C-u>Leaderf! rg -e ' . expand('<cword>')]],
-        short_desc = "Search CurrentWord",
-        expr = true
-    })
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","b","h"},
+        key = {"<leader>","l","m"},
         action = ':LeaderfMru<CR>',
-        short_desc = "Open Mru",
+        short_desc = "Buffer历史",
+    })
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","M"},
+        action = ':LeaderfMruCwd<CR>',
+        short_desc = "当前路径下的Buffer历史",
     })
 
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","r","f"},
+        key = {"<leader>","l","f"},
         action = ':LeaderfFunction<CR>',
-        short_desc = "List Functions",
+        short_desc = "当前Buffer的Functions列表",
+    })
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","F"},
+        action = ':LeaderfFunctionAll<CR>',
+        short_desc = "已打开Buffer的Functions列表",
     })
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","b","b"},
-        action = ':Leaderf! buffer<CR>',
-        short_desc = "List Buffers",
+        key = {"<leader>","l","b"},
+        action = ':LeaderfBuffer<CR>',
+        short_desc = "已打开Buffer列表",
     })
-
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","b","r"},
-        action = ':Leaderf! rg --recall<CR>',
-        short_desc = "List Buffers",
+        key = {"<leader>","l","t"},
+        action = ':LeaderfBufTag<CR>',
+        short_desc = "当前Buffer的Tags列表",
     })
-
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","T"},
+        action = ':LeaderfBufTagAll<CR>',
+        short_desc = "已打开Buffer的Tags列表",
+    })
 
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","b","c"},
+        key = {"<leader>","l","e"},
         action = ':Leaderf! filer<CR>',
-        short_desc = "List Buffers",
+        short_desc = "文件浏览器",
+    })
+
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","w"},
+        action = [[:<C-U><C-R>=printf("Leaderf! rg --current-buffer -e %s ", expand("<cword>"))<CR>]],
+        short_desc = "当前buffer中查找光标下的字符串",
+        expr = true
+    })
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","W"},
+        action = [[:<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>]],
+        short_desc = "查找光标下的字符串",
+        expr = true
+    })
+
+
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","c"},
+        action = [[:<C-U><C-R>=printf("Leaderf! rg --current-buffer -e ")<CR>]],
+        short_desc = "当前buffer中查找Input",
+        expr = true
+    })
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","C"},
+        action = [[:<C-U><C-R>=printf("Leaderf! rg -e  ")<CR>]],
+        short_desc = "查找Input",
+        expr = true
+    })
+
+
+    keymap.register({
+        mode = {"n"},
+        key = {"<leader>","l","r"},
+        action = ':Leaderf! rg --recall<CR>',
+        short_desc = "重新打开Leaderf",
     })
 
     --[===[
@@ -136,6 +184,8 @@ plugin.mapping = function()
     C	copy	Copy files and directories under cursor.
     P	paste	Paste the file or directory copied by the copy command to cwd of LeaderF-filer.
     --]===]
+
+
 
 end
 

@@ -13,6 +13,7 @@ plugin.core = {
     "xvhfeng/vim-gutentags",
     -- 智能切换多项目时的tags链接问题,保证项目中的应用不串
     "xvhfeng/gutentags_plus",
+    "preservim/tagbar",
 
     vim.cmd [[
     " gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
@@ -44,16 +45,32 @@ plugin.core = {
     " 禁用 gutentags 自动加载 gtags 数据库的行为
     let g:gutentags_auto_add_gtags_cscope = 0
     let g:gutentags_plus_nomap = 1
-    noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
-    noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
-    noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
-    noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
-    noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
-    noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
-    noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
-    noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
-    noremap <silent> <leader>gz :GscopeFind z <C-R><C-W><cr>
 
+
+     "let g:tagbar_position = 'botright'
+     "let g:tagbar_autoclose = 1
+      let g:tagbar_autofocus = 1
+     let g:tagbar_width = max([25, winwidth(0) / 5])
+     let g:tagbar_scopestrs = {
+            \    'class': "\uf0e8",
+            \    'const': "\uf8ff",
+            \    'constant': "\uf8ff",
+            \    'enum': "\uf702",
+            \    'field': "\uf30b",
+            \    'func': "\uf794",
+            \    'function': "\uf794",
+            \    'getter': "\ufab6",
+            \    'implementation': "\uf776",
+            \    'interface': "\uf7fe",
+            \    'map': "\ufb44",
+            \    'member': "\uf02b",
+            \    'method': "\uf6a6",
+            \    'setter': "\uf7a9",
+            \    'variable': "\uf71b",
+            \ }
+     let g:tagbar_iconchars = ['▶', '▼']  "(default on Linux and Mac OS X)
+     "let g:tagbar_autopreview = 1
+     "let g:tagbar_previewwin_pos = "splitbelow"
     ]]
 }
 
@@ -64,7 +81,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","s"},
         action = ":GscopeFind s <C-R><C-W><cr>",
-        short_desc = "Find symbol (reference) under cursor",
+        short_desc = "查看光标下符号的引用",
         silent = true,
         noremap = true
     })
@@ -73,7 +90,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","g"},
         action = ":GscopeFind g <C-R><C-W><cr>",
-        short_desc = "Find symbol definition under cursor",
+        short_desc = "查看光标下符号的定义",
         silent = true,
         noremap = true
     })
@@ -82,7 +99,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","c"},
         action = ":GscopeFind c <C-R><C-W><cr>",
-        short_desc = "Functions calling this function",
+        short_desc = "查找调用本函数的函数",
         silent = true,
         noremap = true
     })
@@ -91,7 +108,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","w"},
         action = ":GscopeFind t <C-R><C-W><cr>",
-        short_desc = "Find text string under cursor",
+        short_desc = "查找光标下的字符串",
         silent = true,
         noremap = true
     })
@@ -100,7 +117,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","e"},
         action = ":GscopeFind e <C-R><C-W><cr>",
-        short_desc = "Find egrep pattern under cursor",
+        short_desc = "使用egrep模式查找光标下的字符串",
         silent = true,
         noremap = true
     })
@@ -109,7 +126,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","f"},
         action = ":GscopeFind f <C-R><C-W><cr>",
-        short_desc = "Find file name under cursor",
+        short_desc = "查找光标下的文件",
         silent = true,
         noremap = true
     })
@@ -118,7 +135,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","i"},
         action = ":GscopeFind i <C-R><C-W><cr>",
-        short_desc = "Find files #including the file name under cursor",
+        short_desc = "查找哪些文件 include 了本文件",
         silent = true,
         noremap = true
     })
@@ -127,7 +144,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","x"},
         action = ":GscopeFind d <C-R><C-W><cr>",
-        short_desc = "Functions called by this function",
+        short_desc = "此函数调用的函数",
         silent = true,
         noremap = true
     })
@@ -136,7 +153,7 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","a"},
         action = ":GscopeFind a <C-R><C-W><cr>",
-        short_desc = "Find places where current symbol is assigned",
+        short_desc = "找到当前符号被赋值的位置",
         silent = true,
         noremap = true
     })
@@ -145,12 +162,20 @@ plugin.mapping = function()
         mode = "n",
         key = {"<leader>", "g","z"},
         action = ":GscopeFind z <C-R><C-W><cr>",
-        short_desc = "Find current word in ctags database",
+        short_desc = "在Ctags数据库中找到当前光标下的文字",
         silent = true,
         noremap = true
     })
 
 
+    mappings.register({
+        mode = "n",
+        key = {"<leader>", "g","o"},
+        action = ":TagbarToggle<cr>",
+        short_desc = "显示当前Buffer的Taglist",
+        silent = true,
+        noremap = true
+    })
 
 end
 

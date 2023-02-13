@@ -58,7 +58,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = { "g", "R" },
+        key = { "t", "R" },
         action = '<cmd>TroubleToggle lsp_references<cr>',
         short_desc = "Goto Trouble Reference",
         noremap = true,
@@ -67,7 +67,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "l", "t" },
+        key = { "<leader>", "t", "t" },
         action = '<cmd>TroubleToggle<cr>',
         short_desc = "Trouble Toggle",
         noremap = true,
@@ -76,7 +76,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "l", "q" },
+        key = { "<leader>", "t", "q" },
         action = '<cmd>TroubleToggle quickfix<cr>',
         short_desc = "Trouble Quickfix",
         noremap = true,
@@ -85,7 +85,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "l", "w" },
+        key = { "<leader>", "t", "w" },
         action = '<cmd>TroubleToggle workspace_diagnostics<cr>',
         short_desc = "Trouble Workspace",
         silent = false,
@@ -94,7 +94,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "l", "l" },
+        key = { "<leader>", "t", "l" },
         action = '<cmd>TroubleToggle loclist<cr>',
         short_desc = "Trouble Loclist",
         noremap = true,
@@ -103,7 +103,7 @@ plugin.mapping = function()
 
     mappings.register({
         mode = "n",
-        key = { "<leader>", "l", "d" },
+        key = { "<leader>", "t", "d" },
         action = '<cmd>TroubleToggle document_diagnostics<cr>',
         short_desc = "Trouble Document",
         noremap = true,
