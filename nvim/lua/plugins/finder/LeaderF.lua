@@ -121,13 +121,13 @@ plugin.mapping = function()
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","b"},
-        action = ':LeaderfBuffer!<CR>',
+        action = ':LeaderfBuffer<CR>',
         short_desc = "已打开Buffer列表",
     })
     keymap.register({
         mode = {"n"},
         key = {"<leader>","l","k"},
-        action = ':LeaderfMarks!<CR>',
+        action = ':LeaderfMarks<CR>',
         short_desc = "列出Marks",
     })
 

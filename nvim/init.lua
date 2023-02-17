@@ -28,6 +28,8 @@ local fn = vim.fn
 
 
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+local pkg_path = fn.stdpath('data') .. '/site/pack/packer/start/'
+vim.g.PKG_PATH = pkg_path
 
 
 if fn.empty(fn.glob(install_path)) > 0 then

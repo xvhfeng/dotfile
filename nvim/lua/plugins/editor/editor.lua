@@ -254,6 +254,12 @@ zN	启用折叠
         action = 'za',
         short_desc = "toggle folding"
     })
+    mappings.register({
+        mode = "n",
+        key = {"<c-a>"},
+        action = 'ggvG$',
+        short_desc = "Select All File"
+    })
 end
 
 return plugin

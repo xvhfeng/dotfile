@@ -3,6 +3,56 @@ local plugin = {}
 plugin.core = {only_keymapping}
 
 plugin.mapping = function()
+    vim.cmd [[
+
+    function! MoveToPrevTab()
+    "there is only one window
+    if tabpagenr('$') == 1 && winnr('$') == 1
+    return
+    endif
+    "preparing new window
+    let l:tab_nr = tabpagenr('$')
+    let l:cur_buf = bufnr('%')
+    if tabpagenr() != 1
+    close!
+    if l:tab_nr == tabpagenr('$')
+    tabprev
+    endif
+    sp
+    else
+    close!
+    exe "0tabnew"
+    endif
+    "opening current buffer in new window
+    exe "b".l:cur_buf
+    endfunc
+
+    function! MoveToNextTab()
+    "there is only one window
+    if tabpagenr('$') == 1 && winnr('$') == 1
+    return
+    endif
+    "preparing new window
+    let l:tab_nr = tabpagenr('$')
+    let l:cur_buf = bufnr('%')
+    if tabpagenr() < tab_nr
+    close!
+    if l:tab_nr == tabpagenr('$')
+    tabnext
+    endif
+    sp
+    else
+    close!
+    tabnew
+    endif
+    "opening current buffer in new window
+    exe "b".l:cur_buf
+    endfunc
+   " nnoremap mt :call MoveToNextTab()<cr>
+   " nnoremap mT :call MoveToPrevTab()<cr>
+
+    ]]
+
     local mappings = require('core.keymapping')
 
     mappings.register({
@@ -46,26 +96,26 @@ plugin.mapping = function()
     })
     mappings.register({
         mode = "n",
-        key = {"<Leader>", "w", "j"},
+        key = {"w", "j"},
         action = '<c-w><c-j>',
         short_desc = "Goto The Down Window"
 
     })
     mappings.register({
         mode = "n",
-        key = {"<Leader>", "w", "k"},
+        key = { "w", "k"},
         action = '<c-w><c-k>',
         short_desc = "Goto The Above Window"
     })
     mappings.register({
         mode = "n",
-        key = {"<Leader>", "w", "h"},
+        key = { "w", "h"},
         action = '<c-w><c-h>',
         short_desc = "Goto The Left Window"
     })
     mappings.register({
         mode = "n",
-        key = {"<Leader>", "w", "l"},
+        key = { "w", "l"},
         action = '<c-w><c-l>',
         short_desc = "Goto The Right Window"
     })

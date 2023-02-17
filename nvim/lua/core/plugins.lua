@@ -65,13 +65,13 @@ plugins_configure.plugins_groups[group_idx] = {
     ["plugins"] = {
         { name = "bufexplorer", enable = true, desc = "buffer的资源管理器" },
         { name = "nvim-tree",   enable = true, desc = "lua写的floder" },
-        { name = "vifm",        enable = true, desc = "一个文件控制器,好用,推荐" },
+        --{ name = "vifm",        enable = true, desc = "一个文件控制器,好用,推荐" },
         { name = "ranger",      enable = true, desc = "floder管理器" },
         { name = "rename",      enable = true, desc = "重名当前打开的文件" },
         { name = "qf-helper",   enable = true, desc = "一个更好的quickfix的替代品" },
         { name = "vim-kickfix", enable = true, desc = "filter for quickfix" },
-        { name = "window",      enable = true, desc = "只是对于windows的key mapping的操作" },
         { name = "vimade",      enable = true, desc = "高亮显示当前foced分割窗口" },
+        { name = "window",      enable = true, desc = "只是对于windows的key mapping的操作" },
         --{ name = "rnvimr",      enable = true, desc = "Ranger的包装器" },
         --{ name = "bufferline",  enable = true, desc = "buffer的显示栏" },
     }
@@ -121,6 +121,8 @@ plugins_configure.plugins_groups[group_idx] = {
         -- 必须保证mason, mason-lspconfig,nvim-lspconfig 依次加载的顺序
         { name = "treesitter",    enable = true, desc = "Neovim的树结构和抽象层" },
         { name = "gutentags",    enable = true, desc = "使用global生成c/cxx的tags,存放在目录下" },
+        { name = "ale",    enable = true, desc = "一款静态分析代码,提示代码错误的工具" },
+        --  { name = "auto_cmp",    enable = true, desc = "YCM代码提示" },
 
         --{ name = "mason",         enable = true, desc = "第三方插件管理器" },
         --{ name = "mason-lspconfig",         enable = true, desc = "第三方插件管理器" },
@@ -233,8 +235,8 @@ plugins_configure.setup = function()
 
 
                 local ok, plug = xpcall(function()
-                        return require(plugin_path)
-                    end, debug.traceback)
+                    return require(plugin_path)
+                end, debug.traceback)
 
                 if not ok then
                     xlog.error("plugin:%s load failed and skip it try next one",
@@ -323,8 +325,8 @@ plugins_configure.create_mapping = function()
 
             -- local ok, plug = pcall(require, plugin_path)
             local ok, plug = xpcall(function()
-                    return require(plugin_path)
-                end, debug.traceback)
+                return require(plugin_path)
+            end, debug.traceback)
 
             if not ok then
                 xlog.error("plugin:%s load failed and skip it try next one",
