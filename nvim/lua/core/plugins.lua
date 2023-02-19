@@ -20,7 +20,7 @@ plugins_configure.plugins_groups[group_idx] = {
         -- { name="toggleterm", enable = true, desc="nvim的终端插件"},
         { name = "auto_mkdir",                 enable = true, desc = "save的时候自动创建目录" },
         { name = "autojump",                   enable = true, desc = "集成autojump工具在vim中" },
-        { name = "context",                    enable = true, desc = "移动文件的时候,根据代码关键字自动压缩代码段" },
+        --{ name = "context",                    enable = true, desc = "移动文件的时候,根据代码关键字自动压缩代码段" },
         { name = "FencView",                   enable = true, desc = "多字节支持" },
         { name = "genutils",                   enable = true, desc = "vim的工具函数集合" },
         { name = "indent-blankline",           enable = true, desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个" },
@@ -172,7 +172,7 @@ plugins_configure.plugins_groups[group_idx] = {
     ["subpath"] = "git",
     ["plugins"] = {
         { name = "tig-explorer", enable = true, desc = "git在vim中的查看" },
-        -- { name="lazygit", enable = true, desc="git的一款plugin"},
+        { name="lazygit", enable = true, desc="git的一款plugin"},
         { name = "diffview",     enable = true, desc = "git的diff在vim中的展现" },
         -- { name="project", enable = true, desc="项目管理"},
     }
