@@ -7,31 +7,9 @@ plugin.core = {
         "nvim-lua/plenary.nvim",
         "nvim-tree/nvim-web-devicons",
         "MunifTanjim/nui.nvim",
-        {
-            -- only needed if you want to use the commands with "_with_window_picker" suffix
-            's1n7ax/nvim-window-picker',
-            tag = "v1.*",
-            config = function()
-                require'window-picker'.setup({
-                    autoselect_one = true,
-                    include_current = false,
-                    filter_rules = {
-                        -- filter using buffer options
-                        bo = {
-                            -- if the file type is one of following, the window will be ignored
-                            filetype = { 'neo-tree', "neo-tree-popup", "notify" },
-
-                            -- if the buffer type is one of following, the window will be ignored
-                            buftype = { 'terminal', "quickfix" },
-                        },
-                    },
-                    other_win_hl_color = '#e35e4f',
-                })
-            end,
-        }
+        's1n7ax/nvim-window-picker',
     },
-}
-plugin.config = function()
+
     require('neo-tree').setup({
         window = {
             mappings = {
@@ -48,13 +26,35 @@ plugin.config = function()
         filesystem = {
             -- follow_current_file = true,
             filtered_items = {
-            visible = true,
+                visible = true,
             },
-            hijack_netrw_behavior = "open_current",
+            hijack_netrw_behavior = "open_default",
         },
-    })
-end
+    }),
 
+    require('window-picker').setup({
+        autoselect_one = true,
+        include_current = false,
+        selection_chars = '1234567890',
+        filter_rules = {
+            -- filter using buffer options
+            bo = {
+                -- if the file type is one of following, the window will be ignored
+                filetype = { 'neo-tree', "neo-tree-popup", "notify" },
+
+                -- if the buffer type is one of following, the window will be ignored
+                buftype = { 'terminal', "quickfix" },
+            },
+        },
+        other_win_hl_color = '#e35e4f',
+    })
+}
+
+function picker()
+    local picker = require('window-picker')
+    local picked_window_id = picker.pick_window() or vim.api.nvim_get_current_win()
+    vim.api.nvim_set_current_win(picked_window_id)
+end
 
 plugin.mapping = function()
     local keymap = require('core.keymapping')
@@ -65,7 +65,6 @@ plugin.mapping = function()
         short_desc = "Open Floder Tree",
     })
 
-
     keymap.register({
         mode = {"n"},
         key = {"|" },
@@ -73,19 +72,13 @@ plugin.mapping = function()
         short_desc = "Open Floder Tree",
     })
 
-    --[[
     keymap.register({
         mode = {"n"},
-        key = {"<leader>","w","w" },
-        action = function()
-            picker = require('window-picker')
-            picked_window_id = picker.pick_window() or vim.api.nvim_get_current_win()
-            vim.api.nvim_set_current_win(picked_window_id)
-        end, 
+        key = {"<leader>","w","z" },
+        action = ":lua picker() <cr>",
         expr = true,
-        short_desc = "Open Floder Tree",
+        short_desc = "Choose Which Windows",
     })
-    --]]
 
 
 end
