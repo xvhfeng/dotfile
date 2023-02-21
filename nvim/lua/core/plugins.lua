@@ -66,7 +66,9 @@ plugins_configure.plugins_groups[group_idx] = {
         --{ name = "bufexplorer", enable = true, desc = "buffer的资源管理器" },
         -- { name = "nvim-tree",   enable = true, desc = "lua写的floder" },
         { name = "neo-tree",   enable = true, desc = "lua写的floder" },
-        { name = "barbar",   enable = true, desc = "Tab list" },
+        --{ name = "barbar",   enable = true, desc = "Tab list" },
+        { name = "vim-maximizer",   enable = true, desc = "最大化window,并且恢复原来打开的window状态" },
+
         --{ name = "vifm",        enable = true, desc = "一个文件控制器,好用,推荐" },
         { name = "ranger",      enable = true, desc = "floder管理器" },
         { name = "rename",      enable = true, desc = "重名当前打开的文件" },
