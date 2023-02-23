@@ -240,6 +240,7 @@ plugin.mapping = function()
         action = '<esc>:wincmd l<cr>',
         short_desc = "<alt-l>Goto Right Window"
     })
+    --[[
     mappings.register({
         mode = {"n", "v", "i", "t"},
         key = {"<A-w>"},
@@ -252,6 +253,7 @@ plugin.mapping = function()
         action = '<esc>:wincmd j<cr>',
         short_desc = "<alt-j>Goto Below Window"
     })
+    --]]
     mappings.register({
         mode = {"n", "v", "i", "t"},
         key = {"]", "b"},

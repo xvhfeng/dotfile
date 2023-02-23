@@ -6,11 +6,45 @@ plugin.core = {
     opt_enable = true,
 
     requires = "nvim-lua/plenary.nvim",
-    cmd = {"DiffviewOpen"},
-    after = {"plenary.nvim"},
-    setup = function() -- Specifies code to run before this plugin is loaded.
-    end,
+    cmd = {
+    'DiffviewLog',
+    'DiffviewOpen',
+    'DiffviewClose',
+    'DiffviewRefresh',
+    'DiffviewFocusFiles',
+    'DiffviewFileHistory',
+    'DiffviewToggleFiles',
+  },
 
+    --cmd = {"DiffviewOpen"},
+    after = {"plenary.nvim"},
+
+    config = function()
+    require('diffview').setup({
+      enhanced_diff_hl = true,
+      view = {
+        file_panel = {
+          win_config = {
+            position = 'right',
+          },
+        },
+      },
+      hooks = {
+        view_opened = function()
+          local offset = string.rep(' ', 36)
+          local keymaps_str =
+            '[x = prev conflict, ]x = next conflict, <leader>co = choose ours, <leader>ct = choose theirs, <leader>cb = choose base, <leader>ca = choose all, dx = choose none'
+          vim.opt.tabline = offset .. keymaps_str
+          vim.opt.showtabline = 2
+        end,
+        view_closed = function()
+          vim.opt.tabline = nil
+          vim.opt.showtabline = 0
+        end,
+      },
+    })
+  end,
+    --[===[
     config = function() -- Specifies code to run after this plugin is loaded
         if not packer_plugins['plenary.nvim'].loaded then
             vim.cmd [[packadd plenary.nvim]]
@@ -126,6 +160,7 @@ plugin.core = {
         }
         require'diffview'.setup {}
     end
+    --]===]
 
 }
 

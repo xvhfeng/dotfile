@@ -38,6 +38,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name = "vim-lastplace",              enable = true, desc = "打开文件的时候,回到上一次编辑的地方" },
         { name = "preview",              enable = true, desc = "预览quickfix中的结果" },
         { name = "which-key",                  enable = true, desc = "vim的操作快捷键映射" },
+        --{ name = "legendary",                  enable = true, desc = "查询与过滤命令" },
         --  { name="test", enable = true, desc="测试插件"},
     }
 }
@@ -75,6 +76,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name = "qf-helper",   enable = true, desc = "一个更好的quickfix的替代品" },
         { name = "vim-kickfix", enable = true, desc = "filter for quickfix" },
         { name = "vimade",      enable = true, desc = "高亮显示当前foced分割窗口" },
+       --{ name = "bufresize",      enable = true, desc = "调整窗口的大小" },
         { name = "window",      enable = true, desc = "只是对于windows的key mapping的操作" },
         --{ name = "rnvimr",      enable = true, desc = "Ranger的包装器" },
         --{ name = "bufferline",  enable = true, desc = "buffer的显示栏" },
@@ -91,7 +93,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name = "LeaderF",  enable = true, desc = "模糊查询插件" },
         { name = "spectre",  enable = true, desc = "一个搜索与替换插件" },
         { name = "fzf",  enable = true, desc = "查找操作" },
-        -- { name="telescope", enable = true, desc="一个高度可扩展的列表模糊查找工具"},
+        --{ name="telescope", enable = true, desc="一个高度可扩展的列表模糊查找工具"},
         { name = "any-jump", enable = true, desc = "在定义的标记间跳转" },
         --{ name = "writable_search", enable = true, desc = "修改查找到的字符串" },
 
