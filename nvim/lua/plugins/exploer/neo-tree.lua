@@ -74,7 +74,7 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
-        key = {"w","q" },
+        key = {"w","w" },
         action = ":lua picker() <cr>",
         expr = true,
         short_desc = "Choose Which Windows",

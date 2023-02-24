@@ -2,7 +2,7 @@ local plugin = {}
 
 plugin.core = {
     'nvim-lualine/lualine.nvim',
-    requires = { 'kyazdani42/nvim-web-devicons' },
+    --requires = { 'kyazdani42/nvim-web-devicons'},
 
     config = function()
         require('lualine').setup({
