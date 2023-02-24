@@ -1,12 +1,23 @@
 local plugin = {}
 
 plugin.core = {
-    "bling/vim-airline",
-    as = "airline",
-    vim.cmd [[
-    let g:airline#extensions#tabline#enabled = 0
-    let g:airline_section_b = '%{strftime("%Y-%m-%d %T")}'
-    ]]
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons' },
+
+    config = function()
+        require('lualine').setup({
+            sections = {
+                lualine_a = {
+                    {
+                        'datetime',
+                        -- options: default, us, uk, iso, or your own format string ("%H:%M", etc..)
+                        style = 'default'
+                    }
+                }
+            }
+        })
+
+    end
 }
 
 plugin.mapping = function()

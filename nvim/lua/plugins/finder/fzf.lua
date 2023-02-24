@@ -43,7 +43,7 @@ plugin.mapping = function()
     local mappings = require('core.keymapping')
     mappings.register({
         mode = "n",
-        key = {"<c-l>"},
+        key = {"<leader>","f","z"},
         action = ":BTags<CR>",
         short_desc = "Show current buffer Tags.",
         silent = true

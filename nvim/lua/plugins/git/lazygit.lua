@@ -30,7 +30,7 @@ plugin.mapping = function()
     
     mappings.register({
         mode = "n",
-        key = { "<leader>", "g", "l","s"},
+        key = { "<leader>", "g", "l","o"},
         action = ":LazyGit<cr>",
         short_desc = "Show GitLazy",
         noremap = true,
