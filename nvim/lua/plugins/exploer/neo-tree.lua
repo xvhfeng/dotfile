@@ -67,6 +67,13 @@ plugin.mapping = function()
 
     keymap.register({
         mode = {"n"},
+        key = {"<leader>","f","t" },
+        action = ':NeoTreeFocusToggle<CR>',
+        short_desc = "Open Floder Tree",
+    })
+
+    keymap.register({
+        mode = {"n"},
         key = {"|" },
         action = ':NeoTreeShowToggle<CR>',
         short_desc = "Open Floder Tree",

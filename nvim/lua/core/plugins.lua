@@ -64,9 +64,9 @@ plugins_configure.plugins_groups[group_idx] = {
     ["name"] = "exploer",
     ["subpath"] = "exploer",
     ["plugins"] = {
+        { name = "nvim-tree",   enable = true, desc = "lua写的floder" },
         --{ name = "bufexplorer", enable = true, desc = "buffer的资源管理器" },
-        -- { name = "nvim-tree",   enable = true, desc = "lua写的floder" },
-        { name = "neo-tree",   enable = true, desc = "lua写的floder" },
+        --{ name = "neo-tree",   enable = true, desc = "lua写的floder" },
         --{ name = "barbar",   enable = true, desc = "Tab list" },
         { name = "vim-maximizer",   enable = true, desc = "最大化window,并且恢复原来打开的window状态" },
 
@@ -76,7 +76,11 @@ plugins_configure.plugins_groups[group_idx] = {
         { name = "qf-helper",   enable = true, desc = "一个更好的quickfix的替代品" },
         { name = "vim-kickfix", enable = true, desc = "filter for quickfix" },
         { name = "vimade",      enable = true, desc = "高亮显示当前foced分割窗口" },
-       { name = "bufresize",      enable = true, desc = "调整窗口的大小" },
+        { name = "bufresize",      enable = true, desc = "调整窗口的大小" },
+
+
+        { name = "nvim-window-picker",   enable = true, desc = "vim分屏的时候,快速选择window" },
+
         { name = "window",      enable = true, desc = "只是对于windows的key mapping的操作" },
         --{ name = "rnvimr",      enable = true, desc = "Ranger的包装器" },
         --{ name = "bufferline",  enable = true, desc = "buffer的显示栏" },
@@ -137,7 +141,8 @@ plugins_configure.plugins_groups[group_idx] = {
         --{ name = "nvim-lspinstall",         enable = true, desc = "第三方插件管理器" },
         --{ name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
         -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
-        -- { name="nvim-cmp", enable = true, desc="基于LSP的代码智能提示完成引擎"},
+        -- { name="nvim-cmp", enable = true, desc="基于LSP的代码智能提示完成引擎
+        -- "},
         --{ name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },
         -- { name="lspkind", enable = true, desc="这个小插件为neovim内置lsp添加了类似vcode的象形图"},
         --{ name = "navigator",     enable = true, desc = "基于LSP的源码分析和导航工具" },

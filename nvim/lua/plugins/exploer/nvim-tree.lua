@@ -1,4 +1,3 @@
-
 local plugin = {}
 
 plugin.core = {
@@ -13,6 +12,7 @@ plugin.core = {
         'nvim-tree/nvim-web-devicons', -- optional, for file icons
     },
 
+    config = function() 
     -- empty setup using defaults
     require("nvim-tree").setup({
         sync_root_with_cwd = true,
@@ -24,13 +24,14 @@ plugin.core = {
         },
 
         actions = {
-        open_file = {
-          window_picker = {
-            chars = "123456789abcdefg",
-          },
+            open_file = {
+                window_picker = {
+                    chars = "123456789abcdefg",
+                },
+            },
         },
-      },
     })
+    end
 }
 
 plugin.mapping = function()
@@ -42,6 +43,12 @@ plugin.mapping = function()
         short_desc = "Open Floder Tree",
     })
 
+    keymap.register({
+        mode = {"n"},
+        key = {"\\" },
+        action = ':NvimTreeToggle<CR>',
+        short_desc = "Open Floder Tree",
+    })
 end
 
 return plugin
