@@ -69,7 +69,6 @@ plugins_configure.plugins_groups[group_idx] = {
         --{ name = "neo-tree",   enable = true, desc = "lua写的floder" },
         --{ name = "barbar",   enable = true, desc = "Tab list" },
         { name = "vim-maximizer",   enable = true, desc = "最大化window,并且恢复原来打开的window状态" },
-
         --{ name = "vifm",        enable = true, desc = "一个文件控制器,好用,推荐" },
         { name = "ranger",      enable = true, desc = "floder管理器" },
         { name = "rename",      enable = true, desc = "重名当前打开的文件" },
@@ -77,10 +76,7 @@ plugins_configure.plugins_groups[group_idx] = {
         { name = "vim-kickfix", enable = true, desc = "filter for quickfix" },
         { name = "vimade",      enable = true, desc = "高亮显示当前foced分割窗口" },
         { name = "bufresize",      enable = true, desc = "调整窗口的大小" },
-
-
         { name = "nvim-window-picker",   enable = true, desc = "vim分屏的时候,快速选择window" },
-
         { name = "window",      enable = true, desc = "只是对于windows的key mapping的操作" },
         --{ name = "rnvimr",      enable = true, desc = "Ranger的包装器" },
         --{ name = "bufferline",  enable = true, desc = "buffer的显示栏" },
@@ -92,13 +88,15 @@ plugins_configure.plugins_groups[group_idx] = {
     ["name"] = "finder",
     ["subpath"] = "finder",
     ["plugins"] = {
-        { name = "ack",      enable = true, desc = "like grep plugin" },
-        { name = "far",      enable = true, desc = "查找和替换插件,多文件搜索替换" },
-        { name = "LeaderF",  enable = true, desc = "模糊查询插件" },
-        { name = "spectre",  enable = true, desc = "一个搜索与替换插件" },
+        --{ name = "ack",      enable = true, desc = "like grep plugin" },
+        --{ name = "far",      enable = true, desc = "查找和替换插件,多文件搜索替换" },
+--        { name = "LeaderF",  enable = true, desc = "模糊查询插件" },
+        --{ name = "spectre",  enable = true, desc = "一个搜索与替换插件" },
         { name = "fzf",  enable = true, desc = "查找操作" },
         { name="telescope", enable = true, desc="一个高度可扩展的列表模糊查找工具"},
         { name = "any-jump", enable = true, desc = "在定义的标记间跳转" },
+        { name = "ferret", enable = true, desc = "使用ack或者ripgrep查找,替换字符串" },
+        { name = "vim-ripgrep", enable = true, desc = "使用ripgrep查询字符串" },
         --{ name = "writable_search", enable = true, desc = "修改查找到的字符串" },
 
     }

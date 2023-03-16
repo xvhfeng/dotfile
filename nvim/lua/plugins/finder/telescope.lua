@@ -13,14 +13,19 @@ plugin.core = {
             opt = false,
             after = 'telescope.nvim',
         },
+        --[[
         {
             'nvim-telescope/telescope-project.nvim',
             opt = false,
             after = 'telescope.nvim',
         },
+        --]]
         {
             'nvim-telescope/telescope-fzf-native.nvim',
             run = 'make'
+        },
+        {
+            "ahmedkhalf/project.nvim",
         }
     },
 
@@ -34,14 +39,18 @@ plugin.core = {
         if not packer_plugins['telescope-frecency.nvim'].loaded then
             vim.cmd [[packadd telescope-frecency.nvim]]
         end
+        --[==[
         if not packer_plugins['telescope-project.nvim'].loaded then
             vim.cmd [[packadd telescope-project.nvim]]
         end
+--]==]
         if not packer_plugins['sql.nvim'].loaded then
             vim.cmd [[packadd sql.nvim]]
         end
         local actions = require('telescope.actions')
+        --[[
         require 'telescope'.load_extension('project')
+        --]]
         local action_state = require("telescope.actions.state")
 
         local custom_actions = {}
@@ -126,6 +135,7 @@ plugin.core = {
                     workspaces = {
                     }
                 },
+                    --[[
                 project = {
                     base_dirs = {
                         '~/.mynvim',
@@ -135,6 +145,7 @@ plugin.core = {
                     },
                     hidden_files = true -- default: false
                 },
+                    --]]
                 -- TODO: switch fuzzy and exact, currently use the telescope-fzf-native
                 -- https://github.com/nvim-telescope/telescope.nvim/issues/930
                 fzf = {
@@ -148,6 +159,12 @@ plugin.core = {
         }
         require 'telescope'.load_extension('fzf')
         require"telescope".load_extension("frecency")
+
+        require("project_nvim").setup {
+             patterns = { ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json" },
+        }
+        require('telescope').load_extension('projects')
+        --require'telescope'.extensions.projects.projects{}
     end,
 }
 
@@ -165,7 +182,7 @@ plugin.mapping = function()
         mode = "n",
         key = { "<leader>","f", "q" },
         action = "<cmd>lua require('telescope.builtin').live_grep()<cr>",
-        short_desc = "Find Query",
+        short_desc = "grep string",
         silent = true
     })
 
@@ -216,6 +233,7 @@ plugin.mapping = function()
         silent = true,
         noremap = true
     })
+    --[[
     mappings.register({
         mode = "n",
         key = { "<leader>", "f", "p" },
@@ -224,6 +242,7 @@ plugin.mapping = function()
         silent = true,
         noremap = true
     })
+    --]]
     mappings.register({
         mode = "n",
         key = { "<leader>", "f", "k" },
