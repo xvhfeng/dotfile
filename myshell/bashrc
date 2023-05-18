@@ -1,0 +1,47 @@
+#!/bin/bash
+
+
+ulimit -S -n 10240
+
+[[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+
+ if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
+          . /opt/local/etc/profile.d/bash_completion.sh
+ fi
+
+
+#添加git的自动完成命令功能
+if [ -f ~/.git-completion.bash ]; then
+    source ~/.git-completion.bash
+fi
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
+
+if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+    source /usr/local/bin/virtualenvwrapper.sh
+fi
+
+if [ -f ~/.aliasrc ]; then
+    source ~/.aliasrc
+fi
+
+ulimit -c unlimited
+
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+
+
+
+#if [ -f ~/.fzf.bash ]; then
+#    source ~/.fzf.bash
+#fi
+
+
+#添加git的自动完成命令功能
+if [ -f ~/.path.bash ]; then
+    source ~/.path.bash
+fi
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+export EDITOR=/usr/local/bin/nvim
