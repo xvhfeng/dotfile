@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 yes "
+    echo "  you will delete all branch expilct master"
+    echo "  \$1: only yes. mean you kown what will you do..."
+    echo "  you will delete branch:"
+    for b in `git branch | grep -v -- 'master'`; do echo $b; done
+    exit 1
+fi
+
+git checkout master
+for b in `git branch | grep -v -- 'master'`; do git branch -d $b; done

@@ -21,7 +21,7 @@ function loading()
     local lspcfg = require('lspconfig')
     lspcfg.awk_ls.setup{}
     lspcfg.bashls.setup{}
-    lspcfg.clangd.setup{}
+     lspcfg.clangd.setup{}
     lspcfg.gopls.setup{}
     lspcfg.jdtls.setup{}
     lspcfg.jsonls.setup{}

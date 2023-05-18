@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat $MYGIT_HOME/passwd.cnf

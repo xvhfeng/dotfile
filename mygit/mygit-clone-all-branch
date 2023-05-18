@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# clone remote repo and clone all branch
+
+for b in `git branch -r | grep -v -- '->'`; do git checkout -b ${b##origin/} $b; done
+echo "\n"
+echo "------current branch roadmap--------"
+git branch -vv
+echo "Note:you maybe need to change branch!!!"

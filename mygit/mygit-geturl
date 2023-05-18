@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# get origin remote url
+git remote get-url  --all origin

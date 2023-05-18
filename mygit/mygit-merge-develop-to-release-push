@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mygit-merge-push $1 develop release

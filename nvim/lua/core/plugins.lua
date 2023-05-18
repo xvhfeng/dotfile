@@ -131,7 +131,7 @@ plugins_configure.plugins_groups[group_idx] = {
         -- {name = "nvim-lspfuzzy",    enable = true, desc = "查看定义等窗口" },
         { name = "treesitter",    enable = true, desc = "Neovim的树结构和抽象层" },
         {name = "lspsaga",    enable = true, desc = "漂亮的lsp的窗口定义等" },
-        {name = "nvim-cmp",    enable = true, desc = "lsp的智能补全" },
+        {name = "lsp_cmp",    enable = true, desc = "lsp的智能补全" },
         { name = "gutentags",    enable = true, desc = "使用global生成c/cxx的tags,存放在目录下" },
         { name = "ale",    enable = true, desc = "一款静态分析代码,提示代码错误的工具" },
         --  { name = "auto_cmp",    enable = true, desc = "YCM代码提示" },

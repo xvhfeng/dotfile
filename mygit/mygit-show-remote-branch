@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# show remote branch
+
+git branch -r

@@ -1,0 +1,33 @@
+
+@Type:
+
+@Scope:
+
+@Subject:
+
+@Msg:
+
+@Related
+
+
+
+
+# type (推荐每次提交一个type,也可以多个功能一起提交,但不推荐):
+#   feature：新功能（Feature）
+#   modify: 更改功能
+#   delete: 删除功能
+#   fix：修补Bug
+#   docs：文档（Documentation）
+#   style： 格式（不影响代码运行的变动）
+#   refactor：重构（即不是新增功能，也不是修改Bug的代码变动）
+#   test：增加测试
+#   chore：构建过程或辅助工具的变动
+
+# scope:
+#   说明提交影响的范围，比如数据层、控制层、视图层等等
+# subject:
+#   提交目的的简短描述，不超过50个字符
+# Msg:
+#   对本次提交的详细描述，可以分成多行
+# Related:
+#   用来关闭Issue或以BREAKING CHANGE开头，后面是对变动的描述、以及变动理由和迁移方法

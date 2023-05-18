@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# myshell tools
+# commit the changed in current branch to locale and push it to remote"
+# usage:
+#   git-commit-push.sh $1 #2
+#        $1: tag(section name) for git configure in passwd.cnf
+#        $2: commit message
+# remark:
+#  if report error with not found "read-passwd" function or command,
+#  pelase exec install.sh first.
+
+
+function fatal()
+{
+    echo "!! $*"
+    exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 \$1 \$2"
+    echo "  \$1: tag(section name) for git configure in passwd.cnf"
+    echo "  \$2: commit message"
+    exit 1
+fi
+
+echo "-----------------------------"
+echo "* commit changed in this branch and push it to remote site. *"
+echo "-----------------------------"
+echo "* let's GOGOGO... *"
+git status
+git branch
+echo "-----------------------------"
+echo "* add all changed and commit *"
+git add -A
+git commit 
+
+echo "* push to remote *"
+source $MYGIT_HOME/mygit-push $1
+
+echo "* shell exec over,see you next time... *"
+echo "-----------------------------"
+git status
