@@ -35,7 +35,7 @@ plugin.mapping = function()
     local keymap = require('core.keymapping')
     keymap.register({
         mode = {"n"},
-        key = {"w","w" },
+        key = {"w","p" },
         action = ":lua picker() <cr>",
         expr = true,
         short_desc = "Choose Which Windows",

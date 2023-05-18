@@ -53,54 +53,66 @@ end
 
 return plugin
 
+
+
+
 --[===[
-`<CR>`            edit                open a file or folder; root will cd to the above directory
-`o`
-`<2-LeftMouse>`
-`<C-e>`           edit_in_place       edit the file in place, effectively replacing the tree explorer
-`O`               edit_no_picker      same as (edit) with no window picker
-`<C-]>`           cd                  cd in the directory under the cursor
-`<2-RightMouse>`
-`<C-v>`           vsplit              open the file in a vertical split
-`<C-x>`           split               open the file in a horizontal split
-`<C-t>`           tabnew              open the file in a new tab
-`<`               prev_sibling        navigate to the previous sibling of current file/directory
-`>`               next_sibling        navigate to the next sibling of current file/directory
-`P`               parent_node         move cursor to the parent directory
-`<BS>`            close_node          close current opened directory or parent
-`<Tab>`           preview             open the file as a preview (keeps the cursor in the tree)
-`K`               first_sibling       navigate to the first sibling of current file/directory
-`J`               last_sibling        navigate to the last sibling of current file/directory
-`I`               toggle_git_ignored  toggle visibility of files/folders hidden via |git.ignore| option
-`H`               toggle_dotfiles     toggle visibility of dotfiles via |filters.dotfiles| option
-`U`               toggle_custom       toggle visibility of files/folders hidden via |filters.custom| option
-`R`               refresh             refresh the tree
-`a`               create              add a file; leaving a trailing `/` will add a directory
-`d`               remove              delete a file (will prompt for confirmation)
-`D`               trash               trash a file via |trash| option
-`r`               rename              rename a file
-`<C-r>`           full_rename         rename a file and omit the filename on input
-`x`               cut                 add/remove file/directory to cut clipboard
-`c`               copy                add/remove file/directory to copy clipboard
-`p`               paste               paste from clipboard; cut clipboard has precedence over copy; will prompt for confirmation
-`y`               copy_name           copy name to system clipboard
-`Y`               copy_path           copy relative path to system clipboard
-`gy`              copy_absolute_path  copy absolute path to system clipboard
-`[e`              prev_diag_item      go to next diagnostic item
-`[c`              prev_git_item       go to next git item
-`]e`              next_diag_item      go to prev diagnostic item
-`]c`              next_git_item       go to prev git item
-`-`               dir_up              navigate up to the parent directory of the current file/directory
-`s`               system_open         open a file with default system application or a folder with default file manager, using |system_open| option
-`f`               live_filter         live filter nodes dynamically based on regex matching.
-`F`               clear_live_filter   clear live filter
-`q`               close               close tree window
-`W`               collapse_all        collapse the whole tree
-`E`               expand_all          expand the whole tree, stopping after expanding |actions.expand_all.max_folder_discovery| folders; this might hang neovim for a while if running on a big folder
-`S`               search_node         prompt the user to enter a path and then expands the tree to match the path
-`.`               run_file_command    enter vim command mode with the file the cursor is on
-`<C-k>`           toggle_file_info    toggle a popup with file infos about the file under the cursor
-`g?`              toggle_help         toggle help
-`m`               toggle_mark         Toggle node in bookmarks
-`bmv`             bulk_move           Move all bookmarked nodes into specified location
+
+
+`<C-]>`           CD                      |nvim-tree-api.tree.change_root_to_node()|
+`<C-e>`           Open: In Place          |nvim-tree-api.node.open.replace_tree_buffer()|
+`<C-k>`           Info                    |nvim-tree-api.node.show_info_popup()|
+`<C-r>`           Rename: Omit Filename   |nvim-tree-api.fs.rename_sub()|
+`<C-t>`           Open: New Tab           |nvim-tree-api.node.open.tab()|
+`<C-v>`           Open: Vertical Split    |nvim-tree-api.node.open.vertical()|
+`<C-x>`           Open: Horizontal Split  |nvim-tree-api.node.open.horizontal()|
+`<BS>`            Close Directory         |nvim-tree-api.node.navigate.parent_close()|
+`<CR>`            Open                    |nvim-tree-api.node.open.edit()|
+`<Tab>`           Open Preview            |nvim-tree-api.node.open.preview()|
+`>`               Next Sibling            |nvim-tree-api.node.navigate.sibling.next()|
+`<`               Previous Sibling        |nvim-tree-api.node.navigate.sibling.prev()|
+`.`               Run Command             |nvim-tree-api.node.run.cmd()|
+`-`               Up                      |nvim-tree-api.tree.change_root_to_parent()|
+`a`               Create                  |nvim-tree-api.fs.create()|
+`bmv`             Move Bookmarked         |nvim-tree-api.marks.bulk.move()|
+`B`               Toggle No Buffer        |nvim-tree-api.tree.toggle_no_buffer_filter()|
+`c`               Copy                    |nvim-tree-api.fs.copy.node()|
+`C`               Toggle Git Clean        |nvim-tree-api.tree.toggle_git_clean_filter()|
+`[c`              Prev Git                |nvim-tree-api.node.navigate.git.prev()|
+`]c`              Next Git                |nvim-tree-api.node.navigate.git.next()|
+`d`               Delete                  |nvim-tree-api.fs.remove()|
+`D`               Trash                   |nvim-tree-api.fs.trash()|
+`E`               Expand All              |nvim-tree-api.tree.expand_all()|
+`e`               Rename: Basename        |nvim-tree-api.fs.rename_basename()|
+`]e`              Next Diagnostic         |nvim-tree-api.node.navigate.diagnostics.next()|
+`[e`              Prev Diagnostic         |nvim-tree-api.node.navigate.diagnostics.prev()|
+`F`               Clean Filter            |nvim-tree-api.live_filter.clear()|
+`f`               Filter                  |nvim-tree-api.live_filter.start()|
+`g?`              Help                    |nvim-tree-api.tree.toggle_help()|
+`gy`              Copy Absolute Path      |nvim-tree-api.fs.copy.absolute_path()|
+`H`               Toggle Dotfiles         |nvim-tree-api.tree.toggle_hidden_filter()|
+`I`               Toggle Git Ignore       |nvim-tree-api.tree.toggle_gitignore_filter()|
+`J`               Last Sibling            |nvim-tree-api.node.navigate.sibling.last()|
+`K`               First Sibling           |nvim-tree-api.node.navigate.sibling.first()|
+`m`               Toggle Bookmark         |nvim-tree-api.marks.toggle()|
+`o`               Open                    |nvim-tree-api.node.open.edit()|
+`O`               Open: No Window Picker  |nvim-tree-api.node.open.no_window_picker()|
+`p`               Paste                   |nvim-tree-api.fs.paste()|
+`P`               Parent Directory        |nvim-tree-api.node.navigate.parent()|
+`q`               Close                   |nvim-tree-api.tree.close()|
+`r`               Rename                  |nvim-tree-api.fs.rename()|
+`R`               Refresh                 |nvim-tree-api.tree.reload()|
+`s`               Run System              |nvim-tree-api.node.run.system()|
+`S`               Search                  |nvim-tree-api.tree.search_node()|
+`U`               Toggle Hidden           |nvim-tree-api.tree.toggle_custom_filter()|
+`W`               Collapse                |nvim-tree-api.tree.collapse_all()|
+`x`               Cut                     |nvim-tree-api.fs.cut()|
+`y`               Copy Name               |nvim-tree-api.fs.copy.filename()|
+`Y`               Copy Relative Path      |nvim-tree-api.fs.copy.relative_path()|
+`<2-LeftMouse>`   Open                    |nvim-tree-api.node.open.edit()|
+`<2-RightMouse>`  CD                      |nvim-tree-api.tree.change_root_to_node()|
+
+
+
+
 --]===]

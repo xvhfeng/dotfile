@@ -1,176 +1,183 @@
 local plugin = {}
 
 plugin.core = {
+    "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-buffer", 
+    "hrsh7th/cmp-path", 
+    "hrsh7th/cmp-cmdline",
     "hrsh7th/nvim-cmp",
-
-    after = {
-        "nvim-lspconfig"
-    },
-    requires = {
-        { "quangnguyen30192/cmp-nvim-ultisnips", disable = vim.g.lspcfg ~= "builtin" }, -- ultisnips source
-        { "hrsh7th/cmp-nvim-lsp", disable = vim.g.lspcfg ~= "builtin" }, --builtin lsp source
-        { "hrsh7th/cmp-buffer", disable = vim.g.lspcfg ~= "builtin" }, --buffer source
-        { "hrsh7th/cmp-path", disable = vim.g.lspcfg ~= "builtin" }, --path source
-        { "hrsh7th/cmp-cmdline", disable = vim.g.lspcfg ~= "builtin" }, -- for commandline complation
-        { "dmitmel/cmp-cmdline-history", disable = vim.g.lspcfg ~= "builtin" }, -- for commandline complation
-        { "hrsh7th/cmp-calc", disable = vim.g.lspcfg ~= "builtin" }, --for calc
-        { "hrsh7th/cmp-emoji", disable = vim.g.lspcfg ~= "builtin" },
-        { "lukas-reineke/cmp-rg", disable = vim.g.lspcfg ~= "builtin" },
-        { "rcarriga/cmp-dap", disable = vim.g.lspcfg ~= "builtin" },
-    },
+    'hrsh7th/cmp-vsnip',
+    'hrsh7th/vim-vsnip',
 
     config = function() -- Specifies code to run after this plugin is loaded
+
         local kind_icons = {
-            Text = " ",
-            Method = "",
-            Function = "",
-            Constructor = "",
-            Field = "",
-            Variable = "",
-            Class = "ﴯ",
-            Interface = "",
-            Module = "",
-            Property = " ",
+            Text = "",
+            Method = "m",
+            Function = "",
+            Constructor = "",
+            Field = "",
+            Variable = "",
+            Class = "",
+            Interface = "",
+            Module = "",
+            Property = "",
             Unit = "",
             Value = "",
             Enum = "",
             Keyword = "",
-            Snippet = "",
+            Snippet = "",
             Color = "",
             File = "",
             Reference = "",
             Folder = "",
             EnumMember = "",
-            Constant = "",
-            Struct = "",
+            Constant = "",
+            Struct = "",
             Event = "",
             Operator = "",
-            TypeParameter = " "
+            TypeParameter = "",
         }
-        local cmp = require 'cmp'
-        vim.cmd [[
-            highlight CompNormal guibg=None guifg=None
 
-            highlight CompBorder guifg=#ffaa55 guibg=#None
-            autocmd! ColorScheme * highlight CompBorder guifg=#ffaa55 guibg=None
-            autocmd FileType AerojumpFilter lua require('cmp').setup.buffer { enabled = false }
-        ]]
-        --highlight CompDocBorder guifg=# guibg=#None
-        --autocmd! ColorScheme * highlight CompDocBorder guifg=#ffaa55 guibg=None
-        local cmp_ultisnips_mappings = require("cmp_nvim_ultisnips.mappings")
+
+        local cmp = require'cmp'
+
+        local has_words_before = function()
+            local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+            return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+        end
+
+        local feedkey = function(key, mode)
+            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+        end
+
         cmp.setup({
             snippet = {
-                -- REQUIRED - you must specify a snippet engine
                 expand = function(args)
-                    vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+                    vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+                    -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+                    -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+                    -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
                 end,
             },
+
             window = {
-                completion = {
-                    border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-                    --winhighlight = 'NormalFloat:NormalFloat,CompBorder:CompBorder',
-                    winhighlight = 'NormalFloat:CompNormal,FloatBorder:CompBorder',
-                },
-                documentation = {
-                    border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-                    --winhighlight = 'NormalFloat:CompNormal,FloatBorder:CompDocBorder',
-                    winhighlight = 'NormalFloat:CompNormal,FloatBorder:FloatBorder',
-                },
+                completion = cmp.config.window.bordered(),
+                documentation = cmp.config.window.bordered(),
             },
-            mapping = cmp.mapping.preset.insert({
-                ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-                ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                ['<C-Space>'] = cmp.mapping.complete(),
-                ['<C-e>'] = cmp.mapping.abort(),
-                ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-                ["<C-j>"] = cmp.mapping(
-                    function(fallback)
-                        cmp_ultisnips_mappings.expand_or_jump_forwards(fallback)
+
+            mapping = {
+
+                ["<Tab>"] = cmp.mapping(function(fallback)
+                    if cmp.visible() then
+                        cmp.select_next_item()
+                    elseif vim.fn["vsnip#available"](1) == 1 then
+                        feedkey("<Plug>(vsnip-expand-or-jump)", "")
+                    elseif has_words_before() then
+                        cmp.complete()
+                    else
+                        fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+                    end
+                end, { "i", "s" }),
+
+                ["<S-Tab>"] = cmp.mapping(function()
+                    if cmp.visible() then
+                        cmp.select_prev_item()
+                    elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+                        feedkey("<Plug>(vsnip-jump-prev)", "")
+                    end
+                end, { "i", "s" }),
+
+
+                ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+                ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+                ['<C-n>'] = cmp.mapping({
+                    c = function()
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            vim.api.nvim_feedkeys(t('<Down>'), 'n', true)
+                        end
                     end,
-                    { "i", "s", --[[ "c" (to enable the mapping in command mode) ]] }
-                ),
-                ["<A-k>"] = cmp.mapping(
-                    function(fallback)
-                        cmp_ultisnips_mappings.jump_backwards(fallback)
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+                ['<C-p>'] = cmp.mapping({
+                    c = function()
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            vim.api.nvim_feedkeys(t('<Up>'), 'n', true)
+                        end
                     end,
-                    { "i", "s", --[[ "c" (to enable the mapping in command mode) ]] }
-                ),
-            }),
-            sources = cmp.config.sources({
-                { name = 'nvim_lsp' },
-                { name = 'ultisnips' }, -- For ultisnips users.
-                { name = 'calc' },
-                { name = 'path' },
-                { name = 'buffer' },
-                { name = 'emoji', insert = true },
-            }),
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+                ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
+                ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
+                --['<C-e>'] = cmp.mapping(cmp.mapping.complete(), {'i', 'c'}),
+                --['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
+                ['<CR>'] = cmp.mapping({
+                    i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+                    c = function(fallback)
+                        if cmp.visible() then
+                            cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true})
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+            },
 
             formatting = {
+                fields = { "kind", "abbr", "menu" },
                 format = function(entry, vim_item)
                     -- Kind icons
-                    vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind) -- This concatonates the icons with the name of the item kind
-                    -- Source
+                    vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
                     vim_item.menu = ({
-                        buffer = "[Buf]",
                         nvim_lsp = "[LSP]",
-                        ultisnips = "[Snip]",
-                        nvim_lua = "[Lua]",
-                        orgmode = "[Org]",
+                        vsnips = "[vsnip]",
+                        buffer = "[Buffer]",
                         path = "[Path]",
-                        dap = "[DAP]",
-                        emoji = "[Emoji]",
-                        calc = "[CALC]",
-                        latex_symbols = "[LaTeX]",
-                        cmdline_history = "[History]",
-                        cmdline = "[Command]",
                     })[entry.source.name]
                     return vim_item
-                end
+                end,
             },
-            enabled = function()
-                return vim.api.nvim_buf_get_option(0, "buftype") ~= "prompt"
-                    or require("cmp_dap").is_dap_buffer()
-            end,
+
+
+            sources = cmp.config.sources({
+                { name = 'nvim_lsp' },
+                { name = 'vsnip' }, -- For vsnip users.
+                -- { name = 'luasnip' }, -- For luasnip users.
+                -- { name = 'ultisnips' }, -- For ultisnips users.
+                -- { name = 'snippy' }, -- For snippy users.
+            }, {
+                    { name = 'buffer' },
+                    { name = 'path' },
+                })
         })
 
         -- Set configuration for specific filetype.
-        cmp.setup.filetype('org', {
-            sources = cmp.config.sources({
-                { name = 'orgmode' },
-                { name = 'buffer' },
-                { name = 'path' },
-                { name = 'calc' },
-                { name = 'ultisnips' },
-                { name = 'emoji', insert = true }
-            })
-        })
-        cmp.setup.filetype('markdown', {
-            sources = cmp.config.sources({
-                { name = 'ultisnips' },
-                { name = 'buffer' },
-                { name = 'path' },
-                { name = 'calc' },
-                { name = 'emoji', insert = true }
-            })
-        })
-        cmp.setup.filetype('dap-repl', {
-            sources = cmp.config.sources({
-                { name = 'dap' },
-                { name = 'buffer' },
-                { name = 'path' },
-                { name = 'ultisnips' }, -- For ultisnips users.
-            })
-        })
         cmp.setup.filetype('gitcommit', {
             sources = cmp.config.sources({
-                { name = 'cmp_git' },  -- You can specify the `cmp_git` source if you were installed it.
-                { name = 'buffer' },
-            }
-            )
+                { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+            }, {
+                    { name = 'buffer' },
+                })
         })
 
-        -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-        cmp.setup.cmdline('/', {
+        -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+        cmp.setup.cmdline({ '/', '?' }, {
             mapping = cmp.mapping.preset.cmdline(),
             sources = {
                 { name = 'buffer' }
@@ -183,18 +190,192 @@ plugin.core = {
             sources = cmp.config.sources({
                 { name = 'path' }
             }, {
-                { name = 'cmdline' },
-                { name = 'cmdline_history' },
-            })
+                    { name = 'cmdline' }
+                })
         })
 
-        -- Setup lspconfig.
-        local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-        capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-        require('lspconfig')['gopls'].setup {
+        -- Set up lspconfig.
+        local capabilities = require('cmp_nvim_lsp').default_capabilities()
+        -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+        require('lspconfig')['clangd'].setup {
             capabilities = capabilities
         }
+
+        --[[
+    lspcfg.awk_ls.setup{}
+    lspcfg.bashls.setup{}
+    lspcfg.clangd.setup{}
+    lspcfg.gopls.setup{}
+    lspcfg.jdtls.setup{}
+    lspcfg.jsonls.setup{}
+    lspcfg.lua_ls.setup{}
+    lspcfg.pyright.setup{}
+    lspcfg.rust_analyzer.setup{}
+    lspcfg.sqlls.setup{}
+    lspcfg.tsserver.setup{}
+
+
+
+
+
+        -- find more here: https://www.nerdfonts.com/cheat-sheet
+
+        local t = function(str)
+            return vim.api.nvim_replace_termcodes(str, true, true, true)
+        end
+        local cmp = require('cmp')
+
+        cmp.setup{
+            snippet = {
+                expand = function(args)
+                    vim.fn["UltiSnips#Anon"](args.body)
+                end,
+            },
+            window = {
+                completion = cmp.config.window.bordered(),
+                documentation = cmp.config.window.bordered(),
+            },
+            mapping = {
+                ["<Tab>"] = cmp.mapping({
+                    c = function()
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                        else
+                            cmp.complete()
+                        end
+                    end,
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Insert })
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+                ["<S-Tab>"] = cmp.mapping({
+                    c = function()
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+                        else
+                            cmp.complete()
+                        end
+                    end,
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Insert })
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+                ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+                ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }), {'i'}),
+                ['<C-n>'] = cmp.mapping({
+                    c = function()
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            vim.api.nvim_feedkeys(t('<Down>'), 'n', true)
+                        end
+                    end,
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+                ['<C-p>'] = cmp.mapping({
+                    c = function()
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            vim.api.nvim_feedkeys(t('<Up>'), 'n', true)
+                        end
+                    end,
+                    i = function(fallback)
+                        if cmp.visible() then
+                            cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+                ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), {'i', 'c'}),
+                ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), {'i', 'c'}),
+                --['<C-e>'] = cmp.mapping(cmp.mapping.complete(), {'i', 'c'}),
+                --['<C-e>'] = cmp.mapping({ i = cmp.mapping.close(), c = cmp.mapping.close() }),
+                ['<CR>'] = cmp.mapping({
+                    i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+                    c = function(fallback)
+                        if cmp.visible() then
+                            cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true})
+                        else
+                            fallback()
+                        end
+                    end
+                }),
+            },
+
+            formatting = {
+                fields = { "kind", "abbr", "menu" },
+                format = function(entry, vim_item)
+                    -- Kind icons
+                    vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
+                    vim_item.menu = ({
+                        nvim_lsp = "[LSP]",
+                        ultisnips = "[Snippet]",
+                        buffer = "[Buffer]",
+                        path = "[Path]",
+                    })[entry.source.name]
+                    return vim_item
+                end,
+            },
+
+            sources = cmp.config.sources({
+                { name = 'nvim_lsp' },
+                { name = 'ultisnips' },
+            }, {
+                    { name = 'buffer' },
+                    { name = 'path' },
+                })
+        }
+
+        -- Set configuration for specific filetype.
+        cmp.setup.filetype('gitcommit', {
+            sources = cmp.config.sources({
+                { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+            }, {
+                    { name = 'buffer' },
+                })
+        })
+
+        -- Use buffer source foj `/` (if you enabled `native_menu`, this won't work anymore).
+        cmp.setup.cmdline('/', {
+            completion = { autocomplete = false },
+            sources = {
+                { name = 'buffer' }
+            }
+        })
+
+        -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+        cmp.setup.cmdline(':', {
+            completion = { autocomplete = false },
+            sources = cmp.config.sources({
+                { name = 'path' }
+            }, {
+                    { name = 'cmdline' }
+                })
+        })
+
+        vim.g.ultiSnipsExpandTrigger = '<plug>(ultisnips_expand)'
+        vim.g.UltiSnipsJumpForwardTrigger = '<plug>(ultisnips_jump_forward)'
+        vim.g.ultiSnipsJumpBackwardTrigger = '<Plug>(ultisnips_jump_backward)'
+        vim.g.ultiSnipsListSnippets = '<c-x><c-s>'
+        vim.g.ultiSnipsRemoveSelectModeMappings = 0
+
+        --]]
     end
 }
 
