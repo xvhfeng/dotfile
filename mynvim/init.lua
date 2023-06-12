@@ -4,7 +4,7 @@ if vim.fn.has('mac') == 1 then
     vim.cmd ([[
         let g:python_host_prog = '/usr/bin/python'
         let g:python3_host_prog = '/opt/local/bin/python3'
-    ]])
+        ]])
 elseif vim.fn.has('unix') == 1 then
     vim.g.HOME_PATH = "/home/" .. vim.fn.expand("$USER")
 else

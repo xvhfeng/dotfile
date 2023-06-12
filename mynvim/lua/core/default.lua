@@ -3,7 +3,7 @@ local default_setting = {}
 
 default_setting['global'] = {
     after_schedule_time_start = 500,
-  
+
 }
 
 -- setting map leader
@@ -18,7 +18,7 @@ local global_func = require('util.global')
 vim.g.side_filetypes = { -- Specify which filetypes get the contrasted (darker) background
     --"terminal", -- Darker terminal background
     "packer", -- Darker packer background
-   -- "NvimTree",
+    -- "NvimTree",
     "ctrlsf",
     "calendar",
     "undotree",
@@ -159,7 +159,7 @@ default_setting['opt'] = {
     textwidth=80,
     -- "折行
     lbr = true,
-
+    
     --ambiwidth="double",
 
     -- "开启行号显示
@@ -215,6 +215,7 @@ default_setting['opt'] = {
     -- "c程序可以在v模式中按=格式化
     cin = true,
 
+
     -- " tab相关变更
     tabstop=4, --      " 设置Tab键的宽度        [等同的空格个数]
     shiftwidth=4 , --  " number of spaces to use for autoindenting
@@ -222,7 +223,7 @@ default_setting['opt'] = {
     smarttab   = true, --" insert tabs on the start of a line according to shiftwidth, not tabstop 按退格键时可以一次删掉 4 个空格
     expandtab     = true, -- " 将Tab自动转化成空格    [需要输入真正的Tab键时，使用 Ctrl+V + Tab]
     shiftround     = true, -- " use multiple of shiftwidth when indenting with '<' and '>'
-    -- cindent shiftwidth=4,
+    -- cindent shiftwidth=4,e
     -- autoindent shiftwidth=4,
     listchars="tab:>-,trail:-" , -- "每行起始的tab显示为“>----”；结尾的空格显示为"-"
 
@@ -276,6 +277,7 @@ default_setting['opt'] = {
 
 }
 
+
 for key, value in pairs(default_setting['opt']) do
     vim.o[key] = value
 end
@@ -287,7 +289,6 @@ end
 vim.cmd [[
 set showmatch matchtime=0 matchpairs+=<:>,《:》,（:）,【:】,“:”,‘:’
 ]]
-
 
 local aug = vim.api.nvim_create_augroup("buf_large", { clear = true })
 

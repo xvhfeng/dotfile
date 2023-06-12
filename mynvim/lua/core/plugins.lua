@@ -244,26 +244,19 @@ plugins_configure.plugins_groups = {
         }, {
             name = "lspsaga",
             enable = true,
-            desc = "漂亮的lsp的窗口定义等"
+            desc = "漂亮的lsp的窗口定义,美化LSP显示"
         }, {
             name = "lsp_cmp",
             enable = true,
             desc = "lsp的智能补全"
-        }, -- { name = "gutentags",    enable = true, desc = "使用global生成c/cxx的tags,存放在目录下" },
+        },
         {
-            name = "ale",
-            enable = false,
-            desc = "一款静态分析代码,提示代码错误的工具"
-        } --  { name = "auto_cmp",    enable = true, desc = "YCM代码提示" },
-        -- { name = "mason",         enable = true, desc = "第三方插件管理器" },
-        -- { name = "mason-lspconfig",         enable = true, desc = "第三方插件管理器" },
-        -- { name = "nvim-lspconfig",         enable = true, desc = "第三方插件管理器" },
-        -- { name = "nlsp-setting",         enable = true, desc = "第三方插件管理器" },
-        -- { name = "nvim-lspinstall",         enable = true, desc = "第三方插件管理器" },
+            name = "​symbols-outline​",
+            enable = true,
+            desc = "outline工具栏"
+        }
         -- { name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
         -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
-        -- { name="nvim-cmp", enable = true, desc="基于LSP的代码智能提示完成引擎
-        -- "},
         -- { name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },
         -- { name="lspkind", enable = true, desc="这个小插件为neovim内置lsp添加了类似vcode的象形图"},
         -- { name = "navigator",     enable = true, desc = "基于LSP的源码分析和导航工具" },
