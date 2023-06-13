@@ -6,13 +6,21 @@ if vim.fn.has('mac') == 1 then
         let g:python3_host_prog = '/opt/local/bin/python3'
         ]])
 elseif vim.fn.has('unix') == 1 then
-    vim.g.HOME_PATH = "/home/" .. vim.fn.expand("$USER")
+    vim.cmd ([[
+        let g:python_host_prog = '/usr/bin/python'
+        let g:python3_host_prog = '/usr/bin/python3'
+        ]])
+    local username = vim.fn.system('whoami')
+    if string.find(username,"root") then
+        vim.g.HOME_PATH = "/root"
+    else
+        vim.g.HOME_PATH = "/home/" .. vim.fn.expand("$USER")
+    end
 else
     print("configure is only for mac or linux or WSL !")
     vim.g.HOME_PATH = " "
     return
 end
-
 
 local xlog = require("util.xlog")
 xlog.Startup = false

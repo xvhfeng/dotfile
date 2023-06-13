@@ -13,12 +13,9 @@ alias emacs="emacs -nw"
 #alias pbpaste='xsel --clipboard --output'
 #fi
 
-alias vup="cd ~/works/vms/ub2004;vagrant up"
-alias vhalt="cd ~/works/vms/ub2004;vagrant halt"
-alias vreload="cd ~/works/vms/ub2004;vagrant reload"
-alias vssh="cd ~/works/vms/ub2004;vagrant ssh"
-
 alias pyenv_login="source bin/activate"
+#quickly install in ubuntu
+alias apt-y='sudo apt-get install -y'
 
 alias ..='cd ..'
 # go back x directories
@@ -138,10 +135,10 @@ untar() {
 
 #undo an unzip
 function undozip(){
-unzip -l "$1" \
-    |  awk 'BEGIN { OFS="" ; ORS="" } ; { for ( i=4; i<NF; i++ ) print $i " "; print $NF "\n" }' \
-    | xargs -I{} rm -r {}
-}
+    unzip -l "$1" \
+        |  awk 'BEGIN { OFS="" ; ORS="" } ; { for ( i=4; i<NF; i++ ) print $i " "; print $NF "\n" }' \
+        | xargs -I{} rm -r {}
+    }
 
 #sudo a cmd or sudo the last cmd in the history
 s(){
@@ -199,16 +196,16 @@ alias busy="cat /dev/urandom | hexdump -C | grep \"ca fe\""
 
 export MARKPATH=$HOME/.marks
 function jump {
-cd -P $MARKPATH/$1 2>/dev/null || echo "No such mark: $1"
+    cd -P $MARKPATH/$1 2>/dev/null || echo "No such mark: $1"
 }
 function mark {
-mkdir -p $MARKPATH; ln -s $(pwd) $MARKPATH/$1
+    mkdir -p $MARKPATH; ln -s $(pwd) $MARKPATH/$1
 }
 function unmark {
-rm -i $MARKPATH/$1
+    rm -i $MARKPATH/$1
 }
 function marks {
-ls -l $MARKPATH | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' && echo
+    ls -l $MARKPATH | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' && echo
 }
 
 

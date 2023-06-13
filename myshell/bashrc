@@ -1,15 +1,21 @@
 #!/bin/bash
-
-
 ulimit -S -n 10240
-
-[[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
-
- if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
-          . /opt/local/etc/profile.d/bash_completion.sh
- fi
-
+SYSTEM=`uname -s`
+if [ $SYSTEM == "Darwin" ]; then
+    [[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
+    [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+    if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
+        . /opt/local/etc/profile.d/bash_completion.sh
+    fi
+fi
+if [ $SYSTEM == "Linux" ]; then
+    /usr/bin/setxkbmap -option "ctrl:nocaps"
+    [ -f /usr/share/autojump/autojump.sh ] && source /usr/share/autojump/autojump.sh
+    [ -f /etc/bash_completion ] && source /etc/bash_completion
+    # bind '"\e[A": history-search-backward'
+    #  bind '"\e[B": history-search-forward'
+    iwconfig wlp0s20f3 power off
+fi
 
 #添加git的自动完成命令功能
 if [ -f ~/.git-completion.bash ]; then
@@ -28,20 +34,14 @@ fi
 
 ulimit -c unlimited
 
-bind '"\e[A": history-search-backward'
-bind '"\e[B": history-search-forward'
-
-
-
 #if [ -f ~/.fzf.bash ]; then
 #    source ~/.fzf.bash
 #fi
-
 
 #添加git的自动完成命令功能
 if [ -f ~/.path.bash ]; then
     source ~/.path.bash
 fi
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-export EDITOR=/usr/local/bin/nvim
+export EDITOR=nvim
+

@@ -18,3 +18,7 @@ tags
 # Persistent undo
 [._]*.un~
 passwd.cnf
+bin
+reps
+.luarc.json
+lazy-lock.json

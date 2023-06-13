@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [ "$#" == "0" ] ;
+then
+    echo "Session daemon missing command" >&2
+    echo "USAGE: $0 command [args...]"
+    echo "Executes given command with args only once per XDG seat (session)."
+    echo "Keeps PID and log of the executed command."
+    exit 1
+fi
+
+COMMAND=$1
+shift
+
+NAME="${COMMAND##*/}"
+PIDFILE=~/.cache/session-daemon/$NAME-$XDG_SEAT.pid
+LOGFILE=~/.cache/session-daemon/$NAME-$XDG_SEAT.log
+PID=""
+PIDDIR="${PIDFILE%/*}"
+LOGDIR="${LOGFILE%/*}"
+
+mkdir -p $PIDDIR
+if [ $? -ne 0 ];
+then
+    echo "Session daemon PIDDIR not there: $PIDDIR" >&2
+    exit 2
+fi
+
+mkdir -p $LOGDIR
+if [ $? -ne 0 ];
+then
+    echo "Session daemon LOGDIR not there: $LOGDIR" >&2
+    exit 2
+fi

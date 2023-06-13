@@ -39,3 +39,13 @@ source ~/.bashrc
 
 echo "Init System Over!!!"
 echo "Notice:File in the path:"$fpath" is setted 777"
+
+
+
+ln -s `pwd`/aliasrc ~/.aliasrc
+ln -s `pwd`/bash_profile ~/.bash_profile
+ln -s  `pwd`/bashrc  ~/.bashrc
+ln -s `pwd`/dircolors ~/.dircolors
+ln -s `pwd`/git-completion.bash ~/.git-completion.bash
+ln -s `pwd`/path.bash ~/.path.bash
+

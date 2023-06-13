@@ -1,0 +1,3 @@
+#!/bin/bash
+#sudo apt-get install xautolock slock
+session-daemon xautolock -locker slock -time 5 -detectsleep -secure -corners "-00+"
