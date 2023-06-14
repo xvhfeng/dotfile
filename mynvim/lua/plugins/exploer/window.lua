@@ -4,29 +4,29 @@ plugin.core = {only_keymapping}
 
 plugin.mapping = {
 
-    keys = { 
-        --[[
+    keys = {
         {
-        mode = "n",
-        key = {"<Leader>", "w", "x"},
-        action = '<c-w>x',
-        short_desc = "change context in the window"
-    }, {
-        mode = "n",
-        key = {"<Leader>", "w", "r"},
-        action = '<c-w>r',
-        short_desc = "change window context"
-    }, {
-        mode = "n",
-        key = {"<Leader>", "w", "c"},
-        action = '<c-w>c',
-        short_desc = "Close current window"
-    }, {
-        mode = "n",
-        key = {"<Leader>", "w", "J"},
-        action = '<c-w>J',
-        short_desc = "Change The Bottom Window"
-    }, {
+            mode = "n",
+            key = { "w", "h"},
+            action = '<c-w>h',
+            short_desc = "Move To Left Window"
+        }, {
+            mode = "n",
+            key = {"w", "l"},
+            action = '<c-w>l',
+            short_desc = "Move To Right Window"
+        }, {
+            mode = "n",
+            key = { "w", "j"},
+            action = '<c-w>j',
+            short_desc = "Move To Below Window"
+        }, {
+            mode = "n",
+            key = { "w", "k"},
+            action = '<c-w>k',
+            short_desc = "Move To Top Window"
+        },
+        --[[ {
         mode = "n",
         key = {"<Leader>", "w", "K"},
         action = '<c-w>K',

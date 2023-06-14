@@ -151,9 +151,9 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "filter for quickfix"
             }, {
-                name = "windowswap",
-                enable = false,
-                desc = "交换window内容"
+                name = "bufexplorer",
+                enable = true,
+                desc = "Buffers选择器"
             }, {
                 name = "vimade",
                 enable = true,
