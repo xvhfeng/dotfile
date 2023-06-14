@@ -19,70 +19,70 @@ plugins_configure.plugins_groups = {
             enable = true,
             desc = "一个用Lua编写的快速而现代的配色方案，它支持NeoVim添加的许多新特性，如内置的LSP和TreeSitter"
         }, {
-            name = "vimdoc",
-            enable = true,
-            desc = "中文的vimdoc帮助"
-        }, {
-            name = "auto_mkdir",
-            enable = true,
-            desc = "save的时候自动创建目录"
-        }, {
-            name = "autojump",
-            enable = true,
-            desc = "集成autojump工具在vim中"
-        }, {
-            name = "FencView",
-            enable = true,
-            desc = "多字节支持"
-        }, {
-            name = "genutils",
-            enable = true,
-            desc = "vim的工具函数集合"
-        }, {
-            name = "indent-blankline",
-            enable = true,
-            desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"
-        }, {
-            name = "rainbow",
-            enable = true,
-            desc = "括号颜色匹配"
-        }, {
-            name = "neoterm",
-            enable = true,
-            desc = "nvim的终端插件"
-        }, {
-            name = "vim-airline",
-            enable = true,
-            desc = "vim的状态栏"
-        }, {
-            name = "vim-emacscommandline",
-            enable = true,
-            desc = "vim的命令中绑定emacs按键模式"
-        }, {
-            name = "vim-highlight-cursor-words",
-            enable = true,
-            desc = "高亮当前光标下的word"
-        }, {
-            name = "vim-repeat",
-            enable = true,
-            desc = "vim的重复命令插件"
-        }, {
-            name = "asynctasks",
-            enable = true,
-            desc = "异步执行工具,依赖于skywind3000/asyncrun.vim"
-        }, {
-            name = "vim-lastplace",
-            enable = true,
-            desc = "打开文件的时候,回到上一次编辑的地方"
-        }, {
-            name = "preview",
-            enable = true,
-            desc = "预览quickfix中的结果"
-        }, {
-            name = "which-key",
-            enable = true,
-            desc = "vim的操作快捷键映射"
-        } --  { name="test", enable = true, desc="测试插件"},
+                name = "vimdoc",
+                enable = true,
+                desc = "中文的vimdoc帮助"
+            }, {
+                name = "auto_mkdir",
+                enable = true,
+                desc = "save的时候自动创建目录"
+            }, {
+                name = "autojump",
+                enable = true,
+                desc = "集成autojump工具在vim中"
+            }, {
+                name = "FencView",
+                enable = true,
+                desc = "多字节支持"
+            }, {
+                name = "genutils",
+                enable = true,
+                desc = "vim的工具函数集合"
+            }, {
+                name = "indent-blankline",
+                enable = true,
+                desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"
+            }, {
+                name = "rainbow",
+                enable = true,
+                desc = "括号颜色匹配"
+            }, {
+                name = "neoterm",
+                enable = true,
+                desc = "nvim的终端插件"
+            }, {
+                name = "vim-airline",
+                enable = true,
+                desc = "vim的状态栏"
+            }, {
+                name = "vim-emacscommandline",
+                enable = true,
+                desc = "vim的命令中绑定emacs按键模式"
+            }, {
+                name = "vim-highlight-cursor-words",
+                enable = true,
+                desc = "高亮当前光标下的word"
+            }, {
+                name = "vim-repeat",
+                enable = true,
+                desc = "vim的重复命令插件"
+            }, {
+                name = "asynctasks",
+                enable = true,
+                desc = "异步执行工具,依赖于skywind3000/asyncrun.vim"
+            }, {
+                name = "vim-lastplace",
+                enable = true,
+                desc = "打开文件的时候,回到上一次编辑的地方"
+            }, {
+                name = "preview",
+                enable = true,
+                desc = "预览quickfix中的结果"
+            }, {
+                name = "which-key",
+                enable = true,
+                desc = "vim的操作快捷键映射"
+            } --  { name="test", enable = true, desc="测试插件"},
         }
     },
     [2] = {
@@ -93,34 +93,34 @@ plugins_configure.plugins_groups = {
             enable = true,
             desc = "代码注释插件"
         }, {
-            name = "textobj-word-column",
-            enable = true,
-            desc = "编辑多行"
-        }, {
-            name = "undotree",
-            enable = true,
-            desc = "undo操作tree"
-        }, {
-            name = "vim-expand-region",
-            enable = true,
-            desc = "块状编辑文本"
-        }, {
-            name = "vim-surround",
-            enable = true,
-            desc = "快速加入修改环绕字符"
-        }, {
-            name = "vim-templates",
-            enable = true,
-            desc = "文件模版,提供c语言的h,c文件等模版功能"
-        }, {
-            name = "vim-visual-multi",
-            enable = true,
-            desc = "多光标插件,可同时编辑选中的多出统一word"
-        }, {
-            name = "editor",
-            enable = true,
-            desc = "编辑类key-mapping"
-        }}
+                name = "textobj-word-column",
+                enable = true,
+                desc = "编辑多行"
+            }, {
+                name = "undotree",
+                enable = true,
+                desc = "undo操作tree"
+            }, {
+                name = "vim-expand-region",
+                enable = true,
+                desc = "块状编辑文本"
+            }, {
+                name = "vim-surround",
+                enable = true,
+                desc = "快速加入修改环绕字符"
+            }, {
+                name = "vim-templates",
+                enable = true,
+                desc = "文件模版,提供c语言的h,c文件等模版功能"
+            }, {
+                name = "vim-visual-multi",
+                enable = true,
+                desc = "多光标插件,可同时编辑选中的多出统一word"
+            }, {
+                name = "editor",
+                enable = true,
+                desc = "编辑类key-mapping"
+            }}
     },
     [3] = {
         ["name"] = "exploer",
@@ -130,70 +130,70 @@ plugins_configure.plugins_groups = {
             enable = true,
             desc = "lua写的floder"
         }, -- { name = "bufexplorer", enable = true, desc = "buffer的资源管理器" },
-        {
-            name = "maximizer",
-            enable = true,
-            desc = "最大化window,并且恢复原来打开的window状态"
-        }, {
-            name = "ranger",
-            enable = true,
-            desc = "floder管理器"
-        }, {
-            name = "rename",
-            enable = true,
-            desc = "重名当前打开的文件"
-        }, {
-            name = "qf-helper",
-            enable = true,
-            desc = "一个更好的quickfix的替代品"
-        }, {
-            name = "kickfix",
-            enable = true,
-            desc = "filter for quickfix"
-        }, {
-            name = "windowswap",
-            enable = true,
-            desc = "交换window内容"
-        }, {
-            name = "vimade",
-            enable = true,
-            desc = "高亮显示当前foced分割窗口"
-        }, --  { name = "bufresize",      enable = true, desc = "调整窗口的大小" },
-        {
-            name = "windowpicker",
-            enable = true,
-            desc = "vim分屏的时候,快速选择window"
-        }, {
-            name = "window",
-            enable = true,
-            desc = "只是对于windows的key mapping的操作"
-        }}
+            {
+                name = "maximizer",
+                enable = true,
+                desc = "最大化window,并且恢复原来打开的window状态"
+            }, {
+                name = "ranger",
+                enable = true,
+                desc = "floder管理器"
+            }, {
+                name = "rename",
+                enable = true,
+                desc = "重名当前打开的文件"
+            }, {
+                name = "qf-helper",
+                enable = true,
+                desc = "一个更好的quickfix的替代品"
+            }, {
+                name = "kickfix",
+                enable = true,
+                desc = "filter for quickfix"
+            }, {
+                name = "windowswap",
+                enable = false,
+                desc = "交换window内容"
+            }, {
+                name = "vimade",
+                enable = true,
+                desc = "高亮显示当前foced分割窗口"
+            }, --  { name = "bufresize",      enable = true, desc = "调整窗口的大小" },
+            {
+                name = "windowpicker",
+                enable = true,
+                desc = "vim分屏的时候,快速选择window"
+            }, {
+                name = "window",
+                enable = true,
+                desc = "只是对于windows的key mapping的操作"
+            }}
     },
     [4] = {
         ["name"] = "finder",
         ["subpath"] = "finder",
         ["plugins"] = { -- { name = "spectre",  enable = true, desc = "一个搜索与替换插件" },
-        {
-            name = "fzf",
-            enable = true,
-            desc = "查找操作"
-        }, {
-            name = "telescope",
-            enable = true,
-            desc = "一个高度可扩展的列表模糊查找工具"
-        }, {
-            name = "any-jump",
-            enable = true,
-            desc = "在定义的标记间跳转"
-        }, {
-            name = "ferret",
-            enable = true,
-            desc = "使用ack或者ripgrep查找,替换字符串"
-        }, {
-            name = "vim-ripgrep",
-            enable = true,
-            desc = "使用ripgrep查询字符串"
-        }}
+            {
+                name = "fzf",
+                enable = true,
+                desc = "查找操作"
+            }, {
+                name = "telescope",
+                enable = true,
+                desc = "一个高度可扩展的列表模糊查找工具"
+            }, {
+                name = "any-jump",
+                enable = true,
+                desc = "在定义的标记间跳转"
+            }, {
+                name = "ferret",
+                enable = true,
+                desc = "使用ack或者ripgrep查找,替换字符串"
+            }, {
+                name = "vim-ripgrep",
+                enable = true,
+                desc = "使用ripgrep查询字符串"
+            }}
     },
     [5] = {
         ["name"] = "navigation",
@@ -203,68 +203,68 @@ plugins_configure.plugins_groups = {
             enable = true,
             desc = "高亮显示匹配信息,并且可以在匹配之间跳转"
         }, {
-            name = "hop",
-            enable = true,
-            desc = "快速移动插件"
-        }, {
-            name = "marks",
-            enable = true,
-            desc = "标记插件"
-        }, {
-            name = "vim-unimpaired",
-            enable = true,
-            desc = "[ ] 开头的快捷键,vim缺失的快捷键"
-        }, {
-            name = "trouble",
-            enable = true,
-            desc = "一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"
-        }, {
-            name = "preview",
-            enable = true,
-            desc = "预览定义"
-        }, {
-            name = "nav",
-            enable = true,
-            desc = "navigation的key-mapping。"
-        }}
+                name = "hop",
+                enable = true,
+                desc = "快速移动插件"
+            }, {
+                name = "marks",
+                enable = true,
+                desc = "标记插件"
+            }, {
+                name = "vim-unimpaired",
+                enable = true,
+                desc = "[ ] 开头的快捷键,vim缺失的快捷键"
+            }, {
+                name = "trouble",
+                enable = true,
+                desc = "一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"
+            }, {
+                name = "preview",
+                enable = true,
+                desc = "预览定义"
+            }, {
+                name = "nav",
+                enable = true,
+                desc = "navigation的key-mapping。"
+            }}
     },
     [6] = {
         ["name"] = "lsp",
         ["subpath"] = "lspcfg",
         ["plugins"] = { -- 必须保证mason, mason-lspconfig,nvim-lspconfig 依次加载的顺序
-        {
-            name = "lsp-init",
-            enable = true,
-            desc = "lsp服务的配置,主要是mason,lspconfig等"
-        }, -- {name = "nvim-lspfuzzy",    enable = true, desc = "查看定义等窗口" },
-        {
-            name = "treesitter",
-            enable = true,
-            desc = "Neovim的树结构和抽象层"
-        }, {
-            name = "lspsaga",
-            enable = true,
-            desc = "漂亮的lsp的窗口定义,美化LSP显示"
-        }, {
-            name = "lsp_cmp",
-            enable = true,
-            desc = "lsp的智能补全"
-        },
-        {
-            name = "​symbols-outline​",
-            enable = true,
-            desc = "outline工具栏"
-        }
-        -- { name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
-        -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
-        -- { name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },
-        -- { name="lspkind", enable = true, desc="这个小插件为neovim内置lsp添加了类似vcode的象形图"},
-        -- { name = "navigator",     enable = true, desc = "基于LSP的源码分析和导航工具" },
-        -- { name = "null-ls",       enable = true, desc = "LSP的扩展插件,可以完成诊断,格式化代码等等功能" },
-        -- { name="nvim-dap", enable = true, desc="debug转换协议"},
-        -- { name = "symbols-outline", enable = true, desc = "使用LSP在nvim中树状展现一个符号的outline" },
-        -- { name = "vista",         enable = true, desc = "查看和搜索Vim/NeoVim中的LSP符号、标签" },
-        -- {name = "ccls",enable=true,desc = "使用ccls实现智能提示,跳转tree"},
+            {
+                name = "lsp-init",
+                enable = true,
+                desc = "lsp服务的配置,主要是mason,lspconfig等"
+            }, -- {name = "nvim-lspfuzzy",    enable = true, desc = "查看定义等窗口" },
+            {
+                name = "treesitter",
+                enable = true,
+                desc = "Neovim的树结构和抽象层"
+            }, {
+                name = "lspsaga",
+                enable = true,
+                desc = "漂亮的lsp的窗口定义,美化LSP显示"
+            }, {
+                name = "lsp_cmp",
+                enable = true,
+                desc = "lsp的智能补全"
+            },
+            {
+                name = "symbols-outline",
+                enable = true,
+                desc = "outline工具栏"
+            }
+            -- { name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
+            -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
+            -- { name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },
+            -- { name="lspkind", enable = true, desc="这个小插件为neovim内置lsp添加了类似vcode的象形图"},
+            -- { name = "navigator",     enable = true, desc = "基于LSP的源码分析和导航工具" },
+            -- { name = "null-ls",       enable = true, desc = "LSP的扩展插件,可以完成诊断,格式化代码等等功能" },
+            -- { name="nvim-dap", enable = true, desc="debug转换协议"},
+            -- { name = "symbols-outline", enable = true, desc = "使用LSP在nvim中树状展现一个符号的outline" },
+            -- { name = "vista",         enable = true, desc = "查看和搜索Vim/NeoVim中的LSP符号、标签" },
+            -- {name = "ccls",enable=true,desc = "使用ccls实现智能提示,跳转tree"},
         }
     },
     [7] = {
@@ -275,18 +275,18 @@ plugins_configure.plugins_groups = {
             enable = true,
             desc = "可以非常方便地管理我们的笔记和创建代办列表，可以随时进行预览"
         }, {
-            name = "orgmode",
-            enable = true,
-            desc = "一个采用org格式进行记录的笔记插件，好处是写的笔记支持emacs进行编辑"
-        }, {
-            name = "telekasten",
-            enable = true,
-            desc = "用于使用基于文本的Markdown Zettelkasten/Wiki,支持与telescope 插件的整合"
-        }, {
-            name = "mind",
-            enable = true,
-            desc = "快速将笔记挂载到树上的插件，通过树将日记，笔记，wiki和任务管理等通过工作流实现"
-        }}
+                name = "orgmode",
+                enable = true,
+                desc = "一个采用org格式进行记录的笔记插件，好处是写的笔记支持emacs进行编辑"
+            }, {
+                name = "telekasten",
+                enable = true,
+                desc = "用于使用基于文本的Markdown Zettelkasten/Wiki,支持与telescope 插件的整合"
+            }, {
+                name = "mind",
+                enable = true,
+                desc = "快速将笔记挂载到树上的插件，通过树将日记，笔记，wiki和任务管理等通过工作流实现"
+            }}
     },
     [8] = {
         ["name"] = "git",
@@ -296,14 +296,14 @@ plugins_configure.plugins_groups = {
             enable = true,
             desc = "git在vim中的查看"
         }, {
-            name = "lazygit",
-            enable = true,
-            desc = "git的一款plugin"
-        }, {
-            name = "diffview",
-            enable = true,
-            desc = "git的diff在vim中的展现"
-        } -- { name="project", enable = true, desc="项目管理"},
+                name = "lazygit",
+                enable = true,
+                desc = "git的一款plugin"
+            }, {
+                name = "diffview",
+                enable = true,
+                desc = "git的diff在vim中的展现"
+            } -- { name="project", enable = true, desc="项目管理"},
         }
     }
 }
