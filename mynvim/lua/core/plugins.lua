@@ -113,6 +113,10 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "文件模版,提供c语言的h,c文件等模版功能"
             }, {
+                name = "formatter",
+                enable = true,
+                desc = "格式化工具"
+            }, {
                 name = "vim-visual-multi",
                 enable = true,
                 desc = "多光标插件,可同时编辑选中的多出统一word"
@@ -158,8 +162,7 @@ plugins_configure.plugins_groups = {
                 name = "vimade",
                 enable = true,
                 desc = "高亮显示当前foced分割窗口"
-            }, --  { name = "bufresize",      enable = true, desc = "调整窗口的大小" },
-            {
+            }, {
                 name = "windowpicker",
                 enable = true,
                 desc = "vim分屏的时候,快速选择window"

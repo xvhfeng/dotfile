@@ -7,7 +7,7 @@ plugin.core = {
 plugin.mapping = {
     keys = {{
         mode = "n",
-        key = {"<leader>", "b", "l"},
+        key = {"<leader>", "b", "b"},
         action = ':ToggleBufExplorer<cr>',
         short_desc = "Show Buffers"
     }, {

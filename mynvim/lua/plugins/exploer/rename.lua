@@ -1,5 +1,3 @@
-
-
 local plugin = {}
 
 plugin.core = {
@@ -13,7 +11,7 @@ plugin.mapping = {
         action = ":Rename ",
         short_desc = "Rename current buffer filename.",
     }
-}
+    }
 }
 
 
