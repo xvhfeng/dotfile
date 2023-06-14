@@ -20,8 +20,38 @@ require("awful.hotkeys_popup.keys")
 
 -- Battery Power Control
 --require("power")
-local battery_widget = require("battery-widget.battery")
-local volume_widget = require("volume-widget.volume")
+local battery_widget = require("widgets.battery-widget.battery")
+local volume_widget = require("widgets.volume-widget.volume")
+
+-- calendar
+local calendar_widget = require("widgets.calendar-widget.calendar")
+mytextclock = wibox.widget.textclock()
+-- default
+local cw = calendar_widget({
+    theme = 'outrun',
+    start_sunday = false,
+    placement = 'top_right',
+    radius = 8,
+    -- with customized next/previous (see table above)
+    previous_month_button = 1,
+    next_month_button = 3,
+})
+
+mytextclock:connect_signal("button::press",
+    function(_, _, _, button)
+        if button == 1 then cw.toggle() end
+    end)
+
+--docker
+local docker_widget = require("widgets.docker-widget.docker")
+--todo list
+local todo_widget = require("widgets.todo-widget.todo")
+
+--weather
+local weather_widget = require("widgets.weather-widget.weather")
+-- logout
+local logout_menu_widget = require("widgets.logout-menu-widget.logout-menu")
+
 
 
 -- Load Debian menu entries
@@ -69,7 +99,7 @@ editor = os.getenv("EDITOR") or "editor"
 editor_cmd = terminal .. " -e " .. editor
 
 local rofi_cmd = "rofi -show run"
-local i3lock_settings = "i3lock-fancy -t 'Locked' -n -- scrot"
+--local i3lock_settings = "i3lock-fancy -t 'Locked' -n -- scrot"
 
 -- Default modkey.
 -- Usually, Mod4 is the key with a logo between Control and Alt.
@@ -149,7 +179,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 
 -- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock()
+-- mytextclock = wibox.widget.textclock()
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -267,10 +297,19 @@ awful.screen.connect_for_each_screen(function(s)
             mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
+            --customized
+            --https://home.openweathermap.org/api_keys
+            weather_widget({
+                api_key='02359399742ba887f3611b2db3a31491',
+                coordinates = {31.2243, 121.4691},
+            }),
+            docker_widget(),
+            todo_widget(),
             battery_widget(),
             volume_widget({
                 widget_type = "arc",
             }),
+            logout_menu_widget(),
             mybattmon,
             s.mylayoutbox,
         },
@@ -278,6 +317,12 @@ awful.screen.connect_for_each_screen(function(s)
 end)
 -- }}}
 
+local i3cmd =  [[
+        i3lock --insidever-color='#ffffff22' --ringver-color='#bb00bbbb' --insidewrong-color='#ffffff22'  \
+        --ringwrong-color='#880000bb' --inside-color='#00000000' --ring-color='#ff00ffcc' --line-color='#00000000' --separator-color='#ff00ffcc'  \
+        --verif-color='#ee00eeee' --wrong-color='#ee00eeee' --time-color='#ee00eeee' --date-color='#ee00eeee' --layout-color='#ee00eeee' \
+        --keyhl-color='#880000bb'  --bshl-color='#880000bb' --screen 1 --blur 5 --clock --indicator  --time-str="%H:%M:%S" --date-str='%A, %Y-%m-%d' --keylayout 1
+    ]]
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
     awful.button({}, 3, function()
@@ -420,7 +465,7 @@ clientkeys = gears.table.join(
         c:move_to_screen(c.screen.index + 1)
     end, { description = "move to screen right", group = "client" }),
     awful.key({ modkey, altkey }, "l", function()
-        awful.util.spawn("gnome-screensaver-command --lock")
+        awful.util.spawn(i3cmd)
     end),
     awful.key({}, "XF86AudioRaiseVolume", function()
         awful.util.spawn("amixer -D pulse sset Master 2%+", false)

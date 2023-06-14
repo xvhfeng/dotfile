@@ -4,6 +4,7 @@ alias lout="logout"
 alias c="clear"
 alias e="nvim"
 alias v="nvim"
+alias vim="nvim"
 alias cmdhelp="apropos"
 alias emacs="emacs -nw"
 

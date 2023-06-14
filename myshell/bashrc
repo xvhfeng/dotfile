@@ -1,4 +1,5 @@
 #!/bin/bash
+export PS1="\[\e[0;31m\]\D{%F %T}|\[\e[1;33m\]\u|\[\e[36m\]\w$"
 ulimit -S -n 10240
 SYSTEM=`uname -s`
 if [ $SYSTEM == "Darwin" ]; then
