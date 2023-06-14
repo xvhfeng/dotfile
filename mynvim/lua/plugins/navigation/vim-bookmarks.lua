@@ -1,61 +1,92 @@
 local plugin = {}
 
 plugin.core = {
-    "chentoast/marks.nvim",
+
+    'MattesGroeger/vim-bookmarks',
     config = function()
-        require'marks'.setup {
-            -- whether to map keybinds or not. default true
-            default_mappings = true,
-            -- which builtin marks to show. default {}
-            builtin_marks = {".", "<", ">", "^"},
-            -- whether movements cycle back to the beginning/end of buffer. default true
-            cyclic = true,
-            -- whether the shada file is updated after modifying uppercase marks. default false
-            force_write_shada = false,
-            -- how often (in ms) to redraw signs/recompute mark positions. 
-            -- higher values will have better performance but may cause visual lag, 
-            -- while lower values may cause performance penalties. default 150.
-            refresh_interval = 250,
-            -- sign priorities for each type of mark - builtin marks, uppercase marks, lowercase
-            -- marks, and bookmarks.
-            -- can be either a table with all/none of the keys, or a single number, in which case
-            -- the priority applies to all marks.
-            -- default 10.
-            sign_priority = {
-                lower = 10,
-                upper = 15,
-                builtin = 8,
-                bookmark = 20
-            },
-            -- disables mark tracking for specific filetypes. default {}
-            excluded_filetypes = {},
-            -- marks.nvim allows you to configure up to 10 bookmark groups, each with its own
-            -- sign/virttext. Bookmarks can be used to group together positions and quickly move
-            -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
-            -- default virt_text is "".
-            bookmark_0 = {
-                sign = "⚑",
-                virt_text = "hello world",
-                -- explicitly prompt for a virtual line annotation when setting a bookmark from this group.
-                -- defaults to false.
-                annotate = false
-            },
-            mappings = {
-                set_next = "m,",
-                toggle = "mm",
-            }
-        }
+        vim.g.bookmark_save_per_working_dir = 1
+        vim.g.bookmark_auto_save = 1
+
+        vim.cmd [[
+            "highlight BookmarkSign ctermbg=whatever ctermfg=whatever
+            "highlight BookmarkAnnotationSign ctermbg=whatever ctermfg=whatever
+            "highlight BookmarkLine ctermbg=whatever ctermfg=whatever
+            "highlight BookmarkAnnotationLine ctermbg=whatever ctermfg=whatever
+
+            function! g:BMWorkDirFileLocation()
+            let filename = 'bookmarks'
+            let location = ''
+            if isdirectory('.git')
+            " Current work dir is git's work tree
+            let location = getcwd().'/.git'
+            else
+            " Look upwards (at parents) for a directory named '.git'
+            let location = finddir('.git', '.;')
+            endif
+            if len(location) > 0
+            return location.'/'.filename
+            else
+            return getcwd().'/.'.filename
+            endif
+            endfunction
+            ]]
     end
 
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "m","l"},
-        action = ':Marks<CR>',
-        short_desc = "Open Marks List"
-    }
+    keys = {
+        {
+            mode = "n",
+            key = {"<leader>", "m","m"},
+            action = ':BookmarkToggle<CR>',
+            short_desc = "Toggle Mark"
+        },
+
+        {
+            mode = "n",
+            key = {"<leader>", "m","i"},
+            action = ':BookmarkAnnotate<CR>',
+            short_desc = "Toggle Mark Annotate"
+        },
+
+        {
+            mode = "n",
+            key = {"<leader>", "m","a"},
+            action = ':BookmarkShowAll<CR>',
+            short_desc = "Show All Marks"
+        },
+        {
+            mode = "n",
+            key = {"<leader>", "m","c"},
+            action = ':BookmarkClear<CR>',
+            short_desc = "Clear Current Mark"
+        },
+        {
+            mode = "n",
+            key = {"<leader>", "m","k"},
+            action = ':BookmarkMoveUp<CR>',
+            short_desc = "Move Mark Up"
+        },
+        {
+            mode = "n",
+            key = {"<leader>", "m","j"},
+            action = ':BookmarkMoveDown<CR>',
+            short_desc = "Move Mark Down"
+        },
+        {
+            mode = "n",
+            key = {"<leader>", "m","p"},
+            action = ':BookmarkPrev<CR>',
+            short_desc = "Move Mark Prev"
+        },
+        {
+            mode = "n",
+            key = {"<leader>", "m","n"},
+            action = ':BookmarkNext<CR>',
+            short_desc = "Move Mark Next"
+        },
+
     }
 }
 

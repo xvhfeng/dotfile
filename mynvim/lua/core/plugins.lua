@@ -207,8 +207,12 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "快速移动插件"
             }, {
-                name = "marks",
+                name = "vim-bookmarks",
                 enable = true,
+                desc = "标记插件"
+            }, {
+                name = "marks",
+                enable = false,
                 desc = "标记插件"
             }, {
                 name = "vim-unimpaired",
