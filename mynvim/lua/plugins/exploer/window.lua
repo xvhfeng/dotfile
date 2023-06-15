@@ -70,11 +70,6 @@ plugin.mapping = {
             short_desc = "Down Resize window"
         }, {
             mode = "n",
-            key = {"<Leader>", "w", "'"},
-            action = ":resize -10<CR>",
-            short_desc = "Down Resize window"
-        }, {
-            mode = "n",
             key = {"<Leader>", "w", "["},
             action = '<c-w>t<c-w>K',
             short_desc = "change window  vertically to horizonally"

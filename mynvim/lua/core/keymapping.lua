@@ -68,6 +68,7 @@ global_mapping.addkey = function(new_map)
     --  key = {"<leader>", "f"},     required
     --  noremap = nil,               default : nil
     --  action = "",                  required
+    --  checked = false,             default : false
     --  short_desc = "",              default : No DESC
     --  desc = "",                    default = short_desc
     --  expr = nil,                   default = nil
@@ -145,16 +146,20 @@ global_mapping.addkey = function(new_map)
         end
     end
 
-    -- 检测key的冲突性
-    if used[new_map['mode']][uni_key_string] then
-        print("Mode " .. new_map['mode'] .. " " .. uni_key_string .. " has been used for " .. used[new_map['mode']][uni_key_string] .. ", you should change " .. new_map["short_desc"] .. " to another one.")
-        return
-    else
-        used[new_map['mode']][uni_key_string] = new_map['short_desc']
+    local checked = new_map['checked']
+
+    if nil == checked or checked then
+        -- 检测key的冲突性
+        if used[new_map['mode']][uni_key_string] then
+            print("Mode " .. new_map['mode'] .. " " .. uni_key_string .. " has been used for " .. used[new_map['mode']][uni_key_string] .. ", you should change " .. new_map["short_desc"] .. " to another one.")
+            return
+        else
+            used[new_map['mode']][uni_key_string] = new_map['short_desc']
+        end
     end
 
     if  #key_list > 1 and new_map.mode == 'n' then
-    -- if myplugins.all_loaded_module['which_key'] and #key_list > 1 and new_map.mode == 'n' then
+        -- if myplugins.all_loaded_module['which_key'] and #key_list > 1 and new_map.mode == 'n' then
         local prefix = key_list[1]
         if #key_list > 1 then
             prefix = prefix .. key_list[2]
@@ -188,14 +193,14 @@ global_mapping.addkey = function(new_map)
             end
         end
     end
-   -- else
+    -- else
     if new_map.action ~= nil then
         if del_first then
             vim.api.nvim_del_keymap(new_map.mode,uni_key_string)
         end
         vim.api.nvim_set_keymap(new_map.mode, uni_key_string, new_map.action, option)
     end
-   -- end
+    -- end
 
 end
 
@@ -203,12 +208,14 @@ global_mapping.addkey({
     mode = "i",
     key = { vim.g.mapleader },
     action = vim.g.mapleader,
+    checked = false,
 })
 
 global_mapping.addkey({
     mode = "i",
     key = { vim.g.maplocalleader },
     action = vim.g.maplocalleader,
+    checked = false,
 })
 
 -- common mappings
@@ -265,10 +272,10 @@ global_mapping.setup = function()
         -- vim.cmd("packadd which-key")
 
         --log.setup("trace",log.OnlyFile,"/Users/xuhaifeng/works/nvim-log/log.log")
-      --  local jstr = json.encode(mapping_prefix or {} )
+        --  local jstr = json.encode(mapping_prefix or {} )
         local tstr = DataDumper(mapping_prefix)
         -- print(tstr)
-      --  xlog.trace("mapping prefix json\n  %s", jstr )
+        --  xlog.trace("mapping prefix json\n  %s", jstr )
         xlog.trace("mapping prefix tbl\n  %s",tstr )
 
         -- jstr = json_encode(mapping_prefix)

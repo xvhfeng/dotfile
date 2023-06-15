@@ -193,7 +193,7 @@ zN	启用折叠
             short_desc = "toggle folding"
         }, {
             mode = "n",
-            key = {"<leader>","f","a"},
+            key = {"<leader>","f","B"},
             action = 'gg=G',
             short_desc = "Format All File"
         }

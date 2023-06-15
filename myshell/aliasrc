@@ -16,7 +16,7 @@ alias emacs="emacs -nw"
 
 alias pyenv_login="source bin/activate"
 #quickly install in ubuntu
-alias apt-y='sudo apt-get install -y'
+alias apy='sudo apt-get install -y'
 
 alias ..='cd ..'
 # go back x directories

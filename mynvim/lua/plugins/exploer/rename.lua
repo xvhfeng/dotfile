@@ -7,7 +7,7 @@ plugin.core = {
 plugin.mapping = {
     keys = { {
         mode = "n",
-        key = { "<leader>", "f", "r" },
+        key = { "<leader>", "b", "r" },
         action = ":Rename ",
         short_desc = "Rename current buffer filename.",
     }

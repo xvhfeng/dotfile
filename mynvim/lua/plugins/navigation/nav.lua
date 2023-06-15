@@ -5,25 +5,27 @@ plugin.core = {only_keymapping}
 plugin.mapping = {
     keys = {{
         mode = "n",
-        key = {"<leader>", "["},
+        key = {"[", ","},
         action = '<c-O>',
         short_desc = "jump to better last postion"
     }, {
-        mode = "n",
-        key = {"<leader>", "]"},
-        action = '<c-I>',
-        short_desc = "jump to better new postion"
-    }, {
-        mode = "n",
-        key = {"j"},
-        action = 'gj',
-        short_desc = "Treat long lines as break lines in j"
-    }, {
-        mode = "n",
-        key = {"k"},
-        action = 'gk',
-        short_desc = "Treat long lines as break lines in k"
-    }}
+            mode = "n",
+            key = { "[","."},
+            action = '<c-I>',
+            short_desc = "jump to better new postion"
+        }, {
+            mode = "n",
+            key = {"j"},
+            checked = false,
+            action = 'gj',
+            short_desc = "Treat long lines as break lines in j"
+        }, {
+            mode = "n",
+            key = {"k"},
+            action = 'gk',
+            checked = false,
+            short_desc = "Treat long lines as break lines in k"
+        }}
 }
 
 --[==[
