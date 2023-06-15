@@ -1,3 +1,0 @@
-let l:bm_file_version = 1
-let l:bm_sessions = {'default': {'/opt/dotfile/mynvim/init.lua': [{'sign_idx': 9501, 'line_nr': 28, 'content': '    xlog.setup("trace",xlog.OnlyFile,vim.g.HOME_PATH.."/.cache/nvim/xlog")'},{'sign_idx': 9500, 'line_nr': 35, 'content': 'vim.g.REPSPATH = repspath'},],}}
-let l:bm_current_session = 'default'
