@@ -183,19 +183,14 @@ zN	启用折叠
 
 --]===] {
             mode = "n",
-            key = {"z", "f"},
+            key = {"z", "j"},
             action = 'zf%',
             short_desc = "folding"
         }, {
             mode = "n",
-            key = {"<SPACE>"},
-            action = 'za',
-            short_desc = "toggle folding"
-        }, {
-            mode = "n",
             key = {"<leader>","f","B"},
             action = 'gg=G',
-            short_desc = "Format All File"
+            short_desc = "Format(Except C/C++ Lua)"
         }
         -- , {
         --    mode = "n",

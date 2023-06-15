@@ -136,6 +136,11 @@ plugin.mapping = {
     }, {
             mode = "n",
             key = {"<leader>", "f", "q"},
+            action = "<cmd>lua require('telescope.builtin').grep_string({search = vim.fn.expand('<cword>')})<cr>",
+            short_desc = "grep current words"
+        }, {
+            mode = "n",
+            key = {"<leader>", "f", "d"},
             action = "<cmd>lua require('telescope.builtin').live_grep()<cr>",
             short_desc = "grep string"
         }, {

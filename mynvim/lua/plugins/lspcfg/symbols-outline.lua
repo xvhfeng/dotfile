@@ -12,9 +12,9 @@ plugin.mapping = {
     keys = { 
         {
             mode = {"n"},
-            key = {"<leader>", "o", "l"},
+            key = {"<leader>", "l", "O"},
             action = "<cmd>SymbolsOutline<CR>",
-            short_desc = "Outline"
+            short_desc = "Symbols Outline"
         }}
 }
 

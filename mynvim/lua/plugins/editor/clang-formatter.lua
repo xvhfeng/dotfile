@@ -9,7 +9,7 @@ plugin.mapping = {
     keys = { {
         mode = "n",
         key = {"<leader>", "f", "a"},
-        action = '=ClangFormat<cr>',
+        action = ':ClangFormat<cr>',
         short_desc = "Format C/C++ File",
     }
     }

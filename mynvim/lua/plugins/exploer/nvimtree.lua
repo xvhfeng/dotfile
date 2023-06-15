@@ -45,6 +45,10 @@ plugin.core = {
     config = function() 
         -- empty setup using defaults
         require("nvim-tree").setup({
+            disable_netrw = false,
+            hijack_netrw = false,
+            hijack_cursor = false,
+            update_cwd = false,
             sync_root_with_cwd = true,
             -- respect_buf_cwd = true,
             sort_by = "case_sensitive",
@@ -61,10 +65,6 @@ plugin.core = {
                 },
             },
 
-            hijack_directories = {
-                enable = true,
-                auto_open = true,
-            },
 
         })
 

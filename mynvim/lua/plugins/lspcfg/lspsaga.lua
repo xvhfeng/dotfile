@@ -139,7 +139,7 @@ plugin.mapping = {
         mode = {"n"},
         key = {"<leader>", "l", "o"},
         action = "<cmd>Lspsaga outline<CR>",
-        short_desc = "Outline"
+        short_desc = "Lspsaga Outline(default)"
     }, -- Hover Doc
     -- If there is no hover doc,
     -- there will be a notification stating that

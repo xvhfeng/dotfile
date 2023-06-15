@@ -1,12 +1,3 @@
---[[
-Author: your name
-Date: 2023-06-12 17:39:54
-LastEditTime: 2023-06-12 17:39:54
-LastEditors: your name
-Description: 
-FilePath: /mynvim/lua/plugins/lspcfg/copilot_cmp.lua
-可以输入预定的版权声明、个性签名、空行等
---]]
 local plugin = {}
 
 plugin.core = {

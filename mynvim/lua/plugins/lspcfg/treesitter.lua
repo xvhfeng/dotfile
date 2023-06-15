@@ -22,22 +22,24 @@ plugin.core = {
                     scope_incremental = '<TAB>',
                 }
             },
-          
-           
+
+
         }
-        vim.wo.foldmethod = 'expr'
+        -- vim.wo.foldmethod = 'marker'
         vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
         -- 默认不折叠
         vim.wo.foldlevel = 99
         vim.wo.foldenable = false
 
+        --[[
         local auto_indent = vim.api.nvim_create_augroup("AUTO_INDENT", {clear = true})
         vim.api.nvim_create_autocmd({"BufWritePost"}, {
             pattern = "*",
             group = auto_indent,
             command = 'normal! gg=G``'
         })
-        
+        --]]
+
 
     end
 }

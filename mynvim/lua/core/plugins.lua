@@ -71,9 +71,13 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "异步执行工具,依赖于skywind3000/asyncrun.vim"
             }, {
-                name = "vim-lastplace",
+                name = "remember",
                 enable = true,
                 desc = "打开文件的时候,回到上一次编辑的地方"
+            }, {
+                name = "keepsession",
+                enable = true,
+                desc = "保存上一次回话"
             }, {
                 name = "preview",
                 enable = true,
@@ -260,8 +264,19 @@ plugins_configure.plugins_groups = {
                 name = "lsp_cmp",
                 enable = true,
                 desc = "lsp的智能补全"
-            },
-            {
+            }, {
+                name = "nvim-dap",
+                enable = true,
+                desc = "lsp的智能补全"
+            }, {
+                name = "copilot",
+                enable = true,
+                desc = "GitHub的AI分析"
+            }, {
+                name = "copilot_cmp",
+                enable = true,
+                desc = "GitHub的AI智能补全"
+            }, {
                 name = "symbols-outline",
                 enable = true,
                 desc = "outline工具栏"
