@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# myshell tools
+# merge prev branch to current and push current branch to remote
+# usage:
+#   source git-pull.sh $1
+#        $1: tag(section name) for git configure in passwd.cnf
+# remark:
+#  if report error with not found "read-passwd" function or command,
+#  pelase exec install.sh first.
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 \$1 "
+    echo "  \$1: tag(section name) for git configure in passwd.cnf"
+    exit 1
+fi
+
+echo "-----------------------------"
+echo "* pull current branch changed from remote *"
+echo "-----------------------------"
+echo "* read certificate with $MYGIT_HOME/passwd.cnf *"
+source $MYGIT_HOME/read-passwd-cfg.sh
+uid=$(read-passwd $MYGIT_HOME/passwd.cnf $1 uid)
+pass=$(read-passwd $MYGIT_HOME/passwd.cnf $1 pwd)
+
+echo "-----------------------------"
+echo "* 鉴权开始,GitSite -> " $1 "* "
+echo "@UserName -> " ${uid}
+echo "@Password -> " ${pass}
+echo "-----------------------------"
+
+export SEXPECT_SOCKFILE=/tmp/sexpect-ssh-$$.sock
+type -P sexpect >& /dev/null || exit 1
+
+echo "* begin push to remote *"
+sexpect spawn -idle 60 -t 10 git pull
+
+while true; do
+    sexpect expect -nocase -re 'Username|Password'
+    ret=$?
+    if [[ $ret == 0 ]]; then
+        out=$( sexpect expect_out )
+        if [[ $out == Username ]]; then
+            sexpect send -enter ${uid}
+            continue
+        else
+            sexpect send -enter ${pass}
+            break
+        fi
+    elif
+        sexpect chkerr -errno $ret -is eof; then
+        sexpect wait
+        exit
+    elif
+        sexpect chkerr -errno $ret -is timeout; then
+        sexpect close
+        sexpect wait
+        fatal "timeout waiting for password prompt"
+    else
+        fatal "unknown error: $ret"
+    fi
+done
+
+sexpect interact
+
+echo "* push to remote over *"
+echo "-----------------------------"
+
+
