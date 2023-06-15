@@ -1,7 +1,6 @@
 local plugin = {}
 
 plugin.core = {
-
     -- "skywind3000/asynctasks.vim",
     "cstsunfu/asynctasks.vim", -- FIXME: when this buf fix, change to the default repo. https://github.com/skywind3000/asynctasks.vim/issues/92
     cmd = {"AsyncTask"},
@@ -16,12 +15,13 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "q", "b"},
-        action = "<cmd>AsyncTask file-build<cr>",
-        short_desc = "Quick Build"
-    }, {
+    keys = {
+        {
+            mode = "n",
+            key = {"<leader>", "q", "b"},
+            action = "<cmd>AsyncTask file-build<cr>",
+            short_desc = "Quick Build"
+        }, {
             mode = "n",
             key = {"<leader>", "q", "r"},
             action = "<cmd>AsyncTask file-run<cr>",
@@ -46,7 +46,8 @@ plugin.mapping = {
             key = {"<leader>", "q", "g", "f"},
             action = "<cmd>AsyncTask quickfix-rg-grep-filetype<cr>",
             short_desc = "Quick Grep Current Path File Types"
-        }}
+        }
+    }
 }
 
 return plugin

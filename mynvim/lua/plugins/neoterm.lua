@@ -15,17 +15,19 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "t", "o"},
-        action = ':NeotermToggle<cr>',
-        short_desc = "NeotermToggle"
-    }, {
-        mode = "n",
-        key = {"<leader>", "t", "e"},
-        action = ':NeotermExit<cr>',
-        short_desc = "NeotermExit"
-    }}
+    keys = {
+        {
+            mode = "n",
+            key = {"<leader>", "t", "o"},
+            action = ':NeotermToggle<cr>',
+            short_desc = "NeotermToggle"
+        }, {
+            mode = "n",
+            key = {"<leader>", "t", "e"},
+            action = ':NeotermExit<cr>',
+            short_desc = "NeotermExit"
+        }
+    }
 }
 
 return plugin

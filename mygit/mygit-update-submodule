@@ -1,7 +1,5 @@
 #!/bin/bash
 
 # clone or update submodule 
+git submodule update --init --recursive
 
-
-git submodule update --init  //初始化版本
-git submodule update --remote  //更新到最新版本

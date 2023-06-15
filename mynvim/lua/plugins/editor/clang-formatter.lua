@@ -2,15 +2,17 @@ local plugin = {}
 
 plugin.core = {
     "rhysd/vim-clang-format",
+
 }
 
 plugin.mapping = {
-    keys = {{
+    keys = { {
         mode = "n",
         key = {"<leader>", "f", "a"},
-        action = ':ClangFormat<cr>',
-        short_desc = "Format File",
-    } }
+        action = '=ClangFormat<cr>',
+        short_desc = "Format C/C++ File",
+    }
+    }
 }
 
 return plugin

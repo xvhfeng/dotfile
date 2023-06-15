@@ -113,9 +113,13 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "文件模版,提供c语言的h,c文件等模版功能"
             }, {
-                name = "formatter",
+                name = "lua-formatter",
                 enable = true,
-                desc = "格式化工具"
+                desc = "lua-format格式化工具"
+            }, {
+                name = "clang-formatter",
+                enable = true,
+                desc = "clang-format格式化工具"
             }, {
                 name = "vim-visual-multi",
                 enable = true,

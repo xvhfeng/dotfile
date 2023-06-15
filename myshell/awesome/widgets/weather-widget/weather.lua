@@ -15,7 +15,7 @@ local beautiful = require("beautiful")
 
 local HOME_DIR = os.getenv("HOME")
 local WIDGET_DIR = HOME_DIR .. '/.config/awesome/widgets/weather-widget'
-local GET_FORECAST_CMD = [[bash -c "curl -s '%s'"]]
+local GET_FORECAST_CMD = [[bash -c "curl -s --show-error -X GET '%s'"]]
 
 local SYS_LANG = os.getenv("LANG"):sub(1, 2)
 if SYS_LANG == "C" or SYS_LANG == "C." then
@@ -36,9 +36,9 @@ local function show_warning(message)
     }
 end
 
-if SYS_LANG ~= LANG then
-    --    show_warning("Your language is not supported yet. Language set to English")
-end
+--if SYS_LANG ~= LANG then
+--show_warning("Your language is not supported yet. Language set to English")
+--end
 
 local weather_widget = {}
 local warning_shown = false
@@ -152,16 +152,15 @@ local function worker(user_args)
     local timeout = args.timeout or 120
 
     local ICONS_DIR = WIDGET_DIR .. '/icons/' .. icon_pack_name .. '/'
-    local owm_one_cal_api = [[http://api.openweathermap.org/data/2.5/forecast?q=shanghai&appid=02359399742ba887f3611b2db3a31491]]
-    --[[
+    local owm_one_cal_api =
     ('https://api.openweathermap.org/data/2.5/onecall' ..
     '?lat=' .. coordinates[1] .. '&lon=' .. coordinates[2] .. '&appid=' .. api_key ..
     '&units=' .. units .. '&exclude=minutely' ..
     (show_hourly_forecast == false and ',hourly' or '') ..
     (show_daily_forecast == false and ',daily' or '') ..
     '&lang=' .. LANG)
-    --]]
 
+    --show_warning(owm_one_cal_api)
     weather_widget = wibox.widget {
         {
             {
