@@ -22,7 +22,7 @@ else
 end
 
 local xlog = require("util.xlog")
-xlog.Startup = false
+xlog.Startup = true
 if xlog.Startup then
     xlog.setup("trace", xlog.OnlyFile, vim.g.HOME_PATH .. "/.cache/nvim/xlog")
     xlog.trace("NVim Startup...")

@@ -323,6 +323,13 @@ local i3cmd =  [[
         --verif-color='#ee00eeee' --wrong-color='#ee00eeee' --time-color='#ee00eeee' --date-color='#ee00eeee' --layout-color='#ee00eeee' \
         --keyhl-color='#880000bb'  --bshl-color='#880000bb' --screen 1 --blur 5 --clock --indicator  --time-str="%H:%M:%S" --date-str='%A, %Y-%m-%d' --keylayout 1
     ]]
+
+local autolock_cmd = [[exec xautolock -detectsleep -time 5 -locker "\
+        i3lock --insidever-color='#ffffff22' --ringver-color='#bb00bbbb' --insidewrong-color='#ffffff22'  \
+        --ringwrong-color='#880000bb' --inside-color='#00000000' --ring-color='#ff00ffcc' --line-color='#00000000' --separator-color='#ff00ffcc'  \
+        --verif-color='#ee00eeee' --wrong-color='#ee00eeee' --time-color='#ee00eeee' --date-color='#ee00eeee' --layout-color='#ee00eeee' \
+        --keyhl-color='#880000bb'  --bshl-color='#880000bb' --screen 1 --blur 5 --clock --indicator  --time-str="%H:%M:%S" --date-str='%A, %Y-%m-%d' --keylayout 1"]]
+
 -- {{{ Mouse bindings
 root.buttons(gears.table.join(
     awful.button({}, 3, function()
@@ -695,6 +702,7 @@ end)
 awful.util.spawn_with_shell("nm-applet")
 awful.util.spawn_with_shell("gnome-sound-applet") --sine ubuntu 12.04.02
 awful.util.spawn_with_shell("fcitx")
+--awful.util.spawn_with_shell(autolock_cmd)
 -- awful.util.spawn_with_shell("gnome-settings-daemon")
 -- awful.util.spawn_with_shell("/usr/bin/gnome-screensaver")
 -- awful.util.spawn_with_shell("~/.config/awesome/xautolock-session")

@@ -49,4 +49,5 @@ if [ $SYSTEM == "Linux" ]; then
     export RUSTC_HOME=$RUST_HOME/rustc
     export PATH=$CARGO_HOME/bin:$RUSTC_HOME/bin:$PATH
     export PATH=$DOTFILE_PATH/myshell/tools:$PATH
+    export PATH=$DOTFILE_PATH/bin/lazydocker:$PATH
 fi

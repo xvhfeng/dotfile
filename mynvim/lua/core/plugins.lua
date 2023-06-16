@@ -19,6 +19,10 @@ plugins_configure.plugins_groups = {
             enable = true,
             desc = "一个用Lua编写的快速而现代的配色方案，它支持NeoVim添加的许多新特性，如内置的LSP和TreeSitter"
         }, {
+                name = "tokyonight",
+                enable = false,
+                desc = "nvim的主题"
+        }, {
                 name = "vimdoc",
                 enable = true,
                 desc = "中文的vimdoc帮助"
@@ -47,8 +51,12 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "括号颜色匹配"
             }, {
-                name = "neoterm",
+                name = "toggleterm",
                 enable = true,
+                desc = "虚拟终端，执行系统bash与lazydocker"
+            }, {
+                name = "neoterm",
+                enable = false,
                 desc = "nvim的终端插件"
             }, {
                 name = "vim-airline",
@@ -75,8 +83,12 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "打开文件的时候,回到上一次编辑的地方"
             }, {
-                name = "keepsession",
+                name = "noice",
                 enable = true,
+                desc = "UI for Messgae cmdline and popupmenu"
+            }, {
+                name = "keepsession",
+                enable = false,
                 desc = "保存上一次回话"
             }, {
                 name = "preview",
@@ -265,16 +277,20 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "lsp的智能补全"
             }, {
+                name = "cmake-tools",
+                enable = true,
+                desc = "Cmake Tools"
+            }, {
                 name = "nvim-dap",
                 enable = true,
                 desc = "lsp的智能补全"
             }, {
                 name = "copilot",
-                enable = true,
+                enable = false,
                 desc = "GitHub的AI分析"
             }, {
                 name = "copilot_cmp",
-                enable = true,
+                enable = false,
                 desc = "GitHub的AI智能补全"
             }, {
                 name = "symbols-outline",

@@ -192,12 +192,12 @@ zN	启用折叠
             action = 'gg=G',
             short_desc = "Format(Except C/C++ Lua)"
         }
-        -- , {
-        --    mode = "n",
-        --   key = {"<c-a>"},
-        --  action = 'ggvG$',
-        -- short_desc = "Select All File"
-        --}
+         , {
+            mode = "n",
+           key = {"<c-a>"},
+          action = 'ggvG$',
+         short_desc = "Select All File"
+        }
     }
 }
 
