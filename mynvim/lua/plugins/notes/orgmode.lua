@@ -3,6 +3,8 @@ local plugin = {}
 plugin.core = {
     -- 'nvim-treesitter/nvim-treesitter',
     'nvim-orgmode/orgmode',
+    ft = "org",
+    cmd = { "Org" },
     config = function()
         require('orgmode').setup_ts_grammar()
 
@@ -18,8 +20,94 @@ plugin.core = {
 
         require('orgmode').setup({
             org_agenda_files = {'~/notes/org/*', '~/notes/my-orgs/**/*'},
-            org_default_notes_file = '~/notes/org/refile.org'
+            org_default_notes_file = '~/notes/org/refile.org',
+            org_todo_keywords = { 'TODO(T)', 'WAIT(W)', '|', 'DONE(D)', "ASSIGN(A)", 'CANCEL(C)'},
+            org_todo_keyword_faces = {
+                TODO = ':foreground #FA7F08 :weight bold', -- overrides builtin color for `TODO` keyword
+                WAIT= ':foreground #F24405 :weight bold',
+                DONE = ':foreground #9EF8EE :weight bold', -- overrides builtin color for `TODO` keyword
+                ASSIGN = ':foreground #22BABB :weight bold',
+                CANCEL = ':foreground #348888 :weight bold', -- overrides builtin color for `TODO` keyword
+            },
+            org_deadline_warning_days = 7,
+            org_agenda_min_height = 16,
+            org_agenda_span = 'week', -- day/week/month/year/number of days
+            org_agenda_start_on_weekday = 1,
+            org_agenda_start_day = nil, -- start from today + this modifier
+            org_capture_templates = {
+                t = {
+                    description = 'Default TODO',
+                    template = '** TODO %?\n   SCHEDULED: %T\n   [[file:~/org/wiki/note/;.md]]',
+                    target = '~/org/agenda/todo.org',
+                },
+                w = {
+                    description = 'Work Weekly Plan',
+                    template = '** TODO %?\n   SCHEDULED: %T\n   [[file:~/org/work/weekly/%<%Y>/%<%Y>_%<%W>.md][%<%Y>_%<%W>]]',
+                    target = '~/org/work/weekly/todo.org',
+                },
+            },
+            org_agenda_skip_scheduled_if_done = false,
+            org_agenda_skip_deadline_if_done = false,
+            org_agenda_text_search_extra_files = {},
+            org_priority_highest = 'A',
+            org_priority_default = 'B',
+            org_priority_lowest = 'C',
+            org_archive_location = '%s_archive::',
+            org_use_tag_inheritance = true,
+            org_tags_exclude_from_inheritance = {},
+            org_hide_leading_stars = false,
+            org_hide_emphasis_markers = false,
+            org_ellipsis = '...',
+            org_log_done = 'time',
+            org_highlight_latex_and_related = nil,
+            org_custom_exports = {},
+            org_indent_mode = 'indent',
+            org_time_stamp_rounding_minutes = 5,
+            org_blank_before_new_entry = {
+                heading = true,
+                plain_list_item = false,
+            },
+            org_src_window_setup = 'top 20new',
+            org_edit_src_content_indentation = 0,
+            diagnostics = true,
+            notifications = {
+                enabled = false,
+                cron_enabled = true,
+                repeater_reminder_time = {1, 10},
+                deadline_warning_reminder_time = false,
+                reminder_time = 10,
+                deadline_reminder = true,
+                scheduled_reminder = true,
+                notifier = function(tasks)
+                    local result = {}
+                    for _, task in ipairs(tasks) do
+                        require('orgmode.utils').concat(result, {
+                            string.format('# %s (%s)', task.category, task.humanized_duration),
+                            string.format('%s %s %s', string.rep('*', task.level), task.todo, task.title),
+                            string.format('%s: <%s>', task.type, task.time:to_string())
+                        })
+                    end
+
+                    if not vim.tbl_isempty(result) then
+                        require('orgmode.notifications.notification_popup'):new({ content = result })
+                    end
+                end,
+                cron_notifier = function(tasks)
+                    for _, task in ipairs(tasks) do
+                        local title = string.format('%s (%s)', task.category, task.humanized_duration)
+                        local subtitle = string.format('%s %s %s', string.rep('*', task.level), task.todo, task.title)
+                        local date = string.format('%s: %s', task.type, task.time:to_string())
+                        -- Linux
+                        if vim.fn.executable('notify-send') == 1 then
+                            vim.loop.spawn('notify-send', { args = { string.format('%s\n%s\n%s', title, subtitle, date) }})
+                        elseif vim.fn.executable('terminal-notifier') == 1 then -- MacOS
+                            vim.loop.spawn('terminal-notifier', { args = { '-title', title, '-subtitle', subtitle, '-message', date }})
+                        end
+                    end
+                end
+            }
         })
+        vim.cmd[[autocmd FileType org setlocal iskeyword+=:,#,+]]
     end
 }
 
