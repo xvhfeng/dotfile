@@ -195,7 +195,7 @@ zN	启用折叠
          , {
             mode = "n",
            key = {"<c-a>"},
-          action = 'ggvG$',
+          action = 'gg^vG$',
          short_desc = "Select All File"
         }
     }

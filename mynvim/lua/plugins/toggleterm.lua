@@ -12,7 +12,7 @@ plugin.core = {
 
 local lazydocker = nil
 function _lazydocker_toggle()
-    lazydocker = lazydocker or require('plugins.toggleterm.lazydocker')
+    lazydocker = lazydocker or require('plugins.containers.lazydocker')
     lazydocker.toggle()
 end
 
@@ -20,7 +20,7 @@ plugin.mapping = {
     keys = {
         {
             mode = "n",
-            key = {"<leader>", "t", "a"},
+            key = {"<leader>", "t", "o"},
             action = '<cmd>ToggleTerm<cr>',
             short_desc = "Open Toggle Term"
         }, {
@@ -33,3 +33,5 @@ plugin.mapping = {
 }
 
 return plugin
+
+

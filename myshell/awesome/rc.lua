@@ -625,6 +625,7 @@ client.connect_signal("unfocus",
 awful.util.spawn_with_shell("nm-applet")
 awful.util.spawn_with_shell("gnome-sound-applet") -- sine ubuntu 12.04.02
 awful.util.spawn_with_shell("fcitx")
+awful.util.spawn_with_shell("blueman-applet")
 -- awful.util.spawn_with_shell(autolock_cmd)
 -- awful.util.spawn_with_shell("gnome-settings-daemon")
 -- awful.util.spawn_with_shell("/usr/bin/gnome-screensaver")

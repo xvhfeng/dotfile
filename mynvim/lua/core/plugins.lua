@@ -347,6 +347,20 @@ plugins_configure.plugins_groups = {
                 desc = "git的diff在vim中的展现"
             } -- { name="project", enable = true, desc="项目管理"},
         }
+    },
+    [9] = {
+        ["name"] = "containers",
+        ["subpath"] = "containers",
+        ["plugins"] = {{
+            name = "nvim-remote-containers",
+            enable = true,
+            desc = "Connect Docker"
+        }, {
+                name = "vim-docker-tools",
+                enable = true,
+                desc = "管理docker的工具"
+            }
+        }
     }
 }
 
