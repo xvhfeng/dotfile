@@ -3,8 +3,6 @@ local plugin = {}
 plugin.core = {
     -- 'nvim-treesitter/nvim-treesitter',
     'nvim-orgmode/orgmode',
-    ft = "org",
-    cmd = { "Org" },
     config = function()
         require('orgmode').setup_ts_grammar()
 

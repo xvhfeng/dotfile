@@ -1,3 +1,4 @@
+vim.loader.enable() 
 if vim.fn.has('mac') == 1 then
     vim.g.HOME_PATH = "/Users/" .. vim.fn.expand('$USER')
     vim.cmd([[
@@ -22,9 +23,9 @@ else
 end
 
 local xlog = require("util.xlog")
-xlog.Startup = true
+xlog.Startup = false
 if xlog.Startup then
-    xlog.setup("trace", xlog.OnlyFile, vim.g.HOME_PATH .. "/.cache/nvim/xlog")
+    xlog.setup("trace", xlog.OnlyFile, "/tmp/nvim/xlog")
     xlog.trace("NVim Startup...")
 end
 

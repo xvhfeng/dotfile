@@ -57,6 +57,8 @@ plugin.core = {
                             },
                         },
                         popupmenu = {
+                            enabled = true,
+                            backend = "nui",
                             relative = "editor",
                             position = {
                                 row = 23,

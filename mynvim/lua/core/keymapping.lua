@@ -74,6 +74,7 @@ global_mapping.addkey = function(new_map)
     --  expr = nil,                   default = nil
     --  silent = nil,                 default = nil
     --  del_first = false              default = false
+    --  target = ""                 default = "","w"->whichkey,"l"->legenday
 
     -- default
     if new_map['mode'] == nil then
