@@ -7,10 +7,13 @@ plugin.core = {
     'hrsh7th/cmp-path',
     'hrsh7th/cmp-cmdline',
     'hrsh7th/nvim-cmp',
-    'onsails/lspkind.nvim',
-
     'L3MON4D3/LuaSnip',
     'saadparwaiz1/cmp_luasnip',
+    'onsails/lspkind.nvim',
+    "ray-x/lsp_signature.nvim",
+    "windwp/nvim-autopairs",
+    "hrsh7th/cmp-nvim-lsp-signature-help",
+
 
     config = function ()
 
@@ -35,21 +38,44 @@ plugin.core = {
                 -- documentation = cmp.config.window.bordered(),
             },
             mapping = cmp.mapping.preset.insert({
-                ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-                ['<C-f>'] = cmp.mapping.scroll_docs(4),
-                ['<Tab>'] = cmp.mapping.complete(),
-                ['<C-e>'] = cmp.mapping.abort(),
-                ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+                ["<CR>"] = cmp.mapping.confirm({ select = true }),
+                ["<C-p>"] = cmp.mapping.select_prev_item(),
+                ["<C-n>"] = cmp.mapping.select_next_item(),
+                ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+                ["<C-f>"] = cmp.mapping.scroll_docs(4),
+                ["<C-e>"] = cmp.mapping.close(),
+                ["<Tab>"] = cmp.mapping(function(fallback)
+                    if cmp.visible() then
+                        cmp.select_next_item()
+                    elseif require("luasnip").expand_or_jumpable() then
+                        require("luasnip").expand_or_jump()
+                    elseif has_words_before() then
+                        cmp.complete()
+                    else
+                        fallback()
+                    end
+                end, { "i", "s" }),
+                ["<S-Tab>"] = cmp.mapping(function(fallback)
+                    if cmp.visible() then
+                        cmp.select_prev_item()
+                    elseif require("luasnip").jumpable(-1) then
+                        require("luasnip").jump(-1)
+                    else
+                        fallback()
+                    end
+                end, { "i", "s" }),
             }),
+
             sources = cmp.config.sources({
+                { name = 'nvim_lsp_signature_help' },
                 { name = 'nvim_lsp' },
                 { name = 'luasnip' }, -- For luasnip users.
                 --{ name = 'vsnip' }, -- For vsnip users.
                 --{ name = 'ultisnips' }, -- For ultisnips users.
                 -- { name = 'snippy' }, -- For snippy users.
             }, {
-                { name = 'buffer' },
-            }),
+                    { name = 'buffer' },
+                }),
 
             formatting = ({
                 format = lspkind.cmp_format({
@@ -63,17 +89,25 @@ plugin.core = {
                         return vim_item
                     end
                 })
-            })
-
+            }),
+            completion = { completeopt = "menu,menuone,noinsert" },
+            experimental = { ghost_text = true },
         })
 
+        require("luasnip").config.set_config({ history = true, updateevents = "TextChanged,TextChangedI" })
+        require("luasnip.loaders.from_vscode").load()
+        require("nvim-autopairs").setup()
+        local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+        cmp_autopairs.lisp[#cmp_autopairs.lisp + 1] = "racket"
+        cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done({ map_char = { tex = "" } }))
+        --
         -- Set configuration for specific filetype.
         cmp.setup.filetype('gitcommit', {
             sources = cmp.config.sources({
                 { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
             }, {
-                { name = 'buffer' },
-            })
+                    { name = 'buffer' },
+                })
         })
 
         -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
@@ -90,13 +124,22 @@ plugin.core = {
             sources = cmp.config.sources({
                 { name = 'path' }
             }, {
-                { name = 'cmdline' }
-            })
+                    { name = 'cmdline' }
+                })
         })
 
 
         -- Set up lspconfig.
-        local capabilities = require('cmp_nvim_lsp').default_capabilities()
+        -- local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+
+        local capabilities = vim.lsp.protocol.make_client_capabilities()
+        capabilities.textDocument.completion.completionItem.snippetSupport = true
+        capabilities.textDocument.completion.completionItem.resolveSupport = {
+            properties = { "documentation", "detail", "additionalTextEdits" },
+        }
+
+
         local lspcfg = require('lspconfig')
         lspcfg.clangd.setup {
             capabilities = capabilities
@@ -107,6 +150,8 @@ plugin.core = {
         lspcfg.gopls.setup {
             capabilities = capabilities
         }
+
+        require("lsp_signature").setup()
 
 
     end

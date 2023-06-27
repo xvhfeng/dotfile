@@ -1,4 +1,5 @@
 vim.loader.enable() 
+
 if vim.fn.has('mac') == 1 then
     vim.g.HOME_PATH = "/Users/" .. vim.fn.expand('$USER')
     vim.cmd([[
@@ -22,8 +23,19 @@ else
     return
 end
 
+local user_setting = {
+    python3_host_prog =  'python3', -- add to your own python3 path
+    snips_author = 'Bgm',
+    snips_email = 'bgm.spk.xu@gmail.com',
+    snips_github = 'https://github.com/xvhfeng',
+}
+
+for key, value in pairs(user_setting) do
+    vim.g[key] = value
+end
+
 local xlog = require("util.xlog")
-xlog.Startup = false
+xlog.Startup = true
 if xlog.Startup then
     xlog.setup("trace", xlog.OnlyFile, "/tmp/nvim/xlog")
     xlog.trace("NVim Startup...")

@@ -84,4 +84,21 @@ plugin.core = {
     end
 }
 
+--[[   
+local OpenCmdLine = function()
+    require("noice").redirect(vim.fn.getcmdline())
+    end
+
+plugin.mapping = {
+    keymaps = {
+        {
+            mode = "n",
+            key = "<c>-x",
+            action ="<cmd>lua OpenCmdLine()<cr>", 
+            desc = "Redirect Cmdline"
+        }
+    }
+}
+--]]
+
 return plugin

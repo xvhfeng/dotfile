@@ -2,12 +2,29 @@ local plugin = {}
 
 plugin.core = {
     "mrjones2014/legendary.nvim",
-    dependencies = {
+    dependencies = {{
         "kkharji/sqlite.lua",
         name = "sqlite3"
-    },
+    }, "stevearc/dressing.nvim"},
 
-    --setup function called in the keymapping.lua
+    config = function()
+        require('legendary').setup({require('dressing').setup({
+            select = {
+                get_config = function(opts)
+                    if opts.kind == 'legendary.nvim' then
+                        return {
+                            telescope = {
+                                sorter = require('telescope.sorters').fuzzy_with_index_bias({})
+                            }
+                        }
+                    else
+                        return {}
+                    end
+                end
+            }
+        })})
+    end
+    -- setup function called in the keymapping.lua
 }
 
 return plugin

@@ -5,41 +5,42 @@ plugin.core = {
     init = function() -- Specifies code to run before this plugin is loaded.
         vim.g.NERDCreateDefaultMappings = 0
         vim.g.NERDCustomDelimiters = {
-            json = {
-                left = '// '
-            },
-            json5 = {
-                left = '// '
-            },
-            hjson = {
-                left = '// '
-            }
+            json = {left = '// '},
+            json5 = {left = '// '},
+            hjson = {left = '// '}
         }
     end
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = {"n", "v"},
-        key = {"<leader>", "e", "c", "c"},
-        action = "<Plug>NERDCommenterAlignBoth",
-        short_desc = "Comment",
-    }, {
-        mode = {"n", "v"},
-        key = {"<leader>", "e", "c", "a"},
-        action = "<Plug>NERDCommenterAltDelims",
-        short_desc = "Comment Alt Format",
-    }, {
-        mode = {"n", "v"},
-        key = {"<leader>", "e", "c", "A"},
-        action = "<Plug>NERDCommenterAppend",
-        short_desc = "Comment Append",
-    }, {
-        mode = {"n", "v"},
-        key = {"<leader>", "e", "c", "u"},
-        action = "<Plug>NERDCommenterUncomment",
-        short_desc = "UnComment",
-    }}
+    keymaps = {
+         {
+            tag = {key = "<leader>ec", name = "Commneter"},
+            keymaps = {
+                {
+                    mode = {"n", "v"},
+                    key = "<leader>ecc",
+                    action = "<Plug>NERDCommenterAlignBoth",
+                    desc = "Comment"
+                }, {
+                    mode = {"n", "v"},
+                    key = "<leader>ecd",
+                    action = "<Plug>NERDCommenterAltDelims",
+                    desc = "Comment Alt Format"
+                }, {
+                    mode = {"n", "v"},
+                    key = "<leader>eca",
+                    action = "<Plug>NERDCommenterAppend",
+                    desc = "Comment Append"
+                }, {
+                    mode = {"n", "v"},
+                    key = "<leader>ecu",
+                    action = "<Plug>NERDCommenterUncomment",
+                    desc = "UnComment"
+                }
+            }
+        }
+    }
 }
 
 return plugin

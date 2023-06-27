@@ -1,28 +1,29 @@
-
 local plugin = {}
 
 plugin.core = {
     "francoiscabrol/ranger.vim",
-    dependencies = {
-        {"rbgrouleff/bclose.vim"},
-    },
+    dependencies = {{"rbgrouleff/bclose.vim"}},
 
-    vim.cmd [[
-            let g:ranger_replace_netrw = 1
-            let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
-            ]],
+    config = function()
+        vim.g.ranger_replace_netrw = 1 
+        vim.g.ranger_command_override = 'ranger --cmd "set show_hidden=true"'
+    end
 }
 
 plugin.mapping = {
-    keys = {
+    keymaps = {
         {
-            mode = "n",
-            key = { "<leader>", "f", "'" },
-            action = ":Ranger<CR>",
-            short_desc = "Open file-exp by Ranger.",
+            tag = {key = "<leader>we", name = "Exploer"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>wer",
+                    action = "<cmd>Ranger<CR>",
+                    desc = "Open Ranger."
+                }
+            }
         }
     }
 }
-
 
 return plugin

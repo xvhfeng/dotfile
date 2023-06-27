@@ -1,19 +1,15 @@
 local default_setting = {}
 
-
 default_setting['global'] = {
     after_schedule_time_start = 500,
 
 }
-
--- setting map leader
 
 vim.cmd("let maplocalleader=','")
 vim.cmd("let mapleader=','")
 vim.cmd("nnoremap ; :")
 --vim.cmd("vnoremap \\ ;")
 local global_func = require('util.global')
-
 
 vim.g.side_filetypes = { -- Specify which filetypes get the contrasted (darker) background
     --"terminal", -- Darker terminal background

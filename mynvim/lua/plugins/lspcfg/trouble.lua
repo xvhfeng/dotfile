@@ -3,7 +3,7 @@ local plugin = {}
 plugin.core = {
     "folke/trouble.nvim",
     -- requires = { { 'kyazdani42/nvim-web-devicons' } },
-    config = function() -- Specifies code to run after this plugin is loaded
+    config = funltion() -- Specifies code to run after this plugin is loaded
         require("trouble").setup {
             position = "bottom", -- position of the list can be: bottom, top, left, right
             height = 10, -- height of the trouble list when position is top or bottom
@@ -55,43 +55,47 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"t", "R"},
-        action = '<cmd>TroubleToggle lsp_references<cr>',
-        short_desc = "Goto Trouble Reference"
+    keymaps = {
+        {
+            tags = { key = "<leader>lt",name = "Trouble"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>ltr",
+                    action = '<cmd>TroubleToggle lsp_references<cr>',
+                    desc = "Goto Trouble Reference"
 
-    }, {
-        mode = "n",
-        key = {"<leader>", "t", "t"},
-        action = '<cmd>TroubleToggle<cr>',
-        short_desc = "Trouble Toggle"
+                }, {
+                    mode = "n",
+                    key = "<leader>ltt",
+                    action = '<cmd>TroubleToggle<cr>',
+                    desc = "Trouble Toggle"
 
-    }, {
-        mode = "n",
-        key = {"<leader>", "t", "q"},
-        action = '<cmd>TroubleToggle quickfix<cr>',
-        short_desc = "Trouble Quickfix"
+                }, {
+                    mode = "n",
+                    key = "<leader>ltq",
+                    action = '<cmd>TroubleToggle quickfix<cr>',
+                    desc = "Trouble Quickfix"
 
-    }, {
-        mode = "n",
-        key = {"<leader>", "t", "w"},
-        action = '<cmd>TroubleToggle workspace_diagnostics<cr>',
-        short_desc = "Trouble Workspace",
-        silent = false,
-        noremap = true
-    }, {
-        mode = "n",
-        key = {"<leader>", "t", "l"},
-        action = '<cmd>TroubleToggle loclist<cr>',
-        short_desc = "Trouble Loclist"
+                }, {
+                    mode = "n",
+                    key = "<leader>ltD", 
+                    action = '<cmd>TroubleToggle workspace_diagnostics<cr>',
+                    desc = "Trouble Workspace",
+                }, {
+                    mode = "n",
+                    key = "<leader>ltl",
+                    action = '<cmd>TroubleToggle loclist<cr>',
+                    desc = "Trouble Loclist"
 
-    }, {
-        mode = "n",
-        key = {"<leader>", "t", "d"},
-        action = '<cmd>TroubleToggle document_diagnostics<cr>',
-        short_desc = "Trouble Document"
+                }, {
+                    mode = "n",
+                    key = "<leader>ltd", 
+                    action = '<cmd>TroubleToggle document_diagnostics<cr>',
+                    desc = "Trouble Document"
 
-    }}
+                }}
+        }
+    }
 }
 return plugin

@@ -3,24 +3,33 @@ local plugin = {}
 plugin.core = {"wincent/ferret"}
 
 plugin.mapping = {
-    tags = {{
-        key = "<leader>rA",
-        desc = "+ Search And Replace In Muilt Files"
-    }},
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "r", "A", "s"},
-        action = ":Ack! ",
-        short_desc = "Search text in Files Into QuickFix",
-        silent = true
-    }, {
-        mode = "n",
-        key = {"<leader>", "r", "A", "r"},
-        action = ":Acks /pattern/replacement/",
-        short_desc = "Replace Files In QuickFix",
-        silent = true
-    }}
-
+    keymaps = {
+        {
+            tag = {key = "<leader>fm", name = "Search In MuiltFiles"},
+            keymaps = {{
+                mode = "n",
+                key = "<leader>fms",
+                action = ":Ack! [pattern]",
+                desc = "Search [pattern] in Files Into QuickFix",
+            },{
+                    mode = "n",
+                    key = "<leader>fmc",
+                    action = ":Ack! <cword><CR>",
+                    desc = "Search CWORD in Files Into QuickFix",
+                }, {
+                    mode = "n",
+                    key = "<leader>fmr",
+                    action = ":Acks /pattern/replacement/",
+                    desc = "Replace Files In QuickFix",
+                }, {
+                    mode = "n",
+                    key = "<leader>fmp",
+                    action = ":Acks /<cword>/replacement/",
+                    desc = "Replace Files In QuickFix",
+                }
+            }
+        }
+    }
 }
 
 return plugin

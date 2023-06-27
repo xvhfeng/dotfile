@@ -5,7 +5,8 @@ plugin.core = {
     config = function()
         vim.g.lazygit_floating_window_winblend = 0 -- " transparency of floating window
         vim.g.lazygit_floating_window_scaling_factor = 0.9 -- " scaling factor for floating window
-        vim.g.lazygit_floating_window_corner_chars = "['╭', '╮', '╰', '╯']" -- " customize lazygit popup window corner characters
+        vim.g.lazygit_floating_window_corner_chars =
+        "['╭', '╮', '╰', '╯']" -- " customize lazygit popup window corner characters
         vim.g.lazygit_floating_window_use_plenary = 0 -- " use plenary.nvim to manage floating window if available
         vim.g.lazygit_use_neovim_remote = 1 -- " fallback to 0 if neovim-remote is not installed
 
@@ -15,32 +16,34 @@ plugin.core = {
 }
 
 plugin.mapping = {
-
-    tags = {{
-        key = "<leader>gl",
-        desc = "+ LazyGit"
-    }},
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "g", "l", "o"},
-        action = ":LazyGit<cr>",
-        short_desc = "Show GitLazy"
-    }, {
-        mode = "n",
-        key = {"<leader>", "g", "l", "c"},
-        action = ":LazyGitConfig<cr>",
-        short_desc = "Show LazyGit Config"
-    }, {
-        mode = "n",
-        key = {"<leader>", "g", "l", "p"},
-        action = ":LazyGitCurrentFile<cr>",
-        short_desc = "Show Project GitInfo"
-    }, {
-        mode = "n",
-        key = {"<leader>", "g", "l", "b"},
-        action = ":LazyGitFilter<cr>",
-        short_desc = "Git Current Buffer GitInfo"
-    }}
+    keymaps = {
+        {
+            tag = {key = "<leader>gl", name = "LazyGit"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>glo",
+                    action = "<cmd>LazyGit<cr>",
+                    desc = "Show GitLazy"
+                }, {
+                    mode = "n",
+                    key = "<leader>glc",
+                    action = "<cmd>LazyGitConfig<cr>",
+                    desc = "Show LazyGit Config"
+                }, {
+                    mode = "n",
+                    key = "<leader>glf",
+                    action = "<cmd>LazyGitCurrentFile<cr>",
+                    desc = "Show Project GitInfo"
+                }, {
+                    mode = "n",
+                    key = "<leader>glb",
+                    action = "<cmd>LazyGitFilter<cr>",
+                    desc = "Git Current Buffer GitInfo"
+                }
+            }
+        }
+    }
 }
 
 return plugin

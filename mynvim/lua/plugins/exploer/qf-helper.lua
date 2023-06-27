@@ -1,12 +1,3 @@
---[[
-Author: your name
-Date: 2022-12-21 14:34:34
-LastEditTime: 2023-06-10 08:50:21
-LastEditors: your name
-Description: 
-FilePath: /nvim-config/mynvim/lua/plugins/exploer/qf-helper.lua
-可以输入预定的版权声明、个性签名、空行等
---]]
 local plugin = {}
 
 plugin.core = {
@@ -38,34 +29,36 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {
+    keymaps = {
         {
-            mode = {"n"},
-            key = {"<ctrl>", "n"},
+            mode = "n",
+            key = "<c-n>",
             action = '<cmd>QNext<CR>',
-            short_desc = "QuickFix Next Item"
+            desc = "QuickFix Next Item"
         },
-    
         {
-            mode = {"n"},
-            key = {"<ctrl>", "p"},
+            mode = "n",
+            key = "<c-p>",
             action = '<cmd>QPrev<CR>',
-            short_desc = "QuickFix Prev Item"
+            desc = "QuickFix Prev Item"
         },
-    
+
         {
-            mode = {"n"},
-            key = {"<leader>", "q", "t"},
-            action = '<cmd>QFToggle!<CR>',
-            short_desc = "QuickFix Toggle"
-        },
-    
-        {
-            mode = {"n"},
-            key = {"<leader>", "q", "l"},
-            action = '<cmd>LLToggle!<CR>',
-            short_desc = "QuickFix Toggle"
-        },
+            tag = {key = "<leader>wq", name = "QuickFix"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>wqt",
+                    action = '<cmd>QFToggle!<CR>',
+                    desc = "QuickFix Toggle"
+                }, {
+                    mode = "n",
+                    key = "<leader>wql",
+                    action = '<cmd>LLToggle!<CR>',
+                    desc = "QuickFix Toggle"
+                }
+            }
+        }
     }
 }
 

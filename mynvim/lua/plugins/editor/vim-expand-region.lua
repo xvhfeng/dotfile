@@ -5,13 +5,13 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {{
+    keymaps = {{
         mode = "n",
-        key = {"+"},
+        key = "+",
         action = 'expand_region_expand',
     }, {
         mode = "n",
-        key = {"-"},
+        key = "-",
         action = 'expand_region_shrink',
     }}
 }

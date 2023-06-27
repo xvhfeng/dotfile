@@ -34,14 +34,15 @@ plugin.core = {
     end
 
 }
-
+--[[
 plugin.mapping = {
     keys = {{
         mode = "n",
         key = {"<leader>", "f", "z"},
         action = ":BTags<CR>",
-        short_desc = "Show current buffer Tags."
+        desc = "Show current buffer Tags."
     }}
 }
+--]]
 
 return plugin

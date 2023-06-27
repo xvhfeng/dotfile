@@ -2,54 +2,54 @@ local plugin = {}
 
 plugin.core = {
 
-'Civitasv/cmake-tools.nvim',
+    'Civitasv/cmake-tools.nvim',
     config = function()
-require("cmake-tools").setup {
-  cmake_command = "cmake", -- this is used to specify cmake command path
-  cmake_regenerate_on_save = true, -- auto generate when save CMakeLists.txt
-  cmake_generate_options = { "-DCMAKE_EXPORT_COMPILE_COMMANDS=1" }, -- this will be passed when invoke `CMakeGenerate`
-  cmake_build_options = {}, -- this will be passed when invoke `CMakeBuild`
-  cmake_build_directory = "", -- this is used to specify generate directory for cmake
-  cmake_build_directory_prefix = "cmake_build_", -- when cmake_build_directory is set to "", this option will be activated
-  cmake_soft_link_compile_commands = true, -- this will automatically make a soft link from compile commands file to project root dir
-  cmake_compile_commands_from_lsp = false, -- this will automatically set compile commands file location using lsp, to use it, please set `cmake_soft_link_compile_commands` to false
-  cmake_kits_path = nil, -- this is used to specify global cmake kits path, see CMakeKits for detailed usage
-  cmake_variants_message = {
-    short = { show = true }, -- whether to show short message
-    long = { show = true, max_length = 40 } -- whether to show long message
-  },
-  cmake_dap_configuration = { -- debug settings for cmake
-    name = "cpp",
-    type = "codelldb",
-    request = "launch",
-    stopOnEntry = false,
-    runInTerminal = true,
-    console = "integratedTerminal",
-  },
-  cmake_always_use_terminal = false, -- if true, use terminal for generate, build, clean, install, run, etc, except for debug, else only use terminal for run, use quickfix for others
-  cmake_quickfix_opts = { -- quickfix settings for cmake, quickfix will be used when `cmake_always_use_terminal` is false
-    show = "always", -- "always", "only_on_error"
-    position = "belowright", -- "bottom", "top"
-    size = 10,
-  },
-  cmake_terminal_opts = { -- terminal settings for cmake, terminal will be used for run when `cmake_always_use_terminal` is false or true, will be used for all tasks except for debug when `cmake_always_use_terminal` is true
-    name = "Main Terminal",
-    prefix_name = "[CMakeTools]: ", -- This must be included and must be unique, otherwise the terminals will not work. Do not use a simple spacebar " ", or any generic name
-    split_direction = "horizontal", -- "horizontal", "vertical"
-    split_size = 11,
+        require("cmake-tools").setup {
+            cmake_command = "cmake", -- this is used to specify cmake command path
+            cmake_regenerate_on_save = true, -- auto generate when save CMakeLists.txt
+            cmake_generate_options = { "-DCMAKE_EXPORT_COMPILE_COMMANDS=1" }, -- this will be passed when invoke `CMakeGenerate`
+            cmake_build_options = {}, -- this will be passed when invoke `CMakeBuild`
+            cmake_build_directory = "", -- this is used to specify generate directory for cmake
+            cmake_build_directory_prefix = "cmake_build_", -- when cmake_build_directory is set to "", this option will be activated
+            cmake_soft_link_compile_commands = true, -- this will automatically make a soft link from compile commands file to project root dir
+            cmake_compile_commands_from_lsp = false, -- this will automatically set compile commands file location using lsp, to use it, please set `cmake_soft_link_compile_commands` to false
+            cmake_kits_path = nil, -- this is used to specify global cmake kits path, see CMakeKits for detailed usage
+            cmake_variants_message = {
+                short = { show = true }, -- whether to show short message
+                long = { show = true, max_length = 40 } -- whether to show long message
+            },
+            cmake_dap_configuration = { -- debug settings for cmake
+                name = "cpp",
+                type = "codelldb",
+                request = "launch",
+                stopOnEntry = false,
+                runInTerminal = true,
+                console = "integratedTerminal",
+            },
+            cmake_always_use_terminal = false, -- if true, use terminal for generate, build, clean, install, run, etc, except for debug, else only use terminal for run, use quickfix for others
+            cmake_quickfix_opts = { -- quickfix settings for cmake, quickfix will be used when `cmake_always_use_terminal` is false
+                show = "always", -- "always", "only_on_error"
+                position = "belowright", -- "bottom", "top"
+                size = 10,
+            },
+            cmake_terminal_opts = { -- terminal settings for cmake, terminal will be used for run when `cmake_always_use_terminal` is false or true, will be used for all tasks except for debug when `cmake_always_use_terminal` is true
+                name = "Main Terminal",
+                prefix_name = "[CMakeTools]: ", -- This must be included and must be unique, otherwise the terminals will not work. Do not use a simple spacebar " ", or any generic name
+                split_direction = "horizontal", -- "horizontal", "vertical"
+                split_size = 11,
 
-    -- Window handling
-    single_terminal_per_instance = true, -- Single viewport, multiple windows
-    single_terminal_per_tab = true, -- Single viewport per tab
-    keep_terminal_static_location = true, -- Static location of the viewport if avialable
+                -- Window handling
+                single_terminal_per_instance = true, -- Single viewport, multiple windows
+                single_terminal_per_tab = true, -- Single viewport per tab
+                keep_terminal_static_location = true, -- Static location of the viewport if avialable
 
-    -- Running Tasks
-    start_insert_in_launch_task = false, -- If you want to enter terminal with :startinsert upon using :CMakeRun
-    start_insert_in_other_tasks = false, -- If you want to enter terminal with :startinsert upon launching all other cmake tasks in the terminal. Generally set as false
-    focus_on_main_terminal = false, -- Focus on cmake terminal when cmake task is launched. Only used if cmake_always_use_terminal is true.
-    focus_on_launch_terminal = false, -- Focus on cmake launch terminal when executable target in launched.
-  }
-}
+                -- Running Tasks
+                start_insert_in_launch_task = false, -- If you want to enter terminal with :startinsert upon using :CMakeRun
+                start_insert_in_other_tasks = false, -- If you want to enter terminal with :startinsert upon launching all other cmake tasks in the terminal. Generally set as false
+                focus_on_main_terminal = false, -- Focus on cmake terminal when cmake task is launched. Only used if cmake_always_use_terminal is true.
+                focus_on_launch_terminal = false, -- Focus on cmake launch terminal when executable target in launched.
+            }
+        }
 
 
     end,
@@ -57,49 +57,52 @@ require("cmake-tools").setup {
 }
 
 plugin.mapping = {
-    keys = { 
-        {
-            mode = {"n"},
-            key = {"<leader>", "c", "g"},
-            action = "<cmd>CmakeGenerate<CR>",
-            short_desc = "Config And Generate"
-        }, {
-            mode = {"n"},
-            key = {"<leader>", "c", "G"},
-            action = "<cmd>CmakeGenerate!<CR>",
-            short_desc = "Clean Config And Generate"
-        }, {
-            mode = {"n"},
-            key = {"<leader>", "c", "b"},
-            action = "<cmd>CmakeBuild<CR>",
-            short_desc = "Config And Generate"
-        }, {
-            mode = {"n"},
-            key = {"<leader>", "c", "B"},
-            action = "<cmd>CmakeBuild!<CR>",
-            short_desc = "Clean Config And Generate"
-        }, {
-            mode = {"n"},
-            key = {"<leader>", "c", "c"},
-            action = "<cmd>CmakeClean<CR>",
-            short_desc = "Clean All Target"
-        }, {
-            mode = {"n"},
-            key = {"<leader>", "c", "d"},
-            action = "<cmd>CmakeDebug<CR>",
-            short_desc = "Debug With DAP"
-        }, {
-            mode = {"n"},
-            key = {"<leader>", "c", "r"},
-            action = "<cmd>CmakeRun<CR>",
-            short_desc = "Run Selected Target"
-        }, {
-            mode = {"n"},
-            key = {"<leader>", "c", "R"},
-            action = "<cmd>CmakeLaunchArgs<SPACE>",
-            short_desc = "Run Which Target"
-        },
+    keymaps = {
+        tag = { key = "<leader>lc", name = "CmakeTools"},
+        keymaps = { 
+            {
+                mode = "n",
+                key = "<leader>lcg",
+                action = "<cmd>CmakeGenerate<CR>",
+                desc = "Config And Generate"
+            }, {
+                mode = "n",
+                key = "<leader>lcG",
+                action = "<cmd>CmakeGenerate!<CR>",
+                desc = "Clean Config And Generate"
+            }, {
+                mode = "n",
+                key = "<leader>lcb",
+                action = "<cmd>CmakeBuild<CR>",
+                desc = "Config And Generate"
+            }, {
+                mode = "n",
+                key = "<leader>lcB", 
+                action = "<cmd>CmakeBuild!<CR>",
+                desc = "Clean Config And Generate"
+            }, {
+                mode = "n",
+                key = "<leader>lcc",
+                action = "<cmd>CmakeClean<CR>",
+                desc = "Clean All Target"
+            }, {
+                mode = "n",
+                key = "<leader>lcd", 
+                action = "<cmd>CmakeDebug<CR>",
+                desc = "Debug With DAP"
+            }, {
+                mode = "n",
+                key = "<leader>lcr",
+                action = "<cmd>CmakeRun<CR>",
+                desc = "Run Selected Target"
+            }, {
+                mode = "n",
+                key = "<leader>lcR",
+                action = "<cmd>CmakeLaunchArgs<SPACE>",
+                desc = "Run Which Target"
+            },
 
+        }
     }
 }
 

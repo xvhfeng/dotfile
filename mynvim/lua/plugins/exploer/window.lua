@@ -3,118 +3,82 @@ local plugin = {}
 plugin.core = {only_keymapping}
 
 plugin.mapping = {
-
-    keys = {
+    keymaps = {
         {
             mode = "n",
-            key = { "w", "h"},
+            key = "wh",
             action = '<c-w>h',
-            short_desc = "Move To Left Window"
+            desc = "Move To Left Window"
         }, {
             mode = "n",
-            key = {"w", "l"},
+            key = "wl",
             action = '<c-w>l',
-            short_desc = "Move To Right Window"
+            desc = "Move To Right Window"
         }, {
             mode = "n",
-            key = { "w", "j"},
+            key = "wj",
             action = '<c-w>j',
-            short_desc = "Move To Below Window"
-        }, {
-            mode = "n",
-            key = { "w", "k"},
-            action = '<c-w>k',
-            short_desc = "Move To Top Window"
+            desc = "Move To Below Window"
         },
-        --[[ {
-        mode = "n",
-        key = {"<Leader>", "w", "K"},
-        action = '<c-w>K',
-        short_desc = "Change The Top Window"
-    }, {
-        mode = "n",
-        key = {"<Leader>", "w", "H"},
-        action = '<c-w>H',
-        short_desc = "Change The Leftest Window"
-    }, {
-        mode = "n",
-        key = {"<Leader>", "w", "L"},
-        action = '<c-w>L',
-        short_desc = "Change The Rightest Window"
-    }, 
-        --]]
         {
             mode = "n",
-            key = {"<Leader>", "w", "="},
+            key = "wk",
+            action = '<c-w>k',
+            desc = "Move To Top Window"
+        },
+        {
+            mode = "n",
+            key = "w=",
             action = '<c-w>=',
-            short_desc = "Resize window"
+            desc = "Resize window"
         }, {
             mode = "n",
-            key = {"<Leader>", "w", ","},
-            action = ":vertical resize -10<CR>",
-            short_desc = "Left Resize window"
-        }, {
-            mode = "n",
-            key = {"<Leader>", "w", "."},
-            action = ":vertical resize +10<CR>",
-            short_desc = "Right Resize window"
-        }, {
-            mode = "n",
-            key = {"<Leader>", "w", ";"},
-            action = ":resize +10<CR>",
-            short_desc = "Up Resize window"
-        }, {
-            mode = "n",
-            key = {"<Leader>", "w", "'"},
-            action = ":resize -10<CR>",
-            short_desc = "Down Resize window"
-        }, {
-            mode = "n",
-            key = {"<Leader>", "w", "["},
+            key = "[w",
             action = '<c-w>t<c-w>K',
-            short_desc = "change window  vertically to horizonally"
+            desc = "change window  vertically to horizonally"
         }, {
             mode = "n",
-            key = {"<Leader>", "w", "]"},
+            key = "]w",
             action = '<c-w>t<c-w>H',
-            short_desc = "change window horizonally to vertically"
+            desc = "change window horizonally to vertically"
         }, {
             mode = "n",
-            key = {"<leader>", "x"},
+            key = "<leader>x",
             action = ':close<cr>',
-            short_desc = "Close Current Window"
+            desc = "Close Current Window"
         }, {
             mode = "n",
-            key = {"<Leader>", "[", "t"},
+            key = "[t",
             action = '<ESC>:split term://bash<cr>',
-            short_desc = "Split window and open term"
+            desc = "Split window and open term"
         }, {
             mode = "n",
-            key = {"<Leader>", "]", "t"},
+            key = "]t",
             action = '<ESC>:vsplit term://bash<cr>',
-            short_desc = "Split window and open term"
+            desc = "Split window and open term"
         }, -- quickfix
         {
             mode = "n",
-            key = {"<leader>", "q", "c"},
+            key = "<leader>qc",
             action = ':cclose<cr>',
-            short_desc = "QuickFix Close"
+            desc = "QuickFix Close"
         }, {
             mode = "n",
-            key = {"<leader>", "q", "o"},
+            key = "<leader>qo",
             action = ':copen<cr>',
-            short_desc = "QuickFix Open"
+            desc = "QuickFix Open"
         }, {
             mode = "n",
-            key = {"<leader>", "q", "p"},
+            key = "<c-p>",
             action = ':cprevious<cr>',
-            short_desc = "QuickFix Previous Item"
+            desc = "QuickFix Previous Item"
         }, {
             mode = "n",
-            key = {"<leader>", "q", "n"},
+            key = "<c-n>",
             action = ':cnext<cr>',
-            short_desc = "QuickFix Next Item"
-        }}
+            desc = "QuickFix Next Item"
+        }
+    }
 }
 
 return plugin

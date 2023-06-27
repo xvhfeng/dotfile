@@ -4,11 +4,13 @@ plugin.core = {
     "nvim-telescope/telescope.nvim",
     tag = "0.1.0",
     -- event = { "VimEnter" },
-    dependencies = {{"nvim-lua/popup.nvim"}, {"nvim-lua/plenary.nvim"}, {"tami5/sqlite.lua"}, {"tami5/sql.nvim"},
-        {"nvim-telescope/telescope-frecency.nvim"}, {
-            'nvim-telescope/telescope-fzf-native.nvim',
-            build = 'make'
-        }, {"ahmedkhalf/project.nvim"}},
+    dependencies = {
+        {"nvim-lua/popup.nvim"}, {"nvim-lua/plenary.nvim"},
+        {"tami5/sqlite.lua"}, {"tami5/sql.nvim"},
+        {"nvim-telescope/telescope-frecency.nvim"},
+        {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
+        {"ahmedkhalf/project.nvim"}
+    },
 
     config = function() -- Specifies code to run after this plugin is loaded
 
@@ -36,11 +38,13 @@ plugin.core = {
 
         require('telescope').setup {
             defaults = {
-                vimgrep_arguments = {'rg', '--color=never', '--no-heading', '--with-filename', '--line-number',
-                    '--column', '--smart-case'},
-                prompt_prefix = " ",
+                vimgrep_arguments = {
+                    'rg', '--color=never', '--no-heading', '--with-filename',
+                    '--line-number', '--column', '--smart-case'
+                },
+                prompt_tag = " ",
                 selection_caret = "➤ ",
-                entry_prefix = "  ",
+                entry_tag = "  ",
                 -- initial_mode = "insert",
                 selection_strategy = "reset",
                 sorting_strategy = "descending",
@@ -49,28 +53,27 @@ plugin.core = {
                     path = '~/.local/share/nvim/telescope_history.sqlite3'
                 },
                 layout_config = {
-                    horizontal = {
-                        mirror = false
-                    },
-                    vertical = {
-                        mirror = false
-                    }
+                    horizontal = {mirror = false},
+                    vertical = {mirror = false}
                 },
                 file_sorter = require'telescope.sorters'.get_fuzzy_file,
                 file_ignore_patterns = {},
                 generic_sorter = require'telescope.sorters'.get_generic_fuzzy_sorter,
                 winblend = 0,
                 border = {},
-                borderchars = {'─', '│', '─', '│', '╭', '╮', '╯', '╰'},
+                borderchars = {
+                    '─', '│', '─', '│', '╭', '╮', '╯', '╰'
+                },
                 color_devicons = true,
                 use_less = true,
                 path_display = {},
-                set_env = {
-                    ['COLORTERM'] = 'truecolor'
-                }, -- default = nil,
-                file_previewer = require'telescope.previewers'.vim_buffer_cat.new,
-                grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new,
-                qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new,
+                set_env = {['COLORTERM'] = 'truecolor'}, -- default = nil,
+                file_previewer = require'telescope.previewers'.vim_buffer_cat
+                    .new,
+                grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep
+                    .new,
+                qflist_previewer = require'telescope.previewers'.vim_buffer_qflist
+                    .new,
 
                 -- Developer configurations: Not meant for general override
                 buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker,
@@ -120,7 +123,10 @@ plugin.core = {
         require"telescope".load_extension("frecency")
 
         require("project_nvim").setup {
-            patterns = {".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile", "package.json"}
+            patterns = {
+                ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile",
+                "package.json"
+            }
         }
         require('telescope').load_extension('projects')
         -- require'telescope'.extensions.projects.projects{}
@@ -128,111 +134,84 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "f", "f"},
-        action = "<cmd>lua require('telescope.builtin').find_files()<cr>",
-        short_desc = "Find files"
-    }, {
-            mode = "n",
-            key = {"<leader>", "f", "q"},
-            action = "<cmd>lua require('telescope.builtin').grep_string({search = vim.fn.expand('<cword>')})<cr>",
-            short_desc = "grep current words"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "d"},
-            action = "<cmd>lua require('telescope.builtin').live_grep()<cr>",
-            short_desc = "grep string"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "l"},
-            action = "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({skip_empty_lines=true})<cr>",
-            short_desc = "Find Lines"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "b"},
-            action = "<cmd>lua require('telescope.builtin').buffers()<cr>",
-            short_desc = "Find Buffers"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "c"},
-            action = "<cmd>lua require('telescope.builtin').command_history()<cr>",
-            short_desc = "Find Command History"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "w"},
-            action = "<cmd>lua require 'telescope.builtin'.find_files{ cwd = vim.g.HOME_PATH .. '/org/wiki'}<cr>",
-            short_desc = "Find Wiki"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "j"},
-            action = "<cmd>lua require 'telescope.builtin'.find_files{ cwd = vim.g.HOME_PATH .. '/org/work'}<cr>",
-            short_desc = "Find Wiki"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "h"},
-            action = "<Cmd>lua require('telescope').extensions.frecency.frecency{ sorter = require('telescope.config').values.file_sorter()}<CR>",
-            short_desc = "Find Recent/History"
-        }, --[[
-    {
-        mode = "n",
-        key = { "<leader>", "f", "p" },
-        action = "<Cmd>lua require'telescope'.extensions.project.project{}<CR>",
-        short_desc = "Find Project",
-        silent = true,
-        noremap = true
-   },
-    --]] {
-            mode = "n",
-            key = {"<leader>", "f", "k"},
-            action = "<cmd>lua require('telescope.builtin').keymaps()<cr>",
-            short_desc = "Find All Mappings"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", ";"},
-            action = nil,
-            short_desc = "Find More"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "r"},
-            action = "<cmd>lua require('telescope.builtin').registers()<cr>",
-            short_desc = "Find Registers"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "i"},
-            action = "<cmd>lua require('telescope.builtin').highlights()<cr>",
-            short_desc = "Find Highlights"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "s"},
-            action = "<cmd>lua require('telescope.builtin').colorscheme()<cr>",
-            short_desc = "Find Themes"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "e"},
-            action = "<cmd>lua require('telescope.builtin').planets()<cr>",
-            short_desc = "Find Planets"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "g"},
-            action = "<cmd>lua require('telescope.builtin').git_commits()<cr>",
-            short_desc = "Find Git Commits"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "G"},
-            action = "<cmd>lua require('telescope.builtin').git_bcommits()<cr>",
-            short_desc = "Find Git Commits(buffer)"
-        }, {
-            mode = "n",
-            key = {"<leader>", "j", "l"},
-            action = "<cmd>lua require('telescope.builtin').jumplist()<cr>",
-            short_desc = "Find Jump List"
-        }, {
-            mode = "n",
-            key = {"<leader>", "f", "m"},
-            action = "<cmd>lua require('telescope.builtin').marks()<cr>",
-            short_desc = "Find Marks"
-        }}
+    keymaps = {
+        {
+            tag = {key = "<leader>ft", name = "Telescope"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>ftf",
+                    action = "<cmd>lua require('telescope.builtin').find_files()<cr>",
+                    desc = "Find files"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftq",
+                    action = "<cmd>lua require('telescope.builtin').grep_string({search = vim.fn.expand('<cword>')})<cr>",
+                    desc = "grep current words"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftd",
+                    action = "<cmd>lua require('telescope.builtin').live_grep()<cr>",
+                    desc = "grep string"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftl",
+                    action = "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({skip_empty_lines=true})<cr>",
+                    desc = "Find Lines"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftb",
+                    action = "<cmd>lua require('telescope.builtin').buffers()<cr>",
+                    desc = "Find Buffers"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftc",
+                    action = "<cmd>lua require('telescope.builtin').command_history()<cr>",
+                    desc = "Find Command History"
+                }, {
+                    mode = "n",
+                    key = "<leader>fth",
+                    action = "<Cmd>lua require('telescope').extensions.frecency.frecency{ sorter = require('telescope.config').values.file_sorter()}<CR>",
+                    desc = "Find Recent/History"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftk",
+                    action = "<cmd>lua require('telescope.builtin').keymaps()<cr>",
+                    desc = "Find All Mappings"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftr",
+                    action = "<cmd>lua require('telescope.builtin').registers()<cr>",
+                    desc = "Find Registers"
+                }, {
+                    mode = "n",
+                    key = "<leader>fte",
+                    action = "<cmd>lua require('telescope.builtin').planets()<cr>",
+                    desc = "Find Planets"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftg",
+                    action = "<cmd>lua require('telescope.builtin').git_commits()<cr>",
+                    desc = "Find Git Commits"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftG",
+                    action = "<cmd>lua require('telescope.builtin').git_bcommits()<cr>",
+                    desc = "Find Git Commits(buffer)"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftj",
+                    action = "<cmd>lua require('telescope.builtin').jumplist()<cr>",
+                    desc = "Find Jump List"
+                }, {
+                    mode = "n",
+                    key = "<leader>ftm",
+                    action = "<cmd>lua require('telescope.builtin').marks()<cr>",
+                    desc = "Find Marks"
+                }
+            }
+        }
+    }
 }
 
 return plugin

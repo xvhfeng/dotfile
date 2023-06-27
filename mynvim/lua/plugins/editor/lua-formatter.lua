@@ -9,13 +9,21 @@ plugin.core = {
     config = function()
     end
 }
+
 plugin.mapping = {
-    keys = { {
-        mode = "n",
-        key = {"<leader>", "f", "A"},
-        action = ':call LuaFormat()<CR>',
-        short_desc = "Format Lua File",
-    }
+    keymaps = {
+         {
+            tag = {key = "<leader>ef", name = "Format"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>efl",
+                    action = '<cmd>call LuaFormat()<CR>',
+                    desc = "Lua Format",
+
+                }
+            }
+        }
     }
 }
 

@@ -8,11 +8,18 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>","s","c"},
-        action = '<cmd>StripTrailingWhitespace<cr>',
-    }
+    keymaps = {
+         {
+            tag = {key = "<leader>ee", name = "Edit"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>eec",
+                    action = '<cmd>StripTrailingWhitespace<cr>',
+                    desc = "Clean Space"
+                }
+            }
+        }
     }
 }
 

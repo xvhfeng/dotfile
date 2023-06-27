@@ -3,13 +3,13 @@ local xlog = {
 }
 
 local opt = require "util.opt"
---local tbl = require "util.tbl"
+
 
 xlog.usecolor = true
 xlog.outpath = nil
 xlog.level = "trace"
 xlog.fp = nil
-xlog.outpath_default = "~/.cache/nvim/xlog"
+xlog.outpath_default = "/tmp/nvim/xlog"
 xlog.filepath = nil
 
 xlog.ConsoleAndFile = 0

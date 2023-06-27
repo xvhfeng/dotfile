@@ -1,17 +1,20 @@
 local plugin = {}
 
-plugin.core = {
-    "rhysd/vim-clang-format",
-
-}
+plugin.core = {"rhysd/vim-clang-format"}
 
 plugin.mapping = {
-    keys = { {
-        mode = "n",
-        key = {"<leader>", "f", "a"},
-        action = ':ClangFormat<cr>',
-        short_desc = "Format C/C++ File",
-    }
+    keymaps = {
+         {
+            tag = {key = "<leader>ef", name = "Format"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>efc",
+                    action = '<cmd>ClangFormat<cr>',
+                    desc = "C/C++ Format",
+                }
+            }
+        }
     }
 }
 

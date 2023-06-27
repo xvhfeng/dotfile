@@ -6,12 +6,12 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {
+    keymaps = {
         {
             mode = "n",
-            key = {"<leader>", "w", "e"},
+            key = "<leader>ws",
             action = "<cmd>WinResizerStartResize<cr>",
-            short_desc = "Resize Windows"
+            desc = "Resize Windows"
         }
     }
 }

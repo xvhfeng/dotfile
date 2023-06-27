@@ -5,7 +5,19 @@ plugin.core = {
     build = ':TSUpdate',
     config = function()
         require('nvim-treesitter.configs').setup {
-            ensure_installed = {"vim", "bash", "c", "cpp", "lua", "java", "go","jsonc"},
+            ensure_installed = {"vim", 
+                "bash",
+                "c",
+                "cpp",
+                "lua",
+                "java",
+                "go",
+                "jsonc",
+            "cmake",
+            "dockerfile",
+                "sql"
+
+            },
             highlight = {
                 enable = true, -- false will disable the whole extension
                 additional_vim_regex_highlighting = false

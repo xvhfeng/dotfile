@@ -19,32 +19,32 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {
+    keymaps = {
         {
-            mode = {"n"},
-            key = {"<leader>","w","w" },
-            action = ":WindowPick<CR>",
-            short_desc = "Choose Which Windows",
+            mode = "n",
+            key = "<leader>ww",
+            action = "<cmd>WindowPick<CR>",
+            desc = "Choose Which Windows",
         },
 
         {
-            mode = {"n"},
-            key = {"<leader>","w","x" },
-            action = ":WindowSwap<CR>",
-            short_desc = "Swap Context By Windows",
+            mode = "n",
+            key = "<leader>wx",
+            action = "<cmd>WindowSwap<CR>",
+            desc = "Swap Context By Windows",
         },
 
         {
-            mode = {"n"},
-            key = {"<leader>","w","r" },
-            action = ":WindowSwapStay<CR>",
-            short_desc = "Send Context To Window",
+            mode = "n",
+            key = "<leader>wr",
+            action = "<cmd>WindowSwapStay<CR>",
+            desc = "Send Context To Window",
         },
         {
-            mode = {"n"},
-            key = {"<leader>", "w","q" },
-            action = ":WindowZap<CR>",
-            short_desc = "Close Which Windows",
+            mode = "n",
+            key = "<leader>wq",
+            action = "<cmd>WindowZap<CR>",
+            desc = "Close Which Windows",
         }
     }
 }

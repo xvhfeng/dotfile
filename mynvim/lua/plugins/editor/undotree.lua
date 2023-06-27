@@ -1,17 +1,21 @@
 local plugin = {}
 
-plugin.core = {
-    "mbbill/undotree",
-    cmd = 'UndotreeToggle'
-}
+plugin.core = {"mbbill/undotree", cmd = 'UndotreeToggle'}
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "e", "h"},
-        action = ':UndotreeToggle<cr>',
-        short_desc = "History Tree",
-    }}
+    keymaps = {
+        {
+            tag = {key = "<leader>eh", name = "UndoTree"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>eho",
+                    action = ':UndotreeToggle<cr>',
+                    desc = "Toggle UndoTree"
+                }
+            }
+        }
+    }
 }
 
 return plugin

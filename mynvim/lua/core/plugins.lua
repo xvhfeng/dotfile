@@ -6,7 +6,7 @@ plugins_configure["all_loaded_module"] = {}
 
 local opt = require("util.opt")
 local xlog = require("util.xlog")
-require "util.tbl"
+local tbldump = require("util.tbldump")
 
 xlog.trace("load plugins.lua")
 
@@ -40,11 +40,7 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"
             }, {name = "rainbow", enable = true, desc = "括号颜色匹配"},
-            {
-                name = "toggleterm",
-                enable = true,
-                desc = "虚拟终端，执行系统bash与lazydocker"
-            }, {name = "autosession", enable = true, desc = "session保存"},
+            {name = "autosession", enable = true, desc = "session保存"},
             {name = "vim-airline", enable = true, desc = "vim的状态栏"}, {
                 name = "vim-emacscommandline",
                 enable = true,
@@ -68,6 +64,11 @@ plugins_configure.plugins_groups = {
                 desc = "打开文件的时候,回到上一次编辑的地方"
             },
             {
+                name = "toggleterm",
+                enable = true,
+                desc = "虚拟终端，执行系统bash与lazydocker"
+            },
+            {
                 name = "noice",
                 enable = true,
                 desc = "UI for Messgae cmdline and popupmenu"
@@ -82,6 +83,7 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "可以搜索的keymap function command绑定插件"
             },
+            { name = "preview", enable = true, desc = "预览定义"},
             {
                 name = "which-key",
                 enable = true,
@@ -96,6 +98,8 @@ plugins_configure.plugins_groups = {
             {name = "nerdcommenter", enable = true, desc = "代码注释插件"},
             {name = "textobj-word-column", enable = true, desc = "编辑多行"},
             {name = "undotree", enable = true, desc = "undo操作tree"},
+            {name = "NrrwRgn", enable = true, desc = "Nrrw窗口操作选中文本区域"},
+            {name = "vim-mundo", enable = true, desc = "mundo窗口操作文件变更history"},
             {
                 name = "vim-expand-region",
                 enable = true,
@@ -124,11 +128,13 @@ plugins_configure.plugins_groups = {
                 name = "whitespace",
                 enable = true,
                 desc = "自动删除行尾空格"
-            }, {
-                name = "vim-visual-multi",
+            },
+            {
+                name = "vim-textobj-entire",
                 enable = true,
-                desc = "多光标插件,可同时编辑选中的多出统一word"
-            }, {name = "editor", enable = true, desc = "编辑类key-mapping"}
+                desc = "文本对象与格式化"
+            },
+            {name = "editor", enable = true, desc = "编辑类key-mapping"}
         }
     },
     [3] = {
@@ -176,7 +182,8 @@ plugins_configure.plugins_groups = {
     [4] = {
         ["name"] = "finder",
         ["subpath"] = "finder",
-        ["plugins"] = {  { name = "spectre",  enable = true, desc = "一个搜索与替换插件" },
+        ["plugins"] = {  
+            { name = "spectre",  enable = true, desc = "一个搜索与替换插件" },
             {name = "fzf", enable = true, desc = "查找操作"}, {
                 name = "telescope",
                 enable = true,
@@ -187,9 +194,13 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "在定义的标记间跳转"
             }, {
-                name = "vim-asterisk",
+                name = "preview",
                 enable = true,
-                desc = "不改变光标位置，使用z*选择文本"
+                desc = "预览插件"
+            }, {
+                name = "ssr",
+                enable = true,
+                desc = "使用模式替换,支持n和v两种模式"
             }, {
                 name = "ferret",
                 enable = true,
@@ -202,30 +213,37 @@ plugins_configure.plugins_groups = {
         }
     },
     [5] = {
-        ["name"] = "navigation",
-        ["subpath"] = "navigation",
+        ["name"] = "sltdo",
+        ["subpath"] = "sltdo",
         ["plugins"] = {
             {
                 name = "nvim-hlslens",
                 enable = true,
-                desc = "高亮显示匹配信息,并且可以在匹配之间跳转"
-            }, {name = "hop", enable = true, desc = "快速移动插件"},
+                desc = "高亮显示匹配信息,并且可以在匹配之间跳转,和asteris,matchup一起配合"
+            },
+            {name = "hop", enable = true, desc = "快速移动插件"},
             {name = "vim-bookmarks", enable = true, desc = "标记插件"},
-            {name = "marks", enable = false, desc = "标记插件"}, {
+            {name = "marks", enable = false, desc = "标记插件"},
+            {
                 name = "vim-unimpaired",
                 enable = true,
                 desc = "[ ] 开头的快捷键,vim缺失的快捷键"
             }, {
-                name = "trouble",
+                name = "vim-asterisk",
                 enable = true,
-                desc = "一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"
+                desc = "不移动鼠标通过*/#选择文本",
+                -- desc = "一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"
             }, {
                 name = "vim-matchup",
                 enable = true,
                 desc = "使用%查找对应的范围标签"
-            }, {
-                name = "preview", enable = true, desc = "预览定义"},
-            {name = "nav", enable = true, desc = "navigation的key-mapping。"}
+            },
+            {
+                name = "vim-visual-multi",
+                enable = true,
+                desc = "多光标插件,可同时编辑选中的多出统一word"
+            },
+            {name = "sltdo", enable = true, desc = "navigation的key-mapping。"}
         }
     },
     [6] = {
@@ -248,6 +266,7 @@ plugins_configure.plugins_groups = {
             }, {name = "lsp_cmp", enable = true, desc = "lsp的智能补全"},
             {name = "cmake-tools", enable = true, desc = "Cmake Tools"},
             {name = "nvim-dap", enable = true, desc = "lsp的智能补全"},
+            {name = "trouble", enable = true, desc = "lsp的错误显示"},
             {name = "copilot", enable = false, desc = "GitHub的AI分析"},
             {
                 name = "copilot_cmp",
@@ -275,6 +294,10 @@ plugins_configure.plugins_groups = {
                 name = "vimwiki",
                 enable = true,
                 desc = "可以非常方便地管理我们的笔记和创建代办列表，可以随时进行预览"
+            }, {
+                name = "calendar",
+                enable = true,
+                desc = "日期与todo"
             }, {
                 name = "orgmode",
                 enable = true,
@@ -319,10 +342,16 @@ plugins_configure.plugins_groups = {
                 name = "vim-docker-tools",
                 enable = true,
                 desc = "管理docker的工具"
+            },
+            {
+                name = "lazydocker",
+                enable = true,
+                desc = "管理lazydocker的UI"
             }
         }
     }
 }
+
 
 plugins_configure.setup = function()
     xlog.trace("myplugins's setup called")
@@ -344,7 +373,7 @@ plugins_configure.setup = function()
 
         if opt.isRealFalse(enable) then
             xlog.warn("group:%s enable:%s. so not load this plugin group",
-                      group_name, enable)
+                group_name, enable)
             goto continues_1
         end
 
@@ -352,11 +381,11 @@ plugins_configure.setup = function()
             namespace = plugins_configure.plugin_configure_root
         else
             namespace = plugins_configure.plugin_configure_root .. subpath ..
-                            "."
+            "."
         end
 
         xlog.trace("group:%s plugin namespace:%s plugin count ->%d", group_name,
-                   namespace, #plugins)
+            namespace, #plugins)
 
         for idx, plugin in ipairs(plugins) do
             local plugin_name = plugin["name"]
@@ -365,16 +394,15 @@ plugins_configure.setup = function()
 
             if opt.isRealFalse(plugin_enable) then
                 xlog.warn("plugin:%s idx:%d enable:%s,so not load", plugin_name,
-                          idx, plugin_enable)
+                    idx, plugin_enable)
                 goto continue_2
             end
 
             xlog.trace("plugin name -> %s ,enbale ->%s desc ->%s", plugin_name,
-                       plugin_enable, plugin_desc)
+                plugin_enable, plugin_desc)
 
             if nil == plugin_name then
-                local tbl = DataDumper(plugin, "plugin")
-                print(tbl)
+                tbldump.tbl_trace("plugin",plugin)
             end
 
             local plugin_path = namespace .. plugin_name
@@ -389,7 +417,7 @@ plugins_configure.setup = function()
 
             if not ok then
                 xlog.error("plugin:%s load failed and skip it try next one",
-                           plugin_name, plugin_desc, group_name, plugin_path)
+                    plugin_name, plugin_desc, group_name, plugin_path)
                 xlog.error(plug)
                 goto continue_2
             end
@@ -473,6 +501,10 @@ end
 plugins_configure.create_mapping = function()
     xlog.trace("myplugins's create_mapping called")
     local kmr = require('core.keymapping')
+
+    xlog.trace("myplugins begin loop plugins_groups to mapping keys.")
+    -- tbldump.tbl_trace("plugins_groups",plugins_configure.plugins_groups)
+
     for gidx, plugins_group in ipairs(plugins_configure.plugins_groups) do
         local group_name = plugins_group["name"]
         local subpath = plugins_group["subpath"]
@@ -484,7 +516,7 @@ plugins_configure.create_mapping = function()
 
         if opt.isRealFalse(enable) then
             xlog.warn("group:%s enable:%s. so not load this plugin group",
-                      group_name, enable)
+                group_name, enable)
             goto continues_1
         end
 
@@ -492,7 +524,7 @@ plugins_configure.create_mapping = function()
             namespace = plugins_configure.plugin_configure_root
         else
             namespace = plugins_configure.plugin_configure_root .. subpath ..
-                            "."
+            "."
         end
 
         xlog.trace("group:%s plugin namespace:%s", group_name, namespace)
@@ -504,14 +536,14 @@ plugins_configure.create_mapping = function()
 
             if opt.isRealFalse(plugin_enable) then
                 xlog.warn("plugin:%s enable:%s,so not load", plugin_name,
-                          plugin_enable)
+                    plugin_enable)
                 goto continue_2
             end
 
             local plugin_path = namespace .. plugin_name
 
             xlog.trace("plugin:%s [with %s] in group:%s load plugin_path:%s",
-                       plugin_name, plugin_desc, group_name, plugin_path)
+                plugin_name, plugin_desc, group_name, plugin_path)
 
             -- local ok, plug = pcall(require, plugin_path)
             local ok, plug = xpcall(function()
@@ -520,14 +552,21 @@ plugins_configure.create_mapping = function()
 
             if not ok then
                 xlog.error("plugin:%s load failed and skip it try next one",
-                           plugin_name, plugin_desc, group_name, plugin_path)
+                    plugin_name, plugin_desc, group_name, plugin_path)
                 xlog.error(plug)
                 goto continue_2
             end
 
             local mapping = plug["mapping"]
-
+            local plugin_fullname = group_name .. " [ " .. plugin_name .. " ] "
             if mapping then
+                if "table" == type(mapping) then 
+                    kmr.mappings_parser(plugin_fullname,mapping)
+                else
+                    xlog.trace(plugin_fullname .. " mapping is function.execing...")
+                    mapping()
+                end
+                --[[  
                 if type({}) == type(mapping) then
                     local keys = mapping["keys"];
                     local tags = mapping["tags"]
@@ -550,6 +589,7 @@ plugins_configure.create_mapping = function()
                 else
                     mapping()
                 end
+                --]]
             end
 
             ::continue_2::

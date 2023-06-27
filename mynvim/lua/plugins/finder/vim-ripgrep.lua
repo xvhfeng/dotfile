@@ -11,12 +11,25 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "r", "r"},
-        action = ':Rg <space>',
-        short_desc = "grep keywords in project folder"
-    }}
+    keymaps = {
+        {
+            tag = {key = '<leader>ff', name = "Simpe Rg Find"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>fff",
+                    action = ':Rg <space>',
+                    desc = "grep keywords in project folder"
+                }, {
+                    mode = "n",
+                    key = "<leader>ffc",
+                    action = '<cmd>Rg <CWORD><cr>',
+                    desc = "grep cword in project folder"
+                }
+
+            }
+        }
+    }
 }
 
 return plugin

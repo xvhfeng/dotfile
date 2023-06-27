@@ -1,18 +1,28 @@
-local M = {}
+local plugin = {}
 
-local Terminal = require("toggleterm.terminal").Terminal
+plugin.core = {only_keymapping}
 
--- Docker
-local docker_tui = "lazydocker"
-
-local docker_client = Terminal:new {
-  cmd = docker_tui,
-  hidden = true,
-  direction = "float",
-}
-
-function M.toggle()
-  docker_client:toggle()
+local lazydocker = nil
+function _lazydocker_toggle()
+    lazydocker = lazydocker or require('plugins.containers.lazydocker-inc')
+    lazydocker.toggle()
 end
 
-return M
+plugin.mapping = {
+    keymaps = {
+        {
+            tag = {
+                key = "<leader>cd",
+                name = "Docker"
+            },
+            keymaps = {{
+                mode = "n",
+                key = "<leader>cdz",
+                action = '<cmd>lua _lazydocker_toggle()<cr>',
+                desc = "LazyDocker Toggle"
+            }}
+        }
+    }
+}
+
+return plugin

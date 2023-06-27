@@ -1,25 +1,26 @@
 local plugin = {}
 
-plugin.core = {
-    "jlanzarotta/bufexplorer",
-}
+plugin.core = {"jlanzarotta/bufexplorer"}
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "b", "b"},
-        action = ':ToggleBufExplorer<cr>',
-        short_desc = "Show Buffers"
-    }, {
+    keymaps = {
+        {
             mode = "n",
-            key = {"<leader>", "b", "v"},
-            action = ':BufExplorerVerticalSplit<cr>',
-            short_desc = "VShow Buffers"
+            key = "<leader>bb",
+            action = '<cmd>ToggleBufExplorer<cr>',
+            desc = "Show Buffers"
         }, {
             mode = "n",
-            key = {"<leader>", "b", "s"},
-            action = ':BufExplorerHorizontalSplit<cr>',
-            short_desc = "Show Buffers"
-        }}
+            key = "<leader>bv",
+            action = '<cmd>BufExplorerVerticalSplit<cr>',
+            desc = "Show Buffers Vert"
+        }, {
+            mode = "n",
+            key = "<leader>bs",
+            action = '<cmd>BufExplorerHorizontalSplit<cr>',
+            desc = "Show Buffers Hori"
+        }
+    }
 }
+
 return plugin

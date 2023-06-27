@@ -1,6 +1,5 @@
 local plugin = {}
 
-
 local function tab_win_closed(winnr)
     local api = require"nvim-tree.api"
     local tabnr = vim.api.nvim_win_get_tabpage(winnr)
@@ -29,10 +28,8 @@ local function tab_win_closed(winnr)
     end
 end
 
-
 plugin.core = {
     'nvim-tree/nvim-tree.lua',
-
     dependencies = {
         --[[
             brew tap homebrew/cask-fonts
@@ -82,19 +79,23 @@ plugin.core = {
 }
 
 plugin.mapping = {
-    keys = {
+    keymaps = {
         {
-            mode = {"n"},
-            key = {"<leader>", "f","t" },
-            action = ':NvimTreeToggle <CR>',
-            short_desc = "Open Floder Tree",
-        },
+            mode = "n",
+            key = "\\",
+            action = '<cmd>NvimTreeToggle<CR>',
+            desc = "Open Floder Tree",
+        }, {
+            tag = {key = "<leader>we", name = "Exploer"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>wet",
+                    action = '<cmd>NvimTreeToggle <CR>',
+                    desc = "Open Floder Tree",
+                },
 
-        {
-            mode = {"n"},
-            key = {"\\" },
-            action = ':NvimTreeToggle<CR>',
-            short_desc = "Open Floder Tree",
+            }
         }
     }
 }

@@ -7,31 +7,73 @@ plugin.core = {
     config = function() -- Specifies code to run after this plugin is loaded
         require('spectre').setup()
     end
-
 }
 
 plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "r", "s", "r"},
-        action = ":lua require('spectre').open()<CR>",
-        short_desc = "Search By Reg Exp."
-    }, {
-        mode = "n",
-        key = {"<leader>", "r", "s", "c"},
-        action = ":lua require('spectre').open_visual({select_word=true})<CR>",
-        short_desc = "Search By Reg Exp."
-    }, {
-        mode = "n",
-        key = {"<leader>", "r", "s", "w"},
-        action = ":lua require('spectre').open_visual()<CR>",
-        short_desc = "Search By Reg Exp."
-    }, {
-        mode = "n",
-        key = {"<leader>", "r", "s", "f"},
-        action = ":lua require('spectre').open_file_search()<cr>",
-        short_desc = "Search By Reg Exp."
-    }}
+    keymaps = {
+        {
+            tag = {key = "<leader>fr", name = "Search&Replace With Preview"},
+            keymaps = {
+                {
+                    mode = "n",
+                    key = "<leader>fro",
+                    action = ":lua require('spectre').open()<CR>",
+                    desc = "Open Search"
+                }, {
+                    mode = "n",
+                    key = "<leader>frc",
+                    action = ":lua require('spectre').open_visual({select_word=true})<CR>",
+                    desc = "Search CWord"
+                }, {
+                    mode = "n",
+                    key = "<leader>frv",
+                    action = ":lua require('spectre').open_visual()<CR>",
+                    desc = "Open Seach Visual"
+                }, {
+                    mode = "n",
+                    key = "<leader>frf",
+                    action = ":lua require('spectre').open_file_search()<cr>",
+                    desc = "Search In CurrentFile"
+
+                }, {
+                    mode = "n",
+                    key = "<leader>frt",
+                    action = ":lua require('spectre').toggle_line()<cr>",
+                    desc = "Toggle Current Item"
+                }, {
+                    mode = "n",
+                    key = "<leader>frg",
+                    action = ":lua require('spectre').select_entry()<cr>",
+                    desc = "Goto CurrentFile"
+                }, {
+                    mode = "n",
+                    key = "<leader>frr",
+                    action = ":lua require('spectre').run_current_replace()<cr>",
+                    desc = "Replace CurrentLine"
+                }, {
+                    mode = "n",
+                    key = "<leader>fra",
+                    action = ":lua require('spectre').run_repalce()<cr>",
+                    desc = "Replace All"
+                }, {
+                    mode = "n",
+                    key = "<leader>fri",
+                    action = ":lua require('spectre').change_options('ignore-case')<cr>",
+                    desc = "Toggle IgnoreCase"
+                }, {
+                    mode = "n",
+                    key = "<leader>frp",
+                    action = ":lua require('spectre').change_view()<cr>",
+                    desc = "Update Result ViewMode"
+                }, {
+                    mode = "n",
+                    key = "<leader>frh",
+                    action = ":lua require('spectre').resume_last_search()<cr>",
+                    desc = "Resume Last Search"
+                }
+            }
+        }
+    }
 }
 return plugin
 

@@ -6,27 +6,32 @@ local plugin = {}
     ripgrep 11.0.0+ or ag
 --]==]
 
-plugin.core = {
-    'pechorin/any-jump.vim',
-}
+plugin.core = {'pechorin/any-jump.vim'}
 
 plugin.mapping = {
-    keys = {{
-        mode = {"n", "v"},
-        key = {"<leader>", "r", "j"},
-        action = ':AnyJump<CR>',
-        short_desc = "Jump to definition under cursor"
-    }, {
-        mode = "n",
-        key = {"<leader>", "r", "b"},
-        action = ':AnyJumpBack<CR>',
-        short_desc = "open previous opened file (after jump)"
-    }, {
-        mode = "n",
-        key = {"<leader>", "r", "l"},
-        action = '::AnyJumpLastResults<CR>',
-        short_desc = "open last closed search window again"
-    }}
+    keymaps = {
+        {
+            tag = {key = "<leader>fj", name = "JumpTo"},
+            keymaps = {
+                {
+                    mode = {"n", "v"},
+                    key = "<leader>fjd",
+                    action = '<cmd>AnyJump<CR>',
+                    desc = "JumpTo Definition CWORD"
+                }, {
+                    mode = "n",
+                    key = "<leader>fjb",
+                    action = '<cmd>AnyJumpBack<CR>',
+                    desc = "Back Previous Opened File (After Jump)"
+                }, {
+                    mode = "n",
+                    key = "<leader>fjl",
+                    action = '<cmd>AnyJumpLastResults<CR>',
+                    desc = "Reopen Last Closed Search Window"
+                }
+            }
+        }
+    }
 }
 
 --[==[
@@ -45,4 +50,3 @@ L          toggle results lists ui style
 --]==]
 
 return plugin
-
