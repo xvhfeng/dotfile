@@ -28,6 +28,9 @@ local function tab_win_closed(winnr)
     end
 end
 
+local HEIGHT_RATIO = 0.8  -- You can change this
+local WIDTH_RATIO = 0.5   -- You can change this too
+
 plugin.core = {
     'nvim-tree/nvim-tree.lua',
     dependencies = {
@@ -61,12 +64,43 @@ plugin.core = {
                     },
                 },
             },
+            view = {
+                float = {
+                    enable = true,
+                    open_win_config = function()
+                        local screen_w = vim.opt.columns:get()
+                        local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
+                        local window_w = screen_w * WIDTH_RATIO
+                        local window_h = screen_h * HEIGHT_RATIO
+                        local window_w_int = math.floor(window_w)
+                        local window_h_int = math.floor(window_h)
+                        local center_x = (screen_w - window_w) / 2
+                        local center_y = ((vim.opt.lines:get() - window_h) / 2)
+                        - vim.opt.cmdheight:get()
+                        return {
+                            border = 'rounded',
+                            relative = 'editor',
+                            row = center_y,
+                            col = center_x,
+                            width = window_w_int,
+                            height = window_h_int,
+                        }
+                    end,
+                },
+                width = function()
+                    return math.floor(vim.opt.columns:get() * WIDTH_RATIO)
+                end,
+            },
+
 
 
         })
 
     end,
     init = function()
+
+        -- close window auto when  only nvim-tree
+        -- but is unuseful when lsp do something
         vim.api.nvim_create_autocmd("WinClosed", {
             callback = function ()
                 local winnr = tonumber(vim.fn.expand("<amatch>"))
@@ -74,9 +108,66 @@ plugin.core = {
             end,
             nested = true
         })
+
+        -- workaround when using auto-session
+        vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+            pattern = 'NvimTree*',
+            callback = function()
+                local api = require('nvim-tree.api')
+                local view = require('nvim-tree.view')
+
+                if not view.is_visible() then
+                    api.tree.open()
+                end
+            end,
+        })
+
+        -- back last hidden buffer when delete a buffer
+        vim.api.nvim_create_autocmd("BufEnter", {
+            nested = true,
+            callback = function()
+                local api = require('nvim-tree.api')
+
+                -- Only 1 window with nvim-tree left: we probably closed a file buffer
+                if #vim.api.nvim_list_wins() == 1 and api.tree.is_tree_buf() then
+                    -- Required to let the close event complete. An error is thrown without this.
+                    vim.defer_fn(function()
+                        -- close nvim-tree: will go to the last hidden buffer used before closing
+                        api.tree.toggle({find_file = true, focus = true})
+                        -- re-open nivm-tree
+                        api.tree.toggle({find_file = true, focus = true})
+                        -- nvim-tree is still the active window. Go to the previous window.
+                        vim.cmd("wincmd p")
+                    end, 0)
+                end
+            end
+        })
+
     end
 
 }
+
+function find_directory_and_focus()
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+
+  local function open_nvim_tree(prompt_bufnr, _)
+    actions.select_default:replace(function()
+      local api = require("nvim-tree.api")
+
+      actions.close(prompt_bufnr)
+      local selection = action_state.get_selected_entry()
+      api.tree.open()
+      api.tree.find_file(selection.cwd .. "/" .. selection.value)
+    end)
+    return true
+  end
+
+  require("telescope.builtin").find_files({
+    find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*" },
+    attach_mappings = open_nvim_tree,
+  })
+end
 
 plugin.mapping = {
     keymaps = {
@@ -93,6 +184,12 @@ plugin.mapping = {
                     key = "<leader>wet",
                     action = '<cmd>NvimTreeToggle <CR>',
                     desc = "Open Floder Tree",
+                },
+                {
+                    mode = "n",
+                    key = "<leader>wef",
+                    action = ':lua find_directory_and_focus()<CR>',
+                    desc = "Find&Focus File/Path",
                 },
 
             }

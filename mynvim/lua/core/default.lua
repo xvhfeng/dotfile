@@ -261,7 +261,8 @@ default_setting['opt'] = {
 
     helplang="cn",
 
-    clipboard="unnamed",
+ --    clipboard="unnamed",
+     clipboard="unnamedplus",
 
     -- 样式
     termguicolors = true,
@@ -284,6 +285,22 @@ end
 
 vim.cmd [[
 set showmatch matchtime=0 matchpairs+=<:>,《:》,（:）,【:】,“:”,‘:’
+]]
+
+vim.cmd [[
+if executable('clipboard-provider')
+  let g:clipboard = {
+          \ 'name': 'myClipboard',
+          \     'copy': {
+          \         '+': 'clipboard-provider copy',
+          \         '*': 'clipboard-provider copy',
+          \     },
+          \     'paste': {
+          \         '+': 'clipboard-provider paste',
+          \         '*': 'clipboard-provider paste',
+          \     },
+          \ }
+endif
 ]]
 
 local aug = vim.api.nvim_create_augroup("buf_large", { clear = true })

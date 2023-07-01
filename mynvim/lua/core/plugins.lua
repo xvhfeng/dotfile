@@ -84,6 +84,7 @@ plugins_configure.plugins_groups = {
                 desc = "可以搜索的keymap function command绑定插件"
             },
             { name = "preview", enable = true, desc = "预览定义"},
+            { name = "vim-fakeclip", enable = true, desc = "vim与系统之间共享clip"},
             {
                 name = "which-key",
                 enable = true,
