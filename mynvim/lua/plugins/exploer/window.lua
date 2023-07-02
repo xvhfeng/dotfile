@@ -67,7 +67,9 @@ plugin.mapping = {
             key = "<leader>qo",
             action = ':copen<cr>',
             desc = "QuickFix Open"
-        }, {
+        },
+        --[[
+        {
             mode = "n",
             key = "<c-p>",
             action = ':cprevious<cr>',
@@ -78,6 +80,7 @@ plugin.mapping = {
             action = ':cnext<cr>',
             desc = "QuickFix Next Item"
         }
+        --]]
     }
 }
 

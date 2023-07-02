@@ -135,6 +135,16 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "文本对象与格式化"
             },
+            {
+                name = "neogen",
+                enable = true,
+                desc = "Doxydoc Gener"
+            },
+            {
+                name = "doxygen",
+                enable = true,
+                desc = "Doxydoc Gener"
+            },
             {name = "editor", enable = true, desc = "编辑类key-mapping"}
         }
     },
@@ -266,7 +276,7 @@ plugins_configure.plugins_groups = {
                 desc = "漂亮的lsp的窗口定义,美化LSP显示"
             }, {name = "lsp_cmp", enable = true, desc = "lsp的智能补全"},
             {name = "cmake-tools", enable = true, desc = "Cmake Tools"},
-            {name = "nvim-dap", enable = true, desc = "lsp的智能补全"},
+            {name = "nvim-dap", enable = false, desc = "lsp的智能补全"},
             {name = "trouble", enable = true, desc = "lsp的错误显示"},
             {name = "copilot", enable = false, desc = "GitHub的AI分析"},
             {
@@ -274,7 +284,8 @@ plugins_configure.plugins_groups = {
                 enable = false,
                 desc = "GitHub的AI智能补全"
             },
-            {name = "symbols-outline", enable = true, desc = "outline工具栏"}
+            {name = "symbols-outline", enable = true, desc = "outline工具栏"},
+            {name = "aerial", enable = true, desc = "outline工具栏"}
             -- { name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
             -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
             -- { name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },

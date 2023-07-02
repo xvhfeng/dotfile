@@ -46,24 +46,26 @@ plugin.core = {
         -- empty setup using defaults
         require("nvim-tree").setup({
             disable_netrw = false,
-            hijack_netrw = false,
+            hijack_netrw = true,
             hijack_cursor = false,
-            update_cwd = false,
-            sync_root_with_cwd = true,
-            -- respect_buf_cwd = true,
+            sync_root_with_cwd = false,
+            respect_buf_cwd = false,
             sort_by = "case_sensitive",
             update_focused_file = {
                 enable = true,
-                -- update_root = true,
+                update_root = true,
             },
 
             actions = {
                 open_file = {
+                    -- quit_on_open = true,
                     window_picker = {
                         chars = "123456789abcdefg",
                     },
                 },
             },
+
+            --[[
             view = {
                 float = {
                     enable = true,
@@ -91,8 +93,7 @@ plugin.core = {
                     return math.floor(vim.opt.columns:get() * WIDTH_RATIO)
                 end,
             },
-
-
+            --]]
 
         })
 
@@ -142,6 +143,15 @@ plugin.core = {
                 end
             end
         })
+
+        --[==[
+        vim.cmd [[
+augroup cdpwd
+    autocmd!
+    autocmd VimEnter * cd $PWD
+augroup END
+        ]]
+            --]==]
 
     end
 

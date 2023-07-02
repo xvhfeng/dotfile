@@ -30,6 +30,7 @@ plugin.core = {
 
 plugin.mapping = {
     keymaps = {
+        --[[
         {
             mode = "n",
             key = "<c-n>",
@@ -42,7 +43,7 @@ plugin.mapping = {
             action = '<cmd>QPrev<CR>',
             desc = "QuickFix Prev Item"
         },
-
+--]]
         {
             tag = {key = "<leader>wq", name = "QuickFix"},
             keymaps = {

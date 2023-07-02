@@ -146,7 +146,7 @@ plugin.mapping = {
                 -- Toggle outline
                 {
                     mode = "n",
-                    key = "<leader>lso",
+                    key = "<leader>lsO",
                     action = "<cmd>Lspsaga outline<CR>",
                     desc = "Lspsaga Outline(default)"
                 }, -- Hover Doc
