@@ -35,6 +35,9 @@ if [ $SYSTEM == "Darwin" ]; then
     export PATH=/Users/xuhaifeng/.local/bin:$PATH
     export PATH=/opt/local/libexec/gnubin/:$PATH
     export PATH=/Users/xuhaifeng/Library/Python/3.9/bin:$PATH
+    export PATH=/opt/local/bin:$PATH
+    # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+    export PATH="$PATH:$HOME/.rvm/bin"
 fi
 if [ $SYSTEM == "Linux" ]; then
     export DOTFILE_PATH=/opt/dotfile

@@ -271,6 +271,7 @@ default_setting['opt'] = {
     list = false,
     -- 不可见字符的显示，这里只把空格显示为一个点
     listchars = "space:·,tab:··",
+    lazyredraw = false,
 
 }
 
