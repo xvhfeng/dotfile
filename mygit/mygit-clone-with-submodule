@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# clone remote repo and clone all branch
+
+git clone  --recurse-submodules $1

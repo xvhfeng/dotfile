@@ -42,19 +42,24 @@ plugin.core = {
         'nvim-tree/nvim-web-devicons', -- optional, for file icons
     },
 
-    config = function() 
+    config = function()
         -- empty setup using defaults
         require("nvim-tree").setup({
             disable_netrw = false,
             hijack_netrw = true,
             hijack_cursor = false,
+            sort_by = "case_sensitive",
+            --[[ -- for project.nvim open any path but root is git root floder
+                -- add blow config item ,it will auto and cannot contorl
+                -- so move it and can use vim ./ to open current floder and
+                -- default is open git root path
             sync_root_with_cwd = false,
             respect_buf_cwd = false,
-            sort_by = "case_sensitive",
             update_focused_file = {
                 enable = true,
                 update_root = true,
             },
+            --]]
 
             actions = {
                 open_file = {
@@ -64,40 +69,9 @@ plugin.core = {
                     },
                 },
             },
-
-            --[[
-            view = {
-                float = {
-                    enable = true,
-                    open_win_config = function()
-                        local screen_w = vim.opt.columns:get()
-                        local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
-                        local window_w = screen_w * WIDTH_RATIO
-                        local window_h = screen_h * HEIGHT_RATIO
-                        local window_w_int = math.floor(window_w)
-                        local window_h_int = math.floor(window_h)
-                        local center_x = (screen_w - window_w) / 2
-                        local center_y = ((vim.opt.lines:get() - window_h) / 2)
-                        - vim.opt.cmdheight:get()
-                        return {
-                            border = 'rounded',
-                            relative = 'editor',
-                            row = center_y,
-                            col = center_x,
-                            width = window_w_int,
-                            height = window_h_int,
-                        }
-                    end,
-                },
-                width = function()
-                    return math.floor(vim.opt.columns:get() * WIDTH_RATIO)
-                end,
-            },
-            --]]
-
         })
-
     end,
+
     init = function()
 
         -- close window auto when  only nvim-tree
@@ -143,40 +117,30 @@ plugin.core = {
                 end
             end
         })
-
-        --[==[
-        vim.cmd [[
-augroup cdpwd
-    autocmd!
-    autocmd VimEnter * cd $PWD
-augroup END
-        ]]
-            --]==]
-
     end
 
 }
 
 function find_directory_and_focus()
-  local actions = require("telescope.actions")
-  local action_state = require("telescope.actions.state")
+    local actions = require("telescope.actions")
+    local action_state = require("telescope.actions.state")
 
-  local function open_nvim_tree(prompt_bufnr, _)
-    actions.select_default:replace(function()
-      local api = require("nvim-tree.api")
+    local function open_nvim_tree(prompt_bufnr, _)
+        actions.select_default:replace(function()
+            local api = require("nvim-tree.api")
 
-      actions.close(prompt_bufnr)
-      local selection = action_state.get_selected_entry()
-      api.tree.open()
-      api.tree.find_file(selection.cwd .. "/" .. selection.value)
-    end)
-    return true
-  end
+            actions.close(prompt_bufnr)
+            local selection = action_state.get_selected_entry()
+            api.tree.open()
+            api.tree.find_file(selection.cwd .. "/" .. selection.value)
+        end)
+        return true
+    end
 
-  require("telescope.builtin").find_files({
-    find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*" },
-    attach_mappings = open_nvim_tree,
-  })
+    require("telescope.builtin").find_files({
+        find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*" },
+        attach_mappings = open_nvim_tree,
+    })
 end
 
 plugin.mapping = {

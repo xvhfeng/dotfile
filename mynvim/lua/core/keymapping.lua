@@ -21,6 +21,7 @@ local mapping_prefix = {
     ["<leader>c"] = {name = "+ Container"},
     ["<leader>e"] = {name = "+ Edit"},
     ["<leader>g"] = {name = "+ Git"},
+--     ["<leader>j"] = {name = "+ JumpCscope"},
     ["<leader>l"] = {name = "+ Lsp" },
     ["<leader>m"] = {name = "+ Marks"},
     ["<leader>w"] = {name = "+ Windows"},

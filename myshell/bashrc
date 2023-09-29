@@ -10,12 +10,12 @@ if [ $SYSTEM == "Darwin" ]; then
     fi
 fi
 if [ $SYSTEM == "Linux" ]; then
-    /usr/bin/setxkbmap -option "ctrl:nocaps"
     [ -f /usr/share/autojump/autojump.sh ] && source /usr/share/autojump/autojump.sh
     [ -f /etc/bash_completion ] && source /etc/bash_completion
     # bind '"\e[A": history-search-backward'
     #  bind '"\e[B": history-search-forward'
-    iwconfig wlp0s20f3 power off
+#    /usr/bin/setxkbmap -option "ctrl:nocaps"
+#    iwconfig wlp0s20f3 power off
 fi
 
 #添加git的自动完成命令功能

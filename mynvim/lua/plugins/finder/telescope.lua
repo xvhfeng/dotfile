@@ -166,7 +166,7 @@ plugin.mapping = {
                 }, {
                     mode = "n",
                     key = "<leader>ftc",
-                    action = "<cmd>lua require('telescope.builtin').command_history()<cr>",
+                   action = "<cmd>lua require('telescope.builtin').command_history()<cr>",
                     desc = "Find Command History"
                 }, {
                     mode = "n",

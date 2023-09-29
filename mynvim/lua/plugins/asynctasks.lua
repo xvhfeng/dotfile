@@ -11,6 +11,7 @@ plugin.core = {
         vim.g.asynctasks_extra_config = {vim.g.CONFIG .. 'tasks.ini'}
         vim.g.asyncrun_open = 8
         vim.g.asyncrun_bell = 1
+        vim.g.asyncrun_rootmarks = {'.svn', '.git', '.root', '_darcs', 'build.xml'}
     end
 }
 

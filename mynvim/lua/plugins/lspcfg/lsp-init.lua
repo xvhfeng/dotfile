@@ -37,7 +37,8 @@ function loading()
 
     require("mason").setup()
     require("mason-lspconfig").setup({
-        ensure_installed = {"lua_ls", "bashls", "gopls", "jdtls", "clangd", "cmake", "pyright"},
+        -- ensure_installed = {"lua_ls", "bashls", "gopls", "jdtls", "clangd", "cmake-language-server", "pyright"},
+        ensure_installed = {"lua_ls", "bashls",  "jdtls", "clangd", "cmake-language-server", "pyright"},
         automatic_installation = true
     })
 

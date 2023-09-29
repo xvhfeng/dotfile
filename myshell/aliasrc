@@ -17,7 +17,7 @@ alias cdn_clear="/etc/init.d/nscd restart"
 
 alias pyenv_login="source bin/activate"
 #quickly install in ubuntu
-alias apy='sudo apt-get install -y'
+alias apti='apt install -y '
 
 alias ..='cd ..'
 # go back x directories

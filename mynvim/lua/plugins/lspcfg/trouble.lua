@@ -57,7 +57,7 @@ plugin.core = {
 plugin.mapping = {
     keymaps = {
         {
-            tags = { key = "<leader>lt",name = "Trouble"},
+            tag = { key = "<leader>lt",name = "Trouble"},
             keymaps = {
                 {
                     mode = "n",
