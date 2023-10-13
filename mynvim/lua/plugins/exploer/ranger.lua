@@ -20,6 +20,12 @@ plugin.mapping = {
                     key = "<leader>wer",
                     action = "<cmd>Ranger<CR>",
                     desc = "Open Ranger."
+                },
+                {
+                    mode = "n",
+                    key = "<space>",
+                    action = "<cmd>Ranger<CR>",
+                    desc = "Open Ranger."
                 }
             }
         }

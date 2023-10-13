@@ -4,14 +4,14 @@ plugin.core = {
     'vim-autoformat/vim-autoformat',
     config  = function()
         vim.cmd [[
-            au BufWrite * :Autoformat
+        "            au BufWrite * :Autoformat
         ]]
     end
 }
 
 plugin.mapping = {
     keymaps = {
-         {
+        {
             tag = {key = "<leader>ef", name = "Format"},
             keymaps = {
                 {
