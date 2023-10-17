@@ -18,7 +18,7 @@ plugin.mapping = {
             keymaps = {
                 {
                     mode = "n",
-                    key = "<leader>efl",
+                    key = "<leader>efc",
                     action = '<cmd>call Cpplint()<cr>',
                     desc = "C/C++ Cpplint Format",
                 }
