@@ -117,20 +117,27 @@ plugins_configure.plugins_groups = {
                 desc = "文件模版,提供c语言的h,c文件等模版功能"
             },
             {
-                name = "lua-formatter",
-                enable = true,
-                desc = "lua-format格式化工具"
-            },
-            {
                 name = "vim-autoformat",
                 enable = true,
                 desc = "autoformat格式化工具"
+            },
+            {
+                name = "vim-cpplint",
+                enable = true,
+                desc = "cpp googlestyle检查"
+            },
+            --[[
+            {
+                name = "lua-formatter",
+                enable = true,
+                desc = "lua-format格式化工具"
             },
             {
                 name = "clang-formatter",
                 enable = true,
                 desc = "clang-format格式化工具"
             },
+            --]]
             {
                 name = "whitespace",
                 enable = true,

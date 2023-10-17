@@ -1,13 +1,12 @@
 local plugin = {}
 
 plugin.core = {
-    --   dir = "/opt/lib/vim-autoformat"
 
-    'xvhfeng/vim-autoformat',
-    branch = 'bgm-master',
+    -- dir = '/opt/lib/vim-cpplint',
+    'xvhfeng/vim-cpplint',
     config  = function()
         vim.cmd [[
-            au BufWrite * :Autoformat
+            " autocmd BufWritePost *.h,*.cpp call Cpplint()
             ]]
     end
 }
@@ -19,9 +18,9 @@ plugin.mapping = {
             keymaps = {
                 {
                     mode = "n",
-                    key = "<leader>efa",
-                    action = '<cmd>Autoformat<cr>',
-                    desc = "C/C++ AstyleInAutoFormat",
+                    key = "<leader>efl",
+                    action = '<cmd>call Cpplint()<cr>',
+                    desc = "C/C++ Cpplint Format",
                 }
             }
         }
