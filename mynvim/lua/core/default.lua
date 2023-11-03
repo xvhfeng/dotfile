@@ -1,5 +1,4 @@
 local default_setting = {}
-
 default_setting['global'] = {
     after_schedule_time_start = 500,
 

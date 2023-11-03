@@ -1,0 +1,2 @@
+" 加载 lua 配置
+lua require 'init.lua'

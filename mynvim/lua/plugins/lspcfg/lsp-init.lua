@@ -1,7 +1,7 @@
 local plugin = {}
 
 function loading()
-    --[[ 
+    --[[
     require("mason").setup()
     require("mason-lspconfig").setup{
         ensure_installed = {
@@ -33,7 +33,7 @@ function loading()
     lspcfg.tsserver.setup{}
     --]]
 
-    -- 
+    --
 
     require("mason").setup()
     require("mason-lspconfig").setup({
