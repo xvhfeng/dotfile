@@ -1,4 +1,9 @@
-vim.loader.enable() 
+vim.loader.enable()
+
+-- disable netrw at the very start of your init.lua
+-- netrw 有很多的BUG，提前禁用
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 if vim.fn.has('mac') == 1 then
     vim.g.HOME_PATH = "/Users/" .. vim.fn.expand('$USER')
@@ -50,7 +55,7 @@ local lazypath = repspath .. "/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
         "git", "clone", "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git", "--branch=stable", -- latest stable release
+        "https://github.com/folke/lazy.nvim.git",  "--branch=main", -- latest stable release
         lazypath
     })
 end

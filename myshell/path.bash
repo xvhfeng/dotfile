@@ -45,7 +45,7 @@ if [ $SYSTEM == "Linux" ]; then
     export PATH=$NVIM_HOME/bin:$PATH
     export MYGIT_HOME=$DOTFILE_PATH/mygit
     export PATH=$MYGIT_HOME:$PATH
-    export GO_HOME=$DOTFILE_PATH/bin/go1.20.5
+    export GO_HOME=/opt/bin/go
     export PATH=$GO_HOME/bin/:$PATH
     export RUST_HOME=$DOTFILEPATH/rust-1.70.0
     export CARGO_HOME=$RUST_HOME/cargo

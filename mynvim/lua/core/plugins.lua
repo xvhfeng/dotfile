@@ -274,10 +274,11 @@ plugins_configure.plugins_groups = {
         ["name"] = "lsp",
         ["subpath"] = "lspcfg",
         ["plugins"] = { -- 必须保证mason, mason-lspconfig,nvim-lspconfig 依次加载的顺序
-            {name = "cscope", enable = true, desc = "nvim 0.9支持cscope插件"},
-            {name = "gutentags", enable = true, desc = "自动为cscope生成数据库"},
+            -- {name = "cscope", enable = true, desc = "nvim 0.9支持cscope插件"},
+            -- {name = "gutentags", enable = true, desc = "自动为cscope生成数据库"},
             -- {name = "vim-indexer", enable = false, desc = "使用catgs自动生成数据库"},
             --  {name = "gutentags_plus", enable = true, desc = "自动为cscope生成数据库"},
+            {name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig"},
             {
                 name = "treesitter",
                 enable = true,
