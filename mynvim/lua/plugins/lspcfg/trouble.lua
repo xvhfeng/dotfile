@@ -79,7 +79,7 @@ plugin.mapping = {
 
                 }, {
                     mode = "n",
-                    key = "<leader>ltD", 
+                    key = "<leader>ltD",
                     action = '<cmd>TroubleToggle workspace_diagnostics<cr>',
                     desc = "Trouble Workspace",
                 }, {
@@ -90,7 +90,7 @@ plugin.mapping = {
 
                 }, {
                     mode = "n",
-                    key = "<leader>ltd", 
+                    key = "<leader>ltd",
                     action = '<cmd>TroubleToggle document_diagnostics<cr>',
                     desc = "Trouble Document"
 

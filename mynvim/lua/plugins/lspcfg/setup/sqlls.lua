@@ -1,4 +1,4 @@
 return {
-    name = 'sqll',
+    name = 'sqlls',
     setup_config = {},
 }

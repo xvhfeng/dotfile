@@ -273,17 +273,14 @@ plugins_configure.plugins_groups = {
     [6] = {
         ["name"] = "lsp",
         ["subpath"] = "lspcfg",
-        ["plugins"] = { -- 必须保证mason, mason-lspconfig,nvim-lspconfig 依次加载的顺序
+        ["plugins"] = {
+            -- 必须保证mason, mason-lspconfig,nvim-lspconfig 依次加载的顺序
             -- {name = "cscope", enable = true, desc = "nvim 0.9支持cscope插件"},
             -- {name = "gutentags", enable = true, desc = "自动为cscope生成数据库"},
             -- {name = "vim-indexer", enable = false, desc = "使用catgs自动生成数据库"},
             --  {name = "gutentags_plus", enable = true, desc = "自动为cscope生成数据库"},
             {name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig"},
-            {
-                name = "treesitter",
-                enable = true,
-                desc = "Neovim的树结构和抽象层"
-            },
+            { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
             {name = "trouble", enable = true, desc = "lsp的错误显示"},
             --[==[
             {
@@ -388,6 +385,13 @@ plugins_configure.plugins_groups = {
                 desc = "管理lazydocker的UI"
             }
         }
+    },
+    [10] = {
+        ["name"] = "hooks",
+        ["subpath"] = "hooks",
+        ["plugins"] = {
+            { name="telescope-hooks", enable = true, desc="所有telescope hooks"}
+        }
     }
 }
 
@@ -396,6 +400,7 @@ plugins_configure.setup = function()
     xlog.trace("myplugins's setup called")
 
     local lazy_plugins = {}
+    local hooks= {}
     -- local tbl = DataDumper(plugins_configure.plugins_groups,"plugins")
     -- print(tbl)
 
@@ -462,13 +467,29 @@ plugins_configure.setup = function()
             end
 
             local core = plug.core
-            local only_keymapping = core["only_keymapping"]
-
-            if (nil ~= only_keymapping) then
+            -- local only_keymapping = core["only_keymapping"]
+            if ( core.only_keymapping) then
                 xlog.trace(
                     "plugin:%s [with %s] in group:%s is only-keymapping(No core) loading by plugin_path:%s",
                     plugin_name, plugin_desc, group_name, plugin_path)
                 plugins_configure.all_loaded_module[plugin_name] = true -- added to all_loaded_module
+                goto continue_2
+            end
+
+            -- local only_hooks = core["only_hooks"]
+            if (core.only_hooks) then
+                xlog.trace(
+                    "plugin:%s [with %s] in group:%s is only-hooks(No core) loading by plugin_path:%s",
+                    plugin_name, plugin_desc, group_name, plugin_path)
+                -- plugins_configure.all_loaded_module[plugin_name] = true -- added to all_loaded_module
+                local hooks_init = plug.hooks_init;
+                if(nil ~= hooks_init) then
+                    xlog.trace(
+                        "plugin:%s [with %s] in group:%s by plugin_path:%s run hooks_init functions",
+                        plugin_name, plugin_desc, group_name, plugin_path)
+
+                    table.insert(hooks, hooks_init)
+                end
                 goto continue_2
             end
 
@@ -535,6 +556,11 @@ plugins_configure.setup = function()
         }
 
     })
+
+    -- run hooks after all plugins loaded
+    for idx, hk in ipairs(hooks) do
+        hk()
+    end
 end
 
 plugins_configure.create_mapping = function()

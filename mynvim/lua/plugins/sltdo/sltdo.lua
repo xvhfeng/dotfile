@@ -1,6 +1,6 @@
 local plugin = {}
 
-plugin.core = {only_keymapping}
+plugin.core = {only_keymapping = true}
 
 plugin.mapping = {
     keymaps = {
@@ -9,13 +9,13 @@ plugin.mapping = {
         {mode = "i", key = "<C-h>", action = '<BS>', desc = "Delete Prior Char"},
         {mode = "i", key = "<C-d>", action = '<Del>', desc = "Delete Next Char"},
         {mode = "i", key = "<C-b>", action = '<Left>', desc = "Go Left"},
-        {mode = "i", key = "<C-f>", action = '<Right>', desc = "Go Right"}, 
+        {mode = "i", key = "<C-f>", action = '<Right>', desc = "Go Right"},
         { mode = "i", key = "<C-a>", action = '<ESC>^i', desc = "Go To The Head" },
         { mode = "i", key = "<C-e>", action = '<ESC>$a', desc = "Go To The Tail" },
         {mode = "i", key = "<C-n>", action = '<Down>', desc = "Move Down"},
         {mode = "i", key = "<C-p>", action = '<Up>', desc = "Move up"},
         { mode = "i", key = "<C-v>", action = '<PageDown>', desc = "Move PageDown" },
-        {mode = "i", key = "<C-u>", action = '<PageUp>', desc = "Move PageUp"}, 
+        {mode = "i", key = "<C-u>", action = '<PageUp>', desc = "Move PageUp"},
         { mode = "n", key = "[,", action = '<c-O>', desc = "JumpTo Last Postion" },
         { mode = "n", key = "[.", action = '<c-I>', desc = "jumpTo Next" },
         { mode = "n", key = "j", action = 'gj', desc = "SomeAs j In Long Line"} ,
@@ -29,7 +29,7 @@ plugin.mapping = {
 
 如果想回到更老的跳转位置，使用命令"CTRL-O"；与它相对应的，是"CTRL-I"，它跳转到更新的跳转位置(:help CTRL-O和:help CTRL-I)。这两个命令前面可以加数字来表示倍数。
 
-使用命令":jumps"可以查看跳转表(:help :jumps)。    
+使用命令":jumps"可以查看跳转表(:help :jumps)。
 --]==]
 
 return plugin

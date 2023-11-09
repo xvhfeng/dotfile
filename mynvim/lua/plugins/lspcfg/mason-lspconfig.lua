@@ -45,7 +45,7 @@ plugin.core = {
             require "plugins/lspcfg/setup/lua_ls",
             require "plugins/lspcfg/setup/marksman",
             require "plugins/lspcfg/setup/pyright",
-            require "plugins/lspcfg/setup/sqll",
+            require "plugins/lspcfg/setup/sqlls",
             require "plugins/lspcfg/setup/tsserver",
             require "plugins/lspcfg/setup/vimls",
             require "plugins/lspcfg/setup/yamlls",
