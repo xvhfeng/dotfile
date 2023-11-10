@@ -200,9 +200,9 @@ default_setting['opt'] = {
     --  " syntax    使用语法定义折叠
     --  " diff      对没有更改的文本进行折叠
     --  " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
-    foldmethod="marker",
-    -- foldmethod="indent",
-    foldlevel=1,
+    foldmethod="syntax",
+    -- foldmethod="manual",
+    foldlevel=99,
 
     -- " 缩进配置
     smartindent = true, --  " Smart indent
@@ -260,8 +260,8 @@ default_setting['opt'] = {
 
     helplang="cn",
 
- --    clipboard="unnamed",
-     clipboard="unnamedplus",
+    --    clipboard="unnamed",
+    clipboard="unnamedplus",
 
     -- 样式
     termguicolors = true,
@@ -289,17 +289,17 @@ set showmatch matchtime=0 matchpairs+=<:>,《:》,（:）,【:】,“:”,‘:�
 
 vim.cmd [[
 if executable('clipboard-provider')
-  let g:clipboard = {
-          \ 'name': 'myClipboard',
-          \     'copy': {
-          \         '+': 'clipboard-provider copy',
-          \         '*': 'clipboard-provider copy',
-          \     },
-          \     'paste': {
-          \         '+': 'clipboard-provider paste',
-          \         '*': 'clipboard-provider paste',
-          \     },
-          \ }
+let g:clipboard = {
+\ 'name': 'myClipboard',
+\     'copy': {
+\         '+': 'clipboard-provider copy',
+\         '*': 'clipboard-provider copy',
+\     },
+\     'paste': {
+\         '+': 'clipboard-provider paste',
+\         '*': 'clipboard-provider paste',
+\     },
+\ }
 endif
 ]]
 
@@ -346,7 +346,7 @@ local active_group = vim.api.nvim_create_augroup("active_group", { clear = false
 vim.cmd('highlight link DarkNormal Normal')
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
     callback = function()
-        -- if filetype in 
+        -- if filetype in
         if global_func.index(vim.g.side_filetypes, vim.bo.filetype) == nil then
             vim.cmd('setl winhighlight=Normal:Normal')
             if vim.g.no_number_filetypes[vim.bo.filetype] == nil and vim.api.nvim_win_get_config(0).relative == '' then

@@ -72,12 +72,12 @@ plugin.mapping = {
         {
             mode = "c",
             key = "<c-p>",
-            action = '<UP>',
+            action = '<Up>',
             desc = "QuickFix Previous Item"
         }, {
             mode = "c",
             key = "<c-n>",
-            action = '<DOWN>',
+            action = '<Down>',
             desc = "QuickFix Next Item"
         }
 

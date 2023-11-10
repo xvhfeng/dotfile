@@ -1,8 +1,23 @@
 local plugin = {}
 
 plugin.core = {
-    'nvim-treesitter/nvim-treesitter',
+    "nvim-treesitter/nvim-treesitter",
+    commit = "226c1475a46a2ef6d840af9caa0117a439465500",
+    event = "BufReadPost",
     build = ':TSUpdate',
+    dependencies = {
+        {
+            "JoosepAlviste/nvim-ts-context-commentstring",
+            event = "VeryLazy",
+            commit = "729d83ecb990dc2b30272833c213cc6d49ed5214",
+        },
+        {
+            "nvim-tree/nvim-web-devicons",
+            event = "VeryLazy",
+            commit = "0568104bf8d0c3ab16395433fcc5c1638efc25d4"
+        },
+    },
+
     config = function()
         require('nvim-treesitter.configs').setup {
             ensure_installed = {"vim",
@@ -34,14 +49,21 @@ plugin.core = {
                     scope_incremental = '<TAB>',
                 }
             },
+            autopairs = {
+                enable = true,
+            },
+            context_commentstring = {
+                enable = true,
+                enable_autocmd = false,
+            },
 
 
         }
         -- vim.wo.foldmethod = 'marker'
-        vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
+        -- vim.wo.foldexpr = 'nvim_treesitter#foldexpr()'
         -- 默认不折叠
-        vim.wo.foldlevel = 99
-        vim.wo.foldenable = false
+        -- vim.wo.foldlevel = 99
+        -- vim.wo.foldenable = false
 
         --[[
         local auto_indent = vim.api.nvim_create_augroup("AUTO_INDENT", {clear = true})

@@ -35,11 +35,11 @@ plugins_configure.plugins_groups = {
                 name = "genutils",
                 enable = true,
                 desc = "vim的工具函数集合"
-            }, {
-                name = "indent-blankline",
-                enable = true,
-                desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"
-            }, {name = "rainbow", enable = true, desc = "括号颜色匹配"},
+            },
+            {
+                name = "indent-blankline", enable = true, desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"
+            },
+            {name = "rainbow", enable = true, desc = "括号颜色匹配"},
             {name = "autosession", enable = false, desc = "session保存"},
             {name = "vim-airline", enable = true, desc = "vim的状态栏"}, {
                 name = "vim-emacscommandline",
@@ -69,10 +69,10 @@ plugins_configure.plugins_groups = {
                 desc = "虚拟终端，执行系统bash与lazydocker"
             },
             --[[ {
-                name = "noice",
-                enable = true,
-                desc = "UI for Messgae cmdline and popupmenu"
-            },--]]
+name = "noice",
+enable = true,
+desc = "UI for Messgae cmdline and popupmenu"
+},--]]
             {
                 name = "preview",
                 enable = true,
@@ -127,17 +127,17 @@ plugins_configure.plugins_groups = {
                 desc = "cpp googlestyle检查"
             },
             --[[
-            {
-                name = "lua-formatter",
-                enable = true,
-                desc = "lua-format格式化工具"
-            },
-            {
-                name = "clang-formatter",
-                enable = true,
-                desc = "clang-format格式化工具"
-            },
-            --]]
+{
+name = "lua-formatter",
+enable = true,
+desc = "lua-format格式化工具"
+},
+{
+name = "clang-formatter",
+enable = true,
+desc = "clang-format格式化工具"
+},
+--]]
             {
                 name = "whitespace",
                 enable = true,
@@ -152,6 +152,11 @@ plugins_configure.plugins_groups = {
                 name = "neogen",
                 enable = true,
                 desc = "Doxydoc Gener"
+            },
+            {
+                name = "nvim-ufo",
+                enable = true,
+                desc = "代码折叠"
             },
             {
                 name = "doxygen",
@@ -274,45 +279,18 @@ plugins_configure.plugins_groups = {
         ["name"] = "lsp",
         ["subpath"] = "lspcfg",
         ["plugins"] = {
-            -- 必须保证mason, mason-lspconfig,nvim-lspconfig 依次加载的顺序
-            -- {name = "cscope", enable = true, desc = "nvim 0.9支持cscope插件"},
-            -- {name = "gutentags", enable = true, desc = "自动为cscope生成数据库"},
-            -- {name = "vim-indexer", enable = false, desc = "使用catgs自动生成数据库"},
-            --  {name = "gutentags_plus", enable = true, desc = "自动为cscope生成数据库"},
             {name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig"},
             { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
             {name = "trouble", enable = true, desc = "lsp的错误显示"},
             {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
-            --[==[
-            {
-                name = "lsp-init",
-                enable = true,
-                desc = "lsp服务的配置,主要是mason,lspconfig等"
-            }, -- {name = "nvim-lspfuzzy",    enable = true, desc = "查看定义等窗口" },
-             {
-                name = "lspsaga",
-                enable = true,
-                desc = "漂亮的lsp的窗口定义,美化LSP显示"
-            },
-            {name = "cmake-tools", enable = true, desc = "Cmake Tools"},
-            {name = "nvim-dap", enable = false, desc = "lsp的智能补全"},
-
-            {name = "copilot", enable = false, desc = "GitHub的AI分析"},
-            {
-                name = "copilot_cmp",
-                enable = false,
-                desc = "GitHub的AI智能补全"
-            },
             {name = "symbols-outline", enable = true, desc = "outline工具栏"},
-            {name = "aerial", enable = true, desc = "outline工具栏"},
-            --]==]
-            -- { name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
+            { name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
+            --[==[
+{name = "aerial", enable = true, desc = "outline工具栏"},
+--]==]
             -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
             -- { name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },
-            -- { name="lspkind", enable = true, desc="这个小插件为neovim内置lsp添加了类似vcode的象形图"},
             -- { name = "navigator",     enable = true, desc = "基于LSP的源码分析和导航工具" },
-            -- { name = "null-ls",       enable = true, desc = "LSP的扩展插件,可以完成诊断,格式化代码等等功能" },
-            -- { name="nvim-dap", enable = true, desc="debug转换协议"},
             -- { name = "symbols-outline", enable = true, desc = "使用LSP在nvim中树状展现一个符号的outline" },
             -- { name = "vista",         enable = true, desc = "查看和搜索Vim/NeoVim中的LSP符号、标签" },
             -- {name = "ccls",enable=true,desc = "使用ccls实现智能提示,跳转tree"},
@@ -391,7 +369,8 @@ plugins_configure.plugins_groups = {
         ["name"] = "hooks",
         ["subpath"] = "hooks",
         ["plugins"] = {
-            { name="telescope-hooks", enable = true, desc="所有telescope hooks"}
+            { name="telescope-hooks", enable = true, desc="所有telescope hooks"},
+            { name="folding-hooks", enable = true, desc="Code Folding hooks,依赖nvim-ufo"},
         }
     }
 }
@@ -633,29 +612,29 @@ plugins_configure.create_mapping = function()
                     mapping()
                 end
                 --[[
-                if type({}) == type(mapping) then
-                    local keys = mapping["keys"];
-                    local tags = mapping["tags"]
+if type({}) == type(mapping) then
+local keys = mapping["keys"];
+local tags = mapping["tags"]
 
-                    if keys then
-                        for _, key in pairs(keys) do
-                            kmr.addkey(key)
-                        end
-                    end
+if keys then
+for _, key in pairs(keys) do
+kmr.addkey(key)
+end
+end
 
-                    if tags then
-                        for _, tag in pairs(tags) do
-                            kmr.addtag(tag)
-                        end
-                    end
-                    -- key_mapping()
-                    xlog.trace(
-                        "plugin:%s [with %s] in group:%s success in make keymapping plugin_path:%s",
-                        plugin_name, plugin_desc, group_name, plugin_path)
-                else
-                    mapping()
-                end
-                --]]
+if tags then
+for _, tag in pairs(tags) do
+kmr.addtag(tag)
+end
+end
+-- key_mapping()
+xlog.trace(
+"plugin:%s [with %s] in group:%s success in make keymapping plugin_path:%s",
+plugin_name, plugin_desc, group_name, plugin_path)
+else
+mapping()
+end
+--]]
             end
 
             ::continue_2::

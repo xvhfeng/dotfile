@@ -2,20 +2,20 @@ local plugin = {}
 
 plugin.core = {
     'stevearc/aerial.nvim',
-  opts = {},
-  -- Optional dependencies
-  dependencies = {
-     "nvim-treesitter/nvim-treesitter",
-     "nvim-tree/nvim-web-devicons"
-  },
+    opts = {},
+    -- Optional dependencies
+    dependencies = {
+        "nvim-treesitter/nvim-treesitter",
+        "nvim-tree/nvim-web-devicons"
+    },
 
 }
 
 plugin.mapping = {
-    keymaps = { 
+    keymaps = {
         {
             mode = "n",
-            key = "<leader>lso", 
+            key = "<leader>lso",
             action = "<cmd>AerialToggle<CR>",
             desc = "Aerial Outline"
         }}
