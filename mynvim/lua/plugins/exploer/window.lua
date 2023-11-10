@@ -68,19 +68,19 @@ plugin.mapping = {
             action = ':copen<cr>',
             desc = "QuickFix Open"
         },
-        --[[
+
         {
-            mode = "n",
+            mode = "c",
             key = "<c-p>",
-            action = ':cprevious<cr>',
+            action = '<UP>',
             desc = "QuickFix Previous Item"
         }, {
-            mode = "n",
+            mode = "c",
             key = "<c-n>",
-            action = ':cnext<cr>',
+            action = '<DOWN>',
             desc = "QuickFix Next Item"
         }
-        --]]
+
     }
 }
 

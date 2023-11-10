@@ -5,7 +5,7 @@ plugin.core = {
     build = ':TSUpdate',
     config = function()
         require('nvim-treesitter.configs').setup {
-            ensure_installed = {"vim", 
+            ensure_installed = {"vim",
                 "bash",
                 "c",
                 "cpp",
@@ -13,9 +13,9 @@ plugin.core = {
                 "java",
                 "go",
                 "jsonc",
-            "cmake",
-            "dockerfile",
-                "sql"
+                "cmake",
+                "dockerfile"
+                --    "sql"
 
             },
             highlight = {

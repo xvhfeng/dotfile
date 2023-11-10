@@ -282,6 +282,7 @@ plugins_configure.plugins_groups = {
             {name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig"},
             { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
             {name = "trouble", enable = true, desc = "lsp的错误显示"},
+            {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
             --[==[
             {
                 name = "lsp-init",
@@ -292,7 +293,7 @@ plugins_configure.plugins_groups = {
                 name = "lspsaga",
                 enable = true,
                 desc = "漂亮的lsp的窗口定义,美化LSP显示"
-            }, {name = "lsp_cmp", enable = true, desc = "lsp的智能补全"},
+            },
             {name = "cmake-tools", enable = true, desc = "Cmake Tools"},
             {name = "nvim-dap", enable = false, desc = "lsp的智能补全"},
 
