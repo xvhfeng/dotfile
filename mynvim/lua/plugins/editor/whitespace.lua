@@ -9,8 +9,8 @@ plugin.core = {
 
 plugin.mapping = {
     keymaps = {
-         {
-            tag = {key = "<leader>ee", name = "Edit"},
+        {
+            tag = {key = "<leader>ee", name = "Trailing Whitespace"},
             keymaps = {
                 {
                     mode = "n",

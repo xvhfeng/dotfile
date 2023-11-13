@@ -1,7 +1,7 @@
 local plugin = {}
 
 plugin.core = {
-    "windwp/nvim-spectre",
+    'nvim-pack/nvim-spectre',
     dependencies = {{"nvim-lua/plenary.nvim"}},
 
     config = function() -- Specifies code to run after this plugin is loaded
@@ -12,136 +12,97 @@ plugin.core = {
 plugin.mapping = {
     keymaps = {
         {
-            tag = {key = "<leader>fr", name = "Search&Replace With Preview"},
+            tag = {key = '<leader>ro', name = "Open"},
+            keymaps = {
+                { mode =  'n', key = '<leader>roo', action = '<cmd>lua require("spectre").toggle()<CR>', desc = "Toggle Spectre" },
+                { mode = 'n', key = '<leader>row', action = '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', desc = "Search current word"},
+                { mode = 'v', key = '<leader>ros', action = '<esc><cmd>lua require("spectre").open_visual()<CR>', desc = "Search current word"},
+                { mode = 'n', key = '<leader>rop', action = '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', desc = "Search on current file"},
+            }
+        },
+        {
+            tag = {key = '<leader>rd', name = "Doing"},
             keymaps = {
                 {
                     mode = "n",
-                    key = "<leader>fro",
-                    action = ":lua require('spectre').open()<CR>",
-                    desc = "Open Search"
-                }, {
+                    key = "<leader>rdl",
+                    action = "<cmd>lua require('spectre').toggle_line()<CR>",
+                    desc = "toggle current line"
+                },
+                {
                     mode = "n",
-                    key = "<leader>frc",
-                    action = ":lua require('spectre').open_visual({select_word=true})<CR>",
-                    desc = "Search CWord"
-                }, {
+                    key = "<cr>",
+                    action = "<cmd>lua require('spectre.actions').select_entry()<CR>",
+                    desc = "goto current file"
+                },
+                {
                     mode = "n",
-                    key = "<leader>frv",
-                    action = ":lua require('spectre').open_visual()<CR>",
-                    desc = "Open Seach Visual"
-                }, {
+                    key = "<leader>rdq",
+                    action = "<cmd>lua require('spectre.actions').send_to_qf()<CR>",
+                    desc = "send all item to quickfix"
+                },
+                {
                     mode = "n",
-                    key = "<leader>frf",
-                    action = ":lua require('spectre').open_file_search()<cr>",
-                    desc = "Search In CurrentFile"
-
-                }, {
+                    key = "<leader>rdc",
+                    action = "<cmd>lua require('spectre.actions').replace_cmd()<CR>",
+                    desc = "input replace vim command"
+                },
+                {
                     mode = "n",
-                    key = "<leader>frt",
-                    action = ":lua require('spectre').toggle_line()<cr>",
-                    desc = "Toggle Current Item"
-                }, {
+                    key = "<leader>rdh",
+                    action = "<cmd>lua require('spectre').show_options()<CR>",
+                    desc = "show option"
+                },
+                {
                     mode = "n",
-                    key = "<leader>frg",
-                    action = ":lua require('spectre').select_entry()<cr>",
-                    desc = "Goto CurrentFile"
-                }, {
+                    key = "<leader>rdr",
+                    action = "<cmd>lua require('spectre.actions').run_current_replace()<CR>",
+                    desc = "replace current line"
+                },
+                {
                     mode = "n",
-                    key = "<leader>frr",
-                    action = ":lua require('spectre').run_current_replace()<cr>",
-                    desc = "Replace CurrentLine"
-                }, {
+                    key = "<leader>rdR",
+                    action = "<cmd>lua require('spectre.actions').run_replace()<CR>",
+                    desc = "replace all"
+                },
+                {
                     mode = "n",
-                    key = "<leader>fra",
-                    action = ":lua require('spectre').run_repalce()<cr>",
-                    desc = "Replace All"
-                }, {
+                    key = "<leader>rdv",
+                    action = "<cmd>lua require('spectre').change_view()<CR>",
+                    desc = "change result view mode"
+                },
+                {
                     mode = "n",
-                    key = "<leader>fri",
-                    action = ":lua require('spectre').change_options('ignore-case')<cr>",
-                    desc = "Toggle IgnoreCase"
-                }, {
+                    key = "<leader>rde",
+                    action = "<cmd>lua require('spectre').change_engine_replace('sed')<CR>",
+                    desc = "replace by sed (X)"
+                },
+                {
                     mode = "n",
-                    key = "<leader>frp",
-                    action = ":lua require('spectre').change_view()<cr>",
-                    desc = "Update Result ViewMode"
-                }, {
+                    key = "<leader>rdx",
+                    action = "<cmd>lua require('spectre').change_engine_replace('oxi')<CR>",
+                    desc = "replace by oxi (X)"
+                },
+                {
                     mode = "n",
-                    key = "<leader>frh",
-                    action = ":lua require('spectre').resume_last_search()<cr>",
-                    desc = "Resume Last Search"
-                }
+                    key = "<leader>rdu",
+                    action = "<cmd>lua require('spectre').toggle_live_update()<CR>",
+                    desc = "update change when vim write file."
+                },
+                {
+                    mode = "n",
+                    key = "<leader>rdi",
+                    action = "<cmd>lua require('spectre').change_options('ignore-case')<CR>",
+                    desc = "toggle ignore case"
+                },
+                {
+                    mode = "n",
+                    key = "<leader>rdt",
+                    action = "<cmd>lua require('spectre').change_options('hidden')<CR>",
+                    desc = "toggle search hidden"
+                },
             }
         }
     }
 }
 return plugin
-
---[===[
-mapping={
-    ['toggle_line'] = {
-        map = "dd",
-        cmd = "<cmd>lua require('spectre').toggle_line()<CR>",
-        desc = "toggle current item"
-    },
-    ['enter_file'] = {
-        map = "<cr>",
-        cmd = "<cmd>lua require('spectre.actions').select_entry()<CR>",
-        desc = "goto current file"
-    },
-    ['send_to_qf'] = {
-        map = "<leader>q",
-        cmd = "<cmd>lua require('spectre.actions').send_to_qf()<CR>",
-        desc = "send all item to quickfix"
-    },
-    ['replace_cmd'] = {
-        map = "<leader>c",
-        cmd = "<cmd>lua require('spectre.actions').replace_cmd()<CR>",
-        desc = "input replace vim command"
-    },
-    ['show_option_menu'] = {
-        map = "<leader>o",
-        cmd = "<cmd>lua require('spectre').show_options()<CR>",
-        desc = "show option"
-    },
-    ['run_current_replace'] = {
-      map = "<leader>rc",
-      cmd = "<cmd>lua require('spectre.actions').run_current_replace()<CR>",
-      desc = "replace current line"
-    },
-    ['run_replace'] = {
-        map = "<leader>R",
-        cmd = "<cmd>lua require('spectre.actions').run_replace()<CR>",
-        desc = "replace all"
-    },
-    ['change_view_mode'] = {
-        map = "<leader>v",
-        cmd = "<cmd>lua require('spectre').change_view()<CR>",
-        desc = "change result view mode"
-    },
-    ['change_replace_sed'] = {
-      map = "th",
-      cmd = "<cmd>lua require('spectre').change_engine_replace('sed')<CR>",
-      desc = "use sed to replace"
-    },
-    ['change_replace_oxi'] = {
-      map = "th",
-      cmd = "<cmd>lua require('spectre').change_engine_replace('oxi')<CR>",
-      desc = "use oxi to replace"
-    },
-    ['toggle_live_update']={
-      map = "tu",
-      cmd = "<cmd>lua require('spectre').toggle_live_update()<CR>",
-      desc = "update change when vim write file."
-    },
-    ['toggle_ignore_case'] = {
-      map = "ti",
-      cmd = "<cmd>lua require('spectre').change_options('ignore-case')<CR>",
-      desc = "toggle ignore case"
-    },
-    ['toggle_ignore_hidden'] = {
-      map = "th",
-      cmd = "<cmd>lua require('spectre').change_options('hidden')<CR>",
-      desc = "toggle search hidden"
-    },
-----]===]

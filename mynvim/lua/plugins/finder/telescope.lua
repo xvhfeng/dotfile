@@ -136,80 +136,75 @@ plugin.core = {
 plugin.mapping = {
     keymaps = {
         {
-            tag = {key = "<leader>ft", name = "Telescope"},
-            keymaps = {
-                {
-                    mode = "n",
-                    key = "<leader>ftf",
-                    action = "<cmd>lua require('telescope.builtin').find_files()<cr>",
-                    desc = "Find files"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftq",
-                    action = "<cmd>lua require('telescope.builtin').grep_string({search = vim.fn.expand('<cword>')})<cr>",
-                    desc = "grep current words"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftd",
-                    action = "<cmd>lua require('telescope.builtin').live_grep()<cr>",
-                    desc = "grep string"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftl",
-                    action = "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({skip_empty_lines=true})<cr>",
-                    desc = "Find Lines"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftb",
-                    action = "<cmd>lua require('telescope.builtin').buffers()<cr>",
-                    desc = "Find Buffers"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftc",
-                   action = "<cmd>lua require('telescope.builtin').command_history()<cr>",
-                    desc = "Find Command History"
-                }, {
-                    mode = "n",
-                    key = "<leader>fth",
-                    action = "<Cmd>lua require('telescope').extensions.frecency.frecency{ sorter = require('telescope.config').values.file_sorter()}<CR>",
-                    desc = "Find Recent/History"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftk",
-                    action = "<cmd>lua require('telescope.builtin').keymaps()<cr>",
-                    desc = "Find All Mappings"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftr",
-                    action = "<cmd>lua require('telescope.builtin').registers()<cr>",
-                    desc = "Find Registers"
-                }, {
-                    mode = "n",
-                    key = "<leader>fte",
-                    action = "<cmd>lua require('telescope.builtin').planets()<cr>",
-                    desc = "Find Planets"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftg",
-                    action = "<cmd>lua require('telescope.builtin').git_commits()<cr>",
-                    desc = "Find Git Commits"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftG",
-                    action = "<cmd>lua require('telescope.builtin').git_bcommits()<cr>",
-                    desc = "Find Git Commits(buffer)"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftj",
-                    action = "<cmd>lua require('telescope.builtin').jumplist()<cr>",
-                    desc = "Find Jump List"
-                }, {
-                    mode = "n",
-                    key = "<leader>ftm",
-                    action = "<cmd>lua require('telescope.builtin').marks()<cr>",
-                    desc = "Find Marks"
-                }
-            }
+            mode = "n",
+            key = "<leader>tf",
+            action = "<cmd>lua require('telescope.builtin').find_files()<cr>",
+            desc = "Find files"
+        }, {
+            mode = "n",
+            key = "<leader>tq",
+            action = "<cmd>lua require('telescope.builtin').grep_string({search = vim.fn.expand('<cword>')})<cr>",
+            desc = "grep current words"
+        }, {
+            mode = "n",
+            key = "<leader>td",
+            action = "<cmd>lua require('telescope.builtin').live_grep()<cr>",
+            desc = "grep string"
+        }, {
+            mode = "n",
+            key = "<leader>tl",
+            action = "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({skip_empty_lines=true})<cr>",
+            desc = "Find Lines"
+        }, {
+            mode = "n",
+            key = "<leader>tb",
+            action = "<cmd>lua require('telescope.builtin').buffers()<cr>",
+            desc = "Find Buffers"
+        }, {
+            mode = "n",
+            key = "<leader>tc",
+            action = "<cmd>lua require('telescope.builtin').command_history()<cr>",
+            desc = "Find Command History"
+        }, {
+            mode = "n",
+            key = "<leader>th",
+            action = "<Cmd>lua require('telescope').extensions.frecency.frecency{ sorter = require('telescope.config').values.file_sorter()}<CR>",
+            desc = "Find Recent/History"
+        }, {
+            mode = "n",
+            key = "<leader>tk",
+            action = "<cmd>lua require('telescope.builtin').keymaps()<cr>",
+            desc = "Find All Mappings"
+        }, {
+            mode = "n",
+            key = "<leader>tr",
+            action = "<cmd>lua require('telescope.builtin').registers()<cr>",
+            desc = "Find Registers"
+        }, {
+            mode = "n",
+            key = "<leader>te",
+            action = "<cmd>lua require('telescope.builtin').planets()<cr>",
+            desc = "Find Planets"
+        }, {
+            mode = "n",
+            key = "<leader>tg",
+            action = "<cmd>lua require('telescope.builtin').git_commits()<cr>",
+            desc = "Find Git Commits"
+        }, {
+            mode = "n",
+            key = "<leader>tG",
+            action = "<cmd>lua require('telescope.builtin').git_bcommits()<cr>",
+            desc = "Find Git Commits(buffer)"
+        }, {
+            mode = "n",
+            key = "<leader>tj",
+            action = "<cmd>lua require('telescope.builtin').jumplist()<cr>",
+            desc = "Find Jump List"
+        }, {
+            mode = "n",
+            key = "<leader>tm",
+            action = "<cmd>lua require('telescope.builtin').marks()<cr>",
+            desc = "Find Marks"
         }
     }
 }

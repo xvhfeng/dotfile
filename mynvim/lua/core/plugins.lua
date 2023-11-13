@@ -212,33 +212,14 @@ desc = "clang-format格式化工具"
         ["name"] = "finder",
         ["subpath"] = "finder",
         ["plugins"] = {
-            { name = "spectre",  enable = true, desc = "一个搜索与替换插件" },
-            {name = "fzf", enable = true, desc = "查找操作"}, {
-                name = "telescope",
-                enable = true,
-                desc = "一个高度可扩展的列表模糊查找工具"
-            },
-            {
-                name = "any-jump",
-                enable = true,
-                desc = "在定义的标记间跳转"
-            }, {
-                name = "preview",
-                enable = true,
-                desc = "预览插件"
-            }, {
-                name = "ssr",
-                enable = true,
-                desc = "使用模式替换,支持n和v两种模式"
-            }, {
-                name = "ferret",
-                enable = true,
-                desc = "使用ack或者ripgrep查找,替换字符串"
-            }, {
-                name = "vim-ripgrep",
-                enable = true,
-                desc = "使用ripgrep查询字符串"
-            }
+            {name = "telescope", enable = true, desc = "高度可扩展的列表模糊查找工具" },
+            {name = "spectre",  enable = true, desc = "搜索与替换插件" },
+            {name = "any-jump", enable = true, desc = "在定义的标记间跳转" },
+            {name = "preview", enable = true, desc = "预览插件" },
+            {name = "ferret", enable = true, desc = "使用ack或者ripgrep查找,替换字符串" },
+            {name = "vim-ripgrep", enable = true, desc = "使用ripgrep查询字符串" }
+            -- {name = "fzf", enable = true, desc = "查找操作"},
+            -- {name = "ssr", enable = true, desc = "使用模式替换,支持n和v两种模式" },
         }
     },
     [5] = {
@@ -280,14 +261,12 @@ desc = "clang-format格式化工具"
         ["subpath"] = "lspcfg",
         ["plugins"] = {
             {name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig"},
-            { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
+            {name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
             {name = "trouble", enable = true, desc = "lsp的错误显示"},
             {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
-            {name = "symbols-outline", enable = true, desc = "outline工具栏"},
-            { name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
-            --[==[
-{name = "aerial", enable = true, desc = "outline工具栏"},
---]==]
+            {name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
+            {name = "nvim-dap", enable = true, desc = "调试"},
+            -- {name = "symbols-outline", enable = true, desc = "outline工具栏"},
             -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
             -- { name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },
             -- { name = "navigator",     enable = true, desc = "基于LSP的源码分析和导航工具" },

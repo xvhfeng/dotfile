@@ -16,18 +16,20 @@ local global_legfuncmap = {}
 local optDef = {noremap = true, silent = true}
 
 local mapping_prefix = {
-    ["<leader>f"] = {name = "+ Find/Repalce"},
     ["<leader>b"] = {name = "+ Buffer"},
     ["<leader>c"] = {name = "+ Container"},
+    ["<leader>d"] = {name = "+ Debug"},
     ["<leader>e"] = {name = "+ Edit"},
+    ["<leader>f"] = {name = "+ Find/Repalce"},
     ["<leader>g"] = {name = "+ Git"},
---     ["<leader>j"] = {name = "+ JumpCscope"},
     ["<leader>l"] = {name = "+ Lsp" },
     ["<leader>m"] = {name = "+ Marks"},
+    ["<leader>r"] = {name = "+ Replace"},
+    ["<leader>s"] = {name = "+ System"},
+    ["<leader>t"] = {name = "+ Telescope"},
     ["<leader>w"] = {name = "+ Windows"},
-    ["<leader>s"] = {name = "+ System"}
 
-    --[==[ 
+    --[==[
     ["<leader>h"] = { name = "+ History" },
     ["<leader>r"] = {name = "+ Find/Repalce"},
     ["<leader>t"] = {name = "+ Telescope"},
@@ -64,7 +66,7 @@ local mapping_prefix = {
     action = "",                  required
     desc = "",                    default = short_desc
     opt = {}                    keymap's opt,default = { noremap = true, silent = true}
-    cond = {}                       default = {} 
+    cond = {}                       default = {}
      cond value :
         --  del_first = false              default = false
             checked = false|true,default true
@@ -200,7 +202,7 @@ local plugin_keymap_build = function(plugin_name,isWhichKey, isLegendaryKey, mod
             local map = {}
             table.insert(map, action)
             table.insert(map, desc)
-           
+
             if tools.tbl_haskey(opt, 'silent') then
                 map["silent"] = opt['silent']
             end
@@ -283,7 +285,7 @@ local keygroup_parser = function(plugin_name,group)
 
     if tools.isNotNilAndEmptyTbl(keymaps) then
         for _, v in ipairs(keymaps) do
-          ---  tbldump.tbl_trace(plugin_name .. "key_parser's keymap",v,tools.__FILE__(),tools.__LINE__())
+            ---  tbldump.tbl_trace(plugin_name .. "key_parser's keymap",v,tools.__FILE__(),tools.__LINE__())
             local keyset, wkmap, legmap = key_parser(plugin_name,v)
             if nil ~= keyset and tools.isNotNilAndEmptyTbl(wkmap) then
                 wkmaps[keyset] = wkmap
@@ -312,10 +314,10 @@ local keymaps_parser = function(plugin_name,keymaps)
     if tools.isNilOrEmptyTbl(keymaps) then return end
 
     --- tbldump.tbl_trace(plugin_name ,keymaps,tools.__FILE__(),tools.__LINE__())
-   -- local wkmaps = {}
+    -- local wkmaps = {}
     -- local legmaps = {}
 
-    
+
     local wkmap = {}
     local legmap = {}
     local keyset = nil
@@ -325,7 +327,7 @@ local keymaps_parser = function(plugin_name,keymaps)
         if tools.tbl_haskey(keymaps,"tag") then
             xlog.trace(plugin_name .. " keymaps have tag,it's group.")
             wkmap, legmap = keygroup_parser(plugin_name,keymaps)
-           ---tbldump tbldump.tbl_trace(plugin_name ,wkmap,tools.__FILE__(),tools.__LINE__())
+            ---tbldump tbldump.tbl_trace(plugin_name ,wkmap,tools.__FILE__(),tools.__LINE__())
             --- tbldump.tbl_trace(plugin_name ,legmap,tools.__FILE__(),tools.__LINE__())
         else
             xlog.trace(plugin_name .. " keymaps have no tag,they are single keys{}.")
@@ -334,21 +336,21 @@ local keymaps_parser = function(plugin_name,keymaps)
                 if nil ~= keyset and tools.isNotNilAndEmptyTbl(keymap) then
                     wkmap[keyset] = keymap
                 end
-              --- tbldump.tbl_trace(plugin_name ,wkmap,tools.__FILE__(),tools.__LINE__())
-              ---  tbldump.tbl_trace(plugin_name ,legmap,tools.__FILE__(),tools.__LINE__())
+                --- tbldump.tbl_trace(plugin_name ,wkmap,tools.__FILE__(),tools.__LINE__())
+                ---  tbldump.tbl_trace(plugin_name ,legmap,tools.__FILE__(),tools.__LINE__())
             end
         end
-    else 
+    else
         xlog.trace(plugin_name .. "keymaps have no inner keymaps.it maybe single key{}")
         keyset, keymap, legmap = key_parser(plugin_name,keymaps)
         if nil ~= keyset and tools.isNotNilAndEmptyTbl(keymap) then
             wkmap[keyset] = keymap
         end
-       --- tbldump.tbl_trace(plugin_name ,wkmap,tools.__FILE__(),tools.__LINE__())
+        --- tbldump.tbl_trace(plugin_name ,wkmap,tools.__FILE__(),tools.__LINE__())
         --- tbldump.tbl_trace(plugin_name ,legmap,tools.__FILE__(),tools.__LINE__())
     end
 
-    --[[ 
+    --[[
     if tools.isNotNilAndEmptyTbl(wkmap) then
         table.insert(wkmaps, wkmap)
     end
@@ -366,27 +368,27 @@ end
 plugin.mappings_parser = function(plugin_name,mappings)
     if tools.isNilOrEmptyTbl(mappings) then return end
 
-      xlog.trace("begin parser mapping get from luafile for -> "..plugin_name)
-      --- tbldump.tbl_trace(plugin_name,mappings,tools.__FILE__(),tools.__LINE__())
+    xlog.trace("begin parser mapping get from luafile for -> "..plugin_name)
+    --- tbldump.tbl_trace(plugin_name,mappings,tools.__FILE__(),tools.__LINE__())
 
     local keymaps = mappings["keymaps"];
     local cmds = mappings["cmds"]
     local funcs = mappings["funcs"]
 
-   -- local wkGlobalMap = {}
-   -- local legGlobalMap = {}
+    -- local wkGlobalMap = {}
+    -- local legGlobalMap = {}
     if tools.isNotNilAndEmptyTbl(keymaps) then
-         -- xlog.trace(plugin_name .. " have keymaps.")
+        -- xlog.trace(plugin_name .. " have keymaps.")
         for k, v in ipairs(keymaps) do
             local wkmap, legmap
             wkmap, legmap = keymaps_parser(plugin_name,v)
 
             if tools.isNotNilAndEmptyTbl(wkmap) then
-              --- tbldump.tbl_trace("whickmap",wkmap,tools.__FILE__(),tools.__LINE__())
-               table.insert(global_wkmap, wkmap)
+                --- tbldump.tbl_trace("whickmap",wkmap,tools.__FILE__(),tools.__LINE__())
+                table.insert(global_wkmap, wkmap)
             end
             if tools.isNotNilAndEmptyTbl(legmap) then
-              ---  tbldump.tbl_trace("legendarymap",legmap,tools.__FILE__(),tools.__LINE__())
+                ---  tbldump.tbl_trace("legendarymap",legmap,tools.__FILE__(),tools.__LINE__())
                 table.insert(global_legkeymap, legmap)
             end
         end
@@ -401,10 +403,10 @@ plugin.mappings_parser = function(plugin_name,mappings)
     ---tbldump.tbl_trace("global_legmap",global_legkeymap,tools.__FILE__(),tools.__LINE__())
 
 
-   -- tbldump.tbl_trace(plugin_name .. "'s whichkey",wkmap,tools.__FILE__(),tools.__LINE__())
-   -- tbldump.tbl_trace(plugin_name .. "'s legmap ",legmap,tools.__FILE__(),tools.__LINE__())
-    
-   --[[  
+    -- tbldump.tbl_trace(plugin_name .. "'s whichkey",wkmap,tools.__FILE__(),tools.__LINE__())
+    -- tbldump.tbl_trace(plugin_name .. "'s legmap ",legmap,tools.__FILE__(),tools.__LINE__())
+
+    --[[
 
     if tools.isNotNilAndEmptyTbl(wkGlobalMap) then
         table.insert(global_wkmap, wkGlobalMap)

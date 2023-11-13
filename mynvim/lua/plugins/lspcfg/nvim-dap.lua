@@ -10,14 +10,17 @@ local dap_config = function()
 
     dap.listeners.after.event_initialized["dapui_config"] = function()
         dapui.open()
+        dap.repl.close()
     end
 
     dap.listeners.before.event_terminated["dapui_config"] = function()
         dapui.close()
+        dap.repl.close()
     end
 
     dap.listeners.before.event_exited["dapui_config"] = function()
         dapui.close()
+        dap.repl.close()
     end
 
     dap.adapters.codelldb = {
@@ -123,132 +126,85 @@ plugin.core = {
     end,
 }
 
---[==[
 plugin.mapping = {
-    keys = {
-        -- quit
+    keymaps = {
         {
-            mode = "n",
-            key = {"<leader>", "d", "q"},
-            action = ":lua require'dapui'.close()<cr> :lua require('dap').disconnect()<cr> :lua require('dap').close()<cr><cr> :lua require('dap').repl.close()<cr>",
-            desc = string.format("%-15s", "Debug Quit") .. "F2",
-        }, {
-            mode = "n",
-            key = {"<F2>"},
-            action = ":lua require'dapui'.close()<cr> :lua require('dap').disconnect()<cr> :lua require('dap').close()<cr><cr> :lua require('dap').repl.close()<cr>",
-            desc = "Debug Quit",
-        }, -- clear breakpoints
-        {
-            mode = "n",
-            key = {"<leader>", "d", "C"},
-            action = ":lua require'dap'.clear_breakpoints()<cr>",
-            desc = string.format("%-15s", "Clear Breaks") .. "F4",
-        }, {
-            mode = "n",
-            key = {"<F4>"},
-            action = ":lua require'dap'.clear_breakpoints()<cr>",
-            desc = "Clear Breaks",
-        }, -- continue
-        {
-            mode = "n",
-            key = {"<leader>", "d", "c"},
-            action = ":lua require'dap'.continue()<cr>",
-            desc = string.format("%-15s", "Run Continue") .. "F5",
-        }, {
-            mode = "n",
-            key = {"<F5>"},
-            action = ":lua require'dap'.continue()<cr>",
-            desc = "Run Continue",
-        }, -- step back
-        {
-            mode = "n",
-            key = {"<leader>", "d", "B"},
-            action = ":lua require'dap'.step_back()<cr>",
-            desc = string.format("%-15s", "Step Back") .. "F6",
-        }, {
-            mode = "n",
-            key = {"<F6>"},
-            action = ":lua require'dap'.step_back()<cr>",
-            desc = "Step Back",
-        }, {
-            mode = "n",
-            key = {"<leader>", "d", "a"},
-            action = nil,
-            desc = "Advanced Debug",
-        }, -- whole control breakpoint
-        {
-            mode = "n",
-            key = {"<leader>", "d", "a", "w"},
-            action = ":lua require'dap'.toggle_breakpoint(vim.fn.input('Breakpoint condition: '), vim.fn.input('Hit Condition: '), vim.fn.input('Log Message: '))<cr>",
-            desc = string.format("%-15s", "Advanced Break") .. "F7",
-        }, {
-            mode = "n",
-            key = {"<F7>"},
-            action = ":lua require'dap'.toggle_breakpoint(vim.fn.input('Breakpoint condition: '), vim.fn.input('Hit Condition: '), vim.fn.input('Log Message: '))<cr>",
-            desc = "Advanced Break",
-        }, -- condition breakpoint
-        {
-            mode = "n",
-            key = {"<leader>", "d", "a", "c"},
-            action = ":lua require'dap'.toggle_breakpoint(vim.fn.input('Breakpoint condition: '))<cr>",
-            desc = string.format("%-15s", "Cond Break") .. "F8",
-        }, {
-            mode = "n",
-            key = {"<F8>"},
-            action = ":lua require'dap'.toggle_breakpoint(vim.fn.input('Breakpoint condition: '))<cr>",
-            desc = "Cond Break",
-        }, -- breakpoint
-        {
-            mode = "n",
-            key = {"<leader>", "d", "b"},
-            action = ":lua require'dap'.toggle_breakpoint()<cr>",
-            desc = string.format("%-15s", "Toggle Break") .. "F9",
-        }, {
-            mode = "n",
-            key = {"<F9>"},
-            action = ":lua require'dap'.toggle_breakpoint()<cr>",
-            desc = "Toggle Break",
-        }, -- step over
-        {
-            mode = "n",
-            key = {"<leader>", "d", "o"},
-            action = ":lua require'dap'.step_over()<cr>",
-            desc = string.format("%-15s", "Step Over") .. "F10",
-        }, {
-            mode = "n",
-            key = {"<F10>"},
-            action = ":lua require'dap'.step_over()<cr>",
-            desc = "Step Over",
-        }, -- step into
-        {
-            mode = "n",
-            key = {"<leader>", "d", "i"},
-            action = ":lua require'dap'.step_into()<cr>",
-            desc = string.format("%-15s", "Step Into") .. "F11",
-        }, {
-            mode = "n",
-            key = {"<F11>"},
-            action = ":lua require'dap'.step_into()<cr>",
-            desc = "Step Into",
-        }, -- step out
-        {
-            mode = "n",
-            key = {"<leader>", "d", "O"},
-            action = ":lua require'dap'.step_out()<cr>",
-            desc = string.format("%-15s", "Step Out") .. "F12",
-        }, {
-            mode = "n",
-            key = {"<F12>"},
-            action = ":lua require'dap'.step_out()<cr>",
-            desc = "Step Out",
-        }, {
-            mode = "n",
-            key = {"<leader>", "d", "r"},
-            action = ":lua require'dap'.repl.open()<cr>",
-            desc = "Repl Open",
+            tag = { key = "<leader>d",name = "Debug"},
+            keymaps = {
+                -- quit
+                {
+                    mode = "n",
+                    key = "<leader>dq",
+                    action = ":lua require'dapui'.close()<cr> :lua require('dap').disconnect()<cr> :lua require('dap').close()<cr><cr> :lua require('dap').repl.close()<cr>",
+                    desc = string.format("%-15s", "Debug Quit") .. "F2",
+                }, -- clear breakpoints
+                {
+                    mode = "n",
+                    key = "<leader>dC",
+                    action = ":lua require'dap'.clear_breakpoints()<cr>",
+                    desc = string.format("%-15s", "Clear Breaks") .. "F4",
+                }, -- continue
+                {
+                    mode = "n",
+                    key = "<leader>dc",
+                    action = ":lua require'dap'.continue()<cr>",
+                    desc = string.format("%-15s", "Run Continue") .. "F5",
+                }, -- step back
+                {
+                    mode = "n",
+                    key = "<leader>dB",
+                    action = ":lua require'dap'.step_back()<cr>",
+                    desc = string.format("%-15s", "Step Back") .. "F6",
+                }, {
+                    mode = "n",
+                    key = "<leader>da",
+                    action = nil,
+                    desc = "Advanced Debug",
+                }, -- whole control breakpoint
+                {
+                    mode = "n",
+                    key = "<leader>daw",
+                    action = ":lua require'dap'.toggle_breakpoint(vim.fn.input('Breakpoint condition: '), vim.fn.input('Hit Condition: '), vim.fn.input('Log Message: '))<cr>",
+                    desc = "Advanced Break",
+                }, -- condition breakpoint
+                {
+                    mode = "n",
+                    key = "<leader>dac",
+                    action = ":lua require'dap'.toggle_breakpoint(vim.fn.input('Breakpoint condition: '))<cr>",
+                    desc = "Cond Break",
+                }, -- breakpoint
+                {
+                    mode = "n",
+                    key = "<leader>db",
+                    action = ":lua require'dap'.toggle_breakpoint()<cr>",
+                    desc = "Toggle Break",
+                }, -- step over
+                {
+                    mode = "n",
+                    key = "<leader>do",
+                    action = ":lua require'dap'.step_over()<cr>",
+                    desc = "Step Over",
+                }, -- step into
+                {
+                    mode = "n",
+                    key = "<leader>di",
+                    action = ":lua require'dap'.step_into()<cr>",
+                    desc = "Step Into",
+                }, -- step out
+                {
+                    mode = "n",
+                    key = "<leader>dO",
+                    action = ":lua require'dap'.step_out()<cr>",
+                    desc = "Step Out",
+                }, {
+                    mode = "n",
+                    key = "<leader>dr",
+                    action = ":lua require'dap'.repl.open()<cr>",
+                    desc = "Debug Open",
+                }
+            }
         }
     }
 }
 
---]==]
 return plugin

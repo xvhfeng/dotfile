@@ -1,4 +1,8 @@
 vim.loader.enable()
+-- vim的宏很少用，并且经常q按错，首先就禁了再说
+vim.cmd [[
+nnoremap q <Nop>
+]]
 
 -- disable netrw at the very start of your init.lua
 -- netrw 有很多的BUG，提前禁用

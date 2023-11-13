@@ -42,7 +42,7 @@ plugin.mapping = {
         },
         {
             mode = "n",
-            key = "<leader>wq",
+            key = "<leader>wc",
             action = "<cmd>WindowZap<CR>",
             desc = "Close Which Windows",
         }

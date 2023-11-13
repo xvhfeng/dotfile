@@ -53,4 +53,10 @@ if [ $SYSTEM == "Linux" ]; then
     export PATH=$CARGO_HOME/bin:$RUSTC_HOME/bin:$PATH
     export PATH=$DOTFILE_PATH/myshell/tools:$PATH
     export PATH=$DOTFILE_PATH/bin/single-exe:$PATH
+    JAVA_HOME=/opt/bin/java/jdk/
+    PATH=$JAVA_HOME/bin:$PATH
+    export JAVA_HOME
+    export MVN_HOME=/opt/bin/maven/mvn
+    export PATH="$MVN_HOME/bin/:$PATH"
+    export PATH
 fi
