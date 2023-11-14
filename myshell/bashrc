@@ -12,10 +12,11 @@ fi
 if [ $SYSTEM == "Linux" ]; then
     [ -f /usr/share/autojump/autojump.sh ] && source /usr/share/autojump/autojump.sh
     [ -f /etc/bash_completion ] && source /etc/bash_completion
+    [ -f ~/.local/bin/virtualenvwrapper-setting.sh ] && source ~/.local/bin/virtualenvwrapper-setting.sh
     # bind '"\e[A": history-search-backward'
     #  bind '"\e[B": history-search-forward'
-#    /usr/bin/setxkbmap -option "ctrl:nocaps"
-#    iwconfig wlp0s20f3 power off
+    #    /usr/bin/setxkbmap -option "ctrl:nocaps"
+    #    iwconfig wlp0s20f3 power off
 fi
 
 #添加git的自动完成命令功能
@@ -25,9 +26,6 @@ fi
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
 
-if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
-    source /usr/local/bin/virtualenvwrapper.sh
-fi
 
 if [ -f ~/.aliasrc ]; then
     source ~/.aliasrc

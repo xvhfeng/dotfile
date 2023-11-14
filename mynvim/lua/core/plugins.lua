@@ -85,7 +85,7 @@ desc = "UI for Messgae cmdline and popupmenu"
             },
             { name = "preview", enable = true, desc = "预览定义"},
             { name = "vim-fakeclip", enable = true, desc = "vim与系统之间共享clip"},
-            { name = "wilder", enable = true, desc = "更好的命令行功能"},
+            --  { name = "wilder", enable = true, desc = "更好的命令行功能"},
             {
                 name = "which-key",
                 enable = true,
@@ -98,7 +98,7 @@ desc = "UI for Messgae cmdline and popupmenu"
         ["subpath"] = "editor",
         ["plugins"] = {
             {name = "nerdcommenter", enable = true, desc = "代码注释插件"},
-            {name = "textobj-word-column", enable = true, desc = "编辑多行"},
+            -- {name = "textobj-word-column", enable = true, desc = "编辑多行"},
             {name = "undotree", enable = true, desc = "undo操作tree"},
             {name = "NrrwRgn", enable = true, desc = "Nrrw窗口操作选中文本区域"},
             {name = "vim-mundo", enable = true, desc = "mundo窗口操作文件变更history"},
