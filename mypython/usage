@@ -17,4 +17,11 @@ pip3 install --upgrade pip
 
 # add "virtualenvwrapper-setting.sh" to .bashrc source
 
+#where is virtualenvwrapper.sh file
+#on ubuntu 12.04 LTS, installing through pip, it is installed to
+# /usr/local/bin/virtualenvwrapper.sh
+#on ubuntu 17.04, installing through pip as a normal user, it is installed to
+# ~/.local/bin/virtualenvwrapper.sh
 
+# python env use
+# https://zhuanlan.zhihu.com/p/60647332

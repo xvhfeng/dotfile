@@ -54,9 +54,19 @@ plugin.core = {
         }
     },
     config = function()
-        require("mason").setup()
+        require("mason").setup({
+            registries = {
+                "github:mason-org/mason-registry@2023-11-17-whole-turbot"
+            },
+            providers = { "mason.providers.client" },
+            log_level = vim.log.levels.DEBUG
+            --          registries = {
+            --             "github:mason-org/mason-registry@2023-05-15-next-towel"
+            --        }
+        })
         require("mason-lspconfig").setup({
-            ensure_installed = {"lua_ls",
+            ensure_installed = {
+                "lua_ls",
                 "bashls",
                 "jdtls",
                 "clangd",
@@ -69,7 +79,7 @@ plugin.core = {
                 "sqlls",
                 "yamlls",
                 "vimls",
-                "gopls"
+                "gopls",
             },
             automatic_installation = true
         })

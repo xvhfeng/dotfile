@@ -1,5 +1,4 @@
 local plugin = {}
-
 local dap_config = function()
     local dap = require "dap"
 
@@ -51,6 +50,8 @@ local dap_config = function()
             stopOnEntry = false,
         },
     }
+
+    dap.configurations.cpp = dap.configurations.c
 end
 
 local dapui_config = function()
@@ -100,28 +101,42 @@ local dapui_config = function()
 end
 
 plugin.core = {
-    {
+    -- keep maosn setup first
+    -- so lookup plugin.lua for this rule
+    --"williamboman/mason.nvim",
+    "jay-babu/mason-nvim-dap.nvim",
+
+    dependencies = {
         "mfussenegger/nvim-dap",
-        commit = "6b12294a57001d994022df8acbe2ef7327d30587",
-        event = "VeryLazy",
-    },
-    {"ravenxrz/DAPInstall.nvim",
-        commit = "8798b4c36d33723e7bba6ed6e2c202f84bb300de",
-        lazy = true,
-    },
-
-    {
         "rcarriga/nvim-dap-ui",
-        commit = "1cd4764221c91686dcf4d6b62d7a7b2d112e0b13",
-        event = "VeryLazy",
+        "theHamsta/nvim-dap-virtual-text",
     },
-
-    {"theHamsta/nvim-dap-virtual-text"},
-
+    -- cmd = "Mason",
     config = function()
+        require("mason").setup()
+
+        local mason_dap = require("mason-nvim-dap")
+        mason_dap.setup({
+            ensure_installed = {
+                "bash",
+                "cppdbg",
+                "python",
+                -- install delve set go proxy
+                -- go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
+                -- because default goproxy cannot use in contory
+                "delve",
+                "javadbg",
+                "javatest",
+                -- "js",
+                -- "node2",
+                -- "php",
+            },
+            automatic_installation = true,
+            automatic_setup = true,
+        })
+
+        --mason_dap.setup_handlers {}
         dap_config()
-        require("dap_install").setup {}
-        require("dap_install").config("python", {})
         dapui_config()
     end,
 }
@@ -206,5 +221,6 @@ plugin.mapping = {
         }
     }
 }
+
 
 return plugin

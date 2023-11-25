@@ -18,26 +18,26 @@ plugin.core = {
 plugin.mapping = {
     keymaps = {
         {
-            tag = {key = "<leader>gl", name = "LazyGit"},
+            tag = {key = "<leader>gg", name = "LazyGit"},
             keymaps = {
                 {
                     mode = "n",
-                    key = "<leader>glo",
+                    key = "<leader>ggo",
                     action = "<cmd>LazyGit<cr>",
                     desc = "Show GitLazy"
                 }, {
                     mode = "n",
-                    key = "<leader>glc",
+                    key = "<leader>ggc",
                     action = "<cmd>LazyGitConfig<cr>",
                     desc = "Show LazyGit Config"
                 }, {
                     mode = "n",
-                    key = "<leader>glf",
+                    key = "<leader>ggf",
                     action = "<cmd>LazyGitCurrentFile<cr>",
                     desc = "Show Project GitInfo"
                 }, {
                     mode = "n",
-                    key = "<leader>glb",
+                    key = "<leader>ggb",
                     action = "<cmd>LazyGitFilter<cr>",
                     desc = "Git Current Buffer GitInfo"
                 }

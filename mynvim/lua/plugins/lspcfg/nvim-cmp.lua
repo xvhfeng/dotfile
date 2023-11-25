@@ -171,6 +171,7 @@ plugin.core = {
     config = function()
         --        require("luasnip.loaders.from_vscode").lazy_load()
         setup()
+        require "plugins/lspcfg/inc-snippets"
     end
 }
 

@@ -20,6 +20,7 @@ plugins_configure.plugins_groups = {
                 enable = false,
                 desc = "一个用Lua编写的快速而现代的配色方案，它支持NeoVim添加的许多新特性，如内置的LSP和TreeSitter"
             }, {name = "tokyonight", enable = true, desc = "nvim的主题"},
+            {name = "project", enable = true, desc = "项目管理"},
             {name = "vimdoc", enable = true, desc = "中文的vimdoc帮助"},
             {
                 name = "auto_mkdir",
@@ -35,11 +36,11 @@ plugins_configure.plugins_groups = {
                 name = "genutils",
                 enable = true,
                 desc = "vim的工具函数集合"
-            },
-            {
-                name = "indent-blankline", enable = true, desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"
-            },
-            {name = "rainbow", enable = true, desc = "括号颜色匹配"},
+            }, {
+                name = "indent-blankline",
+                enable = true,
+                desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"
+            }, {name = "rainbow", enable = true, desc = "括号颜色匹配"},
             {name = "autosession", enable = false, desc = "session保存"},
             {name = "vim-airline", enable = true, desc = "vim的状态栏"}, {
                 name = "vim-emacscommandline",
@@ -62,29 +63,25 @@ plugins_configure.plugins_groups = {
                 name = "remember",
                 enable = true,
                 desc = "打开文件的时候,回到上一次编辑的地方"
-            },
-            {
+            }, {
                 name = "toggleterm",
                 enable = true,
                 desc = "虚拟终端，执行系统bash与lazydocker"
-            },
-            --[[ {
+            }, --[[ {
 name = "noice",
 enable = true,
 desc = "UI for Messgae cmdline and popupmenu"
-},--]]
-            {
-                name = "preview",
-                enable = true,
-                desc = "预览quickfix中的结果"
-            },
+},--]] {name = "preview", enable = true, desc = "预览quickfix中的结果"},
             {
                 name = "legendary",
                 enable = true,
                 desc = "可以搜索的keymap function command绑定插件"
+            }, {name = "preview", enable = true, desc = "预览定义"},
+            {
+                name = "vim-fakeclip",
+                enable = true,
+                desc = "vim与系统之间共享clip"
             },
-            { name = "preview", enable = true, desc = "预览定义"},
-            { name = "vim-fakeclip", enable = true, desc = "vim与系统之间共享clip"},
             --  { name = "wilder", enable = true, desc = "更好的命令行功能"},
             {
                 name = "which-key",
@@ -100,8 +97,15 @@ desc = "UI for Messgae cmdline and popupmenu"
             {name = "nerdcommenter", enable = true, desc = "代码注释插件"},
             -- {name = "textobj-word-column", enable = true, desc = "编辑多行"},
             {name = "undotree", enable = true, desc = "undo操作tree"},
-            {name = "NrrwRgn", enable = true, desc = "Nrrw窗口操作选中文本区域"},
-            {name = "vim-mundo", enable = true, desc = "mundo窗口操作文件变更history"},
+            {
+                name = "NrrwRgn",
+                enable = true,
+                desc = "Nrrw窗口操作选中文本区域"
+            }, {
+                name = "vim-mundo",
+                enable = true,
+                desc = "mundo窗口操作文件变更history"
+            },
             {
                 name = "vim-expand-region",
                 enable = true,
@@ -126,43 +130,24 @@ desc = "UI for Messgae cmdline and popupmenu"
                 enable = true,
                 desc = "cpp googlestyle检查"
             },
-            --[[
-{
-name = "lua-formatter",
-enable = true,
-desc = "lua-format格式化工具"
-},
+            {
+                name = "lua-formatter",
+                enable = true,
+                desc = "lua-format格式化工具"
+            }, --[[
 {
 name = "clang-formatter",
 enable = true,
 desc = "clang-format格式化工具"
 },
---]]
-            {
-                name = "whitespace",
-                enable = true,
-                desc = "自动删除行尾空格"
-            },
+--]] {name = "whitespace", enable = true, desc = "自动删除行尾空格"},
             {
                 name = "vim-textobj-entire",
                 enable = true,
                 desc = "文本对象与格式化"
-            },
-            {
-                name = "neogen",
-                enable = true,
-                desc = "Doxydoc Gener"
-            },
-            {
-                name = "nvim-ufo",
-                enable = true,
-                desc = "代码折叠"
-            },
-            {
-                name = "doxygen",
-                enable = true,
-                desc = "Doxydoc Gener"
-            },
+            }, {name = "neogen", enable = true, desc = "Doxydoc Gener"},
+            {name = "nvim-ufo", enable = true, desc = "代码折叠"},
+            {name = "doxygen", enable = true, desc = "Doxydoc Gener"},
             {name = "editor", enable = true, desc = "编辑类key-mapping"}
         }
     },
@@ -197,11 +182,9 @@ desc = "clang-format格式化工具"
                 name = "windowpicker",
                 enable = true,
                 desc = "vim分屏的时候,快速选择window"
-            }, {
-                name = "winresizer",
-                enable = true,
-                desc = "调整window的大小"
-            }, {
+            },
+            {name = "winresizer", enable = true, desc = "调整window的大小"},
+            {
                 name = "window",
                 enable = true,
                 desc = "只是对于windows的key mapping的操作"
@@ -212,12 +195,26 @@ desc = "clang-format格式化工具"
         ["name"] = "finder",
         ["subpath"] = "finder",
         ["plugins"] = {
-            {name = "telescope", enable = true, desc = "高度可扩展的列表模糊查找工具" },
-            {name = "spectre",  enable = true, desc = "搜索与替换插件" },
-            {name = "any-jump", enable = true, desc = "在定义的标记间跳转" },
-            {name = "preview", enable = true, desc = "预览插件" },
-            {name = "ferret", enable = true, desc = "使用ack或者ripgrep查找,替换字符串" },
-            {name = "vim-ripgrep", enable = true, desc = "使用ripgrep查询字符串" }
+            {
+                name = "telescope",
+                enable = true,
+                desc = "高度可扩展的列表模糊查找工具"
+            },
+            {name = "spectre", enable = true, desc = "搜索与替换插件"},
+            {
+                name = "any-jump",
+                enable = true,
+                desc = "在定义的标记间跳转"
+            }, {name = "preview", enable = true, desc = "预览插件"}, {
+                name = "ferret",
+                enable = true,
+                desc = "使用ack或者ripgrep查找,替换字符串"
+            },
+            {
+                name = "vim-ripgrep",
+                enable = true,
+                desc = "使用ripgrep查询字符串"
+            }
             -- {name = "fzf", enable = true, desc = "查找操作"},
             -- {name = "ssr", enable = true, desc = "使用模式替换,支持n和v两种模式" },
         }
@@ -230,42 +227,57 @@ desc = "clang-format格式化工具"
                 name = "nvim-hlslens",
                 enable = true,
                 desc = "高亮显示匹配信息,并且可以在匹配之间跳转,和asteris,matchup一起配合"
-            },
-            {name = "hop", enable = true, desc = "快速移动插件"},
+            }, {name = "hop", enable = true, desc = "快速移动插件"},
             {name = "vim-bookmarks", enable = true, desc = "标记插件"},
-            {name = "marks", enable = false, desc = "标记插件"},
-            {
+            {name = "marks", enable = false, desc = "标记插件"}, {
                 name = "vim-unimpaired",
                 enable = true,
                 desc = "[ ] 开头的快捷键,vim缺失的快捷键"
             }, {
                 name = "vim-asterisk",
                 enable = true,
-                desc = "不移动鼠标通过*/#选择文本",
+                desc = "不移动鼠标通过*/#选择文本"
                 -- desc = "一个显示诊断、参考、telescope结果、快速修复和位置列表的漂亮列表，可以帮助您解决代码引起的所有问题。"
             }, {
                 name = "vim-matchup",
                 enable = true,
                 desc = "使用%查找对应的范围标签"
-            },
-            {
+            }, {
                 name = "vim-visual-multi",
                 enable = true,
                 desc = "多光标插件,可同时编辑选中的多出统一word"
             },
-            {name = "sltdo", enable = true, desc = "navigation的key-mapping。"}
+            {
+                name = "sltdo",
+                enable = true,
+                desc = "navigation的key-mapping。"
+            }
         }
     },
     [6] = {
         ["name"] = "lsp",
         ["subpath"] = "lspcfg",
         ["plugins"] = {
-            {name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig"},
-            {name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
-            {name = "trouble", enable = true, desc = "lsp的错误显示"},
+            {
+                name = "mason-lspconfig",
+                enable = true,
+                desc = "lsp By Mason&LspConfig"
+            },
+            {
+                name = "treesitter",
+                enable = true,
+                desc = "Neovim的树结构和抽象层"
+            }, {name = "trouble", enable = true, desc = "lsp的错误显示"},
             {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
-            {name = "aerial",        enable = true, desc = "基于LSP的outline工具" },
+            {name = "aerial", enable = true, desc = "基于LSP的outline工具"},
+            {
+                name = "lsp-lines",
+                enable = true,
+                desc = "将lsp的错误显示定位到对应的行"
+            },
             {name = "nvim-dap", enable = true, desc = "调试"},
+            {name = "nvim-jdtls", enable = true, desc = "java编程工具"},
+            {name = "nvim-go", enable = true, desc = "go编程工具"},
             -- {name = "symbols-outline", enable = true, desc = "outline工具栏"},
             -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
             -- { name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },
@@ -283,15 +295,12 @@ desc = "clang-format格式化工具"
                 name = "vimwiki",
                 enable = true,
                 desc = "可以非常方便地管理我们的笔记和创建代办列表，可以随时进行预览"
-            }, {
-                name = "calendar",
-                enable = true,
-                desc = "日期与todo"
-            }, {
+            }, {name = "calendar", enable = true, desc = "日期与todo"}, {
                 name = "orgmode",
                 enable = true,
                 desc = "一个采用org格式进行记录的笔记插件，好处是写的笔记支持emacs进行编辑"
-            }, {
+            },
+            {
                 name = "vim-lemon-syntax",
                 enable = true,
                 desc = "lemon解析器的高亮"
@@ -319,8 +328,7 @@ desc = "clang-format格式化工具"
                 name = "diffview",
                 enable = true,
                 desc = "git的diff在vim中的展现"
-            } ,
-            { name="project", enable = true, desc="项目管理"},
+            }, {name = "vim-flog", enable = true, desc = "查看git commit log"}
         }
     },
     [9] = {
@@ -337,29 +345,31 @@ desc = "clang-format格式化工具"
                 enable = true,
                 desc = "管理docker的工具"
             },
-            {
-                name = "lazydocker",
-                enable = true,
-                desc = "管理lazydocker的UI"
-            }
+            {name = "lazydocker", enable = true, desc = "管理lazydocker的UI"}
         }
     },
     [10] = {
         ["name"] = "hooks",
         ["subpath"] = "hooks",
         ["plugins"] = {
-            { name="telescope-hooks", enable = true, desc="所有telescope hooks"},
-            { name="folding-hooks", enable = true, desc="Code Folding hooks,依赖nvim-ufo"},
+            {
+                name = "telescope-hooks",
+                enable = true,
+                desc = "所有telescope hooks"
+            }, {
+                name = "folding-hooks",
+                enable = true,
+                desc = "Code Folding hooks,依赖nvim-ufo"
+            }
         }
     }
 }
-
 
 plugins_configure.setup = function()
     xlog.trace("myplugins's setup called")
 
     local lazy_plugins = {}
-    local hooks= {}
+    local hooks = {}
     -- local tbl = DataDumper(plugins_configure.plugins_groups,"plugins")
     -- print(tbl)
 
@@ -405,7 +415,7 @@ plugins_configure.setup = function()
                 plugin_enable, plugin_desc)
 
             if nil == plugin_name then
-                tbldump.tbl_trace("plugin",plugin)
+                tbldump.tbl_trace("plugin", plugin)
             end
 
             local plugin_path = namespace .. plugin_name
@@ -427,7 +437,7 @@ plugins_configure.setup = function()
 
             local core = plug.core
             -- local only_keymapping = core["only_keymapping"]
-            if ( core.only_keymapping) then
+            if (core.only_keymapping) then
                 xlog.trace(
                     "plugin:%s [with %s] in group:%s is only-keymapping(No core) loading by plugin_path:%s",
                     plugin_name, plugin_desc, group_name, plugin_path)
@@ -442,7 +452,7 @@ plugins_configure.setup = function()
                     plugin_name, plugin_desc, group_name, plugin_path)
                 -- plugins_configure.all_loaded_module[plugin_name] = true -- added to all_loaded_module
                 local hooks_init = plug.hooks_init;
-                if(nil ~= hooks_init) then
+                if (nil ~= hooks_init) then
                     xlog.trace(
                         "plugin:%s [with %s] in group:%s by plugin_path:%s run hooks_init functions",
                         plugin_name, plugin_desc, group_name, plugin_path)
@@ -517,9 +527,7 @@ plugins_configure.setup = function()
     })
 
     -- run hooks after all plugins loaded
-    for idx, hk in ipairs(hooks) do
-        hk()
-    end
+    for idx, hk in ipairs(hooks) do hk() end
 end
 
 plugins_configure.create_mapping = function()
@@ -585,9 +593,10 @@ plugins_configure.create_mapping = function()
             local plugin_fullname = group_name .. " [ " .. plugin_name .. " ] "
             if mapping then
                 if "table" == type(mapping) then
-                    kmr.mappings_parser(plugin_fullname,mapping)
+                    kmr.mappings_parser(plugin_fullname, mapping)
                 else
-                    xlog.trace(plugin_fullname .. " mapping is function.execing...")
+                    xlog.trace(plugin_fullname ..
+                        " mapping is function.execing...")
                     mapping()
                 end
                 --[[
