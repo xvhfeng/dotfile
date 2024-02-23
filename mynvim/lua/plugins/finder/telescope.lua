@@ -2,7 +2,7 @@ local plugin = {}
 
 plugin.core = {
     "nvim-telescope/telescope.nvim",
-    tag = "0.1.0",
+    --    tag = "0.1.0",
     -- event = { "VimEnter" },
     dependencies = {
         {"nvim-lua/popup.nvim"}, {"nvim-lua/plenary.nvim"},
@@ -69,11 +69,11 @@ plugin.core = {
                 path_display = {},
                 set_env = {['COLORTERM'] = 'truecolor'}, -- default = nil,
                 file_previewer = require'telescope.previewers'.vim_buffer_cat
-                    .new,
+                .new,
                 grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep
-                    .new,
+                .new,
                 qflist_previewer = require'telescope.previewers'.vim_buffer_qflist
-                    .new,
+                .new,
 
                 -- Developer configurations: Not meant for general override
                 buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker,
@@ -107,7 +107,7 @@ plugin.core = {
                     },
                     hidden_files = true -- default: false
                 },
-                    --]]
+                --]]
                 -- TODO: switch fuzzy and exact, currently use the telescope-fzf-native
                 -- https://github.com/nvim-telescope/telescope.nvim/issues/930
                 fzf = {

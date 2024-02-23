@@ -68,10 +68,10 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "虚拟终端，执行系统bash与lazydocker"
             }, --[[ {
-name = "noice",
-enable = true,
-desc = "UI for Messgae cmdline and popupmenu"
-},--]] {name = "preview", enable = true, desc = "预览quickfix中的结果"},
+                name = "noice",
+                enable = true,
+                desc = "UI for Messgae cmdline and popupmenu"
+            },--]] {name = "preview", enable = true, desc = "预览quickfix中的结果"},
             {
                 name = "legendary",
                 enable = true,
@@ -135,12 +135,12 @@ desc = "UI for Messgae cmdline and popupmenu"
                 enable = true,
                 desc = "lua-format格式化工具"
             }, --[[
-{
-name = "clang-formatter",
-enable = true,
-desc = "clang-format格式化工具"
-},
---]] {name = "whitespace", enable = true, desc = "自动删除行尾空格"},
+            {
+                name = "clang-formatter",
+                enable = true,
+                desc = "clang-format格式化工具"
+            },
+            --]] {name = "whitespace", enable = true, desc = "自动删除行尾空格"},
             {
                 name = "vim-textobj-entire",
                 enable = true,
@@ -263,21 +263,15 @@ desc = "clang-format格式化工具"
                 enable = true,
                 desc = "lsp By Mason&LspConfig"
             },
-            {
-                name = "treesitter",
-                enable = true,
-                desc = "Neovim的树结构和抽象层"
-            }, {name = "trouble", enable = true, desc = "lsp的错误显示"},
+            { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
+            {name = "trouble", enable = true, desc = "lsp的错误显示"},
             {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
             {name = "aerial", enable = true, desc = "基于LSP的outline工具"},
-            {
-                name = "lsp-lines",
-                enable = true,
-                desc = "将lsp的错误显示定位到对应的行"
-            },
+            -- { name = "lsp-lines", enable = true, desc = "将lsp的错误显示定位到对应的行" },
             {name = "nvim-dap", enable = true, desc = "调试"},
             {name = "nvim-jdtls", enable = true, desc = "java编程工具"},
             {name = "nvim-go", enable = true, desc = "go编程工具"},
+
             -- {name = "symbols-outline", enable = true, desc = "outline工具栏"},
             -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},
             -- { name = "lsp_signature", enable = true, desc = "基于LSP展现函数的签名  包括注释和参数" },
@@ -323,7 +317,9 @@ desc = "clang-format格式化工具"
                 name = "tig-explorer",
                 enable = true,
                 desc = "git在vim中的查看"
-            }, {name = "lazygit", enable = true, desc = "git的一款plugin"},
+            },
+            {name = "lazygit", enable = true, desc = "git的一款plugin"},
+            {name = "neogit", enable = true, desc = "git的一款plugin"},
             {
                 name = "diffview",
                 enable = true,
@@ -386,7 +382,7 @@ plugins_configure.setup = function()
 
         if opt.isRealFalse(enable) then
             xlog.warn("group:%s enable:%s. so not load this plugin group",
-                group_name, enable)
+            group_name, enable)
             goto continues_1
         end
 
@@ -398,7 +394,7 @@ plugins_configure.setup = function()
         end
 
         xlog.trace("group:%s plugin namespace:%s plugin count ->%d", group_name,
-            namespace, #plugins)
+        namespace, #plugins)
 
         for idx, plugin in ipairs(plugins) do
             local plugin_name = plugin["name"]
@@ -407,12 +403,12 @@ plugins_configure.setup = function()
 
             if opt.isRealFalse(plugin_enable) then
                 xlog.warn("plugin:%s idx:%d enable:%s,so not load", plugin_name,
-                    idx, plugin_enable)
+                idx, plugin_enable)
                 goto continue_2
             end
 
             xlog.trace("plugin name -> %s ,enbale ->%s desc ->%s", plugin_name,
-                plugin_enable, plugin_desc)
+            plugin_enable, plugin_desc)
 
             if nil == plugin_name then
                 tbldump.tbl_trace("plugin", plugin)
@@ -421,8 +417,8 @@ plugins_configure.setup = function()
             local plugin_path = namespace .. plugin_name
 
             xlog.trace(
-                "plugin:%s idx:%d [with %s] in group:%s load plugin_path:%s",
-                plugin_name, idx, plugin_desc, group_name, plugin_path)
+            "plugin:%s idx:%d [with %s] in group:%s load plugin_path:%s",
+            plugin_name, idx, plugin_desc, group_name, plugin_path)
 
             local ok, plug = xpcall(function()
                 return require(plugin_path)
@@ -430,7 +426,7 @@ plugins_configure.setup = function()
 
             if not ok then
                 xlog.error("plugin:%s load failed and skip it try next one",
-                    plugin_name, plugin_desc, group_name, plugin_path)
+                plugin_name, plugin_desc, group_name, plugin_path)
                 xlog.error(plug)
                 goto continue_2
             end
@@ -439,8 +435,8 @@ plugins_configure.setup = function()
             -- local only_keymapping = core["only_keymapping"]
             if (core.only_keymapping) then
                 xlog.trace(
-                    "plugin:%s [with %s] in group:%s is only-keymapping(No core) loading by plugin_path:%s",
-                    plugin_name, plugin_desc, group_name, plugin_path)
+                "plugin:%s [with %s] in group:%s is only-keymapping(No core) loading by plugin_path:%s",
+                plugin_name, plugin_desc, group_name, plugin_path)
                 plugins_configure.all_loaded_module[plugin_name] = true -- added to all_loaded_module
                 goto continue_2
             end
@@ -448,14 +444,14 @@ plugins_configure.setup = function()
             -- local only_hooks = core["only_hooks"]
             if (core.only_hooks) then
                 xlog.trace(
-                    "plugin:%s [with %s] in group:%s is only-hooks(No core) loading by plugin_path:%s",
-                    plugin_name, plugin_desc, group_name, plugin_path)
+                "plugin:%s [with %s] in group:%s is only-hooks(No core) loading by plugin_path:%s",
+                plugin_name, plugin_desc, group_name, plugin_path)
                 -- plugins_configure.all_loaded_module[plugin_name] = true -- added to all_loaded_module
                 local hooks_init = plug.hooks_init;
                 if (nil ~= hooks_init) then
                     xlog.trace(
-                        "plugin:%s [with %s] in group:%s by plugin_path:%s run hooks_init functions",
-                        plugin_name, plugin_desc, group_name, plugin_path)
+                    "plugin:%s [with %s] in group:%s by plugin_path:%s run hooks_init functions",
+                    plugin_name, plugin_desc, group_name, plugin_path)
 
                     table.insert(hooks, hooks_init)
                 end
@@ -463,14 +459,14 @@ plugins_configure.setup = function()
             end
 
             xlog.trace(
-                "plugin:%s [with %s] in group:%s success in loading plugin_path:%s",
-                plugin_name, plugin_desc, group_name, plugin_path)
+            "plugin:%s [with %s] in group:%s success in loading plugin_path:%s",
+            plugin_name, plugin_desc, group_name, plugin_path)
 
             local in_enable = core["enable"]
             if opt.isRealFalse(in_enable) then
                 xlog.trace(
-                    "plugin:%s [with %s] in group:%s is enable=false in plugin core loading by plugin_path:%s",
-                    plugin_name, plugin_desc, group_name, plugin_path)
+                "plugin:%s [with %s] in group:%s is enable=false in plugin core loading by plugin_path:%s",
+                plugin_name, plugin_desc, group_name, plugin_path)
                 goto continue_2
             end
 
@@ -548,7 +544,7 @@ plugins_configure.create_mapping = function()
 
         if opt.isRealFalse(enable) then
             xlog.warn("group:%s enable:%s. so not load this plugin group",
-                group_name, enable)
+            group_name, enable)
             goto continues_1
         end
 
@@ -568,14 +564,14 @@ plugins_configure.create_mapping = function()
 
             if opt.isRealFalse(plugin_enable) then
                 xlog.warn("plugin:%s enable:%s,so not load", plugin_name,
-                    plugin_enable)
+                plugin_enable)
                 goto continue_2
             end
 
             local plugin_path = namespace .. plugin_name
 
             xlog.trace("plugin:%s [with %s] in group:%s load plugin_path:%s",
-                plugin_name, plugin_desc, group_name, plugin_path)
+            plugin_name, plugin_desc, group_name, plugin_path)
 
             -- local ok, plug = pcall(require, plugin_path)
             local ok, plug = xpcall(function()
@@ -584,7 +580,7 @@ plugins_configure.create_mapping = function()
 
             if not ok then
                 xlog.error("plugin:%s load failed and skip it try next one",
-                    plugin_name, plugin_desc, group_name, plugin_path)
+                plugin_name, plugin_desc, group_name, plugin_path)
                 xlog.error(plug)
                 goto continue_2
             end
@@ -596,33 +592,33 @@ plugins_configure.create_mapping = function()
                     kmr.mappings_parser(plugin_fullname, mapping)
                 else
                     xlog.trace(plugin_fullname ..
-                        " mapping is function.execing...")
+                    " mapping is function.execing...")
                     mapping()
                 end
                 --[[
-if type({}) == type(mapping) then
-local keys = mapping["keys"];
-local tags = mapping["tags"]
+                if type({}) == type(mapping) then
+                    local keys = mapping["keys"];
+                    local tags = mapping["tags"]
 
-if keys then
-for _, key in pairs(keys) do
-kmr.addkey(key)
-end
-end
+                    if keys then
+                        for _, key in pairs(keys) do
+                            kmr.addkey(key)
+                        end
+                    end
 
-if tags then
-for _, tag in pairs(tags) do
-kmr.addtag(tag)
-end
-end
--- key_mapping()
-xlog.trace(
-"plugin:%s [with %s] in group:%s success in make keymapping plugin_path:%s",
-plugin_name, plugin_desc, group_name, plugin_path)
-else
-mapping()
-end
---]]
+                    if tags then
+                        for _, tag in pairs(tags) do
+                            kmr.addtag(tag)
+                        end
+                    end
+                    -- key_mapping()
+                    xlog.trace(
+                    "plugin:%s [with %s] in group:%s success in make keymapping plugin_path:%s",
+                    plugin_name, plugin_desc, group_name, plugin_path)
+                else
+                    mapping()
+                end
+                --]]
             end
 
             ::continue_2::

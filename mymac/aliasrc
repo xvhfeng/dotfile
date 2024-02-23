@@ -1,0 +1,318 @@
+#!/bin/bash
+
+alias lout="logout"
+alias c="clear"
+alias e="nvim"
+alias v="nvim"
+# alias vim="nvim"
+alias cmdhelp="apropos"
+alias emacs="emacs -nw"
+alias cdn_clear="/etc/init.d/nscd restart"
+
+#which pbcopy
+#if [ $? -gt 0 ]; then
+#alias pbcopy='xsel --clipboard --input'
+#alias pbpaste='xsel --clipboard --output'
+#fi
+
+alias pyenv_login="source bin/activate"
+#quickly install in ubuntu
+alias apti='apt install -y '
+
+alias ..='cd ..'
+# go back x directories
+b() {
+    if [[ $# == 0 ]]; then
+        cd ../
+        return
+    fi
+    str=""
+    count=0
+    while [ "$count" -lt "$1" ];
+    do
+        str=$str"../"
+        let count=count+1
+    done
+    cd $str
+}
+
+tmcd() {
+    [ -e $1 ] || mkdir -p "$1"
+    cd "$1"
+}
+
+#makedir and in
+mcd() {
+    mkdir -p "$1"
+    cd "$1"
+}
+cls(){ cd "$1"; ls;}
+
+brew-proxy() {
+export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
+export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
+export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git"
+export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git"
+export HOMEBREW_PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
+}
+
+brew-proxy-clean() {
+export HOMEBREW_API_DOMAIN=""
+export HOMEBREW_BOTTLE_DOMAIN=""
+export HOMEBREW_BREW_GIT_REMOTE=""
+export HOMEBREW_CORE_GIT_REMOTE=""
+export HOMEBREW_PIP_INDEX_URL=""
+}
+
+alias svnclean='find . -name .svn -type d -exec rm -fr {} \;'
+alias ll='ls -lasF'
+alias ll='ls -lAhGp'
+alias lf='ls -F'
+alias l="ls -l"
+#Only list directories
+alias lsd='ls -Gl | grep ^d'
+#Only list directories, including hidden ones
+alias lsad='ls -Gal | grep ^d'
+#show hiddn files only
+alias l.='ls -d .*'
+#find the biggest in a folder
+alias lb='du -ks *|sort -n'
+#Recursive directory listing
+alias lr='ls -R | grep ":$" | sed -e '\''s/:$//'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'''
+
+#list current dirs by tree
+alias ltree="ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'"
+
+#list top 10 largest file/dirs in current dirs
+alias top10='du -cks *|sort -rn|head -11'
+
+#show fiiles by filesize
+sbs(){ du -b --max-depth 1 \
+    | sort -nr \
+    | perl -pe 's{([0-9]+)}{sprintf "%.1f%s", $1>=2**30? ($1/2**30, "G"): $1>=2**20? ($1/2**20, "M"): $1>=2**10? ($1/2**10, "K"): ($1, "")}e';} 
+
+alias grep='grep'
+alias hs='history | grep '
+
+#tmux
+alias tinfo='tmux info'
+alias tcmd='tmux list-commands'
+alias tlk='tmux list-keys'
+
+# -2 参数必须加，因为和vim会有冲突
+alias tnews='tmux -2 new -s'
+alias tatts='tmux -2 attach -t'
+alias tsws='tmux switch -t'
+alias tls='tmux list-sessions'
+alias tres='tmux rename -t'
+alias tks='tmux kill-session -t'
+alias tcs='tmux choose-session -t'
+alias tout='tmux detach'
+tin() {
+    tmux has -t $1
+    if [ $? != 0 ]; then
+        tmux -2 new -s $1
+    fi
+    tmux -2 attach -t $1
+}
+
+alias tneww='tmux new-window'
+alias tswt='tmux select-window -t'
+alias trew='tmux rename-window'
+
+bup() { cp "$1"{,.bak};}
+m5c() { md5sum "$1" | grep "$2";}
+
+#search for process
+alias pg='ps -ef | grep'
+#disk load
+alias dskload="ps faux|awk '\$8 ~ /D/{print}'"
+alias ps?="ps aux | grep"
+
+
+untar() {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xjf $1     ;;
+            *.tar.gz)    tar xzf $1     ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       unrar e $1     ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xf $1      ;;
+            *.tbz2)      tar xjf $1     ;;
+            *.tgz)       tar xzf $1     ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)     echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+#undo an unzip
+function undozip(){
+    unzip -l "$1" \
+        |  awk 'BEGIN { OFS="" ; ORS="" } ; { for ( i=4; i<NF; i++ ) print $i " "; print $NF "\n" }' \
+        | xargs -I{} rm -r {}
+    }
+
+#sudo a cmd or sudo the last cmd in the history
+s(){
+    if [[ $# == 0 ]]; then
+        sudo $(history -p '!!')
+    else
+        sudo "$@"
+    fi
+}
+
+#make a script-file use the last cmd
+alias makescript="fc -rnl | head -1 >"
+
+alias freq='cut -f1 -d" " ~/.bash_history | sort | uniq -c | sort -nr | head -n 30'
+
+#gen a passwd
+alias genpasswd="strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 30 | tr -d '\n'; echo"
+
+#System info
+alias cmount="mount | column -t"
+
+#what gobbing memory
+alias wotgobblemem='ps -o time,ppid,pid,nice,pcpu,pmem,user,comm -A | sort -n -k 6 | tail -15'
+alias intercept="sudo strace -ff -e trace=write -e write=1,2 -p"
+alias meminfo='free -m -l -t'
+alias volume="amixer get Master | sed '1,4 d' | cut -d [ -f 2 | cut -d ] -f 1"
+
+#Network
+alias wget='wget --content-disposition'
+alias cdown='curl -O '
+cdbn() { curl -O $1 $2 ;}
+#down the all site
+alias websiteget="wget --random-wait -r -p -e robots=off -U mozilla"
+#show listening net connect
+alias netlisteners='lsof -i -P | grep LISTEN'
+alias listen="lsof -P -i -n"
+#show the active port
+alias port='netstat -tulanp'
+#get my public ip and machineid
+alias ipinfo="curl ifconfig.me && curl ifconfig.me/host"
+alias where="ifconfig | grep inet"
+alias whereis="uname -n"
+
+#get my current ip and current localtion
+getlocation() { lynx -dump http://www.ip-adress.com/ip_tracer/?QRY=$1\
+    |grep address\
+    |egrep 'city|state|country'\
+    |awk '{print $3,$4,$5,$6,$7,$8}'\
+    |sed 's\ip address flag \\'\
+    |sed 's\My\\';
+}
+
+
+alias busy="cat /dev/urandom | hexdump -C | grep \"ca fe\""
+
+export MARKPATH=$HOME/.marks
+function jump {
+    cd -P $MARKPATH/$1 2>/dev/null || echo "No such mark: $1"
+}
+function mark {
+    mkdir -p $MARKPATH; ln -s $(pwd) $MARKPATH/$1
+}
+function unmark {
+    rm -i $MARKPATH/$1
+}
+function marks {
+    ls -l $MARKPATH | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' && echo
+}
+
+
+#Compact, colorized git log
+alias git-log="git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias git-url="git remote -v"
+alias git-add="git add -A ."
+alias git-commit-m="git commit -m "
+alias git-commit-am="git commit -am "
+alias cc="drush cc all"
+alias ccc="drush cc all; clear;"
+alias git-reset-hard="git reset --hard"
+alias git-reset-hard-master='git fetch --all;git reset --hard origin/master'
+alias git-reset-hard-all='git fetch --all;git reset --hard '
+alias git-checkout="git checkout "
+alias git-pull-from="git pull origin "
+alias git-pull-from-master="gpull master"
+alias git-push-to-master="git push origin master"
+alias git-branch="git branch"
+alias git-status="git status"
+alias git-push-to="git push origin "
+#Open github web page of current git repo
+alias github="chrome \`git remote -v | grep github.com | grep fetch | head -1 | field 2 | sed 's/git:/http:/g'\`"
+#Show log of commits not dcommitted to svn
+alias notsvn="git log --branches --not --remotes --simplify-by-decoration --decorate --oneline"
+deploy(){
+
+    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+    ALL_BRANCES=$(git branch)
+
+    STAGED_CHANGES=$(git diff --exit-code)
+    UNTRACKED_FILES=$(git ls-files --other --exclude-standard --directory)
+
+    # Ensure we have a branch name as an argument.
+    if [ -z "$1" ]
+    then
+        echo "Please provide a branch name to deploy."
+        return
+    fi
+
+    if [ ! -z "$STAGED_CHANGES" ]
+    then
+        echo 'Commit changes in working state before deployment.'
+        return
+    fi
+
+    if [ ! -z "$UNTRACKED_FILES" ]
+    then
+        echo 'You have untracked files. Please resolve before deployment.'
+        echo "$UNTRACKED_FILES"
+        return
+    fi
+
+    SITE_ALIAS=$(drush site-alias @$1)
+
+
+    if [ -z "$SITE_ALIAS" ]
+    then
+        echo "No site alias was found for '$1'"
+        return
+    fi
+
+    REMOTE_HASH=$(git ls-remote origin -h refs/heads/$1 | cut -f1)
+    LOCAL_HASH=$(git rev-parse $1)
+
+    if [ ! "$REMOTE_HASH" = "$LOCAL_HASH" ]
+    then
+        echo -e "Your local branch is not up to date with the remote.\nPlease merge the remote changes into your local branch to deploy."
+        return
+    fi
+
+
+    # We have a branch to switch to and everything is great.
+    echo ""
+    git checkout $1
+    echo ""
+
+    # Send our local working state to the live site
+    drush rsync --progress default @"$1"
+
+    echo -e "\nDeployment from 'local' to '$1' complete.\n"
+
+    $(git checkout -q $CURRENT_BRANCH)
+
+    read -p "Do you want to clear the cache on $1? " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        drush @"$1" cc all
+    fi
+}
+
