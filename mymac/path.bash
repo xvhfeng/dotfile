@@ -42,3 +42,6 @@ export PATH
 
  PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
  export PATH
+
+MYSQL_HOME=/Users/bgm/works/bin/mysql-8.3.0
+export PATH=$MYSQL_HOME/bin:$MYSQL_HOME/support-files:$PATH
