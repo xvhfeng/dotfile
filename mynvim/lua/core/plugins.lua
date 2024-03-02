@@ -120,11 +120,14 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "文件模版,提供c语言的h,c文件等模版功能"
             },
+            --[[ 取消这个配置，一些使用格式化来表示层级的文件会自动对齐
+            --导致读取配置失败，比如yml文件
             {
                 name = "vim-autoformat",
                 enable = true,
                 desc = "autoformat格式化工具"
             },
+            --]]
             {
                 name = "vim-cpplint",
                 enable = true,
