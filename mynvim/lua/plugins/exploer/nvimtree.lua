@@ -88,8 +88,12 @@ plugin.core = {
             },
             --]]
             on_attach = on_attach,
+             view = {
+                preserve_window_proportions = true,
+            },
             actions = {
                 open_file = {
+                    resize_window = false,
                     -- quit_on_open = true,
                     window_picker = {
                         chars = "123456789abcdefg",

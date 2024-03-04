@@ -292,7 +292,8 @@ plugins_configure.plugins_groups = {
                 name = "vimwiki",
                 enable = true,
                 desc = "可以非常方便地管理我们的笔记和创建代办列表，可以随时进行预览"
-            }, {name = "calendar", enable = true, desc = "日期与todo"}, {
+            }, {name = "calendar", enable = true, desc = "日期与todo"},
+            {
                 name = "orgmode",
                 enable = true,
                 desc = "一个采用org格式进行记录的笔记插件，好处是写的笔记支持emacs进行编辑"
