@@ -9,7 +9,20 @@ plugin.mapping = {
             key = "wh",
             action = '<c-w>h',
             desc = "Move To Left Window"
-        }, {
+        },
+        {
+            mode = "n",
+            key = "<c-'>",
+            action = '<c-w><',
+            desc = "Move To Left Window"
+        },
+        {
+            mode = "n",
+            key = "<c-;>",
+            action = '<c-w>>',
+            desc = "Move To Left Window"
+        },
+        {
             mode = "n",
             key = "wl",
             action = '<c-w>l',

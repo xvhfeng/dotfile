@@ -4,7 +4,7 @@ plugin.core = {
     -- 'nvim-treesitter/nvim-treesitter',
     'nvim-orgmode/orgmode',
     config = function()
-        require('orgmode').setup_ts_grammar()
+     --   require('orgmode').setup_ts_grammar()
 
         -- Tree-sitter configuration
         require'nvim-treesitter.configs'.setup {

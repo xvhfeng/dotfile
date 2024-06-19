@@ -176,12 +176,14 @@ plugins_configure.plugins_groups = {
                 name = "qf-helper",
                 enable = true,
                 desc = "一个更好的quickfix的替代品"
-            }, {name = "kickfix", enable = true, desc = "filter for quickfix"},
+            }, 
+            {name = "kickfix", enable = true, desc = "filter for quickfix"},
             {
                 name = "vimade",
                 enable = true,
                 desc = "高亮显示当前foced分割窗口"
-            }, {
+            },
+            {
                 name = "windowpicker",
                 enable = true,
                 desc = "vim分屏的时候,快速选择window"
@@ -271,9 +273,9 @@ plugins_configure.plugins_groups = {
             {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
             {name = "aerial", enable = true, desc = "基于LSP的outline工具"},
             -- { name = "lsp-lines", enable = true, desc = "将lsp的错误显示定位到对应的行" },
-            {name = "nvim-dap", enable = true, desc = "调试"},
-            {name = "nvim-jdtls", enable = true, desc = "java编程工具"},
-            {name = "nvim-go", enable = true, desc = "go编程工具"},
+            --             {name = "nvim-dap", enable = true, desc = "调试"},
+            --         {name = "nvim-jdtls", enable = true, desc = "java编程工具"},
+            --        {name = "nvim-go", enable = true, desc = "go编程工具"},
 
             -- {name = "symbols-outline", enable = true, desc = "outline工具栏"},
             -- { name="folding-nvim", enable = true, desc="基于LSP的折叠插件"},

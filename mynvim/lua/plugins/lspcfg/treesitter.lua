@@ -14,7 +14,6 @@ plugin.core = {
             event = "VeryLazy",
         },
     },
-    vim.g.skip_ts_context_commentstring_module = true
     config = function()
         --require('ts_context_commentstring').setup {}
         require('ts_context_commentstring').setup {}
@@ -27,6 +26,7 @@ plugin.core = {
             "java",
             "go",
             "jsonc",
+            "json"
             --                "cmake",
             --               "dockerfile"
             --    "sql"
@@ -75,7 +75,9 @@ plugin.core = {
     --]]
 
 
-end
+end,
+vim.g.skip_ts_context_commentstring_module = true
+
 }
 
 return plugin

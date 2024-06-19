@@ -13,12 +13,13 @@ alias cdn_clear="/etc/init.d/nscd restart"
 #if [ $? -gt 0 ]; then
 #alias pbcopy='xsel --clipboard --input'
 #alias pbpaste='xsel --clipboard --output'
-#fi
 
+#fi
 alias pyenv_login="source bin/activate"
 #quickly install in ubuntu
 alias apti='apt install -y '
-
+alias proxyon="export all_proxy='127.0.0.1:1087';  export http_proxy='http://127.0.0.1:1087';  export https_proxy='http://127.0.0.1:1087'"
+alias proxyoff="unset all_proxy; unset http_proxy; unset https_proxy"
 alias ..='cd ..'
 # go back x directories
 b() {

@@ -14,7 +14,11 @@ PATH=$JAVA_HOME/bin:$PATH
 export JAVA_HOME
 
 export MVN_HOME=/Users/bgm/works/bin/apache-maven-3.9.6
-export PATH="$MVN_HOME/bin/:$PATH"
+export PATH=$MVN_HOME/bin/:$PATH
+export PATH
+
+export GRADLE_HOME=/Users/bgm/works/bin/gradle-8.7
+export PATH=$GRADLE_HOME/bin/:$PATH
 export PATH
 
 
@@ -45,3 +49,7 @@ export PATH
 
 MYSQL_HOME=/Users/bgm/works/bin/mysql-8.3.0
 export PATH=$MYSQL_HOME/bin:$MYSQL_HOME/support-files:$PATH
+
+export PATH=/Users/bgm/works/bin/7zip:$PATH
+export PATH=/Users/bgm/works/bin/m3u8:$PATH
+export PATH=/Users/bgm/works/bin/online-db-connector:$PATH
