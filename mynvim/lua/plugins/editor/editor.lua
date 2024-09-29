@@ -1,7 +1,6 @@
 local plugin = {}
 
 plugin.core = {only_keymapping = true}
-
 plugin.mapping = {
     keymaps = {
         {

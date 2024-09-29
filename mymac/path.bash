@@ -23,8 +23,8 @@ export PATH
 
 
 # export PATH=/usr/local/opt/ruby/bin:$PATH
-#export MYGIT_HOME=/Users/xuhaifeng/pkgs/mygit
-#export PATH=$MYGIT_HOME:$PATH
+export MYGIT_HOME=/Users/bgm/works/dotfile/mygit
+export PATH=$MYGIT_HOME:$PATH
 # export GO_HOME=/Users/xuhaifeng/works/bin/go
 # export PATH="$GO_HOME/bin/:$PATH"
 #export PROTOC_HOME=/Users/xuhaifeng/works/bin/protoc3

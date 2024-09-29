@@ -5,6 +5,8 @@ plugin.core = {
     config = function()
         vim.g.indentLine_enabled = 1
         vim.g.indentLine_setColors = 0
+        vim.g.indentLine_setConceal = 0
+        vim.g.vim_json_syntax_conceal = 0
         vim.g.indentLine_char = 'c'
         vim.g.indentLine_char_list = {'|', '¦', '┆', '┊'}
     end

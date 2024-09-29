@@ -75,6 +75,9 @@ plugin.core = {
             disable_netrw = false,
             hijack_netrw = true,
             hijack_cursor = false,
+            prefer_startup_root = true,
+            sync_root_with_cwd = true,
+            respect_buf_cwd = true,
             sort_by = "case_sensitive",
             --[[ -- for project.nvim open any path but root is git root floder
                 -- add blow config item ,it will auto and cannot contorl
@@ -92,6 +95,11 @@ plugin.core = {
                 preserve_window_proportions = true,
             },
             actions = {
+                 change_dir = {
+                    enable = true,
+                    global = false,
+                    restrict_above_cwd = true,
+                },
                 open_file = {
                     resize_window = false,
                     -- quit_on_open = true,

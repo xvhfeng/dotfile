@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# usage: ./update_git_url.sh http://new-url.git
+
+# 检查是否提供了新的 URL 作为参数
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <new-url>"
+    exit 1
+fi
+
+# 新的 URL 地址
+NEW_URL=$1
+
+# 配置文件路径，这里假设是当前目录下的 .git/config
+CONFIG_FILE=".git/config"
+
+# 检查配置文件是否存在
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Error: Config file not found."
+    exit 1
+fi
+
+# 使用 sed 命令替换 URL
+sed -i "s|url = .*|url = $NEW_URL|" "$CONFIG_FILE"
+
+# 检查 sed 命令是否成功执行
+if [ $? -eq 0 ]; then
+    echo "URL has been updated successfully."
+else
+    echo "Error: Failed to update URL."
+    exit 1
+fi
