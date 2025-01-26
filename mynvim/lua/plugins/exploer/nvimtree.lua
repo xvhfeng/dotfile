@@ -73,9 +73,9 @@ plugin.core = {
     config = function()
         -- empty setup using defaults
         require("nvim-tree").setup({
-            -- disable_netrw = false,
-            -- hijack_netrw = true,
-            -- hijack_cursor = false,
+             disable_netrw = false,
+             hijack_netrw = true,
+             hijack_cursor = false,
             -- prefer_startup_root = true,
             --     sync_root_with_cwd = true,
             --  respect_buf_cwd = true,
@@ -110,7 +110,7 @@ plugin.core = {
                  },
                 open_file = {
                     resize_window = false,
-                     quit_on_open = true,
+                     -- quit_on_open = true,
                     window_picker = {
                         chars = "123456789abcdefg",
                     },
@@ -131,7 +131,6 @@ plugin.core = {
 
         -- close window auto when  only nvim-tree
         -- but is unuseful when lsp do something
-        --[[
         vim.api.nvim_create_autocmd("WinClosed", {
             callback = function ()
                 local winnr = tonumber(vim.fn.expand("<amatch>"))
@@ -140,6 +139,7 @@ plugin.core = {
             nested = true
         })
 
+        --[[
         -- workaround when using auto-session
         vim.api.nvim_create_autocmd({ 'BufEnter' }, {
             pattern = 'NvimTree*',
