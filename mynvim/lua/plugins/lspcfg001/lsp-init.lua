@@ -78,7 +78,7 @@ function loading()
 
     require("mason-lspconfig").setup_handlers({
         function(server_name)
-            require("lspconfig")[server_name].setup {}
+            require("ts_ls")[server_name].setup {}
         end,
         -- Next, you can provide targeted overrides for specific servers.
         ["lua_ls"] = function()

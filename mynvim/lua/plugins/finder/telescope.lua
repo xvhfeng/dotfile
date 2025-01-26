@@ -8,8 +8,8 @@ plugin.core = {
         {"nvim-lua/popup.nvim"}, {"nvim-lua/plenary.nvim"},
         {"tami5/sqlite.lua"}, {"tami5/sql.nvim"},
         {"nvim-telescope/telescope-frecency.nvim"},
-        {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
-        {"ahmedkhalf/project.nvim"}
+        {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'}
+--        {"ahmedkhalf/project.nvim"}
     },
 
     config = function() -- Specifies code to run after this plugin is loaded
@@ -123,6 +123,8 @@ plugin.core = {
         require"telescope".load_extension("frecency")
 
         require("project_nvim").setup {
+            manual_mode = true,
+             detection_methods = { "lsp", "pattern" },
             patterns = {
                 ".git", "_darcs", ".hg", ".bzr", ".svn", "Makefile",
                 "package.json"

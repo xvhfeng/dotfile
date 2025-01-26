@@ -370,3 +370,8 @@ vim.api.nvim_create_autocmd({ "WinLeave" }, {
     pattern = "*",
 })
 
+
+-- 启动时进入当前目录
+ -- 设置当前工作目录为当前文件所在目录
+  vim.cmd([[autocmd VimEnter * silent! lcd %:p:h]])
+ 

@@ -20,7 +20,7 @@ plugins_configure.plugins_groups = {
                 enable = false,
                 desc = "一个用Lua编写的快速而现代的配色方案，它支持NeoVim添加的许多新特性，如内置的LSP和TreeSitter"
             }, {name = "tokyonight", enable = true, desc = "nvim的主题"},
-            {name = "project", enable = true, desc = "项目管理"},
+              {name = "project", enable = true, desc = "项目管理"},
             {name = "vimdoc", enable = true, desc = "中文的vimdoc帮助"},
             {
                 name = "auto_mkdir",
@@ -41,7 +41,7 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "展现缩进的插件,但是只能在nvim中使用,不支持vim,可以换成支持vim的那个"
             }, {name = "rainbow", enable = true, desc = "括号颜色匹配"},
-            {name = "autosession", enable = false, desc = "session保存"},
+            -- {name = "autosession", enable = false, desc = "session保存"},
             {name = "vim-airline", enable = true, desc = "vim的状态栏"}, {
                 name = "vim-emacscommandline",
                 enable = true,
@@ -158,7 +158,7 @@ plugins_configure.plugins_groups = {
         ["name"] = "exploer",
         ["subpath"] = "exploer",
         ["plugins"] = {
-            {name = "nvimtree", enable = true, desc = "lua写的floder"},
+             {name = "nvimtree", enable = true, desc = "lua写的floder"},
             {
                 name = "bufexplorer",
                 enable = true,
@@ -263,15 +263,11 @@ plugins_configure.plugins_groups = {
         ["name"] = "lsp",
         ["subpath"] = "lspcfg",
         ["plugins"] = {
-            {
-                name = "mason-lspconfig",
-                enable = true,
-                desc = "lsp By Mason&LspConfig"
-            },
-            { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
-            {name = "trouble", enable = true, desc = "lsp的错误显示"},
-            {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
-            {name = "aerial", enable = true, desc = "基于LSP的outline工具"},
+            { name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig" },
+             { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
+             {name = "trouble", enable = true, desc = "lsp的错误显示"},
+            -- {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
+             {name = "aerial", enable = true, desc = "基于LSP的outline工具"},
             -- { name = "lsp-lines", enable = true, desc = "将lsp的错误显示定位到对应的行" },
             --             {name = "nvim-dap", enable = true, desc = "调试"},
             --         {name = "nvim-jdtls", enable = true, desc = "java编程工具"},

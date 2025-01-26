@@ -4,6 +4,7 @@ plugin.core = {only_keymapping = true}
 
 plugin.mapping = {
     keymaps = {
+      --[[
         {
             mode = "n",
             key = "wh",
@@ -44,7 +45,9 @@ plugin.mapping = {
             key = "w=",
             action = '<c-w>=',
             desc = "Resize window"
-        }, {
+        },
+      --]]
+      {
             mode = "n",
             key = "[w",
             action = '<c-w>t<c-w>K',

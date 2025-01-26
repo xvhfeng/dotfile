@@ -11,6 +11,8 @@ plugin.hooks_init = function()
         dynamicRegistration = false,
         lineFoldingOnly = true
     }
+
+    --[[  
     local language_servers = require("lspconfig").util.available_servers() -- or list servers manually like {'gopls', 'clangd'}
     for _, ls in ipairs(language_servers) do
         require('lspconfig')[ls].setup({
@@ -18,7 +20,7 @@ plugin.hooks_init = function()
             -- you can add other fields for setting up lsp server in this table
         })
     end
-
+        --]]
     require('ufo').setup()
 end
 

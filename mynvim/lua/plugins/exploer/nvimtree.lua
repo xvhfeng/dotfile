@@ -33,11 +33,11 @@ local WIDTH_RATIO = 0.5   -- You can change this too
 
 local function on_attach(bufnr)
     local api = require("nvim-tree.api")
-    
+
     local function opts(desc)
         return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
-    
+
     vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open"))
     vim.keymap.set("n", "o", api.node.open.edit, opts("Open"))
     vim.keymap.set("n", "l", api.node.open.edit, opts("Open"))
@@ -62,59 +62,76 @@ plugin.core = {
     'nvim-tree/nvim-tree.lua',
     dependencies = {
         --[[
-            brew tap homebrew/cask-fonts
-            brew install font-hack-nerd-font
-            -- choose iterm text font to font-hack-nerd-font
+        brew tap homebrew/cask-fonts
+        brew install font-hack-nerd-font
+        -- choose iterm text font to font-hack-nerd-font
         --]]
         'nvim-tree/nvim-web-devicons', -- optional, for file icons
     },
+            update_cwd = true, 
 
     config = function()
         -- empty setup using defaults
         require("nvim-tree").setup({
-            disable_netrw = false,
-            hijack_netrw = true,
-            hijack_cursor = false,
-            prefer_startup_root = true,
-            sync_root_with_cwd = true,
-            respect_buf_cwd = true,
+            -- disable_netrw = false,
+            -- hijack_netrw = true,
+            -- hijack_cursor = false,
+            -- prefer_startup_root = true,
+            --     sync_root_with_cwd = true,
+            --  respect_buf_cwd = true,
             sort_by = "case_sensitive",
             --[[ -- for project.nvim open any path but root is git root floder
-                -- add blow config item ,it will auto and cannot contorl
-                -- so move it and can use vim ./ to open current floder and
-                -- default is open git root path
+            -- add blow config item ,it will auto and cannot contorl
+            -- so move it and can use vim ./ to open current floder and
+            -- default is open git root path
             sync_root_with_cwd = false,
             respect_buf_cwd = false,
             update_focused_file = {
                 enable = true,
                 update_root = true,
             },
-            --]]
+             sync_root_with_cwd = true,
+            respect_buf_cwd = true,
+            update_focused_file = {
+                enable = true,
+                update_root = true
+            },
+             --]]
             on_attach = on_attach,
-             view = {
+            view = {
                 preserve_window_proportions = true,
             },
             actions = {
                  change_dir = {
-                    enable = true,
-                    global = false,
-                    restrict_above_cwd = true,
-                },
+                     enable = true,
+                     global = true,
+                     -- 加了这个，不会往父路径跳转
+                     -- restrict_above_cwd = true,
+                 },
                 open_file = {
                     resize_window = false,
-                    -- quit_on_open = true,
+                     quit_on_open = true,
                     window_picker = {
                         chars = "123456789abcdefg",
                     },
                 },
             },
+            renderer = {
+                highlight_opened_files = "name", -- 高亮已打开的文件
+            },
         })
+
+        vim.cmd([[doautocmd NvimTree BufEnter *]])
+  --      vim.cmd([[autocmd VimEnter * silent! lcd %:p:h]])
+
+
     end,
 
     init = function()
 
         -- close window auto when  only nvim-tree
         -- but is unuseful when lsp do something
+        --[[
         vim.api.nvim_create_autocmd("WinClosed", {
             callback = function ()
                 local winnr = tonumber(vim.fn.expand("<amatch>"))
@@ -155,6 +172,14 @@ plugin.core = {
                     end, 0)
                 end
             end
+        })
+        --]]
+
+        vim.api.nvim_create_autocmd("BufEnter", {
+            pattern = "*",
+            callback = function()
+                require'nvim-tree'.change_dir(vim.fn.expand('%:p:h'))
+            end,
         })
     end
 
