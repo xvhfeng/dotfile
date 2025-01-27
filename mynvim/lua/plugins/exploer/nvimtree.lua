@@ -68,14 +68,14 @@ plugin.core = {
         --]]
         'nvim-tree/nvim-web-devicons', -- optional, for file icons
     },
-            update_cwd = true, 
+           -- update_cwd = true, 
 
     config = function()
         -- empty setup using defaults
         require("nvim-tree").setup({
-             disable_netrw = false,
-             hijack_netrw = true,
-             hijack_cursor = false,
+        --     disable_netrw = false,
+         --    hijack_netrw = true,
+          --   hijack_cursor = false,
             -- prefer_startup_root = true,
             --     sync_root_with_cwd = true,
             --  respect_buf_cwd = true,
@@ -100,6 +100,8 @@ plugin.core = {
             on_attach = on_attach,
             view = {
                 preserve_window_proportions = true,
+                -- auto resize tree-windows
+              adaptive_size = true ,
             },
             actions = {
                  change_dir = {
@@ -121,7 +123,7 @@ plugin.core = {
             },
         })
 
-        vim.cmd([[doautocmd NvimTree BufEnter *]])
+        --vim.cmd([[doautocmd NvimTree BufEnter *]])
   --      vim.cmd([[autocmd VimEnter * silent! lcd %:p:h]])
 
 
@@ -153,6 +155,7 @@ plugin.core = {
             end,
         })
 
+        --]]
         -- back last hidden buffer when delete a buffer
         vim.api.nvim_create_autocmd("BufEnter", {
             nested = true,
@@ -173,14 +176,14 @@ plugin.core = {
                 end
             end
         })
-        --]]
-
+--[[
         vim.api.nvim_create_autocmd("BufEnter", {
             pattern = "*",
             callback = function()
                 require'nvim-tree'.change_dir(vim.fn.expand('%:p:h'))
             end,
         })
+        --]]
     end
 
 }
