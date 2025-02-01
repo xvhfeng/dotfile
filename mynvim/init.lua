@@ -54,6 +54,8 @@ vim.g.CONFIG = vim.g.HOME_PATH .. "/.config/nvim"
 local repspath = vim.g.CONFIG .. "/reps"
 vim.o.runtimepath = vim.o.runtimepath .. "," .. vim.g.CONFIG
 vim.g.REPSPATH = repspath
+vim.opt.path:append(vim.fn.stdpath("data") .. "/mason/bin")
+vim.opt.runtimepath:append(repspath .. "/nvim-treesitter/parser")
 
 local lazypath = repspath .. "/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then

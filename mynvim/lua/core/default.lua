@@ -18,6 +18,7 @@ vim.g.side_filetypes = { -- Specify which filetypes get the contrasted (darker) 
     "calendar",
     "undotree",
     "toggleterm",
+    -- auto resize tree-windows
     "DiffviewFiles",
     "diff",
     "Outline",
@@ -305,12 +306,13 @@ endif
 
 local aug = vim.api.nvim_create_augroup("buf_large", { clear = true })
 
+            --[[
 vim.api.nvim_create_autocmd({ "BufReadPre", "FileReadPre" }, {
     callback = function()
         local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()))
         if ok and stats and (stats.size > 100000) then
             vim.b.large_buf = true
-            vim.cmd("syntax off")
+--            vim.cmd("syntax off")
             --vim.cmd("IlluminatePauseBuf") -- disable vim-illuminate
             vim.opt_local.foldmethod = "manual"
             if vim.fn.exists(":TSBufDisable") then
@@ -370,6 +372,7 @@ vim.api.nvim_create_autocmd({ "WinLeave" }, {
     pattern = "*",
 })
 
+            --]]
 
 -- 启动时进入当前目录
  -- 设置当前工作目录为当前文件所在目录

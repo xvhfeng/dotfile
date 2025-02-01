@@ -53,3 +53,4 @@ export PATH=$MYSQL_HOME/bin:$MYSQL_HOME/support-files:$PATH
 export PATH=/Users/bgm/works/bin/7zip:$PATH
 export PATH=/Users/bgm/works/bin/m3u8:$PATH
 export PATH=/Users/bgm/works/bin/online-db-connector:$PATH
+export PATH=/Users/bgm/myslef/bin:$PATH

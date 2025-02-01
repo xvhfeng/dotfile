@@ -55,14 +55,6 @@ plugin.core = {
     },
     config = function()
         require("mason").setup({
-            registries = {
-                "github:mason-org/mason-registry@2023-11-17-whole-turbot"
-            },
-            providers = { "mason.providers.client" },
-            log_level = vim.log.levels.DEBUG
-            --          registries = {
-            --             "github:mason-org/mason-registry@2023-05-15-next-towel"
-            --        }
         })
         require("mason-lspconfig").setup({
             ensure_installed = {
@@ -70,16 +62,17 @@ plugin.core = {
                 "bashls",
                 "jdtls",
                 "clangd",
-                "pyright",
                 "cmake",
                 "eslint",
-                "jsonls",
-                "tsserver",
+                --"jsonls",
+                --"tsserver",
+                "ts_ls",
                 "marksman",
                 "sqlls",
                 "yamlls",
                 "vimls",
                 "gopls",
+                "pylsp",
             },
             automatic_installation = true
         })
@@ -94,8 +87,6 @@ plugin.core = {
             require "plugins/lspcfg/setup/jdtls",
             require "plugins/lspcfg/setup/lua_ls",
             require "plugins/lspcfg/setup/marksman",
-            require "plugins/lspcfg/setup/pyright",
-            require "plugins/lspcfg/setup/sqlls",
             require "plugins/lspcfg/setup/tsserver",
             require "plugins/lspcfg/setup/vimls",
             require "plugins/lspcfg/setup/yamlls",
@@ -109,6 +100,8 @@ plugin.core = {
             lspconfig[cfg.name].setup(setup_config)
         end
 
+        require "plugins/lspcfg/setup/sqlls"
+        require "plugins/lspcfg/setup/pyright"
         keymap()
     end
 }

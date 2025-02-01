@@ -158,7 +158,7 @@ plugins_configure.plugins_groups = {
         ["name"] = "exploer",
         ["subpath"] = "exploer",
         ["plugins"] = {
-             {name = "nvimtree", enable = true, desc = "lua写的floder"},
+            {name = "nvimtree", enable = true, desc = "lua写的floder"},
             {
                 name = "bufexplorer",
                 enable = true,
