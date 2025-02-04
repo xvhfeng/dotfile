@@ -1,53 +1,52 @@
 local plugin = {}
 
-local function fixed()
-    -- update remote plugins to make wilder work
-    local UpdatePlugs = vim.api.nvim_create_augroup("UpdateRemotePlugs", {})
-    vim.api.nvim_create_autocmd({ "VimEnter", "VimLeave" }, {
-        pattern = "*",
-        group = UpdatePlugs,
-        command = "runtime! plugin/rplugin.vim",
-    })
-    vim.api.nvim_create_autocmd({ "VimEnter", "VimLeave" }, {
-        pattern = "*",
-        group = UpdatePlugs,
-        command = "silent! UpdateRemotePlugins",
-    })
-end
-
 plugin.core = {
     'gelguy/wilder.nvim',
+    build = ':UpdateRemotePlugins',
+    event = 'VeryLazy',
     dependencies = {
         'roxma/nvim-yarp'
     },
     config = function()
         local wilder = require('wilder')
-        wilder.set_option('use_python_remote_plugin', 0)
-        wilder.setup({modes = {':', '/', '?'}})
-
-        wilder.set_option('pipeline', {
-            wilder.branch(
-                wilder.cmdline_pipeline({
-                    -- sets the language to use, 'vim' and 'python' are supported
-                    language = 'python',
-                    -- 0 turns off fuzzy matching
-                    -- 1 turns on fuzzy matching
-                    -- 2 partial fuzzy matching (match does not have to begin with the same first letter)
-                    fuzzy = 1,
-                }),
-                wilder.python_search_pipeline({
-                    -- can be set to wilder#python_fuzzy_delimiter_pattern() for stricter fuzzy matching
-                    pattern = wilder.python_fuzzy_pattern(),
-                    -- omit to get results in the order they appear in the buffer
-                    sorter = wilder.python_difflib_sorter(),
-                    -- can be set to 're2' for performance, requires pyre2 to be installed
-                    -- see :h wilder#python_search() for more details
-                    engine = 're',
-                })
-            ),
+        wilder.setup({ modes = { ':', '/\v', '?' } })
+    
+      
+        local highlighters = {
+            wilder.pcre2_highlighter(),
+            wilder.basic_highlighter(),
+        }
+    
+        local popupmenu_renderer = wilder.popupmenu_renderer(wilder.popupmenu_border_theme({
+            border = 'rounded',
+            pumblend = 0,
+            empty_message = wilder.popupmenu_empty_message_with_spinner(),
+            highlighter = highlighters,
+            highlights = {
+                accent = wilder.make_hl(
+                    'WilderAccent',
+                    'Pmenu',
+                    { { a = 1 }, { a = 1 }, { foreground = '#f4468f' } }
+                ),
+            },
+            left = { ' ', wilder.popupmenu_devicons() },
+            right = { ' ', wilder.popupmenu_scrollbar() },
+        }))
+    
+        local wildmenu_renderer = wilder.wildmenu_renderer({
+            highlighter = highlighters,
+            -- separator = ' · ',
+            -- left = { ' ', wilder.wildmenu_spinner(), ' ' },
+            -- right = { ' ', wilder.wildmenu_index() },
         })
-
-        fixed()
+    
+        wilder.set_option(
+            'renderer',
+            wilder.renderer_mux({
+                [':'] = popupmenu_renderer,
+                ['/'] = wildmenu_renderer,
+            })
+        )
     end
 }
 

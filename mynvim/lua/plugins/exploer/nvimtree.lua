@@ -141,7 +141,6 @@ plugin.core = {
             nested = true
         })
 
-        --[[
         -- workaround when using auto-session
         vim.api.nvim_create_autocmd({ 'BufEnter' }, {
             pattern = 'NvimTree*',
@@ -155,7 +154,6 @@ plugin.core = {
             end,
         })
 
-        --]]
         -- back last hidden buffer when delete a buffer
         vim.api.nvim_create_autocmd("BufEnter", {
             nested = true,
@@ -176,7 +174,7 @@ plugin.core = {
                 end
             end
         })
---[[
+        --[[
         vim.api.nvim_create_autocmd("BufEnter", {
             pattern = "*",
             callback = function()

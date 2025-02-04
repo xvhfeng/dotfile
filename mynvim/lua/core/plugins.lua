@@ -71,18 +71,21 @@ plugins_configure.plugins_groups = {
                 name = "noice",
                 enable = true,
                 desc = "UI for Messgae cmdline and popupmenu"
-            },--]] {name = "preview", enable = true, desc = "预览quickfix中的结果"},
+            },--]] 
+            {name = "preview", enable = true, desc = "预览quickfix中的结果"},
+            {name = "scrollbar", enable = true, desc = "预览quickfix中的结果"},
             {
                 name = "legendary",
                 enable = true,
                 desc = "可以搜索的keymap function command绑定插件"
-            }, {name = "preview", enable = true, desc = "预览定义"},
+            }, 
+            -- {name = "preview", enable = true, desc = "预览定义"},
             {
                 name = "vim-fakeclip",
                 enable = true,
                 desc = "vim与系统之间共享clip"
             },
-            --  { name = "wilder", enable = true, desc = "更好的命令行功能"},
+             { name = "wilder", enable = true, desc = "更好的命令行功能"},
             {
                 name = "which-key",
                 enable = true,
@@ -193,7 +196,8 @@ plugins_configure.plugins_groups = {
                 name = "window",
                 enable = true,
                 desc = "只是对于windows的key mapping的操作"
-            }
+            },
+            {name = "neoscroll", enable = true, desc = "lua写的floder"},
         }
     },
     [4] = {
@@ -264,10 +268,15 @@ plugins_configure.plugins_groups = {
         ["subpath"] = "lspcfg",
         ["plugins"] = {
             { name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig" },
+            { name = "delimiters", enable = true, desc = "Neovim的树结构和抽象层" },
+            { name = "nvim-treesitter-context", enable = true, desc = "Neovim的树结构和抽象层" },
              { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
+
              {name = "trouble", enable = true, desc = "lsp的错误显示"},
+             {name = "refactoring", enable = true, desc = "重构"},
             -- {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
              {name = "aerial", enable = true, desc = "基于LSP的outline工具"},
+             {name = "lspsaga", enable = true, desc = "基于LSP的outline工具"},
             -- { name = "lsp-lines", enable = true, desc = "将lsp的错误显示定位到对应的行" },
             --             {name = "nvim-dap", enable = true, desc = "调试"},
             --         {name = "nvim-jdtls", enable = true, desc = "java编程工具"},

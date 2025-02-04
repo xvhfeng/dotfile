@@ -6,3 +6,4 @@ pcall(require, "core.local") -- local maybe not exists
 require('core.plugins').setup()
 require('core.plugins').create_mapping()
 require('core.keymapping').setup()
+require('core.highlights')
