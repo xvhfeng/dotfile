@@ -201,7 +201,8 @@ default_setting['opt'] = {
     --  " syntax    使用语法定义折叠
     --  " diff      对没有更改的文本进行折叠
     --  " marker    使用标记进行折叠, 默认标记是 {{{ 和 }}}
-    foldmethod="syntax",
+    -- 在hooks/folding-hooks中有覆盖设置
+    foldmethod="marker",
     -- foldmethod="manual",
     foldlevel=99,
 

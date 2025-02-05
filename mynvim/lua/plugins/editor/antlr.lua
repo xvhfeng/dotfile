@@ -2,8 +2,6 @@
 local plugin = {}
 
 plugin.core = {
-
-    -- dir = '/opt/lib/vim-cpplint',
     --'xvhfeng/vim-antlr',  
     'Joakker/vim-antlr4',
     config  = function()

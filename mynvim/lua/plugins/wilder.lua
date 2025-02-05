@@ -9,7 +9,7 @@ plugin.core = {
     },
     config = function()
         local wilder = require('wilder')
-        wilder.setup({ modes = { ':', '/\v', '?' } })
+        wilder.setup(next_key = '<Tab>',{ modes = { ':', '/' } })
     
       
         local highlighters = {
@@ -17,6 +17,7 @@ plugin.core = {
             wilder.basic_highlighter(),
         }
     
+
         local popupmenu_renderer = wilder.popupmenu_renderer(wilder.popupmenu_border_theme({
             border = 'rounded',
             pumblend = 0,
@@ -32,14 +33,14 @@ plugin.core = {
             left = { ' ', wilder.popupmenu_devicons() },
             right = { ' ', wilder.popupmenu_scrollbar() },
         }))
-    
+
         local wildmenu_renderer = wilder.wildmenu_renderer({
             highlighter = highlighters,
             -- separator = ' · ',
-            -- left = { ' ', wilder.wildmenu_spinner(), ' ' },
-            -- right = { ' ', wilder.wildmenu_index() },
+             left = { ' ', wilder.wildmenu_spinner(), ' ' },
+             right = { ' ', wilder.wildmenu_index() },
         })
-    
+
         wilder.set_option(
             'renderer',
             wilder.renderer_mux({
@@ -47,6 +48,7 @@ plugin.core = {
                 ['/'] = wildmenu_renderer,
             })
         )
+        -- 禁用在普通模式（n）下空格触发补全
     end
 }
 

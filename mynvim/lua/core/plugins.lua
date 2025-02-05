@@ -85,13 +85,13 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "vim与系统之间共享clip"
             },
-             { name = "wilder", enable = true, desc = "更好的命令行功能"},
+            --  { name = "wilder", enable = true, desc = "更好的命令行功能"},
             {
                 name = "which-key",
                 enable = true,
                 desc = "vim的操作快捷键映射"
             } --  { name="test", enable = true, desc="测试插件"},
-        }
+        }       
     },
     [2] = {
         ["name"] = "editor",
@@ -154,6 +154,8 @@ plugins_configure.plugins_groups = {
             }, {name = "neogen", enable = true, desc = "Doxydoc Gener"},
             {name = "nvim-ufo", enable = true, desc = "代码折叠"},
             {name = "doxygen", enable = true, desc = "Doxydoc Gener"},
+            {name = "antlr", enable = true, desc = "Doxydoc Gener"},
+          
             {name = "editor", enable = true, desc = "编辑类key-mapping"}
         }
     },
@@ -198,6 +200,7 @@ plugins_configure.plugins_groups = {
                 desc = "只是对于windows的key mapping的操作"
             },
             {name = "neoscroll", enable = true, desc = "lua写的floder"},
+            {name = "close-buffers", enable = true, desc = "Doxydoc Gener"},
         }
     },
     [4] = {
