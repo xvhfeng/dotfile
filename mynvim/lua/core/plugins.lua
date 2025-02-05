@@ -73,19 +73,18 @@ plugins_configure.plugins_groups = {
                 desc = "UI for Messgae cmdline and popupmenu"
             },--]] 
             {name = "preview", enable = true, desc = "预览quickfix中的结果"},
-            {name = "scrollbar", enable = true, desc = "预览quickfix中的结果"},
+            {name = "scrollbar", enable = true, desc = "在右侧显示上下滚动条"},
             {
                 name = "legendary",
                 enable = true,
                 desc = "可以搜索的keymap function command绑定插件"
             }, 
-            -- {name = "preview", enable = true, desc = "预览定义"},
             {
                 name = "vim-fakeclip",
                 enable = true,
                 desc = "vim与系统之间共享clip"
             },
-            { name = "wilder", enable = false, desc = "更好的命令行功能"},
+             -- { name = "wilder", enable = false, desc = "更好的命令行功能"},
             {
                 name = "which-key",
                 enable = true,
@@ -154,8 +153,8 @@ plugins_configure.plugins_groups = {
             }, {name = "neogen", enable = true, desc = "Doxydoc Gener"},
             {name = "nvim-ufo", enable = true, desc = "代码折叠"},
             {name = "doxygen", enable = true, desc = "Doxydoc Gener"},
-            {name = "antlr", enable = true, desc = "Doxydoc Gener"},
-            {name = "format", enable = true, desc = "Doxydoc Gener"},
+            {name = "antlr", enable = true, desc = "antlr的高亮显示"},
+            {name = "format", enable = true, desc = "一个可以通过本地安装format工具格式化代码的工具"},
             {name = "editor", enable = true, desc = "编辑类key-mapping"}
         }
     },
@@ -199,7 +198,7 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "只是对于windows的key mapping的操作"
             },
-            {name = "neoscroll", enable = true, desc = "lua写的floder"},
+            {name = "neoscroll", enable = true, desc = "光标不移动，底下的文字移动"},
             {name = "close-buffers", enable = true, desc = "Doxydoc Gener"},
         }
     },
@@ -212,7 +211,12 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "高度可扩展的列表模糊查找工具"
             },
-            {name = "spectre", enable = true, desc = "搜索与替换插件"},
+            {
+                name = "grug-far",
+                enable = true,
+                desc = "一个使用rg 或 ast-grep进行查找或者是替换的插件。"
+            }
+            --[[ {name = "spectre", enable = true, desc = "搜索与替换插件"},
             {
                 name = "any-jump",
                 enable = true,
@@ -228,8 +232,11 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "使用ripgrep查询字符串"
             }
+               
             -- {name = "fzf", enable = true, desc = "查找操作"},
             -- {name = "ssr", enable = true, desc = "使用模式替换,支持n和v两种模式" },
+             --]] 
+          
         }
     },
     [5] = {
@@ -260,11 +267,7 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "多光标插件,可同时编辑选中的多出统一word"
             },
-            {
-                name = "grug-far",
-                enable = true,
-                desc = "一个使用rg 或 ast-grep进行查找或者是替换的插件。"
-            },
+           
             {
                 name = "sltdo",
                 enable = true,
