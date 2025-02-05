@@ -9,6 +9,8 @@
 ######################################################################
 
 
+brew install ast-grep
+
 cd ./reps/telescope-fzf-native.nvim && make
 
 # 全局安装pynvim ，if已经安装了pyevn，

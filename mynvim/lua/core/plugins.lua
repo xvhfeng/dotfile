@@ -85,7 +85,7 @@ plugins_configure.plugins_groups = {
                 enable = true,
                 desc = "vim与系统之间共享clip"
             },
-            --  { name = "wilder", enable = true, desc = "更好的命令行功能"},
+            { name = "wilder", enable = false, desc = "更好的命令行功能"},
             {
                 name = "which-key",
                 enable = true,
@@ -155,7 +155,7 @@ plugins_configure.plugins_groups = {
             {name = "nvim-ufo", enable = true, desc = "代码折叠"},
             {name = "doxygen", enable = true, desc = "Doxydoc Gener"},
             {name = "antlr", enable = true, desc = "Doxydoc Gener"},
-          
+            {name = "format", enable = true, desc = "Doxydoc Gener"},
             {name = "editor", enable = true, desc = "编辑类key-mapping"}
         }
     },
@@ -217,7 +217,8 @@ plugins_configure.plugins_groups = {
                 name = "any-jump",
                 enable = true,
                 desc = "在定义的标记间跳转"
-            }, {name = "preview", enable = true, desc = "预览插件"}, {
+            },
+             {name = "preview", enable = true, desc = "预览插件"}, {
                 name = "ferret",
                 enable = true,
                 desc = "使用ack或者ripgrep查找,替换字符串"
@@ -260,6 +261,11 @@ plugins_configure.plugins_groups = {
                 desc = "多光标插件,可同时编辑选中的多出统一word"
             },
             {
+                name = "grug-far",
+                enable = true,
+                desc = "一个使用rg 或 ast-grep进行查找或者是替换的插件。"
+            },
+            {
                 name = "sltdo",
                 enable = true,
                 desc = "navigation的key-mapping。"
@@ -271,10 +277,9 @@ plugins_configure.plugins_groups = {
         ["subpath"] = "lspcfg",
         ["plugins"] = {
             { name = "mason-lspconfig", enable = true, desc = "lsp By Mason&LspConfig" },
+            { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
             { name = "delimiters", enable = true, desc = "Neovim的树结构和抽象层" },
             { name = "nvim-treesitter-context", enable = true, desc = "Neovim的树结构和抽象层" },
-             { name = "treesitter", enable = true, desc = "Neovim的树结构和抽象层" },
-
              {name = "trouble", enable = true, desc = "lsp的错误显示"},
              {name = "refactoring", enable = true, desc = "重构"},
             -- {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
@@ -302,10 +307,10 @@ plugins_configure.plugins_groups = {
                 name = "vimwiki",
                 enable = true,
                 desc = "可以非常方便地管理我们的笔记和创建代办列表，可以随时进行预览"
-            }, {name = "calendar", enable = true, desc = "日期与todo"},
+            }, {name = "calendar", enable = false, desc = "日期与todo"},
             {
                 name = "orgmode",
-                enable = true,
+                enable = false,
                 desc = "一个采用org格式进行记录的笔记插件，好处是写的笔记支持emacs进行编辑"
             },
             {
@@ -318,7 +323,7 @@ plugins_configure.plugins_groups = {
                 desc = "用于使用基于文本的Markdown Zettelkasten/Wiki,支持与telescope 插件的整合"
             }, {
                 name = "mind",
-                enable = true,
+                enable = false,
                 desc = "快速将笔记挂载到树上的插件，通过树将日记，笔记，wiki和任务管理等通过工作流实现"
             }
         }

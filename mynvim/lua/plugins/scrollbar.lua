@@ -88,6 +88,6 @@ plugin.core = {
         },
     })
     end
-}e
+}
 
 return plugin

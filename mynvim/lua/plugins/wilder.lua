@@ -9,7 +9,7 @@ plugin.core = {
     },
     config = function()
         local wilder = require('wilder')
-        wilder.setup(next_key = '<Tab>',{ modes = { ':', '/' } })
+        wilder.setup( { next_key = '<Tab>',{ modes = { ':', '/' , '?'} } } )
     
       
         local highlighters = {

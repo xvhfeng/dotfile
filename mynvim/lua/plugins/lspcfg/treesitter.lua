@@ -1,21 +1,25 @@
 local plugin = {}
 
-plugin.core = 
-{
+plugin.core = {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     event = 'BufReadPost',
     dependencies = { 'nvim-treesitter/nvim-treesitter-textobjects' },
+
     config = function()
         require('nvim-treesitter.configs').setup({
             ensure_installed = {
+                "vim",
+                "dockerfile",
+                "doxygen",
+                "make",
+                'awk',
                 'bash',
                 'c',
                 'cmake',
                 'cpp',
                 'css',
                 'diff',
-                'fish',
                 'gitignore',
                 'go',
                 'html',
@@ -24,34 +28,27 @@ plugin.core =
                 'javascript',
                 'jsdoc',
                 'jsonc',
-                'latex',
                 'lua',
                 'markdown',
                 'markdown_inline',
-                'meson',
-                'ninja',
-                'nix',
-                'norg',
-                'org',
                 'php',
                 'python',
                 'query',
-                'regex',
                 'rust',
-                'scss',
                 'sql',
                 'toml',
                 'tsx',
                 'typescript',
                 'vue',
-                'wgsl',
                 'yaml', -- "wgsl",
                 'json',
-                'groovy',
             },
-            sync_install = false,
-            auto_install = false,
-            highlight = { enable = true },
+            sync_install = true,
+            auto_install = true,
+            highlight = { 
+                enable = true ,
+                additional_vim_regex_highlighting = false,
+            },
             rainbow = {
                 enable = true,
                 -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
@@ -62,4 +59,5 @@ plugin.core =
         })
     end,
 }
-reutrn plugin
+
+return plugin

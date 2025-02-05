@@ -3,7 +3,7 @@ local plugin = {}
 plugin.core = {
     'nvim-treesitter/nvim-treesitter-context',
     cmd = 'TSContextToggle',
-    ft = { 'lua', 'go' },
+    ft = { 'lua', 'go' ,'c','cpp','python','java'},
     config = function()
         require('treesitter-context').setup({
             enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
