@@ -8,6 +8,8 @@ plugin.core = {
         -- there are no required options atm
         -- engine = 'ripgrep' is default, but 'astgrep' can be specified
       });
+
+      vim.keymap.set('n', '<leader>fg', "<cmd>lua require('grug-far').open(opts)<cr>")
     end
 }
 

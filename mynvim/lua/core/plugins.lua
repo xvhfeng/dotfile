@@ -19,7 +19,8 @@ plugins_configure.plugins_groups = {
                 name = "material",
                 enable = false,
                 desc = "一个用Lua编写的快速而现代的配色方案，它支持NeoVim添加的许多新特性，如内置的LSP和TreeSitter"
-            }, {name = "tokyonight", enable = true, desc = "nvim的主题"},
+            }, 
+            {name = "tokyonight", enable = true, desc = "nvim的主题"},
               {name = "project", enable = true, desc = "项目管理"},
             {name = "vimdoc", enable = true, desc = "中文的vimdoc帮助"},
             {
@@ -162,7 +163,8 @@ plugins_configure.plugins_groups = {
         ["name"] = "exploer",
         ["subpath"] = "exploer",
         ["plugins"] = {
-            {name = "nvimtree", enable = true, desc = "lua写的floder"},
+             {name = "nvimtree", enable = true, desc = "lua写的floder"},
+             -- {name = "neo-tree", enable = true, desc = "lua写的floder"},
             {
                 name = "bufexplorer",
                 enable = true,
@@ -199,7 +201,8 @@ plugins_configure.plugins_groups = {
                 desc = "只是对于windows的key mapping的操作"
             },
             {name = "neoscroll", enable = true, desc = "光标不移动，底下的文字移动"},
-            {name = "close-buffers", enable = true, desc = "Doxydoc Gener"},
+            {name = "close-buffers", enable = true, desc = "快速关闭其它/隐藏/当前等buffer"},
+           -- {name = "oil", enable = true, desc = "buffer模式管理文件夹"},
         }
     },
     [4] = {
@@ -215,7 +218,8 @@ plugins_configure.plugins_groups = {
                 name = "grug-far",
                 enable = true,
                 desc = "一个使用rg 或 ast-grep进行查找或者是替换的插件。"
-            }
+            },
+            {name = "fzf", enable = true, desc = "查找操作"},
             --[[ {name = "spectre", enable = true, desc = "搜索与替换插件"},
             {
                 name = "any-jump",
@@ -233,7 +237,7 @@ plugins_configure.plugins_groups = {
                 desc = "使用ripgrep查询字符串"
             }
                
-            -- {name = "fzf", enable = true, desc = "查找操作"},
+           
             -- {name = "ssr", enable = true, desc = "使用模式替换,支持n和v两种模式" },
              --]] 
           
@@ -285,7 +289,7 @@ plugins_configure.plugins_groups = {
             { name = "nvim-treesitter-context", enable = true, desc = "Neovim的树结构和抽象层" },
              {name = "trouble", enable = true, desc = "lsp的错误显示"},
              {name = "refactoring", enable = true, desc = "重构"},
-            -- {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
+             {name = "nvim-cmp", enable = true, desc = "lsp的智能补全"},
              {name = "aerial", enable = true, desc = "基于LSP的outline工具"},
              {name = "lspsaga", enable = true, desc = "基于LSP的outline工具"},
             -- { name = "lsp-lines", enable = true, desc = "将lsp的错误显示定位到对应的行" },
@@ -306,9 +310,10 @@ plugins_configure.plugins_groups = {
         ["name"] = "notes",
         ["subpath"] = 'notes',
         ["plugins"] = {
+            {name = "render-markdown", enable = true, desc = "markdown插件"},
             {
                 name = "vimwiki",
-                enable = true,
+                enable = false,
                 desc = "可以非常方便地管理我们的笔记和创建代办列表，可以随时进行预览"
             }, {name = "calendar", enable = false, desc = "日期与todo"},
             {
@@ -322,7 +327,7 @@ plugins_configure.plugins_groups = {
                 desc = "lemon解析器的高亮"
             }, {
                 name = "telekasten",
-                enable = true,
+                enable = false,
                 desc = "用于使用基于文本的Markdown Zettelkasten/Wiki,支持与telescope 插件的整合"
             }, {
                 name = "mind",

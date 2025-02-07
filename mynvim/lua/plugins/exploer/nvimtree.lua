@@ -102,16 +102,18 @@ plugin.core = {
                 preserve_window_proportions = true,
                 -- auto resize tree-windows
               adaptive_size = true ,
+          
             },
             actions = {
                  change_dir = {
-                     enable = true,
-                     global = true,
+                    enable = true,
+                   global = true,
                      -- 加了这个，不会往父路径跳转
                      -- restrict_above_cwd = true,
                  },
                 open_file = {
                     resize_window = false,
+                    quit_on_open = false, 
                      -- quit_on_open = true,
                     window_picker = {
                         chars = "123456789abcdefg",
@@ -129,6 +131,7 @@ plugin.core = {
 
     end,
 
+    --[[  
     init = function()
 
         -- close window auto when  only nvim-tree
@@ -174,16 +177,16 @@ plugin.core = {
                 end
             end
         })
-        --[[
+        
         vim.api.nvim_create_autocmd("BufEnter", {
             pattern = "*",
             callback = function()
                 require'nvim-tree'.change_dir(vim.fn.expand('%:p:h'))
             end,
         })
-        --]]
+       
     end
-
+ --]]
 }
 
 function find_directory_and_focus()

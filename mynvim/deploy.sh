@@ -5,7 +5,7 @@
 # @file        : deploy
 # @created     : Sunday Jan 26, 2025 17:14:22 CST
 #
-# @description : 
+# @description :
 ######################################################################
 
 
@@ -20,6 +20,8 @@ pip3 install 'pynvim @ git+https://github.com/neovim/pynvim' --break-system-pack
 brew install tree-sitter
 sudo npm install tree-sitter-cli -g
 brew install lolcat
+brew install bat #cat的带颜色替代品
+brew install delta #git的log带颜色显示
 
 # 设置mason安装的可执行文件到path
 echo "export PATH=$HOME/.local/share/nvim/mason/bin:$PATH" >> ~/.bashrc

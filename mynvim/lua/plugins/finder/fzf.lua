@@ -1,48 +1,91 @@
-local plugin = {}
+local M = {}
 
-plugin.core = {
-    'junegunn/fzf',
-    "junegunn/fzf.vim",
 
+    M.core = {
+    'ibhagwan/fzf-lua',
+    -- optional for icon support
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+
+    keys = {
+        {
+            '<leader>ff',
+            function()
+                require('fzf-lua').files({})
+            end,
+            desc = 'Find Files',
+        },
+        {
+            '<leader>fg',
+            function()
+                require('fzf-lua').live_grep({})
+            end,
+            desc = 'Live grep file content',
+        },
+        {
+            '<leader>ob',
+            function()
+                require('fzf-lua').buffers({})
+            end,
+            desc = 'Search opened buffers',
+        },
+        {
+            '<leader>fh',
+            function()
+                require('fzf-lua').manpages({})
+            end,
+            desc = 'Search help manual page',
+        },
+        {
+            '<leader>xd',
+            function()
+                require('fzf-lua').diagnostics_workspace({})
+            end,
+            desc = 'Workspae Diagnostics',
+        },
+        {
+            '<leader>xx',
+            function()
+                require('fzf-lua').diagnostics_document({})
+            end,
+            desc = 'Document Diagnostics',
+        },
+    },
+    
     config = function()
-        -- This is the default option:
-        --   - Preview window on the right with 50% width
-        --   - CTRL-/ will toggle preview window.
-        -- - Note that this array is passed as arguments to fzf#vim#with_preview function.
-        -- - To learn more about preview window options, see `--preview-window` section of `man fzf`.
-        vim.g.fzf_preview_window = "['right,50%', 'ctrl-/']"
+        -- calling `setup` is optional for customization
+        require('fzf-lua').setup({
+            winopts = {
+                -- row = 1.0,
+                -- col = 0.0,
+                -- height = 0.5,
+                -- width = 1.0,
+                height = 0.9, -- window height
+                width = 0.9, -- window width
+                row = 0.45, -- window row position (0=top, 1=bottom)
+                backdrop = 100,
+                title = 'Searching...',
+                title_pos = 'center', -- 'left', 'center' or 'right',
+            },
+            fzf_opts = {
+                ['--ansi'] = true,
+                ['--info'] = 'inline-right', -- fzf < v0.42 = "inline"
+                ['--height'] = '100%',
+                ['--layout'] = 'reverse-list',
+                ['--border'] = 'none',
+                ['--highlight-line'] = true, -- fzf >= v0.53
+            },
+        })
+        local fzf = require('fzf-lua')
 
-        -- Preview window is hidden by default. You can toggle it with ctrl-/.
-        -- It will show on the right with 50% width, but if the width is smaller
-        -- than 70 columns, it will show above the candidate list
-        vim.g.fzf_preview_window = "['hidden,right,50%,<70(up,40%)', 'ctrl-/']"
+        -- 获取所有 fzf-lua 提供的命令
+        local commands = {
+        'files', 'live_grep', 'buffer', 'grep_cword', 'help_tags', -- 可以补充更多命令
+        }
 
-        -- Empty value to disable preview window altogether
-        vim.g.fzf_preview_window = "[]"
-
-        -- [Buffers] Jump to the existing window if possible
-        vim.g.fzf_buffers_jump = 1
-
-        -- [[B]Commits] Customize the options used by 'git log':
-        vim.g.fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
-
-        -- [Tags] Command to generate tags file
-        vim.g.fzf_tags_command = 'ctags -R'
-
-        -- [Commands] --expect expression for directly executing the command
-        vim.g.fzf_commands_expect = 'alt-enter,ctrl-x'
+        for _, cmd in ipairs(commands) do
+        vim.api.nvim_set_keymap('n', '<leader>' .. cmd, "<cmd>lua require('fzf-lua')." .. cmd .. "()<CR>", { noremap = true, silent = true })
+        end
     end
-
 }
---[[
-plugin.mapping = {
-    keys = {{
-        mode = "n",
-        key = {"<leader>", "f", "z"},
-        action = ":BTags<CR>",
-        desc = "Show current buffer Tags."
-    }}
-}
---]]
 
-return plugin
+    return M
