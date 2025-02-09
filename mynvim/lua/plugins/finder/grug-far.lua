@@ -1,16 +1,25 @@
 local plugin = {}
 
 plugin.core = {
-    'MagicDuck/grug-far.nvim',
-    config = function()
-      require('grug-far').setup({
-        -- options, see Configuration section below
-        -- there are no required options atm
-        -- engine = 'ripgrep' is default, but 'astgrep' can be specified
-      });
+	"MagicDuck/grug-far.nvim",
+	config = function()
+		require("grug-far").setup({
+			-- options, see Configuration section below
+			-- there are no required options atm
+			-- engine = 'ripgrep' is default, but 'astgrep' can be specified
+		})
 
-      vim.keymap.set('n', '<leader>fg', "<cmd>lua require('grug-far').open(opts)<cr>")
-    end
+		--vim.keymap.set("n", "<leader>fg", "<cmd>lua require('grug-far').open(opts)<cr>")
+	end,
+	keys = {
+		{
+			"<leader>fg",
+			function()
+				require("grug-far").open(opts)
+			end,
+			desc = "Find/Replace",
+		},
+	},
 }
 
 -- plugin.mapping = {
@@ -24,7 +33,6 @@ plugin.core = {
 --         { 'x', '#', [[<Plug>(asterisk-z#)<Cmd>lua require('hlslens').start()<CR>]], {} },
 --         { 'x', 'g*', [[<Plug>(asterisk-gz*)<Cmd>lua require('hlslens').start()<CR>]], {} },
 --         { 'x', 'g#', [[<Plug>(asterisk-gz#)<Cmd>lua require('hlslens').start()<CR>]], {} }
-
 
 --         --[[
 --         {mode = "n", key = "*", action = '<Plug>(asterisk-*)',desc = "No Desc" },

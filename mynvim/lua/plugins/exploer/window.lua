@@ -95,7 +95,8 @@ plugin.mapping = {
             key = "<c-n>",
             action = '<Down>',
             desc = "QuickFix Next Item"
-        }
+        },
+
 
     }
 }

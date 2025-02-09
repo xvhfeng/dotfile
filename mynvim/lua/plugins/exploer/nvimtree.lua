@@ -1,86 +1,88 @@
 local plugin = {}
 
 local function tab_win_closed(winnr)
-    local api = require"nvim-tree.api"
-    local tabnr = vim.api.nvim_win_get_tabpage(winnr)
-    local bufnr = vim.api.nvim_win_get_buf(winnr)
-    local buf_info = vim.fn.getbufinfo(bufnr)[1]
-    local tab_wins = vim.tbl_filter(function(w) return w~=winnr end, vim.api.nvim_tabpage_list_wins(tabnr))
-    local tab_bufs = vim.tbl_map(vim.api.nvim_win_get_buf, tab_wins)
-    if buf_info.name:match(".*NvimTree_%d*$") then            -- close buffer was nvim tree
-        -- Close all nvim tree on :q
-        if not vim.tbl_isempty(tab_bufs) then                      -- and was not the last window (not closed automatically by code below)
-            api.tree.close()
-        end
-    else                                                      -- else closed buffer was normal buffer
-        if #tab_bufs == 1 then                                    -- if there is only 1 buffer left in the tab
-            local last_buf_info = vim.fn.getbufinfo(tab_bufs[1])[1]
-            if last_buf_info.name:match(".*NvimTree_%d*$") then       -- and that buffer is nvim tree
-                vim.schedule(function ()
-                    if #vim.api.nvim_list_wins() == 1 then                -- if its the last buffer in vim
-                        vim.cmd "quit"                                        -- then close all of vim
-                    else                                                  -- else there are more tabs open
-                        vim.api.nvim_win_close(tab_wins[1], true)             -- then close only the tab
-                    end
-                end)
-            end
-        end
-    end
+	local api = require("nvim-tree.api")
+	local tabnr = vim.api.nvim_win_get_tabpage(winnr)
+	local bufnr = vim.api.nvim_win_get_buf(winnr)
+	local buf_info = vim.fn.getbufinfo(bufnr)[1]
+	local tab_wins = vim.tbl_filter(function(w)
+		return w ~= winnr
+	end, vim.api.nvim_tabpage_list_wins(tabnr))
+	local tab_bufs = vim.tbl_map(vim.api.nvim_win_get_buf, tab_wins)
+	if buf_info.name:match(".*NvimTree_%d*$") then -- close buffer was nvim tree
+		-- Close all nvim tree on :q
+		if not vim.tbl_isempty(tab_bufs) then -- and was not the last window (not closed automatically by code below)
+			api.tree.close()
+		end
+	else -- else closed buffer was normal buffer
+		if #tab_bufs == 1 then -- if there is only 1 buffer left in the tab
+			local last_buf_info = vim.fn.getbufinfo(tab_bufs[1])[1]
+			if last_buf_info.name:match(".*NvimTree_%d*$") then -- and that buffer is nvim tree
+				vim.schedule(function()
+					if #vim.api.nvim_list_wins() == 1 then -- if its the last buffer in vim
+						vim.cmd("quit") -- then close all of vim
+					else -- else there are more tabs open
+						vim.api.nvim_win_close(tab_wins[1], true) -- then close only the tab
+					end
+				end)
+			end
+		end
+	end
 end
 
-local HEIGHT_RATIO = 0.8  -- You can change this
-local WIDTH_RATIO = 0.5   -- You can change this too
+local HEIGHT_RATIO = 0.8 -- You can change this
+local WIDTH_RATIO = 0.5 -- You can change this too
 
 local function on_attach(bufnr)
-    local api = require("nvim-tree.api")
+	local api = require("nvim-tree.api")
 
-    local function opts(desc)
-        return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
-    end
+	local function opts(desc)
+		return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+	end
 
-    vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open"))
-    vim.keymap.set("n", "o", api.node.open.edit, opts("Open"))
-    vim.keymap.set("n", "l", api.node.open.edit, opts("Open"))
-    vim.keymap.set("n", "V", api.node.open.vertical, opts("Vertical Open"))
-    vim.keymap.set("n", "H", api.node.open.horizontal, opts("Horizontal Open"))
-    vim.keymap.set("n", "<2-LeftMouse>", api.node.open.edit, opts("Open"))
-    vim.keymap.set("n", "h", api.node.navigate.parent_close, opts("Close Directory"))
-    vim.keymap.set("n", "p", api.node.open.preview, opts("Open Preview"))
-    vim.keymap.set("n", "<C-r>", api.tree.reload, opts("Refresh"))
-    vim.keymap.set("n", "yn", api.fs.copy.filename, opts("Copy Name"))
-    vim.keymap.set("n", "yp", api.fs.copy.relative_path, opts("Copy Relative Path"))
-    vim.keymap.set("n", "yy", api.fs.copy.absolute_path, opts("Copy Absolute Path"))
-    vim.keymap.set("n", "a", api.fs.create, opts("Create"))
-    vim.keymap.set("n", "d", api.fs.remove, opts("Delete"))
-    vim.keymap.set("n", "r", api.fs.rename, opts("Rename"))
-    vim.keymap.set("n", "I", api.tree.toggle_gitignore_filter, opts("Toggle Git Ignore"))
-    vim.keymap.set("n", "R", api.tree.collapse_all, opts("Collapse"))
-    vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
+	vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open"))
+	vim.keymap.set("n", "o", api.node.open.edit, opts("Open"))
+	vim.keymap.set("n", "l", api.node.open.edit, opts("Open"))
+	vim.keymap.set("n", "V", api.node.open.vertical, opts("Vertical Open"))
+	vim.keymap.set("n", "H", api.node.open.horizontal, opts("Horizontal Open"))
+	vim.keymap.set("n", "<2-LeftMouse>", api.node.open.edit, opts("Open"))
+	vim.keymap.set("n", "h", api.node.navigate.parent_close, opts("Close Directory"))
+	vim.keymap.set("n", "p", api.node.open.preview, opts("Open Preview"))
+	vim.keymap.set("n", "<C-r>", api.tree.reload, opts("Refresh"))
+	vim.keymap.set("n", "yn", api.fs.copy.filename, opts("Copy Name"))
+	vim.keymap.set("n", "yp", api.fs.copy.relative_path, opts("Copy Relative Path"))
+	vim.keymap.set("n", "yy", api.fs.copy.absolute_path, opts("Copy Absolute Path"))
+	vim.keymap.set("n", "a", api.fs.create, opts("Create"))
+	vim.keymap.set("n", "d", api.fs.remove, opts("Delete"))
+	vim.keymap.set("n", "r", api.fs.rename, opts("Rename"))
+	vim.keymap.set("n", "I", api.tree.toggle_gitignore_filter, opts("Toggle Git Ignore"))
+	vim.keymap.set("n", "R", api.tree.collapse_all, opts("Collapse"))
+	vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
 end
 
 plugin.core = {
-    'nvim-tree/nvim-tree.lua',
-    dependencies = {
-        --[[
+	"nvim-tree/nvim-tree.lua",
+	dependencies = {
+		--[[
         brew tap homebrew/cask-fonts
         brew install font-hack-nerd-font
         -- choose iterm text font to font-hack-nerd-font
         --]]
-        'nvim-tree/nvim-web-devicons', -- optional, for file icons
-    },
-           -- update_cwd = true, 
+		"nvim-tree/nvim-web-devicons", -- optional, for file icons
+	},
+	-- update_cwd = true,
 
-    config = function()
-        -- empty setup using defaults
-        require("nvim-tree").setup({
-        --     disable_netrw = false,
-         --    hijack_netrw = true,
-          --   hijack_cursor = false,
-            -- prefer_startup_root = true,
-            --     sync_root_with_cwd = true,
-            --  respect_buf_cwd = true,
-            sort_by = "case_sensitive",
-            --[[ -- for project.nvim open any path but root is git root floder
+	config = function()
+		-- empty setup using defaults
+		require("nvim-tree").setup({
+			--     disable_netrw = false,
+			--    hijack_netrw = true,
+			--   hijack_cursor = false,
+			-- prefer_startup_root = true,
+			--     sync_root_with_cwd = true,
+			--  respect_buf_cwd = true,
+			sort_by = "case_sensitive",
+			--[[ -- for project.nvim open any path but root is git root floder
             -- add blow config item ,it will auto and cannot contorl
             -- so move it and can use vim ./ to open current floder and
             -- default is open git root path
@@ -97,41 +99,38 @@ plugin.core = {
                 update_root = true
             },
              --]]
-            on_attach = on_attach,
-            view = {
-                preserve_window_proportions = true,
-                -- auto resize tree-windows
-              adaptive_size = true ,
-          
-            },
-            actions = {
-                 change_dir = {
-                    enable = true,
-                   global = true,
-                     -- 加了这个，不会往父路径跳转
-                     -- restrict_above_cwd = true,
-                 },
-                open_file = {
-                    resize_window = false,
-                    quit_on_open = false, 
-                     -- quit_on_open = true,
-                    window_picker = {
-                        chars = "123456789abcdefg",
-                    },
-                },
-            },
-            renderer = {
-                highlight_opened_files = "name", -- 高亮已打开的文件
-            },
-        })
+			on_attach = on_attach,
+			view = {
+				preserve_window_proportions = true,
+				-- auto resize tree-windows
+				adaptive_size = true,
+			},
+			actions = {
+				change_dir = {
+					enable = true,
+					global = true,
+					-- 加了这个，不会往父路径跳转
+					-- restrict_above_cwd = true,
+				},
+				open_file = {
+					resize_window = false,
+					quit_on_open = false,
+					-- quit_on_open = true,
+					window_picker = {
+						chars = "123456789abcdefg",
+					},
+				},
+			},
+			renderer = {
+				highlight_opened_files = "name", -- 高亮已打开的文件
+			},
+		})
 
-        --vim.cmd([[doautocmd NvimTree BufEnter *]])
-  --      vim.cmd([[autocmd VimEnter * silent! lcd %:p:h]])
+		--vim.cmd([[doautocmd NvimTree BufEnter *]])
+		--      vim.cmd([[autocmd VimEnter * silent! lcd %:p:h]])
+	end,
 
-
-    end,
-
-    --[[  
+	--[[  
     init = function()
 
         -- close window auto when  only nvim-tree
@@ -190,44 +189,46 @@ plugin.core = {
 }
 
 function find_directory_and_focus()
-    local actions = require("telescope.actions")
-    local action_state = require("telescope.actions.state")
+	local actions = require("telescope.actions")
+	local action_state = require("telescope.actions.state")
 
-    local function open_nvim_tree(prompt_bufnr, _)
-        actions.select_default:replace(function()
-            local api = require("nvim-tree.api")
+	local function open_nvim_tree(prompt_bufnr, _)
+		actions.select_default:replace(function()
+			local api = require("nvim-tree.api")
 
-            actions.close(prompt_bufnr)
-            local selection = action_state.get_selected_entry()
-            api.tree.open()
-            api.tree.find_file(selection.cwd .. "/" .. selection.value)
-        end)
-        return true
-    end
+			actions.close(prompt_bufnr)
+			local selection = action_state.get_selected_entry()
+			api.tree.open()
+			api.tree.find_file(selection.cwd .. "/" .. selection.value)
+		end)
+		return true
+	end
 
-    require("telescope.builtin").find_files({
-        find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*" },
-        attach_mappings = open_nvim_tree,
-    })
+	require("telescope.builtin").find_files({
+		find_command = { "fd", "--type", "directory", "--hidden", "--exclude", ".git/*" },
+		attach_mappings = open_nvim_tree,
+	})
 end
 
 plugin.mapping = {
-    keymaps = {
-        { mode = "n", key = "\\", action = '<cmd>NvimTreeToggle<CR>', desc = "Open Floder Tree" },
-        {
-            tag = {key = "<leader>we", name = "Exploer"},
-            keymaps = {
-                { mode = "n", key = "<leader>wet", action = '<cmd>NvimTreeToggle <CR>', desc = "Open Floder Tree", },
-                { mode = "n", key = "<leader>wef", action = ':lua find_directory_and_focus()<CR>', desc = "Find&Focus File/Path" },
-            }
-        }
-    }
+	keymaps = {
+		{ mode = "n", key = "\\", action = "<cmd>NvimTreeToggle<CR>", desc = "Open Floder Tree" },
+		{
+			tag = { key = "<leader>we", name = "Exploer" },
+			keymaps = {
+				{ mode = "n", key = "<leader>wet", action = "<cmd>NvimTreeToggle <CR>", desc = "Open Floder Tree" },
+				{
+					mode = "n",
+					key = "<leader>wef",
+					action = ":lua find_directory_and_focus()<CR>",
+					desc = "Find&Focus File/Path",
+				},
+			},
+		},
+	},
 }
 
 return plugin
-
-
-
 
 --[===[
 
