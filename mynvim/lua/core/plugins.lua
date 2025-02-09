@@ -108,73 +108,14 @@ plugins_configure.plugins_groups = {
 		["name"] = "editor",
 		["subpath"] = "editor",
 		["plugins"] = {
-			{ name = "nerdcommenter", enable = true, desc = "代码注释插件" },
 			-- {name = "textobj-word-column", enable = true, desc = "编辑多行"},
 			{ name = "undotree", enable = true, desc = "undo操作tree" },
-			{
-				name = "NrrwRgn",
-				enable = true,
-				desc = "Nrrw窗口操作选中文本区域",
-			},
-			{
-				name = "vim-mundo",
-				enable = true,
-				desc = "mundo窗口操作文件变更history",
-			},
-			{
-				name = "vim-expand-region",
-				enable = true,
-				desc = "块状编辑文本",
-			},
-			{
-				name = "vim-surround",
-				enable = true,
-				desc = "快速加入修改环绕字符",
-			},
-			{
-				name = "vim-templates",
-				enable = true,
-				desc = "文件模版,提供c语言的h,c文件等模版功能",
-			},
-			--[[ 取消这个配置，一些使用格式化来表示层级的文件会自动对齐
-            --导致读取配置失败，比如yml文件
-            {
-                name = "vim-autoformat",
-                enable = true,
-                desc = "autoformat格式化工具"
-            },
-            --]]
-			{
-				name = "vim-cpplint",
-				enable = true,
-				desc = "cpp googlestyle检查",
-			},
-			{
-				name = "lua-formatter",
-				enable = true,
-				desc = "lua-format格式化工具",
-			}, --[[
-            {
-                name = "clang-formatter",
-                enable = true,
-                desc = "clang-format格式化工具"
-            },
-            --]]
-			{ name = "whitespace", enable = true, desc = "自动删除行尾空格" },
-			{
-				name = "vim-textobj-entire",
-				enable = true,
-				desc = "文本对象与格式化",
-			},
+			{ name = "NrrwRgn", enable = true, desc = "Nrrw窗口操作选中文本区域" },
+			{ name = "vim-mundo", enable = true, desc = "mundo窗口操作文件变更history" },
+			{ name = "vim-expand-region", enable = true, desc = "块状编辑文本" },
+			{ name = "vim-surround", enable = true, desc = "快速加入修改环绕字符" },
+			{ name = "vim-textobj-entire", enable = true, desc = "文本对象与格式化" },
 			{ name = "neogen", enable = true, desc = "Doxydoc Gener" },
-			{ name = "nvim-ufo", enable = true, desc = "代码折叠" },
-			{ name = "doxygen", enable = true, desc = "Doxydoc Gener" },
-			{ name = "antlr", enable = true, desc = "antlr的高亮显示" },
-			{
-				name = "format",
-				enable = true,
-				desc = "一个可以通过本地安装format工具格式化代码的工具",
-			},
 			{ name = "editor", enable = true, desc = "编辑类key-mapping" },
 		},
 	},
@@ -338,11 +279,6 @@ plugins_configure.plugins_groups = {
 		["subpath"] = "notes",
 		["plugins"] = {
 			{ name = "render-markdown", enable = true, desc = "markdown插件" },
-			{
-				name = "vim-lemon-syntax",
-				enable = true,
-				desc = "lemon解析器的高亮",
-			},
 			--{
 			--    name = "vimwiki",
 			--    enable = false,
@@ -370,18 +306,10 @@ plugins_configure.plugins_groups = {
 		["name"] = "git",
 		["subpath"] = "git",
 		["plugins"] = {
-			{
-				name = "tig-explorer",
-				enable = true,
-				desc = "git在vim中的查看",
-			},
+			{ name = "tig-explorer", enable = true, desc = "git在vim中的查看" },
 			{ name = "lazygit", enable = true, desc = "git的一款plugin" },
 			{ name = "neogit", enable = true, desc = "git的一款plugin" },
-			{
-				name = "diffview",
-				enable = true,
-				desc = "git的diff在vim中的展现",
-			},
+			{ name = "diffview", enable = true, desc = "git的diff在vim中的展现" },
 			{ name = "vim-flog", enable = true, desc = "查看git commit log" },
 		},
 	},
@@ -403,19 +331,36 @@ plugins_configure.plugins_groups = {
 		},
 	},
 	[10] = {
+		["name"] = "code",
+		["subpath"] = "code",
+		["plugins"] = {
+			{ name = "antlr", enable = true, desc = "antlr的高亮显示" },
+			--[[
+            {
+                name = "clang-formatter",
+                enable = true,
+                desc = "clang-format格式化工具"
+            },
+            --]]
+			{ name = "doxygen", enable = true, desc = "Doxydoc Gener" },
+			{ name = "format", enable = true, desc = "通过本地安装format工具格式化代码" },
+			{ name = "lua-formatter", enable = true, desc = "lua-format格式化工具" },
+			{ name = "nerdcommenter", enable = true, desc = "代码注释插件" },
+			{ name = "nvim-ufo", enable = true, desc = "代码折叠" },
+			--  取消这个配置，一些使用格式化来表示层级的文件会自动对齐
+			--导致读取配置失败，比如yml文件
+			-- { name = "vim-autoformat", enable = true, desc = "autoformat格式化工具" },
+			{ name = "vim-cpplint", enable = true, desc = "cpp googlestyle检查" },
+			{ name = "vim-templates", enable = true, desc = "c语言的h,c文件模版功能" },
+			{ name = "vim-lemon-syntax", enable = true, desc = "lemon解析器的高亮" },
+		},
+	},
+	[11] = {
 		["name"] = "hooks",
 		["subpath"] = "hooks",
 		["plugins"] = {
-			{
-				name = "telescope-hooks",
-				enable = true,
-				desc = "所有telescope hooks",
-			},
-			{
-				name = "folding-hooks",
-				enable = true,
-				desc = "Code Folding hooks,依赖nvim-ufo",
-			},
+			{ name = "telescope-hooks", enable = true, desc = "所有telescope hooks" },
+			{ name = "folding-hooks", enable = true, desc = "Code Folding hooks,依赖nvim-ufo" },
 		},
 	},
 }

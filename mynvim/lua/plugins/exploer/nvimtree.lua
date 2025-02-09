@@ -58,6 +58,8 @@ local function on_attach(bufnr)
 	vim.keymap.set("n", "I", api.tree.toggle_gitignore_filter, opts("Toggle Git Ignore"))
 	vim.keymap.set("n", "R", api.tree.collapse_all, opts("Collapse"))
 	vim.keymap.set("n", "?", api.tree.toggle_help, opts("Help"))
+	vim.keymap.set("n", "x", api.fs.cut, opts("Cut File"))
+	vim.keymap.set("n", "P", api.fs.paste, opts("Paste"))
 end
 
 plugin.core = {
