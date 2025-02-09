@@ -5,7 +5,8 @@ M.core = {
 	-- optional for icon support
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 
-	keys = {
+	--[[  
+    --keys = {
 		{
 			"<leader>ff",
 			function()
@@ -69,6 +70,7 @@ M.core = {
 		},
 	},
 
+    --]]
 	config = function()
 		-- calling `setup` is optional for customization
 		require("fzf-lua").setup({
@@ -94,6 +96,220 @@ M.core = {
 			},
 		})
 	end,
+}
+
+M.mapping = {
+	keymaps = {
+		{
+			tag = { "<leader>F", "Fzf", usekey = true },
+			keymaps = {
+				{
+					"n",
+					"o",
+					function()
+						require("fzf-lua").files({})
+					end,
+					"Open Folder",
+				},
+				{
+					"n",
+					"h",
+					function()
+						require("fzf-lua").oldfiles()
+					end,
+					"Open history",
+				},
+				{
+					"n",
+					"r",
+					function()
+						require("fzf-lua").resume()
+					end,
+					"Resume Last",
+				},
+				{
+					"n",
+					"b",
+					function()
+						require("fzf-lua").buffers()
+					end,
+					"OpenedBuffers",
+				},
+				{
+					"n",
+					"q",
+					function()
+						require("fzf-lua").quickfix()
+					end,
+					"QuickFix List",
+				},
+				{
+					"n",
+					"f",
+					function()
+						require("fzf-lua").grep()
+					end,
+					"Grep",
+				},
+				{
+					"n",
+					"F",
+					function()
+						require("fzf-lua").grep_last()
+					end,
+					"Grep Next",
+				},
+				{
+					"n",
+					"S",
+					function()
+						require("fzf-lua").search_history()
+					end,
+					"Search History",
+				},
+				{
+					"n",
+					"w",
+					function()
+						require("fzf-lua").grep_cword()
+					end,
+					"Current Word",
+				},
+				{
+					"n",
+					"m",
+					function()
+						require("fzf-lua").marks()
+					end,
+					"Marks",
+				},
+				{
+					"n",
+					"c",
+					function()
+						require("fzf-lua").changes()
+					end,
+					"Changes",
+				},
+				{
+					"n",
+					"O",
+					function()
+						local win = require("dressing.input")
+						vim.ui.win = win
+						vim.ui.input({ prompt = "Enter search query: ", relative = "win" }, function(input)
+							if input and input ~= "" then
+								require("fzf-lua").files({ cwd = input })
+								-- fzf_lua.live_grep({ search = input })
+							end
+						end)
+					end,
+					"Open Folder With Input",
+				},
+			},
+		},
+		{
+			tag = { "<leader>Fl", "FZF LSP", true },
+			keymaps = {
+				{
+					"n",
+					"o",
+					function()
+						require("fzf-lua").treesitter()
+					end,
+					"Treesitter Symbols",
+				},
+				{
+					"n",
+					"r",
+					function()
+						require("fzf-lua").lsp_references()
+					end,
+					"References",
+				},
+				{
+					"n",
+					"d",
+					function()
+						require("fzf-lua").lsp_defineitions()
+					end,
+					"Defineitions",
+				},
+				{
+					"n",
+					"D",
+					function()
+						require("fzf-lua").lsp_declarations()
+					end,
+					"Declarations",
+				},
+				{
+					"n",
+					"t",
+					function()
+						require("fzf-lua").lsp_typedefs()
+					end,
+					"Typd Defineitions",
+				},
+				{
+					"n",
+					"i",
+					function()
+						require("fzf-lua").lsp_implementations()
+					end,
+					"Implementations",
+				},
+				{
+					"n",
+					"s",
+					function()
+						require("fzf-lua").lsp_document_symbols()
+					end,
+					"Document Symbols",
+				},
+				{
+					"n",
+					"e",
+					function()
+						require("fzf-lua").diagnostics_document()
+					end,
+					"Diagnostics Document",
+				},
+				{
+					"n",
+					"a",
+					function()
+						require("fzf-lua").lsp_codes_actions()
+					end,
+					"Code Actions",
+				},
+				{
+					"n",
+					"f",
+					function()
+						require("fzf-lua").lsp_finder()
+					end,
+					"LSP Locations",
+				},
+				{
+					"n",
+					"c",
+					function()
+						require("fzf-lua").lsp_incoming_calls()
+					end,
+					"InComing Call",
+				},
+				{
+					"n",
+					"g",
+					function()
+						require("fzf-lua").lsp_outgoing_calls()
+					end,
+					"OutGoing Calls",
+				},
+			},
+		},
+	},
 }
 
 return M

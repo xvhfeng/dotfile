@@ -11,6 +11,7 @@ plugin.core = {
 		{ "tami5/sql.nvim" },
 		{ "nvim-telescope/telescope-frecency.nvim" },
 		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		{ "nvim-telescope/telescope-file-browser.nvim" },
 		--        {"ahmedkhalf/project.nvim"}
 	},
 
@@ -153,88 +154,225 @@ plugin.core = {
 plugin.mapping = {
 	keymaps = {
 		{
-			mode = "n",
-			key = "<leader>tf",
-			action = "<cmd>lua require('telescope.builtin').find_files()<cr>",
-			desc = "Find files",
+			tag = { "<leader>t", "Telescope", true },
+			keymaps = {
+				{
+					"n",
+					"o",
+					function()
+						require("telescope.builtin").find_files()
+					end,
+					"Open Folder",
+				},
+				{
+					"n",
+					"h",
+					function()
+						require("telescope.builtin").oldfiles()
+					end,
+					"Open History",
+				},
+				{
+					"n",
+					"r",
+					function()
+						require("telescope.builtin").resume()
+					end,
+					"Resume Last",
+				},
+				{
+					"n",
+					"b",
+					function()
+						require("telescope.builtin").buffers()
+					end,
+					"Buffers",
+				},
+				{
+					"n",
+					"q",
+					function()
+						require("telescope.builtin").quickfix()
+					end,
+					"Quickfix",
+				},
+				{
+					"n",
+					"Q",
+					function()
+						require("telescope.builtin").quickfixhistory()
+					end,
+					"Quickfix History",
+				},
+				{
+					"n",
+					"f",
+					function()
+						require("telescope.builtin").current_buffer_fuzzy_find()
+					end,
+					"Find Current Buffer",
+				},
+				{
+					"n",
+					"w",
+					function()
+						require("telescope.builtin").current_buffer_fuzzy_find({ search = vim.fn.expand("<cword>") })
+					end,
+					"Find Cword Buffer",
+				},
+				{
+					"n",
+					"s",
+					function()
+						require("telescope.builtin").grep_string()
+					end,
+					"Search Workspace",
+				},
+				{
+					"n",
+					"S",
+					function()
+						require("telescope.builtin").live_grep()
+					end,
+					"Live Search Workspace",
+				},
+				{
+					"n",
+					"W",
+					function()
+						require("telescope.builtin").live_grep({ search = vim.fn.expand("cword") })
+					end,
+					"Live Search Cword Workspace",
+				},
+				{
+					"n",
+					"m",
+					function()
+						require("telescope.builtin").marks()
+					end,
+					"Marks",
+				},
+				{
+					"n",
+					"t",
+					function()
+						require("telescope.builtin").current_buffer_tags()
+					end,
+					"Current Buffer Tags",
+				},
+				{
+					"n",
+					"H",
+					function()
+						require("telescope.builtin").help_tags()
+					end,
+					"List Help Tags",
+				},
+				{
+					"n",
+					"O",
+					function()
+						require("telescope").extensions.file_browser.file_browser({
+							prompt_title = "选择目录",
+							cwd = vim.fn.getcwd(),
+							attach_mappings = function(_, map)
+								map("i", "<CR>", function(prompt_bufnr)
+									local entry = require("telescope.actions.state").get_selected_entry()
+									require("telescope.actions").close(prompt_bufnr)
+									require("telescope.builtin").find_files({ cwd = entry[1] })
+								end)
+								return true
+							end,
+						})
+					end,
+					"浏览目录并查找文件",
+				},
+			},
 		},
 		{
-			mode = "n",
-			key = "<leader>tq",
-			action = "<cmd>lua require('telescope.builtin').grep_string({search = vim.fn.expand('<cword>')})<cr>",
-			desc = "grep current words",
-		},
-		{
-			mode = "n",
-			key = "<leader>td",
-			action = "<cmd>lua require('telescope.builtin').live_grep()<cr>",
-			desc = "grep string",
-		},
-		{
-			mode = "n",
-			key = "<leader>tl",
-			action = "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find({skip_empty_lines=true})<cr>",
-			desc = "Find Lines",
-		},
-		{
-			mode = "n",
-			key = "<leader>tb",
-			action = "<cmd>lua require('telescope.builtin').buffers()<cr>",
-			desc = "Find Buffers",
-		},
-		{
-			mode = "n",
-			key = "<leader>tc",
-			action = "<cmd>lua require('telescope.builtin').command_history()<cr>",
-			desc = "Find Command History",
-		},
-		{
-			mode = "n",
-			key = "<leader>th",
-			action = "<Cmd>lua require('telescope').extensions.frecency.frecency{ sorter = require('telescope.config').values.file_sorter()}<CR>",
-			desc = "Find Recent/History",
-		},
-		{
-			mode = "n",
-			key = "<leader>tk",
-			action = "<cmd>lua require('telescope.builtin').keymaps()<cr>",
-			desc = "Find All Mappings",
-		},
-		{
-			mode = "n",
-			key = "<leader>tr",
-			action = "<cmd>lua require('telescope.builtin').registers()<cr>",
-			desc = "Find Registers",
-		},
-		{
-			mode = "n",
-			key = "<leader>te",
-			action = "<cmd>lua require('telescope.builtin').planets()<cr>",
-			desc = "Find Planets",
-		},
-		{
-			mode = "n",
-			key = "<leader>tg",
-			action = "<cmd>lua require('telescope.builtin').git_commits()<cr>",
-			desc = "Find Git Commits",
-		},
-		{
-			mode = "n",
-			key = "<leader>tG",
-			action = "<cmd>lua require('telescope.builtin').git_bcommits()<cr>",
-			desc = "Find Git Commits(buffer)",
-		},
-		{
-			mode = "n",
-			key = "<leader>tj",
-			action = "<cmd>lua require('telescope.builtin').jumplist()<cr>",
-			desc = "Find Jump List",
-		},
-		{
-			mode = "n",
-			key = "<leader>tm",
-			action = "<cmd>lua require('telescope.builtin').marks()<cr>",
-			desc = "Find Marks",
+			tag = { "<leader>tl", "LSP", true },
+			keymaps = {
+				{
+					"n",
+					"o",
+					function()
+						require("telescope.builtin").treesitter()
+					end,
+					"Treesitter Symbols",
+				},
+				{
+					"n",
+					"r",
+					function()
+						require("telescope.builtin").lsp_references()
+					end,
+					"References",
+				},
+				{
+					"n",
+					"d",
+					function()
+						require("telescope.builtin").lsp_defineitions()
+					end,
+					"Defineitions",
+				},
+				{
+					"n",
+					"t",
+					function()
+						require("telescope.builtin").lsp_type_definitions()
+					end,
+					"Typd Defineitions",
+				},
+				{
+					"n",
+					"i",
+					function()
+						require("telescope.builtin").lsp_implementations()
+					end,
+					"Implementations",
+				},
+				{
+					"n",
+					"s",
+					function()
+						require("telescope.builtin").lsp_document_symbols()
+					end,
+					"Document Symbols",
+				},
+				{
+					"n",
+					"w",
+					function()
+						require("telescope.builtin").lsp_dynamic_workspace_symbols()
+					end,
+					"Document Symbols",
+				},
+				{
+					"n",
+					"e",
+					function()
+						require("telescope.builtin").diagnostics()
+					end,
+					"Diagnostics",
+				},
+				{
+					"n",
+					"c",
+					function()
+						require("telescope.builtin").lsp_incoming_calls()
+					end,
+					"InComing Call",
+				},
+				{
+					"n",
+					"g",
+					function()
+						require("telescope.builtin").lsp_outgoing_calls()
+					end,
+					"OutGoing Calls",
+				},
+			},
 		},
 	},
 }
