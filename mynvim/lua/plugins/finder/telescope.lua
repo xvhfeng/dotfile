@@ -166,6 +166,14 @@ plugin.mapping = {
 				},
 				{
 					"n",
+					"c",
+					function()
+						require("telescope.builtin").commands()
+					end,
+					"Search Commands",
+				},
+				{
+					"n",
 					"h",
 					function()
 						require("telescope.builtin").oldfiles()

@@ -53,6 +53,7 @@ end
 vim.g.no_number_filetypes_list = no_number_filetypes_list
 vim.g.no_number_filetypes_concat_list = table.concat(no_number_filetypes_list, ",")
 
+--[[
 global_func.augroup("smarter_cursorline", {
 	{
 		events = { "filetype" },
@@ -82,10 +83,11 @@ global_func.augroup("smarter_cursorline", {
 	{
 		events = { "InsertLeave", "BufEnter" },
 		targets = { "*" },
-		command = [[ lua if vim.g.no_number_filetypes[vim.bo.filetype] == nil and vim.api.nvim_win_get_config(0).relative == '' then vim.o.relativenumber = true vim.o.number = true end ]],
+		command =  lua if vim.g.no_number_filetypes[vim.bo.filetype] == nil and vim.api.nvim_win_get_config(0).relative == '' then vim.o.relativenumber = true vim.o.number = true end ,
 	},
 })
 
+--]]
 default_setting["opt"] = {
 	guicursor = "n-v:block-Cursor,i-ci-ve-c:ver25-Cursor", --block for normal visual mode, vertical for insert command mode. highlight set to Cursor
 	relativenumber = true,

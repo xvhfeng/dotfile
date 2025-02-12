@@ -1,21 +1,8 @@
-
 local plugin = {}
 
 plugin.core = {
-    'sunjon/shade.nvim',
-    init = function()
-        require'shade'.setup({
-            overlay_opacity = 50,
-            opacity_step = 1,
-            keys = {
-                brightness_up    = '<C-Up>',
-                brightness_down  = '<C-Down>',
-                toggle           = '<Leader>sc',
-            }
-        })
-
-    end
+	"tadaa/vimade",
+	desc = "一款高亮显示选中window的插件,比较稳定",
 }
 
 return plugin
-

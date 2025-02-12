@@ -79,11 +79,7 @@ plugins_configure.plugins_groups = { -- {{{
 			{ name = "nvimtree", enable = true, desc = "lua写的floder" },
 			-- {name = "neo-tree", enable = true, desc = "lua写的floder"},
 			{ name = "bufexplorer", enable = true, desc = "buffer的资源管理器" },
-			--{
-			--    name = "maximizer",
-			--    enable = true,
-			--    desc = "最大化window,并且恢复原来打开的window状态",
-			--},
+			{ name = "maximizer", enable = true, desc = "最大化window" },
 			-- { name = "ranger", enable = true, desc = "floder管理器" },
 			{ name = "rename", enable = true, desc = "重名当前打开的文件" },
 			{ name = "qf-helper", enable = true, desc = "一个更好的quickfix的替代品" },
@@ -206,6 +202,7 @@ plugins_configure.plugins_groups = { -- {{{
 			{ name = "neogit", enable = true, desc = "git的一款plugin" },
 			{ name = "diffview", enable = true, desc = "git的diff在vim中的展现" },
 			{ name = "vim-flog", enable = true, desc = "查看git commit log" },
+			{ name = "fugitive", enable = true, desc = "查看git commit log" },
 		},
 	},
 	[9] = {
