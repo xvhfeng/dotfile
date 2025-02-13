@@ -3,6 +3,7 @@ local M = {}
 M.core = {
 	"tpope/vim-fugitive",
 	"junegunn/gv.vim",
+	"gregsexton/gitv",
 }
 
 M.mapping = {

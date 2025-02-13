@@ -68,6 +68,7 @@ plugins_configure.plugins_groups = { -- {{{
 			{ name = "vim-expand-region", enable = true, desc = "块状编辑文本" },
 			{ name = "vim-surround", enable = true, desc = "快速加入修改环绕字符" },
 			{ name = "vim-textobj-entire", enable = true, desc = "文本对象与格式化" },
+			{ name = "vim-after-object", enable = true, desc = "选择行内符合特征字符之后的内容" },
 			{ name = "neogen", enable = true, desc = "Doxydoc Gener" },
 			{ name = "editor", enable = true, desc = "编辑类key-mapping" },
 		},
