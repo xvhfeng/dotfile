@@ -1,8 +1,7 @@
 local plugin = {}
 
 plugin.core = {
-    'yianwillis/vimcdoc' ,
+	"yianwillis/vimcdoc",
 }
 
 return plugin
-

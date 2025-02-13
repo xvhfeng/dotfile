@@ -1,7 +1,7 @@
 local plugin = {}
 
 plugin.core = {
-    "houtsnip/vim-emacscommandline",
+	"houtsnip/vim-emacscommandline",
 }
 
 return plugin

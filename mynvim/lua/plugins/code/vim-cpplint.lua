@@ -2,29 +2,29 @@ local plugin = {}
 
 plugin.core = {
 
-    -- dir = '/opt/lib/vim-cpplint',
-    'xvhfeng/vim-cpplint',
-    config  = function()
-        vim.cmd [[
+	-- dir = '/opt/lib/vim-cpplint',
+	"xvhfeng/vim-cpplint",
+	config = function()
+		vim.cmd([[
             " autocmd BufWritePost *.h,*.cpp call Cpplint()
-            ]]
-    end
+            ]])
+	end,
 }
 
 plugin.mapping = {
-    keymaps = {
-        {
-            tag = {key = "<leader>ef", name = "Format"},
-            keymaps = {
-                {
-                    mode = "n",
-                    key = "<leader>efc",
-                    action = '<cmd>call Cpplint()<cr>',
-                    desc = "C/C++ Cpplint Format",
-                }
-            }
-        }
-    }
+	keymaps = {
+		{
+			tag = { key = "<leader>ef", name = "Format" },
+			keymaps = {
+				{
+					mode = "n",
+					key = "<leader>efc",
+					action = "<cmd>call Cpplint()<cr>",
+					desc = "C/C++ Cpplint Format",
+				},
+			},
+		},
+	},
 }
 
 return plugin

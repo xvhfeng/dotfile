@@ -1,8 +1,8 @@
 local plugin = {}
 
 plugin.core = {
-    "vim-scripts/genutils",
-    name = "genutils",
+	"vim-scripts/genutils",
+	name = "genutils",
 }
 
 return plugin

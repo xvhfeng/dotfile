@@ -1,4 +1,4 @@
 return {
-    name = 'jdtls',
-    setup_config = {}
+	name = "jdtls",
+	setup_config = {},
 }

@@ -1,16 +1,15 @@
 local plugin = {}
 
 plugin.core = {
-    'andymass/vim-matchup',
-    config = function()
---        vim.builtin.treesitter.matchup.enable = true
-    end,
-    init = function()
-        -- may set any options here
-        vim.g.matchup_matchparen_offscreen = {method = "popup"}
-    end
+	"andymass/vim-matchup",
+	config = function()
+		--        vim.builtin.treesitter.matchup.enable = true
+	end,
+	init = function()
+		-- may set any options here
+		vim.g.matchup_matchparen_offscreen = { method = "popup" }
+	end,
 }
-
 
 --[[
 Note: match-up uses the same b:match_words as matchit.

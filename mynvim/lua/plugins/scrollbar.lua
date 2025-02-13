@@ -91,4 +91,3 @@ plugin.core = {
 }
 
 return plugin
-

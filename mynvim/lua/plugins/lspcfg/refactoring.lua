@@ -41,32 +41,31 @@ plugin.core = {
 	},
 }
 
-
 plugin.mapping = {
-    keymaps = {
-        {
-            keymaps = {
-                {
-                    mode = "n",
-                    key = "<leader>rn",
-                    action = function()
+	keymaps = {
+		{
+			keymaps = {
+				{
+					mode = "n",
+					key = "<leader>rn",
+					action = function()
 						return ":IncRename " .. vim.fn.expand("<cword>")
 					end,
-                    desc = "Incremental rename"
-
-                }, {
-                    mode = "v",
-                    key = "<leader>r",
-                    action = function()
+					desc = "Incremental rename",
+				},
+				{
+					mode = "v",
+					key = "<leader>r",
+					action = function()
 						require("refactoring").select_refactor({
 							show_success_message = true,
 						})
 					end,
-                    desc = "refactoring"
-
-                }}
-        }
-    }
+					desc = "refactoring",
+				},
+			},
+		},
+	},
 }
 
-return plugin;
+return plugin

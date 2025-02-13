@@ -1,9 +1,8 @@
 local plugin = {}
 
 plugin.core = {
-    "dccmx/vim-lemon-syntax",
-    config = function()
-    end
+	"dccmx/vim-lemon-syntax",
+	config = function() end,
 }
 
 return plugin

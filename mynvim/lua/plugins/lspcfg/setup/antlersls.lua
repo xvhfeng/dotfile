@@ -1,4 +1,4 @@
 return {
-    name = 'antlersls',
-    setup_config = {},
+	name = "antlersls",
+	setup_config = {},
 }

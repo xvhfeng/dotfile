@@ -1,17 +1,17 @@
 local plugin = {}
 
 plugin.core = {
-    'simnalamburt/vim-mundo',
+	"simnalamburt/vim-mundo",
 
-    config = function()
-        vim.g.mundo_width = 60
-        vim.g.mundo_preview_height = 40
-        vim.g.mundo_right = 1
-        vim.cmd [[
+	config = function()
+		vim.g.mundo_width = 60
+		vim.g.mundo_preview_height = 40
+		vim.g.mundo_right = 1
+		vim.cmd([[
             set undofile
             set undodir=~/.vim/undo
-            ]]
-    end
+            ]])
+	end,
 }
 
 --[[
@@ -26,19 +26,19 @@ q -- quit
 --]]
 
 plugin.mapping = {
-    keymaps = {
-        {
-            tag = {key = "<leader>eh", name = "UndoTree"},
-            keymaps = {
-                {
-                    mode = "n",
-                    key = "<leader>eht",
-                    action = '<cmd>MundoToggle<cr>',
-                    desc = "MUndoTree Toggle"
-                }
-            }
-        }
-    }
+	keymaps = {
+		{
+			tag = { key = "<leader>eh", name = "UndoTree" },
+			keymaps = {
+				{
+					mode = "n",
+					key = "<leader>eht",
+					action = "<cmd>MundoToggle<cr>",
+					desc = "MUndoTree Toggle",
+				},
+			},
+		},
+	},
 }
 
 return plugin

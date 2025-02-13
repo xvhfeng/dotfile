@@ -1,15 +1,28 @@
 local boolvalues = {
-	["1"] = "0";
-	["true"] = "false";
-	["on"] = "off";
-	["yes"] = "no";
-	["y"] = "n"
+	["1"] = "0",
+	["true"] = "false",
+	["on"] = "off",
+	["yes"] = "no",
+	["y"] = "n",
 }
 local eschars = {
-	"\"", "'", "\\"
+	'"',
+	"'",
+	"\\",
 }
 local escregexchars = {
-	"(", ")", ".", "%", "+", "-", "*", "?", "[", "]", "^", "$"
+	"(",
+	")",
+	".",
+	"%",
+	"+",
+	"-",
+	"*",
+	"?",
+	"[",
+	"]",
+	"^",
+	"$",
 }
 local mt = getmetatable("")
 
@@ -85,7 +98,7 @@ end
 --- @param chars? string Pattern that represents which characters to trim from the start. Whitespaces by default.
 --- @return string s String with trimmed characters at the start.
 function string:trimstart(chars)
-	return self:gsub("^["..(chars or "%s").."]+", "")
+	return self:gsub("^[" .. (chars or "%s") .. "]+", "")
 end
 
 --- Trims string's characters from its right side. Trims whitespaces by default. The `chars` argument is a pattern
@@ -93,7 +106,7 @@ end
 --- @param chars? string Pattern that represents Which characters to trim from the end. Whitespaces by default.
 --- @return string s String with trimmed characters at the end.
 function string:trimend(chars)
-	return self:gsub("["..(chars or "%s").."]+$", "")
+	return self:gsub("[" .. (chars or "%s") .. "]+$", "")
 end
 
 --- Pads the string at the start with specified string until specified length.
@@ -103,7 +116,7 @@ end
 function string:padstart(len, str)
 	str = str or " "
 	local selflen = self:len()
-	return (str:rep(math.ceil((len - selflen) / str:len()))..self):sub(-(selflen < len and len or selflen))
+	return (str:rep(math.ceil((len - selflen) / str:len())) .. self):sub(-(selflen < len and len or selflen))
 end
 
 --- Pads the string at the end with specified string until specified length.
@@ -113,7 +126,7 @@ end
 function string:padend(len, str)
 	str = str or " "
 	local selflen = self:len()
-	return (self..str:rep(math.ceil((len - selflen) / str:len()))):sub(1, selflen < len and len or selflen)
+	return (self .. str:rep(math.ceil((len - selflen) / str:len()))):sub(1, selflen < len and len or selflen)
 end
 
 --- If the string starts with specified prefix then returns string itself, otherwise pads the string until it starts
@@ -131,7 +144,7 @@ function string:ensurestart(prefix)
 		i = i + 1
 		left = left:sub(1, -2)
 	end
-	return prefix:sub(1, i - 1)..self
+	return prefix:sub(1, i - 1) .. self
 end
 
 --- If the string ends with specified suffix then returns string itself, otherwise pads the string until it ends with
@@ -149,7 +162,7 @@ function string:ensureend(suffix)
 		i = i - 1
 		right = right:sub(2)
 	end
-	return self..suffix:sub(i + 1)
+	return self .. suffix:sub(i + 1)
 end
 
 --- Adds backslashes before `"`, `'` and `\` characters.
@@ -161,7 +174,7 @@ function string:esc(eschar, eschartbl)
 	eschar = eschar or "\\"
 	eschartbl = eschartbl or eschars
 	for char in self:iter() do
-		s = includes(eschartbl, char) and s..eschar..char or s..char
+		s = includes(eschartbl, char) and s .. eschar .. char or s .. char
 	end
 	return s
 end
@@ -177,9 +190,9 @@ function string:unesc(eschar)
 		local char = self:sub(i, i)
 		if char == eschar then
 			i = i + 1
-			s = s..self:sub(i, i)
+			s = s .. self:sub(i, i)
 		else
-			s = s..char
+			s = s .. char
 		end
 		i = i + 1
 	end
@@ -225,7 +238,7 @@ end
 function string:truncate(len, suffix)
 	if suffix then
 		local newlen = len - suffix:len()
-		return 0 < newlen and newlen < self:len() and self:sub(1, newlen)..suffix or self:sub(1, len)
+		return 0 < newlen and newlen < self:len() and self:sub(1, newlen) .. suffix or self:sub(1, len)
 	else
 		return self:sub(1, len)
 	end

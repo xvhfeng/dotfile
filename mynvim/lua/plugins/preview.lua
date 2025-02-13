@@ -1,6 +1,6 @@
 local plugin = {}
 
-plugin.core = {'skywind3000/vim-preview'}
+plugin.core = { "skywind3000/vim-preview" }
 
 --[[ 
 plugin.mapping = {
@@ -19,11 +19,10 @@ plugin.mapping = {
 --]]
 
 plugin.mapping = function()
-    vim.cmd[[
+	vim.cmd([[
     autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
     autocmd FileType qf nnoremap <silent><buffer> q :PreviewClose<cr>
-    ]]
+    ]])
 end
 
 return plugin
-

@@ -1,4 +1,4 @@
 return {
-    name = 'cmake',
-    setup_config = {},
+	name = "cmake",
+	setup_config = {},
 }

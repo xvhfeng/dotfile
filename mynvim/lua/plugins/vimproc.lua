@@ -1,8 +1,8 @@
 local plugin = {}
 
 plugin.core = {
-    "Shougo/vimproc",
-    build = "make"
+	"Shougo/vimproc",
+	build = "make",
 }
 
 return plugin

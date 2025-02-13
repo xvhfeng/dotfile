@@ -1,5 +1,4 @@
 return {
-    name = 'vimls',
-    setup_config = {},
+	name = "vimls",
+	setup_config = {},
 }
-

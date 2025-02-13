@@ -7,22 +7,21 @@ return {
 --]]
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = { "pylsp" },  -- 确保 pylsp 安装
-  automatic_installation = true,
+	ensure_installed = { "pylsp" }, -- 确保 pylsp 安装
+	automatic_installation = true,
 })
 
 -- 配置 pylsp
-require("lspconfig").pylsp.setup{
-  settings = {
-    pylsp = {
-      plugins = {
-        pyflakes = { enabled = true },
-        flake8 = { enabled = true },
-      }
-    }
-  }
-}
-
+require("lspconfig").pylsp.setup({
+	settings = {
+		pylsp = {
+			plugins = {
+				pyflakes = { enabled = true },
+				flake8 = { enabled = true },
+			},
+		},
+	},
+})
 
 --[[
 require'lspconfig'.pylsp.setup{
@@ -42,6 +41,6 @@ require'lspconfig'.pylsp.setup{
 }
 --]]
 
-vim.cmd [[
+vim.cmd([[
   autocmd FileType python lua require'lspconfig'.pylsp.setup{}
-]]
+]])

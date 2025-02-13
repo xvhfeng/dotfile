@@ -47,16 +47,16 @@ nnoremap <leader>zd :call SaveImageByUrl() <cr>
 function! OpenUnderCurser(command)
     let l:file_path = expand("<cfile>")
     if l:file_path[0:3] == "http"
-      let l:relate_path = l:file_path 
+      let l:relate_path = l:file_path
     else
       let l:relate_path = expand("%:p")[0:strlen(expand("%:p"))-strlen(expand("%:t"))-2] . "/" . l:file_path
       let l:relate_path = substitute(l:relate_path,"\\","/","")
     endif
     execute(":!" . a:command . " " . l:relate_path)
 endfunction
-nnoremap <silent><leader>ocd :call OpenUnderCurser("start")  <cr> 
-nnoremap <silent><leader>ocb :call OpenUnderCurser("chrome") <cr> 
-nnoremap <silent><leader>ocv :call OpenUnderCurser("code")  <cr> 
+nnoremap <silent><leader>ocd :call OpenUnderCurser("start")  <cr>
+nnoremap <silent><leader>ocb :call OpenUnderCurser("chrome") <cr>
+nnoremap <silent><leader>ocv :call OpenUnderCurser("code")  <cr>
 
 " 从文件中查找(rg替代)
 function! FindFromAllFile()

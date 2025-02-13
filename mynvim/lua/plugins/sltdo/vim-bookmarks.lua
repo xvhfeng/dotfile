@@ -2,12 +2,12 @@ local plugin = {}
 
 plugin.core = {
 
-    'MattesGroeger/vim-bookmarks',
-    config = function()
-        vim.g.bookmark_save_per_working_dir = 1
-        vim.g.bookmark_auto_save = 1
+	"MattesGroeger/vim-bookmarks",
+	config = function()
+		vim.g.bookmark_save_per_working_dir = 1
+		vim.g.bookmark_auto_save = 1
 
-        vim.cmd [[
+		vim.cmd([[
             "highlight BookmarkSign ctermbg=whatever ctermfg=whatever
             "highlight BookmarkAnnotationSign ctermbg=whatever ctermfg=whatever
             "highlight BookmarkLine ctermbg=whatever ctermfg=whatever
@@ -29,69 +29,68 @@ plugin.core = {
             return getcwd().'/.'.filename
             endif
             endfunction
-            ]]
-    end
-
+            ]])
+	end,
 }
 
 plugin.mapping = {
-    keymaps = {
-        {
-            mode = "n",
-            key = "<leader>mm",
-            action = '<cmd>BookmarkToggle<CR>',
-            desc = "Toggle Mark"
-        },
+	keymaps = {
+		{
+			mode = "n",
+			key = "<leader>mm",
+			action = "<cmd>BookmarkToggle<CR>",
+			desc = "Toggle Mark",
+		},
 
-        {
-            mode = "n",
-            key = "<leader>mi",
-            action = '<cmd>BookmarkAnnotate<CR>',
-            desc = "Toggle Mark Annotate"
-        },
+		{
+			mode = "n",
+			key = "<leader>mi",
+			action = "<cmd>BookmarkAnnotate<CR>",
+			desc = "Toggle Mark Annotate",
+		},
 
-        {
-            tag = { key = "<leader>ml",name = "Marks"},
-            keymaps = {
-                {
-                    mode = "n",
-                    key = "<leader>mla",
-                    action = '<cmd>BookmarkShowAll<CR>',
-                    desc = "Show All Marks"
-                },
-                {
-                    mode = "n",
-                    key = "<leader>mlc",
-                    action = '<cmd>BookmarkClear<CR>',
-                    desc = "Clear Current Mark"
-                },
-                {
-                    mode = "n",
-                    key = "<leader>mlk",
-                    action = '<cmd>BookmarkMoveUp<CR>',
-                    desc = "Move Mark Up"
-                },
-                {
-                    mode = "n",
-                    key = "<leader>mlk",
-                    action = '<cmd>BookmarkMoveDown<CR>',
-                    desc = "Move Mark Down"
-                },
-                {
-                    mode = "n",
-                    key = "<leader>mlp",
-                    action = '<cmd>BookmarkPrev<CR>',
-                    desc = "Move Mark Prev"
-                },
-                {
-                    mode = "n",
-                    key = "<leader>mln",
-                    action = '<cmd>BookmarkNext<CR>',
-                    desc = "Move Mark Next"
-                },
-            }
-        }
-    }
+		{
+			tag = { key = "<leader>ml", name = "Marks" },
+			keymaps = {
+				{
+					mode = "n",
+					key = "<leader>mla",
+					action = "<cmd>BookmarkShowAll<CR>",
+					desc = "Show All Marks",
+				},
+				{
+					mode = "n",
+					key = "<leader>mlc",
+					action = "<cmd>BookmarkClear<CR>",
+					desc = "Clear Current Mark",
+				},
+				{
+					mode = "n",
+					key = "<leader>mlk",
+					action = "<cmd>BookmarkMoveUp<CR>",
+					desc = "Move Mark Up",
+				},
+				{
+					mode = "n",
+					key = "<leader>mlk",
+					action = "<cmd>BookmarkMoveDown<CR>",
+					desc = "Move Mark Down",
+				},
+				{
+					mode = "n",
+					key = "<leader>mlp",
+					action = "<cmd>BookmarkPrev<CR>",
+					desc = "Move Mark Prev",
+				},
+				{
+					mode = "n",
+					key = "<leader>mln",
+					action = "<cmd>BookmarkNext<CR>",
+					desc = "Move Mark Next",
+				},
+			},
+		},
+	},
 }
 
 return plugin

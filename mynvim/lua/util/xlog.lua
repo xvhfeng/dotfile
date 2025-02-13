@@ -1,9 +1,8 @@
 local xlog = {
-    _version = "xlog 0.1.0"
+	_version = "xlog 0.1.0",
 }
 
-local opt = require "util.opt"
-
+local opt = require("util.opt")
 
 xlog.usecolor = true
 xlog.outpath = nil
@@ -28,139 +27,148 @@ xlog.Startup = false
 xlog.output = 0
 
 xlog.setup = function(level, output, outpath)
-    if not xlog.Startup then
-        return
-    end
+	if not xlog.Startup then
+		return
+	end
 
-    xlog.level = level
-    xlog.output = output
+	xlog.level = level
+	xlog.output = output
 
-    if xlog.OnlyFile == xlog.output or xlog.ConsoleAndFile == xlog.output then
-       
-        if opt.isNilOrEmpty(outpath) then
-            xlog.outpath = outpath_default
-        else
-            xlog.outpath = outpath
-        end
+	if xlog.OnlyFile == xlog.output or xlog.ConsoleAndFile == xlog.output then
+		if opt.isNilOrEmpty(outpath) then
+			xlog.outpath = outpath_default
+		else
+			xlog.outpath = outpath
+		end
 
-        if not opt.file_exists(xlog.outpath) then
-            local cmd = string.format("mkdir -p %s",xlog.outpath)
-            os.execute(cmd)
-        end
-    end
+		if not opt.file_exists(xlog.outpath) then
+			local cmd = string.format("mkdir -p %s", xlog.outpath)
+			os.execute(cmd)
+		end
+	end
 
-    xlog.filepath = string.format("%s/nvim-%s.log", xlog.outpath, opt.current_datatime_nosp())
-    -- print(xlog.filepath)
-    xlog.fp = io.open(xlog.filepath, "a+");
+	xlog.filepath = string.format("%s/nvim-%s.log", xlog.outpath, opt.current_datatime_nosp())
+	-- print(xlog.filepath)
+	xlog.fp = io.open(xlog.filepath, "a+")
 end
 
 xlog.shutdown = function()
-    xlog.fp:close()
-    xlog.fp = nil
-    xlog.filepath = nil
+	xlog.fp:close()
+	xlog.fp = nil
+	xlog.filepath = nil
 end
 
-local modes = {{
-    name = "trace",
-    color = "\27[34m"
-}, {
-    name = "debug",
-    color = "\27[36m"
-}, {
-    name = "info",
-    color = "\27[32m"
-}, {
-    name = "warn",
-    color = "\27[33m"
-}, {
-    name = "error",
-    color = "\27[31m"
-}, {
-    name = "fatal",
-    color = "\27[35m"
-}}
+local modes = {
+	{
+		name = "trace",
+		color = "\27[34m",
+	},
+	{
+		name = "debug",
+		color = "\27[36m",
+	},
+	{
+		name = "info",
+		color = "\27[32m",
+	},
+	{
+		name = "warn",
+		color = "\27[33m",
+	},
+	{
+		name = "error",
+		color = "\27[31m",
+	},
+	{
+		name = "fatal",
+		color = "\27[35m",
+	},
+}
 
 local levels = {}
 for i, v in ipairs(modes) do
-    levels[v.name] = i
+	levels[v.name] = i
 end
 
 local round = function(x, increment)
-    increment = increment or 1
-    x = x / increment
-    return (x > 0 and math.floor(x + .5) or math.ceil(x - .5)) * increment
+	increment = increment or 1
+	x = x / increment
+	return (x > 0 and math.floor(x + 0.5) or math.ceil(x - 0.5)) * increment
 end
 
 local _tostring = tostring
 
 local tostring = function(...)
-    local t = {}
-    for i = 1, select('#', ...) do
-        local x = select(i, ...)
-        if type(x) == "number" then
-            x = round(x, .01)
-        end
-        t[#t + 1] = _tostring(x)
-    end
-    return table.concat(t, " ")
+	local t = {}
+	for i = 1, select("#", ...) do
+		local x = select(i, ...)
+		if type(x) == "number" then
+			x = round(x, 0.01)
+		end
+		t[#t + 1] = _tostring(x)
+	end
+	return table.concat(t, " ")
 end
 
 for i, x in ipairs(modes) do
-    local nameupper = x.name:upper()
-    xlog[x.name] = function(fmt,...)
+	local nameupper = x.name:upper()
+	xlog[x.name] = function(fmt, ...)
+		if not xlog.Startup then
+			return
+		end
 
-        if not xlog.Startup then
-            return
-        end
+		-- Return early if we're below the log level
+		if i < levels[xlog.level] then
+			return
+		end
 
-        -- Return early if we're below the log level
-        if i < levels[xlog.level] then
-            return
-        end
+		local msg = string.format(fmt, ...)
+		local info = debug.getinfo(2, "Sl")
+		-- local sinfo = DataDumper(info,"debuginfo")
+		-- print(sinfo)
+		local lineinfo = info.short_src .. ":" .. info.currentline --  .. "@" .. info.name
 
-        local msg = string.format(fmt,...)
-        local info = debug.getinfo(2, "Sl")
-       -- local sinfo = DataDumper(info,"debuginfo")
-       -- print(sinfo)
-        local lineinfo = info.short_src .. ":"  .. info.currentline  --  .. "@" .. info.name
+		-- Output to console
+		if xlog.OnlyConsole == xlog.output or xlog.ConsoleAndFile == xlog.output then
+			print(
+				string.format(
+					"%s %s %s %s %s \n\t-->> %s",
+					xlog.usecolor and x.color or "",
+					nameupper,
+					opt.current_datatime_zhcn(),
+					xlog.usecolor and "\27[0m" or "",
+					lineinfo,
+					msg
+				)
+			)
+		end
 
-        -- Output to console
-        if xlog.OnlyConsole == xlog.output or xlog.ConsoleAndFile == xlog.output then
-            print(string.format("%s %s %s %s %s \n\t-->> %s", 
-                                xlog.usecolor and x.color or "", 
-                                nameupper, opt.current_datatime_zhcn(), 
-                                xlog.usecolor and "\27[0m" or "", lineinfo, msg))
-        end
-
-        -- Output to log file
-        if xlog.OnlyFile == xlog.output or (xlog.ConsoleAndFile == xlog.output and xlog.outpath) then
-            local str = string.format("%s %s %s \n\t-->> %s\n", 
-                                    nameupper, 
-                                    opt.current_datatime_zhcn(), 
-                                    lineinfo, msg)
-            if xlog.fp then 
-                xlog.fp:write(str)
-            end
-        end
-    end
+		-- Output to log file
+		if xlog.OnlyFile == xlog.output or (xlog.ConsoleAndFile == xlog.output and xlog.outpath) then
+			local str = string.format("%s %s %s \n\t-->> %s\n", nameupper, opt.current_datatime_zhcn(), lineinfo, msg)
+			if xlog.fp then
+				xlog.fp:write(str)
+			end
+		end
+	end
 end
 
 xlog["blankline"] = function()
-    if not xlog.Startup then
-        return
-    end
+	if not xlog.Startup then
+		return
+	end
 
-    -- Output to console
-    if xlog.OnlyConsole == xlog.output or xlog.ConsoleAndFile == xlog.output then
-        print("\n")
-    end
+	-- Output to console
+	if xlog.OnlyConsole == xlog.output or xlog.ConsoleAndFile == xlog.output then
+		print("\n")
+	end
 
-    -- Output to log file
-    if xlog.OnlyFile == xlog.output or (xlog.ConsoleAndFile == xlog.output and xlog.outpath) then
-        if xlog.fp then 
-            xlog.fp:write("\n")
-        end
-    end
+	-- Output to log file
+	if xlog.OnlyFile == xlog.output or (xlog.ConsoleAndFile == xlog.output and xlog.outpath) then
+		if xlog.fp then
+			xlog.fp:write("\n")
+		end
+	end
 end
 
 return xlog

@@ -1,9 +1,9 @@
 local plugin = {}
 
 plugin.core = {
-    "vim-scripts/DoxygenToolkit.vim",
-    config = function()
-        vim.cmd [[
+	"vim-scripts/DoxygenToolkit.vim",
+	config = function()
+		vim.cmd([[
         let s:licenseTag = "Unpublished copyright. All rights reserved. This material contains\<enter>"
         let s:licenseTag = s:licenseTag . "proprietary information that should be used or copied only within\<enter>"
         let s:licenseTag = s:licenseTag . "COMPANY, except with written permission of COMPANY.\<enter>"
@@ -71,44 +71,42 @@ plugin.core = {
         let g:DoxygenToolkit_companyName="db-exp"
         let g:DoxygenToolkit_authorName="xbgm"
 
-        ]]
-    end
+        ]])
+	end,
 }
 
-plugin.mapping  = {
-    keymaps = {
-        {
-            tag = { key = "<leader>ed", name = "DoxyGenTool"},
-            keymaps = { 
-                {
-                    mode = "n",
-                    key = "<leader>edh", 
-                    action = "<cmd>DoxAuthor<CR>",
-                    desc = "Generate Header"
-                },
-                {
-                    mode = "n",
-                    key = "<leader>edf", 
-                    action = "<cmd>Dox<CR>",
-                    desc = "Generate Annotation"
-                },
-                {
-                    mode = "n",
-                    key = "<leader>edl", 
-                    action = "<cmd>DoxLic<CR>",
-                    desc = "Generate Lic Annotation"
-                },
-                {
-                    mode = "n",
-                    key = "<leader>edb", 
-                    action = "<cmd>DoxBlock<CR>",
-                    desc = "Generate Block Annotation"
-                },
-            }
-        }
-    }
-
-
+plugin.mapping = {
+	keymaps = {
+		{
+			tag = { key = "<leader>ed", name = "DoxyGenTool" },
+			keymaps = {
+				{
+					mode = "n",
+					key = "<leader>edh",
+					action = "<cmd>DoxAuthor<CR>",
+					desc = "Generate Header",
+				},
+				{
+					mode = "n",
+					key = "<leader>edf",
+					action = "<cmd>Dox<CR>",
+					desc = "Generate Annotation",
+				},
+				{
+					mode = "n",
+					key = "<leader>edl",
+					action = "<cmd>DoxLic<CR>",
+					desc = "Generate Lic Annotation",
+				},
+				{
+					mode = "n",
+					key = "<leader>edb",
+					action = "<cmd>DoxBlock<CR>",
+					desc = "Generate Block Annotation",
+				},
+			},
+		},
+	},
 }
 
 return plugin

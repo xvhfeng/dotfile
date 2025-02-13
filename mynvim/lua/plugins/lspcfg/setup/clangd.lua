@@ -1,4 +1,4 @@
 return {
-    name = 'clangd',
-    setup_config = {},
+	name = "clangd",
+	setup_config = {},
 }

@@ -1,4 +1,4 @@
 return {
-    name = 'bashls',
-    setup_config = {},
+	name = "bashls",
+	setup_config = {},
 }

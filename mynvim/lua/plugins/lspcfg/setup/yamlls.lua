@@ -1,4 +1,4 @@
 return {
-    name = 'yamlls',
-    setup_config = {},
+	name = "yamlls",
+	setup_config = {},
 }

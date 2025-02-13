@@ -1,15 +1,13 @@
-
 local plugin = {}
 
 plugin.core = {
-    "mg979/vim-visual-multi",
-    dependencies = {
-        {
-            "Shougo/deoplete.nvim"
-        },
-    },
-    config = function()
-    end
+	"mg979/vim-visual-multi",
+	dependencies = {
+		{
+			"Shougo/deoplete.nvim",
+		},
+	},
+	config = function() end,
 }
 
 return plugin

@@ -1,18 +1,18 @@
 local plugin = {}
 
 plugin.core = {
-    -- "skywind3000/asynctasks.vim",
-    "cstsunfu/asynctasks.vim", -- FIXME: when this buf fix, change to the default repo. https://github.com/skywind3000/asynctasks.vim/issues/92
-    cmd = {"AsyncTask"},
+	-- "skywind3000/asynctasks.vim",
+	"cstsunfu/asynctasks.vim", -- FIXME: when this buf fix, change to the default repo. https://github.com/skywind3000/asynctasks.vim/issues/92
+	cmd = { "AsyncTask" },
 
-    dependencies = {{"skywind3000/asyncrun.vim"}},
+	dependencies = { { "skywind3000/asyncrun.vim" } },
 
-    config = function() -- Specifies code to run after this plugin is loaded
-        vim.g.asynctasks_extra_config = {vim.g.CONFIG .. 'tasks.ini'}
-        vim.g.asyncrun_open = 8
-        vim.g.asyncrun_bell = 1
-        vim.g.asyncrun_rootmarks = {'.svn', '.git', '.root', '_darcs', 'build.xml'}
-    end
+	config = function() -- Specifies code to run after this plugin is loaded
+		vim.g.asynctasks_extra_config = { vim.g.CONFIG .. "tasks.ini" }
+		vim.g.asyncrun_open = 8
+		vim.g.asyncrun_bell = 1
+		vim.g.asyncrun_rootmarks = { ".svn", ".git", ".root", "_darcs", "build.xml" }
+	end,
 }
 
 --[[

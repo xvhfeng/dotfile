@@ -1,4 +1,4 @@
 return {
-    name = 'gopls',
-    setup_config = {}
+	name = "gopls",
+	setup_config = {},
 }

@@ -1,6 +1,5 @@
-
 local plugin = {}
 
-plugin.core = {"kana/vim-fakeclip"}
+plugin.core = { "kana/vim-fakeclip" }
 
 return plugin

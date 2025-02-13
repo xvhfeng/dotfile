@@ -11,7 +11,7 @@ local plugin = {}
 --    delete(functi*on calls)     dsf             function calls
 
 plugin.core = {
-    "tpope/vim-surround",
+	"tpope/vim-surround",
 }
 --[===[
 " put ds' delete '

@@ -1,8 +1,7 @@
-
 local plugin = {}
 
 plugin.core = {
-    "tpope/vim-unimpaired",
+	"tpope/vim-unimpaired",
 }
 
 return plugin
