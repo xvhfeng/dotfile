@@ -122,6 +122,7 @@ for i, x in ipairs(modes) do
 			return
 		end
 
+		-- xlog.fp:write(fmt)
 		local msg = string.format(fmt, ...)
 		local info = debug.getinfo(2, "Sl")
 		-- local sinfo = DataDumper(info,"debuginfo")

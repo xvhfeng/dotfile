@@ -1,8 +1,19 @@
-local plugin = {}
+local m = {}
 
-plugin.core = { "szw/vim-maximizer" }
+--[[
+m.core = {
+	"anuvyklack/middleclass",
+	"anuvyklack/animation.nvim",
+	"anuvyklack/windows.nvim",
+	config = function()
+		require("windows").setup({})
+	end,
+}
 
-plugin.mapping = {
+--]]
+m.core = { "szw/vim-maximizer" }
+
+m.mapping = {
 	keymaps = {
 		{
 			mode = "n",
@@ -12,5 +23,4 @@ plugin.mapping = {
 		},
 	},
 }
-
-return plugin
+return m

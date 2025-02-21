@@ -1,9 +1,9 @@
 if vim.g.custom_filetype_vimwiki then
-    return
+	return
 end
 vim.g.custom_filetype_vimwiki = true
 -- default glow highlight
-vim.cmd[[ 
+vim.cmd([[ 
     highlight VimwikiDelText gui=strikethrough guifg=#5c6370 guibg=background
     highlight link VimwikiCheckBoxDone VimwikiDelText
     hi MdList guifg=#00afff guibg=NONE ctermbg=NONE gui=bold cterm=bold
@@ -35,10 +35,9 @@ vim.cmd[[
         hi VimwikiTag guifg=#c07760 ctermfg=173 guibg=NONE ctermbg=NONE gui=NONE cterm=NONE
         hi VimwikiMarkers guifg=#4c5360 ctermfg=241 guibg=NONE ctermbg=NONE gui=NONE cterm=NONE
     endif
-]]
+]])
 
-
-vim.cmd[[ 
+vim.cmd([[ 
 function! VVimwiki_create_dir() abort
 python3 << EOF
 import math
@@ -74,4 +73,4 @@ cword = f"[{cword}]({os.path.join(dir_name, file_name)})"
 vim.command("normal viwc%s" % cword)
 EOF
 endfunction
-]]
+]])

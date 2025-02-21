@@ -4,11 +4,11 @@ plugin.core = {
 	"folke/trouble.nvim",
 	-- requires = { { 'kyazdani42/nvim-web-devicons' } },
 	config = function() -- Specifies code to run after this plugin is loaded
-		require("trouble").setup({
+		local opts = {
 			position = "bottom", -- position of the list can be: bottom, top, left, right
 			height = 10, -- height of the trouble list when position is top or bottom
 			width = 50, -- width of the list when position is left or right
-			icons = true, -- use devicons for filenames
+			--			icons = true, -- use devicons for filenames
 			mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
 			fold_open = "", -- icon used for open folds
 			fold_closed = "", -- icon used for closed folds
@@ -50,15 +50,71 @@ plugin.core = {
 				other = "﫠",
 			},
 			use_diagnostic_signs = false, -- enabling this will use the signs defined in your lsp client
-		})
+		}
+		require("trouble").setup()
 	end,
 }
 
 plugin.mapping = {
 	keymaps = {
 		{
-			tag = { key = "<leader>lt", name = "Trouble" },
+			tag = { "<leader>lt", "Trouble", true },
 			keymaps = {
+				{
+					"n",
+					"o",
+					"<cmd>Trouble <cr>",
+					"Choose Diagnostics (Trouble)",
+				},
+				{
+					"n",
+					"x",
+					"<cmd>Trouble diagnostics toggle<cr>",
+					"Diagnostics (Trouble)",
+				},
+				{
+					"n",
+					"b",
+					"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+					"Buffer Diagnostics (Trouble)",
+				},
+				{
+					"n",
+					"s",
+					"<cmd>Trouble symbols toggle focus=false<cr>",
+					"Symbols (Trouble)",
+				},
+				{
+					"n",
+					"r",
+					"<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+					"LSP Definitions / references / ... (Trouble)",
+				},
+				{
+					"n",
+					"l",
+					"<cmd>Trouble loclist toggle<cr>",
+					"Location List (Trouble)",
+				},
+				{
+					"n",
+					"q",
+					"<cmd>Trouble qflist toggle<cr>",
+					"Quickfix List (Trouble)",
+				},
+			},
+		},
+	},
+}
+
+return plugin
+
+--[[
+
+
+
+
+
 				{
 					mode = "n",
 					key = "<leader>ltr",
@@ -99,5 +155,4 @@ plugin.mapping = {
 		},
 	},
 }
-return plugin
-
+--]]

@@ -54,3 +54,5 @@ export PATH=/Users/bgm/works/bin/7zip:$PATH
 export PATH=/Users/bgm/works/bin/m3u8:$PATH
 export PATH=/Users/bgm/works/bin/online-db-connector:$PATH
 export PATH=/Users/bgm/myslef/bin:$PATH
+
+export PATH=/opt/homebrew/opt/libarchive/bin:$PATH
