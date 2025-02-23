@@ -101,7 +101,7 @@ M.core = {
 M.mapping = {
 	keymaps = {
 		{
-			tag = { "<leader>F", "Fzf", usekey = true },
+			tag = { "<leader>a", "Fzf", usekey = true },
 			keymaps = {
 				{
 					"n",

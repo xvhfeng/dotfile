@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Setting of powershell_es",
+  "properties": {
+    "powershell.buttons.showPanelMovementButtons": {
+      "default": false,
+      "markdownDescription": "Show buttons in the editor's title bar for moving the terminals pane (with the PowerShell Extension Terminal) around.",
+      "type": "boolean"
+    },
+    "powershell.buttons.showRunButtons": {
+      "default": true,
+      "markdownDescription": "Show the `Run` and `Run Selection` buttons in the editor's title bar.",
+      "type": "boolean"
+    },
+    "powershell.codeFolding.enable": {
+      "default": true,
+      "markdownDescription": "Enables syntax based code folding. When disabled, the default indentation based code folding is used.",
+      "type": "boolean"
+    },
+    "powershell.codeFolding.showLastLine": {
+      "default": true,
+      "markdownDescription": "Shows the last line of a folded section similar to the default VS Code folding style. When disabled, the entire folded region is hidden.",
+      "type": "boolean"
+    },
+    "powershell.enableReferencesCodeLens": {
+      "default": true,
+      "markdownDescription": "Specifies if Code Lenses are displayed above function definitions, used to show the number of times the function is referenced in the workspace and navigate to those references. Large workspaces may want to disable this setting if performance is compromised. See also `#powershell.analyzeOpenDocumentsOnly#`.",
+      "type": "boolean"
+    },
+    "powershell.helpCompletion": {
+      "default": "BlockComment",
+      "enum": [
+        "Disabled",
+        "BlockComment",
+        "LineComment"
+      ],
+      "markdownDescription": "Specifies the [comment based help](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comment_based_help) completion style triggered by typing ` ##`.",
+      "markdownEnumDescriptions": [
+        "Disables the feature.",
+        "Inserts a block style help comment, for example:\n\n`<#`\n\n`.<help keyword>`\n\n`<help content>`\n\n`#>`",
+        "Inserts a line style help comment, for example:\n\n`# .<help keyword>`\n\n`# <help content>`"
+      ],
+      "type": "string"
+    },
+    "powershell.promptToUpdatePackageManagement": {
+      "default": false,
+      "markdownDeprecationMessage": "**Deprecated:** This prompt has been removed as it's no longer strictly necessary to upgrade the `PackageManagement` module.",
+      "markdownDescription": "**Deprecated:** Specifies whether you should be prompted to update your version of `PackageManagement` if it's under 1.4.6.",
+      "type": "boolean"
+    },
+    "powershell.promptToUpdatePowerShell": {
+      "default": true,
+      "markdownDescription": "Specifies whether you may be prompted to update your version of PowerShell.",
+      "type": "boolean"
+    },
+    "powershell.sideBar.CommandExplorerExcludeFilter": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "markdownDescription": "Specifies an array of modules to exclude from Command Explorer listing.",
+      "type": "array"
+    },
+    "powershell.sideBar.CommandExplorerVisibility": {
+      "default": false,
+      "markdownDescription": "Specifies the visibility of the Command Explorer in the side bar.",
+      "type": "boolean"
+    },
+    "powershell.suppressAdditionalExeNotFoundWarning": {
+      "default": false,
+      "markdownDescription": "Suppresses the warning message when any of `#powershell.powerShellAdditionalExePaths#` is not found.",
+      "type": "boolean"
+    }
+  }
+}

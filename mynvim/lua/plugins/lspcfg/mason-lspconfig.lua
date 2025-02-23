@@ -13,8 +13,8 @@ local keymap = function()
 	vim.api.nvim_create_autocmd("LspAttach", {
 		group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 		callback = function(ev)
-			-- Enable completion triggered by <c-x><c-o>
 			vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
+			-- Enable completion triggered by <c-x><c-o>
 
 			-- Buffer local mappings.
 			-- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -46,6 +46,9 @@ plugin.core = {
 	"neovim/nvim-lspconfig",
 	dependencies = {
 		{
+			"tamago324/nlsp-settings.nvim",
+		},
+		{
 			"williamboman/mason.nvim",
 			lazy = false,
 		},
@@ -55,8 +58,12 @@ plugin.core = {
 		},
 	},
 	config = function()
-		require("mason").setup({})
-		require("mason-lspconfig").setup({
+		local mason = require("mason")
+		local mason_lspconfig = require("mason-lspconfig")
+		local lspconfig = require("lspconfig")
+		local nlspsettings = require("nlspsettings")
+		mason.setup({})
+		mason_lspconfig.setup({
 			ensure_installed = {
 				"lua_ls",
 				"bashls",
@@ -77,6 +84,33 @@ plugin.core = {
 			automatic_installation = true,
 		})
 
+		-- local nlspsettings = require("nlspsettings")
+
+		nlspsettings.setup({
+			config_home = vim.g.CONFIG .. "/nlsp-settings",
+			local_settings_dir = ".nlsp-settings",
+			local_settings_root_markers_fallback = { ".git", ".root", ".project" },
+			append_default_schemas = true,
+			loader = "json",
+		})
+
+		local global_capabilities = vim.lsp.protocol.make_client_capabilities()
+		global_capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+		lspconfig.util.default_config = vim.tbl_extend("force", lspconfig.util.default_config, {
+			capabilities = global_capabilities,
+		})
+
+		--		mason.setup()
+		--		mason_lspconfig.setup()
+		mason_lspconfig.setup_handlers({
+			function(server_name)
+				lspconfig[server_name].setup({
+					on_attach = on_attach,
+				})
+			end,
+		})
+		--[[
 		-- 下述的lsp.lsconfig-xxx，都是lsp文件夹下的各种文件
 		local config_tb = {
 			require("plugins/lspcfg/setup/bashls"),
@@ -102,6 +136,7 @@ plugin.core = {
 
 		require("plugins/lspcfg/setup/sqlls")
 		require("plugins/lspcfg/setup/pyright")
+        --]]
 		keymap()
 	end,
 }
