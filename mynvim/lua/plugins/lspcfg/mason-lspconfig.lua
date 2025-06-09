@@ -89,7 +89,7 @@ plugin.core = {
 		nlspsettings.setup({
 			config_home = vim.g.CONFIG .. "/nlsp-settings",
 			local_settings_dir = ".nlsp-settings",
-			local_settings_root_markers_fallback = { ".git", ".root", ".project" },
+			local_settings_root_markers_fallback = { ".git", ".root", ".project", ".github" },
 			append_default_schemas = true,
 			loader = "json",
 		})

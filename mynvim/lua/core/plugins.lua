@@ -234,6 +234,7 @@ plugins_configure.plugins_groups = { -- {{{
 		["subpath"] = "code",
 		["plugins"] = {
 			{ name = "antlr", enable = true, desc = "antlr的高亮显示" },
+			{ name = "pyenv-choose", enable = true, desc = "选择python venv插件" },
 			--[[
             {
                 name = "clang-formatter",
