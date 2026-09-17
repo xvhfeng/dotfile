@@ -37,3 +37,10 @@ ulimit -c unlimited
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export EDITOR=vim
 
+
+. "$HOME/.local/bin/env"
+
+# Hermes Agent — ensure ~/.local/bin is on PATH
+export PATH="$HOME/.local/bin:$PATH"
+
+[ ! -f "$HOME/.x-cmd.root/X" ] || . "$HOME/.x-cmd.root/X" # boot up x-cmd.

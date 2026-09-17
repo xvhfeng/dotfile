@@ -56,3 +56,8 @@ export PATH=/Users/bgm/works/bin/online-db-connector:$PATH
 export PATH=/Users/bgm/myslef/bin:$PATH
 
 export PATH=/opt/homebrew/opt/libarchive/bin:$PATH
+
+export ASDF_DATA_DIR=/Users/bgm/.asdf
+export PATH="$ASDF_DATA_DIR/shims:$PATH"
+
+export PATH=/Users/bgm/.cargo/bin/:$PATH
