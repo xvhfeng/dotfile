@@ -103,7 +103,9 @@ plugin.core = {
 
 		--		mason.setup()
 		--		mason_lspconfig.setup()
-		mason_lspconfig.setup_handlers({
+		--	version 2.0 使用setup
+		--	version < 2.0 使用setup_handlers
+		mason_lspconfig.setup({
 			function(server_name)
 				lspconfig[server_name].setup({
 					on_attach = on_attach,

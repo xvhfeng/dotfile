@@ -9,21 +9,21 @@ export HOMEBREW_HOME
 PATH=$HOMEBREW_HOME/bin:$PATH
 export PATH
 
-JAVA_HOME=/Users/bgm/works/bin/amazon-corretto-21.jdk/Contents/Home
+JAVA_HOME=$HOME/works/bin/amazon-corretto-jdk/Contents/Home
 PATH=$JAVA_HOME/bin:$PATH
 export JAVA_HOME
 
-export MVN_HOME=/Users/bgm/works/bin/apache-maven-3.9.6
+export MVN_HOME=$HOME/works/bin/apache-maven
 export PATH=$MVN_HOME/bin/:$PATH
 export PATH
 
-export GRADLE_HOME=/Users/bgm/works/bin/gradle-8.7
+export GRADLE_HOME=$HOME/works/bin/gradle-8.7
 export PATH=$GRADLE_HOME/bin/:$PATH
 export PATH
 
 
 # export PATH=/usr/local/opt/ruby/bin:$PATH
-export MYGIT_HOME=/Users/bgm/works/dotfile/mygit
+export MYGIT_HOME=$HOME/myself/codes/dotfile/mygit
 export PATH=$MYGIT_HOME:$PATH
 # export GO_HOME=/Users/xuhaifeng/works/bin/go
 # export PATH="$GO_HOME/bin/:$PATH"
@@ -47,12 +47,17 @@ export PATH=$MYGIT_HOME:$PATH
  PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
  export PATH
 
-MYSQL_HOME=/Users/bgm/works/bin/mysql-8.3.0
+MYSQL_HOME=$HOME/works/bin/mysql-8.3.0
 export PATH=$MYSQL_HOME/bin:$MYSQL_HOME/support-files:$PATH
 
-export PATH=/Users/bgm/works/bin/7zip:$PATH
-export PATH=/Users/bgm/works/bin/m3u8:$PATH
-export PATH=/Users/bgm/works/bin/online-db-connector:$PATH
-export PATH=/Users/bgm/myslef/bin:$PATH
+export PATH=$HOME/works/bin/7zip:$PATH
+export PATH=$HOME/works/bin/m3u8:$PATH
+export PATH=$HOME/works/bin/online-db-connector:$PATH
+export PATH=$HOME/myself/bin:$PATH
 
 export PATH=/opt/homebrew/opt/libarchive/bin:$PATH
+export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
+
+export PATH=$HOME/Users/xvhfeng/.asdf/shims:$PATH
+export PATH=/Applications/calibre.app/Contents/MacOS:$PATH
+export PATH=$HOME/.bun/bin:$PATH

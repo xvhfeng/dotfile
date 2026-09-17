@@ -26,3 +26,20 @@ lazy-lock.json
 Session.vim
 sessions
 
+
+.nn
+.pi
+eshell
+eln-cache
+elpa
+tree-sitter
+custom.el
+
+.DS_Store
+**/.idea/
+.vscode/
+dist/
+
+build/
+*.userdb/
+

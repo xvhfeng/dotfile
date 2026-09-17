@@ -37,3 +37,6 @@ ulimit -c unlimited
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export EDITOR=vim
 
+
+# Created by `pipx` on 2025-06-16 10:15:52
+export PATH="$PATH:$HOME/.local/bin"
