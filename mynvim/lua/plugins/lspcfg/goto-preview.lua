@@ -4,6 +4,7 @@ m.core = {
 	"rmagatti/goto-preview",
 	event = "BufEnter",
 	config = true,
+	dependencies = { "rmagatti/logger.nvim" },
 }
 
 m.mapping = {

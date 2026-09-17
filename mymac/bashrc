@@ -44,3 +44,5 @@ export EDITOR=vim
 export PATH="$HOME/.local/bin:$PATH"
 
 [ ! -f "$HOME/.x-cmd.root/X" ] || . "$HOME/.x-cmd.root/X" # boot up x-cmd.
+# Created by `pipx` on 2025-06-16 10:15:52
+export PATH="$PATH:$HOME/.local/bin"

@@ -1,15 +1,15 @@
 #!/usr/bin/env sh
 
 ######################################################################
-# @author      : bgm (bgm@dazuideMacBook-Pro.local)
+# @author      : xvhfeng (xvhfeng@xvhfengdeMacBook-Air.local)
 # @file        : install
-# @created     : Friday Feb 23, 2024 22:41:01 CST
+# @created     : Tuesday Sep 15, 2026 13:15:41 CST
 #
 # @description :
 ######################################################################
+rm -rf ~/Library/Rhyme
+ln -s ~/myself/config/rime-ice ~/Library/Rhyme
 
-if not [ -f ~/.config ]; then
-    mkdir ~/.config
-fi
 
-ln -s $(pwd) ~/.config/emacs
+
+
