@@ -23,7 +23,7 @@ unset MAILCHECK
 # Added by Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
-. "$HOME/.local/bin/env"
+test -e "${HOME}/.local/bin/env"  && . "$HOME/.local/bin/env"
 
 # Hermes Agent — ensure ~/.local/bin is on PATH
 export PATH="$HOME/.local/bin:$PATH"
