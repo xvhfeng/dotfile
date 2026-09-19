@@ -31,7 +31,11 @@
   :bind ("C-<return>" . completion-at-point)
   :hook (minibuffer-setup . cursor-intangible-mode)
   :custom
-  (completion-auto-help t)
+  ;; Fido already renders candidates in the minibuffer.  Do not also create
+  ;; the separate *Completions* window when TAB cannot extend the input.
+  (completion-auto-help nil)
+  ;; Let TAB keep cycling through the original completion set, shell-style.
+  (completion-cycle-threshold t)
   (completion-auto-select t)
   (completion-eager-update t)
   (completion-eager-display nil)

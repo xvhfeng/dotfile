@@ -51,14 +51,46 @@
   :ensure nil
   :bind ("C-x C-r" . my-recentf-open)
   :init
-  (fido-mode 1)
-  (fido-vertical-mode 1)
+   (fido-mode 1)
+   (fido-vertical-mode 1)
   :custom
   (icomplete-max-delay-chars 2)
   (icomplete-hide-common-prefix nil)
   (icomplete-tidy-shadowed-file-names t)
   (icomplete-show-matches-on-no-input nil)
   :config
+  (defun my-fido-render-tab-cycle-selection (render completions metadata)
+    "Keep Fido's highlight aligned with a candidate chosen by TAB.
+
+Native minibuffer completion removes the candidate just inserted by TAB
+from `completion-all-sorted-completions', so that the next TAB can select
+the following candidate.  Fido normally highlights the first remaining
+candidate, which makes its display appear one item ahead.  For an active
+TAB cycle, temporarily prepend the current candidate for rendering only;
+the underlying completion list is left untouched.
+"
+    (if (and fido-mode
+            completion-cycling
+           (eq this-command 'completion-at-point)
+             (consp completions))
+         (let* ((base-size (cdr (last completions)))
+                (current (icomplete--field-string))
+               ;; ;; File completion candidates omit the unchanged directory
+               ;; ;; portion.  Use the base size encoded in the list to render
+               ;; ;; the same text as the other Fido candidates.
+                (current (if (and (integerp base-size)
+                                  (<= base-size (length current)))
+                             (substring current base-size)
+                           current)))
+           (funcall render (cons current completions) metadata))
+       (funcall render completions metadata)))
+
+
+
+
+  (advice-add 'icomplete--render-vertical :around
+              #'my-fido-render-tab-cycle-selection)
+
   (defun my-recentf-open ()
     (interactive)
     (let ((file (completing-read "Find recent file: " recentf-list nil t)))

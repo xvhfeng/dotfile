@@ -7,6 +7,16 @@
 ;;; 优化启动性能：修改底层垃圾回收阈值（gc-cons-threshold），或者配置包管理器行为（如设置 package-enable-at-startup nil 来推迟或禁用自动包初始化）。
 ;;; 原生编译配置：配置 Emacs 的本机代码编译参数（Native Compilation）。
 
+;; Emacs 31 adds `user-lisp-directory' and automatically makes its
+;; subdirectories available to `require'.  Emacs 30 does not, so provide the
+;; same load-path setup explicitly to keep this configuration portable.
+(unless (boundp 'user-lisp-directory)
+  (defvar user-lisp-directory
+    (expand-file-name "user-lisp/" user-emacs-directory)))
+(add-to-list 'load-path user-lisp-directory)
+(let ((default-directory user-lisp-directory))
+  (normal-top-level-add-subdirs-to-load-path))
+
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=81506
 ;; (setq w32-ime-preedit t)
 
@@ -77,19 +87,23 @@
 (use-package package
   :ensure nil
   :custom
-  (package-quickstart t)
+  ;; Some manually managed packages do not ship generated autoload files.
+  ;; Keep startup deterministic instead of generating a broken quickstart.
+  (package-quickstart nil)
   (package-quickstart-file (expand-file-name "package-quickstart.el" package-user-dir))
   (package-enable-at-startup t)
   (package-install-upgrade-built-in nil)
   (package-check-signature nil)
   (package-archives
-   '(("melpa-cn" . "https://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")
+   '(("melpa"    . "https://melpa.org/packages/")
      ("gnu-cn"   . "https://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/"))))
 
 (use-package use-package
   :ensure nil
   :custom
-  (use-package-always-ensure t)
+  ;; Packages are installed by `nn-bootstrap-packages' before feature modules
+  ;; are loaded.  Do not interleave installation with package configuration.
+  (use-package-always-ensure nil)
   (use-package-always-defer t)
   (use-package-expand-minimally t))
 

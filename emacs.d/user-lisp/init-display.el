@@ -7,7 +7,7 @@
   (overflow-newline-into-fringe nil)
   :config
   (setq-default fringes-outside-margins t)
-  (setf (cdr (assq 'truncation fringe-indicator-alist)) '(nil nil)))
+  (nn-disable-truncation-fringe-indicator))
 
 (use-package nn-fringe-scale
   :ensure nil
@@ -117,11 +117,11 @@
    eww-mode org-mode markdown-ts-mode)
   :custom (olivetti-mode-on-hook nil))
 
-(use-package minibuffer-frame
-  :hook window-setup)
+;; (use-package minibuffer-frame
+  ;; :hook window-setup)
 
 (use-package color-picker
-  :vc (:url "https://github.com/zHaOdANiuu/color-picker.el" :rev :newest)
+  :ensure nil
   :commands color-picker
   :custom (color-picker-scale 2.0))
 
@@ -182,14 +182,14 @@ from `readable-foreground-color'."
         (overlay-put ov 'face nil)))))
 
 (use-package material-icon
-  :vc (:url "https://github.com/zHaOdANiuu/material-icon.el" :rev :newest)
+  :ensure nil
   :hook
-  (dired-mode . material-icon-dired-icons-mode)
-  (ibuffer-mode . material-icon-ibuffer-icons-mode)
+  (dired-mode . material-icons-dired-icons-mode)
+  (ibuffer-mode . material-icons-ibuffer-icons-mode)
   :init
-  (setq material-icon-size 22)
+  (setq material-icons-size 22)
   (with-eval-after-load 'speedbar
-    (material-icon-speedbar-icons-mode 1)))
+    (material-icons-speedbar-icons-mode 1)))
 
 (use-package nerd-icons
   :commands
