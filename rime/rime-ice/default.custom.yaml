@@ -1,0 +1,13 @@
+patch:
+  switcher/caption: 「方案选单」
+  # 只启用雾凇全拼，避免首次部署继续落到鼠须管内置的朙月拼音。
+  schema_list:
+    - schema: rime_ice
+  # 每页显示 9 个候选项。
+  menu/page_size: 9
+  # 简繁状态不跨会话记忆，由方案中的 reset: 0 固定为简体开局。
+  switcher/save_options:
+    - ascii_punct
+    - emoji
+    - full_shape
+    - search_single_char

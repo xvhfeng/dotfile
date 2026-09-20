@@ -1,0 +1,4 @@
+# 雾凇拼音本地自定义
+patch:
+  # traditionalization 的第 0 个状态是「简」，每次新建会话默认简体。
+  switches/@2/reset: 0

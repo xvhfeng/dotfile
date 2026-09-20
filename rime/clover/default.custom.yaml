@@ -1,39 +1,11 @@
 # Rime patch file
 # encoding: utf-8
 
+# default.custom.yaml 只负责启用方案
+# clover.custom.yaml 负责模糊音
+# squirrel.custom.yaml 负责横向布局和浅/深色清新主题
+
 patch:
   "menu/page_size": 9
   schema_list:
     - schema: clover
-
-  # 1. 候选框横向显示
-  "style/horizontal": true
-
-  # 2. 开启模糊音（支持拼音/双拼等）
-  "speller/algebra":
-    # ------------------ 常见模糊音规则（根据需求取消前面的 # 注释） ------------------
-    # 声母模糊音
-    - derive/^z/zh/      # z -> zh (输入 z 可以匹配 zh)
-    - derive/^zh/z/      # zh -> z
-    - derive/^c/ch/      # c -> ch
-    - derive/^ch/c/      # ch -> c
-    - derive/^s/sh/      # s -> sh
-    - derive/^sh/s/      # sh -> s
-    # - derive/^l/n/       # l -> n
-    # - derive/^n/l/       # n -> l
-    # - derive/^f/h/       # f -> h
-    # - derive/^h/f/       # f -> h
-    # - derive/^l/r/       # l -> r
-    # - derive/^r/l/       # r -> l
-
-    # 韵母模糊音
-    - derive/ang$/an/    # ang -> an
-    - derive/an$/ang/    # an -> ang
-    - derive/eng$/en/    # eng -> en
-    - derive/en$/eng/    # en -> eng
-    - derive/ing$/in/    # ing -> in
-    - derive/in$/ing/    # in -> ing
-    # - derive/ian$/iang/  # ian -> iang
-    #- derive/iang$/ian/  # iang -> ian
-    - derive/uan$/uang/  # uan -> uang
-    - derive/uang$/uan/  # uang -> uan

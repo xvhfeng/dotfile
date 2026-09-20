@@ -1,0 +1,33 @@
+# 四叶草拼音个性化设置
+# encoding: utf-8
+
+patch:
+  # Emoji 由 OpenCC 过滤器提供，不依赖已不存在的 emoji 输入方案。
+  "schema/dependencies": []
+
+  # V 开头进入临时半角英文模式；处理器必须位于 ascii_composer 之前。
+  "engine/processors/@before 0": lua_processor@*v_mode
+  "engine/translators/@before 0": lua_translator@*v_mode_translator
+  "recognizer/patterns/v_mode": "^v.*$"
+
+  # 在原方案的智能纠错规则之后追加常用模糊音，不覆盖原有规则。
+  "speller/algebra/+":
+    # 平翘舌：z/zh、c/ch、s/sh 双向兼容。
+    - derive/^z/zh/
+    - derive/^zh/z/
+    - derive/^c/ch/
+    - derive/^ch/c/
+    - derive/^s/sh/
+    - derive/^sh/s/
+
+    # 前后鼻音：an/ang、en/eng、in/ing 双向兼容。
+    - derive/ang$/an/
+    - derive/an$/ang/
+    - derive/eng$/en/
+    - derive/en$/eng/
+    - derive/ing$/in/
+    - derive/in$/ing/
+
+    # uan/uang 双向兼容。
+    - derive/uan$/uang/
+    - derive/uang$/uan/
