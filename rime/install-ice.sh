@@ -8,7 +8,7 @@
 # @description :
 ######################################################################
 
-[ -f $HOME/Library/Rime ] && rm -rf $HOME/Library/Rime
+[ -r $HOME/Library/Rime ] && rm -rf $HOME/Library/Rime
 
 ln -s $(pwd)/rime-ice $HOME/Library/Rime
 
