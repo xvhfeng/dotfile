@@ -6,9 +6,19 @@ name: rime_ice
 version: "2026-01-26"
 import_tables:
   - cn_dicts/8105     # 字表
-  # - cn_dicts/41448  # 大字表（按需启用）（启用时和 8105 同时启用并放在 8105 下面）
   - cn_dicts/base     # 基础词库
   - cn_dicts/ext      # 扩展词库
+
+  - cn_dicts/extend/sogou.default
+  - cn_dicts/extend/sougou.chengyu
+  - cn_dicts/extend/sougou.netword
+  - cn_dicts/extend/qqpy.default
+  - cn_dicts/extend/qqpy.usually
+  - cn_dicts/extend/tsinghua.ocl
+
+  - cn_dicts/extend/xinhua
+
+  # - cn_dicts/41448  # 大字表（按需启用）（启用时和 8105 同时启用并放在 8105 下面）
   - cn_dicts/tencent  # 腾讯词向量（大词库，部署时间较长）
   - cn_dicts/others   # 一些杂项
 
