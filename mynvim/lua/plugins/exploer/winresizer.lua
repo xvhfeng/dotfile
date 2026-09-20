@@ -37,8 +37,8 @@ plugin.core = {
 			end,
 		})
 		local wk = require("which-key")
-		wk.register({
-			["<leader>ws"] = { name = "+Windows Resize" }, -- 核心：定义前缀键分组
+		wk.add({
+			{ "<leader>ws", group = "Windows Resize" },
 		})
 		-- recommended mappings
 		-- resizing splits

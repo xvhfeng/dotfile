@@ -7,6 +7,8 @@ M.core = {
 		-- Your options go here
 		-- name = "venv",
 		-- auto_refresh = false
+		-- Keep the currently pinned plugin version without showing its upgrade notice at every startup.
+		stay_on_this_version = true,
 	},
 	event = "VeryLazy", -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
 }

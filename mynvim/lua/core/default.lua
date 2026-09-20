@@ -370,6 +370,12 @@ vim.api.nvim_create_autocmd({ "WinLeave" }, {
 
             --]]
 
--- 启动时进入当前目录
--- 设置当前工作目录为当前文件所在目录
-vim.cmd([[autocmd VimEnter * silent! lcd %:p:h]])
+-- 启动时进入当前文件所在目录；无文件启动时保留已有工作目录。
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+        local filename = vim.api.nvim_buf_get_name(0)
+        if filename ~= "" then
+            vim.cmd("silent! lcd " .. vim.fn.fnameescape(vim.fs.dirname(filename)))
+        end
+    end,
+})

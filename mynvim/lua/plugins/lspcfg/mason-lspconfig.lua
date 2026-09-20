@@ -106,11 +106,11 @@ plugin.core = {
 		--	version 2.0 使用setup
 		--	version < 2.0 使用setup_handlers
 		mason_lspconfig.setup({
-			function(server_name)
-				lspconfig[server_name].setup({
-					on_attach = on_attach,
-				})
-			end,
+			handlers = {
+				function(server_name)
+					lspconfig[server_name].setup({})
+				end,
+			},
 		})
 		--[[
 		-- 下述的lsp.lsconfig-xxx，都是lsp文件夹下的各种文件

@@ -77,8 +77,8 @@ plugin.core = {
 	config = function()
 		-- empty setup using defaults
 		require("nvim-tree").setup({
-			--     disable_netrw = false,
-			--    hijack_netrw = true,
+			-- init.lua has already disabled netrw, so do not clear its FileExplorer autocmd group.
+			hijack_netrw = false,
 			--   hijack_cursor = false,
 			-- prefer_startup_root = true,
 			--     sync_root_with_cwd = true,

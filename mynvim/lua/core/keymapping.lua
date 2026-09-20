@@ -61,6 +61,32 @@ local mapping_prefix = {
     --]==]
 }
 
+local function legacy_wk_to_spec(legacy_mappings)
+	local spec = {}
+
+	local function add_entries(entries)
+		for lhs, mapping in pairs(entries) do
+			if type(lhs) == "string" and type(mapping) == "table" then
+				if type(mapping.name) == "string" then
+					table.insert(spec, { lhs, group = mapping.name:gsub("^%+%s?", "") })
+				elseif type(mapping[1]) == "string" or type(mapping[1]) == "function" then
+					table.insert(spec, { lhs, mapping[1], desc = mapping[2] })
+				end
+			end
+		end
+	end
+
+	if vim.tbl_islist(legacy_mappings) then
+		for _, mappings in ipairs(legacy_mappings) do
+			add_entries(mappings)
+		end
+	else
+		add_entries(legacy_mappings)
+	end
+
+	return spec
+end
+
 --[[
      mode = "n", --string or list of string         default : "n" or {"n","v"}
      key = {"<leader>", "f"},     required
@@ -456,10 +482,10 @@ plugin.setup = function()
 		-- print(jstr)
 
 		local wk = require("which-key")
-		wk.register(mapping_prefix)
+		wk.add(legacy_wk_to_spec(mapping_prefix))
 		if tools.isNotNilAndEmptyTbl(global_wkmap) then
 			tbldump.tbl_trace("global_wkmap", global_wkmap, tools.__FILE__(), tools.__LINE__())
-			wk.register(global_wkmap)
+			wk.add(legacy_wk_to_spec(global_wkmap))
 		end
 	end
 
