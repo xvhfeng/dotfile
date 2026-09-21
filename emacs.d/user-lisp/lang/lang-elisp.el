@@ -1,4 +1,8 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：Emacs Lisp 开发配置。elisp-mode 负责求值、缩进和语法，help-mode
+;;; 展示函数/变量文档，并增加配置调试与 hook 管理辅助。F12 查光标处函数，
+;;; C-F12 查变量；Help 缓冲区中 r 可移除光标处显示的 hook 函数。
 (use-package elisp-mode
   :ensure nil
   :bind
@@ -9,6 +13,7 @@
   (emacs-lisp-indent-offset nn-indent-offset)
   (lisp-indent-function #'my-lisp-indent-function)
   :config
+  ;; 根据 Lisp 表达式结构计算 INDENT-POINT 的缩进，并兼容自定义宏参数形式。
   (defun my-lisp-indent-function (indent-point state)
     "See https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned"
     (let ((normal-indent (current-column))
@@ -275,6 +280,7 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
   (help-mode . cursor-sensor-mode)
   :bind (:map help-mode-map ("r" . my-remove-hook-at-point))
   :config
+  ;; 返回安装在 FUNCTION 上的所有 advice 函数列表。
   (defun my-function-advices (function)
     "Return FUNCTION's advices."
     (let ((flist (indirect-function function)) advices)
@@ -283,12 +289,14 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
         (setq flist (advice--cdr flist)))
       advices))
 
+  ;; 重新生成当前 Help 缓冲区，使 advice/hook 变更立即反映在页面中。
   (defun my-help--update ()
     "Update the help buffer."
     (if (eq major-mode 'helpful-mode)
         (helpful-update)
       (revert-buffer nil t)))
 
+  ;; 在 Help 页为 ADVICE 添加“移除”按钮，点击后从 FUNCTION 删除该 advice。
   (defun my-add-remove-advice-button (advice function)
     (when (and (functionp advice) (functionp function))
       (let ((inhibit-read-only t)
@@ -306,6 +314,7 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
                      (my-help--update)))
          'follow-link t))))
 
+  ;; 在 BUFFER-OR-NAME 对应 Help 缓冲区列出 FUNCTION 的 advice 移除按钮。
   (defun my-add-button-to-remove-advice (buffer-or-name function)
     "Add a button to remove advice."
     (with-current-buffer buffer-or-name
@@ -317,6 +326,7 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
               (my-add-remove-advice-button advice function)
               (setq ad-list (delq advice ad-list))))))))
 
+  ;; 读取 Help 页光标处记录的 hook/函数，并将该函数从 hook 中移除。
   (defun my-remove-hook-at-point ()
     "Remove the hook at the point in the *Help* buffer."
     (interactive)

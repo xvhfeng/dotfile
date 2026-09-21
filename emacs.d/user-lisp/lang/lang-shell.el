@@ -1,4 +1,7 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：Shell 语言配置。sh-script 处理 sh/bash/zsh 等脚本，PowerShell 包
+;;; 处理 *.ps1；这里设置解释器关联、缩进和通用语言工具接入。
 (use-package sh-script
   :ensure nil
   :mode "\\.\$$?:bats\\|zunit\\|env\\\'" "/bspwmrc\\'"
@@ -19,6 +22,7 @@
       "sleep" "sudo" "touch")
     "A list of common shell commands to be fontified especially in `sh-mode'.")
 
+  ;; 在 LIMIT 前匹配双引号字符串中的 $变量，供额外语法着色规则使用。
   (defun my-sh--match-variables-in-quotes (limit)
     "Search for variables in double-quoted strings bounded by LIMIT."
     (with-syntax-table sh-mode-syntax-table
@@ -31,6 +35,7 @@
                  (not (eq (nth 3 (syntax-ppss)) ?\"))))
         res)))
 
+  ;; 在 LIMIT 前匹配双引号中的 $(命令替换)，以独立 face 突出显示。
   (defun my-sh--match-command-subst-in-quotes (limit)
     "Search for variables in double-quoted strings bounded by LIMIT."
     (with-syntax-table sh-mode-syntax-table
@@ -43,6 +48,7 @@
                  (not (eq (nth 3 (syntax-ppss)) ?\"))))
         res)))
 
+  ;; 进入 Shell 模式时安装变量和命令替换的额外 font-lock 规则。
   (defun my-sh-init-extra-fontification-h ()
     (font-lock-add-keywords
      nil `((my-sh--match-variables-in-quotes

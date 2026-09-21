@@ -1,13 +1,19 @@
 ;;; -*- lexical-binding: t -*-
 
+;;; 中文导读：Neotree 侧边栏文件树配置。C-x t n 显示/隐藏文件树；树中 RET 打开
+;;; 当前项，TAB 展开/折叠目录，SPC 快速预览，Backspace/DEL 返回父目录，
+;;; C-右/C-左 调整侧栏宽度。自定义包装函数使目录和文件的交互更符合本配置习惯。
+
 (defconst nn-neotree-icon-font-family "JetBrainsMono Nerd Font Mono"
   "Installed Nerd Font used only by Neotree buffers.")
 
+;; 初始化 Neotree 缓冲区的局部显示与操作设置。
 (defun nn-neotree-setup-buffer ()
   "Apply buffer-local display settings for Neotree."
   (setq-local nerd-icons-font-family nn-neotree-icon-font-family)
   (setq-local window-size-fixed nil))
 
+;; Neotree 打开后允许用户通过窗口边界或快捷键改变侧栏宽度。
 (defun nn-neotree-enable-resizing (&rest _)
   "Remove width constraints from the Neotree side window."
   (when-let* ((window (get-buffer-window neo-buffer-name)))
@@ -15,30 +21,35 @@
       (setq-local window-size-fixed nil))
     (window-preserve-size window t nil)))
 
+;; 将 Neotree 内部节点游标同步到当前显示行，供后续打开/预览命令使用。
 (defun nn-neotree--goto-node-on-current-line ()
   "Move point onto the node button on the current line, if present."
   (when-let* ((button (neo-buffer--get-button-current-line)))
     (goto-char (button-start button))
     button))
 
+;; 打开当前 Neotree 节点；目录进入或展开，文件则在编辑窗口中访问。
 (defun nn-neotree-enter (&optional arg)
   "Open the node on the current line, including from its indentation."
   (interactive "P")
   (when (nn-neotree--goto-node-on-current-line)
     (neotree-enter arg)))
 
+;; 展开或折叠当前目录节点，文件节点则沿用 Neotree 默认动作。
 (defun nn-neotree-toggle-directory (&optional arg)
   "Toggle the directory on the current line from any column."
   (interactive "P")
   (when (nn-neotree--goto-node-on-current-line)
     (neo-buffer--execute arg nil #'neo-open-dir)))
 
+;; 临时预览当前文件而不永久离开 Neotree 选择流程。
 (defun nn-neotree-quick-look (&optional arg)
   "Quick-look the node on the current line from any column."
   (interactive "P")
   (when (nn-neotree--goto-node-on-current-line)
     (neotree-quick-look arg)))
 
+;; 将 Neotree 侧栏宽度增减 COLUMNS 列，并限制为可用的正宽度。
 (defun nn-neotree-resize (columns)
   "Resize the Neotree window horizontally by COLUMNS."
   (when-let* ((window (get-buffer-window neo-buffer-name)))
@@ -47,11 +58,13 @@
       (setq window-size-fixed nil)
       (enlarge-window-horizontally columns))))
 
+;; 将 Neotree 侧栏加宽 COUNT 列。
 (defun nn-neotree-enlarge (&optional count)
   "Enlarge Neotree by five columns times COUNT."
   (interactive "p")
   (nn-neotree-resize (* 5 (or count 1))))
 
+;; 将 Neotree 侧栏缩窄 COUNT 列。
 (defun nn-neotree-shrink (&optional count)
   "Shrink Neotree by five columns times COUNT."
   (interactive "p")

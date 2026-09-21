@@ -1,4 +1,10 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：Web 文件编辑。web-mode 处理 HTML 与模板，html/mhtml/css 的
+;;; Tree-sitter 模式处理标准标记和样式，Emmet 用缩写生成标签。web-mode 中
+;;; C-c C-h 重载、C-c C-i 缩进缓冲区、M-]/M-[ 跳下/上一个标签、C-M-]/C-M-[
+;;; 跳属性、C-c C-f 折叠、C-c C-w/k/r/c 包裹/删除/重命名/克隆元素、C-c /
+;;; 闭合元素、C-c t s/m 选择/匹配标签；M-E 展开 Emmet 缩写。
 (use-package css-mode
   :ensure nil
   :custom (css-fontify-colors nil))

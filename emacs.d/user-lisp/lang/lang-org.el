@@ -1,4 +1,12 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：Org 工作流配置。Org 管理大纲/任务/链接，Agenda 汇总日程，Capture
+;;; 快速记录，Clock 计时，Crypt 加密条目，Babel/org-src 编辑和执行代码块，
+;;; org-modern 美化显示。全局 C-c o a/b/x 打开议程、切换 Org 缓冲区、捕获；
+;;; Org 中 C-RET/C-S-RET/C-M-RET 插入标题/TODO/子标题，C-c C-t 改 TODO，
+;;; C-c C-q 设标签，C-c C-d/C-s 设截止/计划，C-c ./! 插活动/非活动时间戳，
+;;; C-c C-o 开链接，C-c @ 插引用，C-c C-x e 导出，C-c C-x C-w/C-a 剪切/归档
+;;; 子树。Agenda 中 t/r/q/d/s 修改 TODO/归档/标签/截止/计划，C-SPC 预览条目。
 (use-package ol
   :ensure nil
   :config

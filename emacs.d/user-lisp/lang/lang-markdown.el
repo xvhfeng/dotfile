@@ -1,4 +1,7 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：Markdown 配置。markdown-ts-mode 使用 Tree-sitter 展示标题、列表、
+;;; 代码块与链接结构，并调整换行、字体与文件关联，适用于 README 和普通文档。
 (use-package markdown-ts-mode
   :ensure nil
   :if (treesit-language-available-p 'markdown)

@@ -1,4 +1,7 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：YAML 配置。yaml-ts-mode 使用 Tree-sitter 解析 YAML，提供结构化
+;;; 高亮和缩进，并负责常见 *.yaml/*.yml 文件。
 (use-package yaml-ts-mode
   :ensure nil
   :if (treesit-language-available-p 'yaml)

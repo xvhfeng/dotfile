@@ -1,7 +1,11 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：C/C++ 语言配置。simpc-mode 是轻量的 C/C++ major mode，负责文件
+;;; 关联、语法高亮、缩进与结构导航，并接入通用的 Eglot/Flymake 编辑链。
 (defvar my-clangd--query-driver
   (concat (executable-find "gcc") "," (executable-find "g++")))
 
+;; 返回启动 clangd 使用的命令行参数列表，供 Eglot 创建 C/C++ 语言服务器进程。
 (defun my-clangd-args (_interactive)
   (let ((proj (project-current)))
     `("clangd"

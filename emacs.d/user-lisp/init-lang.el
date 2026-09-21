@@ -1,4 +1,8 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：语言配置总入口。先配置通用 text-mode、conf-mode 与 syntax，再加载
+;;; user-lisp/lang/ 中各语言模块，使所有语言共享一致的缩进、语法和编辑基线，同时
+;;; 将语言特有设置保持隔离。
 (require 'treesit)
 (require 'lang-cc)
 (require 'lang-elisp)

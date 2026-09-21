@@ -1,4 +1,9 @@
 ;;; -*- lexical-binding: t -*-
+
+;;; 中文导读：JavaScript/TypeScript 配置。js-mode 兼容传统 JavaScript，
+;;; js-ts-mode/typescript-ts-mode/tsx-ts-mode 使用 Tree-sitter，分别处理 JS、TS
+;;; 和 TSX；同时设置缩进、文件关联和语言服务器启动条件。
+;; 在 TypeScript Tree-sitter 模式中注册 JSDoc 字体锁规则和编辑支持。
 (defun my-add-jsdoc-in-typescript-ts-mode ()
   "Add jsdoc treesitter rules to typescript as a host language.
 As seen on: https://www.reddit.com/r/emacs/comments/1kfblch/need_help_with_adding_jsdoc_highlighting_to"
