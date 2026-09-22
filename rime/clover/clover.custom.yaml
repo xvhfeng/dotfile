@@ -10,6 +10,12 @@ patch:
   "engine/translators/@before 0": lua_translator@*v_mode_translator
   "recognizer/patterns/v_mode": "^v.*$"
 
+  # 明确启用用户词典学习：记录选词频率，并让常用候选逐渐前移。
+  # 指定独立词典名，保留并继续使用现有 clover.userdb 数据。
+  "translator/user_dict": clover
+  "translator/enable_user_dict": true
+  "translator/enable_encoder": true
+
   # 在原方案的智能纠错规则之后追加常用模糊音，不覆盖原有规则。
   "speller/algebra/+":
     # 平翘舌：z/zh、c/ch、s/sh 双向兼容。
@@ -31,3 +37,5 @@ patch:
     # uan/uang 双向兼容。
     - derive/uan$/uang/
     - derive/uang$/uan/
+    - derive/^wang$/huang/
+    - derive/^huang$/wang/

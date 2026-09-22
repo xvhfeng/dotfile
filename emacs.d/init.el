@@ -94,3 +94,4 @@
   (require 'init-windows)
    (require 'init-vertico)
   (require 'init-home))
+(put 'upcase-region 'disabled nil)
