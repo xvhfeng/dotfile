@@ -1,0 +1,17 @@
+- 使用了JetBrainsMonoNL字体，安装JetBrainsMonoNL字体
+
+- shell使用的是vterm，需要安装libvterm
+  brew install cmake libvterm
+  然后看一下emacs中的加载路径是否指向so文件（注意mac下so共享库的加载问题）
+
+- 如果使用dired，那么需要安装nerd-icons-install-fonts
+  在emacs中执行M-x nerd-icons-install-fonts
+
+- 如果使用ranger，首先需要在系统中安装ranger
+  brew install ranger
+  更好的体验需要all-the-icons
+  (use-package all-the-icons
+  :straight t
+  :if (display-graphic-p))
+(第一次使用 all-the-icons 时，请在 Emacs 中执行 M-x all-the-icons-install-fonts 安装图标字体)
+
