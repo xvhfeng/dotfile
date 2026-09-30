@@ -15,3 +15,6 @@
    这一步中可能需要使用终端--debug-init模式执行，安装字体和图标的时候在GUI中会有问题
    如果现在终端显式，需要安装 brew install --cask font-fira-code-nerd-font（但是我没有强求，觉得无所谓）
 
+- 使用rg搜索，需要安装
+  brew install ripgrep
+
