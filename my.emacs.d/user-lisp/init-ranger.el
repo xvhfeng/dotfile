@@ -20,8 +20,16 @@
   (ranger-dont-show-binary t)        ; 不预览二进制文件
   (ranger-parent-depth 1)            ; 左侧父目录深度
   (ranger-preview-file t)            ; 开启右侧文件预览
+(ranger-show-literal t)              ; 开启排版美化
 
   :config
+;; 核心修复：强制在启动 ranger 时加载图标渲染
+  (add-hook 'ranger-mode-hook
+            (lambda ()
+              (when (display-graphic-p)
+                (all-the-icons-dired-mode 1))))
+
+
   ;; 设置标题栏样式
   (setq ranger-header-func 'ranger-header-line))
 
@@ -31,5 +39,13 @@
 (use-package all-the-icons
   :straight t
   :if (display-graphic-p))
+
+
+;; 2. 为 Dired / Ranger 注入图标渲染（核心关键！）
+(use-package all-the-icons-dired
+  :straight t
+  :after (all-the-icons dired)
+  :hook (dired-mode . all-the-icons-dired-mode))
+
 
 (provide 'init-ranger)

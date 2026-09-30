@@ -10,9 +10,8 @@
 - 如果使用ranger，首先需要在系统中安装ranger
   brew install ranger
   更好的体验需要all-the-icons
-  (use-package all-the-icons
-  :straight t
-  :if (display-graphic-p))
-(第一次使用 all-the-icons 时，请在 Emacs 中执行 M-x all-the-icons-install-fonts 安装图标字体)
+  
+  (第一次使用 all-the-icons 时，请在 Emacs 中执行 M-x all-the-icons-install-fonts 安装图标字体)
    这一步中可能需要使用终端--debug-init模式执行，安装字体和图标的时候在GUI中会有问题
+   如果现在终端显式，需要安装 brew install --cask font-fira-code-nerd-font（但是我没有强求，觉得无所谓）
 

@@ -33,13 +33,17 @@
   (expand-file-name name my/runtime-directory))
 
 (make-directory my/runtime-directory t)
-(let ((eln-directory (file-name-as-directory
-                      (my/runtime-file "eln-cache/"))))
-  (make-directory eln-directory t)
-  (setq native-comp-eln-load-path
-        (cons eln-directory
-              (delete (expand-file-name "eln-cache/" user-emacs-directory)
-                      native-comp-eln-load-path))))
+;; `native-comp-eln-load-path' only exists in Emacs builds with native
+;; compilation support.  Some official/portable builds omit native-comp even
+;; on recent Emacs versions, so checking `emacs-version' is not sufficient.
+(when (boundp 'native-comp-eln-load-path)
+  (let ((eln-directory (file-name-as-directory
+                        (my/runtime-file "eln-cache/"))))
+    (make-directory eln-directory t)
+    (setq native-comp-eln-load-path
+          (cons eln-directory
+                (delete (expand-file-name "eln-cache/" user-emacs-directory)
+                        native-comp-eln-load-path)))))
 
 
 ;;; Emacs 31 引入内置的变量 user-lisp-directory（默认指向 ~/.emacs.d/user-lisp/），用来统一存放用户自定义的 .el 插件或代码。
@@ -48,9 +52,10 @@
 (unless (boundp 'user-lisp-directory)
   (defvar user-lisp-directory
     (expand-file-name "user-lisp/" user-emacs-directory)))
-(add-to-list 'load-path user-lisp-directory)
-(let ((default-directory user-lisp-directory))
-  (normal-top-level-add-subdirs-to-load-path))
+(when (file-directory-p user-lisp-directory)
+  (add-to-list 'load-path user-lisp-directory)
+  (let ((default-directory user-lisp-directory))
+    (normal-top-level-add-subdirs-to-load-path)))
 
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=81506
