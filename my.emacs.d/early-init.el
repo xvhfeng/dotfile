@@ -9,6 +9,17 @@
 (add-to-list 'default-frame-alist
              '(font . "JetBrainsMonoNL Nerd Font-14"))
 
+;; 初始 GUI Frame 与后续由 emacsclient 等方式创建的 Frame 都默认最大化。
+;; 逐项加入而不是整体覆盖，避免丢失字体或其他已有的 Frame 参数。
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(dolist (parameter '((fullscreen . maximized)
+                     (menu-bar-lines . 0)
+                     (tool-bar-lines . 0)
+                     (horizontal-scroll-bars . nil)
+                     (vertical-scroll-bars . nil)
+                     (border-width . 0)))
+  (add-to-list 'default-frame-alist parameter))
+
 ;; 2. 如果需要针对中英文字体分别设置（实现中英文等高/对齐），可以使用 set-face-attribute
 ;; 注意：如果仅使用 set-face-attribute，请用 set-fontset-font 设置中文字体
 (set-face-attribute 'default nil
@@ -152,15 +163,8 @@
 
   ;; Frame 可按像素而不是字符格调整尺寸，并避免字体变化触发隐式 resize
   (frame-resize-pixelwise t)
-  (frame-inhibit-implied-resize t) ;; 'force  强制阻止 Emacs 在某些操作下（如隐藏或显示窗口的菜单栏、工具栏等）自动调整窗口大小。 
-                                   ;; force 是一个比较强的设置，确保窗口大小保持不变。
-  ;; 新 Frame 隐藏菜单/工具/滚动条并默认最大化
-  (default-frame-alist
-    '((menu-bar-lines . 0)
-      (tool-bar-lines . 0)
-      (horizontal-scroll-bars)
-      (vertical-scroll-bars)
-      (fullscreen . maximized))))
+  (frame-inhibit-implied-resize t)) ;; 'force  强制阻止 Emacs 在某些操作下（如隐藏或显示窗口的菜单栏、工具栏等）自动调整窗口大小。
+                                    ;; force 是一个比较强的设置，确保窗口大小保持不变。
 
 
 ;; 系统环境变量与子进程环境配置
@@ -198,23 +202,6 @@
 ;;
 ;;(add-to-list 'default-frame-alist `(font . ,(rc/get-default-font)))
 
-
-;; 在 Emacs 完成初始化文件（如 init.el）的加载之后，会执行这个配置。
-;; 将一个匿名函数（lambda）挂载到 'after-init-hook 上。
-(add-hook 'after-init-hook (lambda ()
-                            (setq default-frame-alist `((horizontal-scroll-bars . nil)
-                                                        ;;(menu-bar-lines . 0)
-                                                        (tool-bar-lines . 0)
-                                                        (vertical-scroll-bars . nil)
-                                                        (scroll-bar-width . (if (eq window-system 'pgtk) 12 6))
-                                                        (width . (text-pixels . 600))
-                                                        (height . (text-pixels . 700))
-                                                        ;;,@(unless j-pgtk-p
-                                                        ;;    (list '(undecorated . t)))
-                                                        (border-width . 0)
-                                                        ;;,@(when j-laptop-p
-                                                        ;;    (list '(fullscreen . maximized)))
-))))
 
 (setq gc-cons-threshold (* 50 1000 1000))
 
