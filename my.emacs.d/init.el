@@ -304,14 +304,16 @@
 ;; 8. 常用现代化生态插件配置 ;; 现代化插件配置模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 (require 'init-base) ;; 加载基础配置模块 init-base.el
-(require 'init-themes) ;; 加载主题配置模块 init-themes.el
 (require 'init-keybindings) ;; 加载快捷键配置模块 init-keybindings.el
+(require 'init-themes) ;; 加载主题配置模块 init-themes.el
 (require 'init-minbuffer) ;; 加载 Minibuffer 配置模块 init-minbuffer.el
 (require 'init-eshell) ;; 加载shell，让emacs和系统（mac/linux）具有同样的bash环境
 (require 'init-ranger) ;; 加载ranger，目录选择器
 (require 'init-consult) ;; 加载搜索等一系列的插件
 (require 'init-rainbow) ;; 彩虹括号
 (require 'init-edit) ;; 使用插件的编辑操作，黄金3插件
+
+
 
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 9. 启动时间统计与 GC 恢复Hook ;; 启动统计与收尾模块标题
