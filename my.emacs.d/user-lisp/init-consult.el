@@ -57,3 +57,12 @@
   (wgrep-change-readonly-file t))
 
 (provide 'init-consult)
+
+
+;; 替换三步法流程：
+;; 搜索： 执行 M-x consult-ripgrep（或 consult-grep），输入你想查找的文本。
+;; 导出： 在 Minibuffer 结果列表中，按下 C-. E（即调用 embark-act 然后按 E 执行 embark-export），这会将搜索结果导出到一个 *grep* 缓冲区。
+;; 可编辑替换：
+;; 在 *grep* 缓冲区中，按下 C-c C-p（进入 wgrep-change-to-wgrep-mode 模式）。
+;; 此时该缓冲区变为可编辑状态！你可以直接用 M-% (query-replace) 或 C-M-% (query-replace-regexp) 在这个 Buffer 中批量替换。
+;; 保存改动： 替换完成后，按下 C-c C-c，wgrep 会自动将修改写入对应的所有物理磁盘文件；如果想放弃，按 C-c C-k。

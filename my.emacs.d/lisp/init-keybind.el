@@ -13,14 +13,14 @@
 ;;; 缓冲区：C-x k 执行带保护的关闭，C-x C-k 直接关闭；S-TAB 左移缩进。
 
 ;; 若有活动选区则剪切选区，否则剪切当前整行，并把内容放入 kill-ring。
-(defun my-cut ()
+(defun my-cut-region-or-whole-line ()
   (interactive)
   (if (use-region-p)
       (kill-region (region-beginning) (region-end))
     (kill-whole-line)))
 
 ;; 若有活动选区则复制选区，否则复制当前整行；复制后内容可由 yank 粘贴。
-(defun my-copy ()
+(defun my-copy-region-or-whole-line()
   (interactive)
   (if (use-region-p)
       (copy-region-as-kill (region-beginning) (region-end))
@@ -39,11 +39,11 @@
   (transpose-lines 1)
   (forward-line -1))
 
-;; 复制当前整行到 kill-ring，然后把光标移到下一行同一逻辑位置。
-(defun my-copy-line-and-move-down ()
-  (interactive)
-  (duplicate-line)
-  (next-line 1))
+;;;; 复制当前整行到 kill-ring，然后把光标移到下一行同一逻辑位置。
+;;(defun my-copy-line-and-move-down ()
+;;  (interactive)
+;;  (duplicate-line)
+;;  (next-line 1))
 
 ;; 删除当前整行但不写入 kill-ring，避免覆盖刚复制/剪切的内容。
 (defun my-delete-whole-line-no-kill ()
@@ -51,7 +51,8 @@
   (delete-region (line-beginning-position) (line-beginning-position 2)))
 
 ;; 根据当前上下文安全关闭窗口或缓冲区，避免直接 kill 带来的误关闭。
-(defun my-kill ()
+;; 该函数在关闭当前 Buffer 时，会自动静默保存已修改的实体文件，并在只剩双分屏时自动销毁当前窗口以恢复单屏布局。
+(defun my-kill-with-save-and-delete-split-window ()
   (interactive)
   (when (and (buffer-file-name)
              (file-exists-p (buffer-file-name))
@@ -62,18 +63,52 @@
     (delete-window)))
 
 ;; 有选区时把选区转小写，否则把光标处单词转小写（DWIM：按上下文执行）。
-(defun my-downcase-dwim ()
+;; (defun my-downcase-dwim ()
+;;   (interactive)
+;;  (if (use-region-p)
+;;      (downcase-region (region-beginning) (region-end))
+;;    (call-interactively #'downcase-word)))
+
+(defun my-lower-dwim ()
+  "如果选中了区域则转小写选区；否则将当前光标所在的整个单词转小写。"
   (interactive)
   (if (use-region-p)
       (downcase-region (region-beginning) (region-end))
-    (call-interactively #'downcase-word)))
+    (let ((bounds (bounds-of-thing-at-point 'word)))
+      (if bounds
+          (downcase-region (car bounds) (cdr bounds))
+        (call-interactively #'downcase-word)))))
 
-;; 有选区时把选区转大写，否则把光标处单词转大写。
-(defun my-upcase-dwim ()
+;;  如果选中了区域则大写选区；否则将当前光标所在的整个单词转大写
+(defun my-uppercase-dwim ()
+  "Upcase region if active; otherwise upcase the ENTIRE word at point."
   (interactive)
   (if (use-region-p)
       (upcase-region (region-beginning) (region-end))
-    (call-interactively #'upcase-word)))
+    (let ((bounds (bounds-of-thing-at-point 'word)))
+      (if bounds
+          (upcase-region (car bounds) (cdr bounds))
+        ;; 如果光标不在任何单词上（如空白处），则按原生逻辑转换下一个单词
+        (upcase-word 1)))))
+
+
+;; 2. 整个单词/选区首字母大写
+(defun my-capitalize-dwim ()
+  "Capitalize region if active; otherwise capitalize the ENTIRE word at point."
+  (interactive)
+  (if (use-region-p)
+      (capitalize-region (region-beginning) (region-end))
+    (let ((bounds (bounds-of-thing-at-point 'word)))
+      (if bounds
+          (capitalize-region (car bounds) (cdr bounds))
+        (capitalize-word 1)))))
+
+;; 有选区时把选区转大写，否则把光标处单词转大写。
+;; (defun my-upcase-dwim ()
+;;  (interactive)
+;;  (if (use-region-p)
+;;      (upcase-region (region-beginning) (region-end))
+;;    (call-interactively #'upcase-word)))
 
 ;; 用 Dired 打开用户主目录。
 (defun my-home-dired ()
@@ -89,6 +124,7 @@
 
 ;; 读取一个字符 CHAR，用它（或对应的闭合符号）包围光标处单词。
 (defun my-surround-word (char)
+;; 用指定字符包围文本用指定字符包围文本
   "Wrap word at point or active region with CHAR."
   (interactive "cWrap char: ")
   (let ((beg (if (use-region-p) (region-beginning)
@@ -102,6 +138,7 @@
 
 ;; 将光标附近已有的包围符替换为用户输入的 CHAR 对应符号。
 (defun my-surround-replace (char)
+;; 模糊替换光标单词两侧的符号
   (interactive "cReplace surrounding chars with: ")
   (when-let ((bounds (bounds-of-thing-at-point 'word)))
     (save-excursion
@@ -114,6 +151,7 @@
 
 ;; 在当前位置附近查找 OLD-CHAR 成对符号，并整体替换为 NEW-CHAR 对应符号。
 (defun my-surround-replace-pair (old-char new-char)
+;; 精准替换成对出现的符号
   (interactive "cWrap char? \ncReplace surrounding chars with: ")
   (when-let ((bounds (bounds-of-thing-at-point 'word)))
     (save-excursion
@@ -127,7 +165,8 @@
         (insert (string new-char))))))
 
 ;; 在 START 到 END（默认选区或缓冲区）内把 FROM 替换为 TO；DELIMITED 限制完整单词。
-(defun my-replace (from to &optional delimited start end)
+(defun my-replace-region-or-buffer (from to &optional delimited start end)
+;; 区域/全缓冲区全局字符串替换
   (interactive
    (let ((beg (if (use-region-p) (region-beginning) (point-min)))
          (end (if (use-region-p) (region-end)       (point-max))))
