@@ -89,6 +89,9 @@
   ;; 关闭 JIT/延迟原生编译，避免使用配置时后台编译带来的 CPU 和磁盘抖动
   (setq native-comp-jit-compilation nil
         native-comp-deferred-compilation nil
+        ;; 重定义内置函数（例如将 yes-or-no-p 映射为 y-or-n-p）会触发
+        ;; trampoline 原生编译；本机 GUI Emacs 的编译器不可用，故关闭它。
+        comp-enable-subr-trampolines nil
         ;; 每次最多读取 64 KiB 子进程输出，并关闭自适应缓冲（提升 LSP/子进程吞吐）
         read-process-output-max (* 64 1024)
         process-adaptive-read-buffering nil
