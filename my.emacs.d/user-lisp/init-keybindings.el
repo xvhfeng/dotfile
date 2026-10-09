@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+j;; -*- lexical-binding: t -*-
 
 
 ;; 开启 Emacs 28+ 内置的快捷键重复模式

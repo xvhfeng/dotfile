@@ -34,4 +34,4 @@
   (add-to-list 'project-switch-commands '(magit-project-status "Magit" ?m)))
 
 (provide 'init-magit)
-;;; init-magit.el ends here
+;;; init-magit.el ends herejj
