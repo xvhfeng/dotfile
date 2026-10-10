@@ -4,9 +4,14 @@
 ;; Ranger: 类似终端 Ranger 的文件管理器 (整合 Dired + 实时预览)
 ;; ============================================================================
 
+;; 1. 确保安装并加载 hydra
+(use-package hydra
+  :straight t)
+
+
 (use-package ranger
   :straight (:host github :repo "punassuming/ranger.el")
-
+ :after hydra
   :bind ("C-c r" . ranger)
   
   :custom

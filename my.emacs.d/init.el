@@ -313,7 +313,8 @@
 (require 'init-rainbow) ;; 彩虹括号
 (require 'init-edit) ;; 使用插件的编辑操作，黄金3插件
 (require 'init-magit) ;;git的版本控制
-
+(require 'init-vundo) ;;  撤回
+(require 'init-mykey) ;; emacs 自身快捷键行为的设定和自身的一些快捷键偏好设定
 
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 9. 启动时间统计与 GC 恢复Hook ;; 启动统计与收尾模块标题

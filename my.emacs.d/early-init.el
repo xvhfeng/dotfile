@@ -98,9 +98,9 @@
         ;; 输入繁忙时可暂缓语法着色；缓存 load-path 目录扫描结果
         redisplay-skip-fontification-on-input t
         load-path-filter-function #'load-path-filter-cache-directory-files
-        ;; 启动过程中暂停 echo 消息与屏幕刷新，窗口完成后由 hook 恢复
-        inhibit-message t
-        inhibit-redisplay t
+
+
+
         menu-bar-mode -1
         tool-bar-mode -1
         scroll-bar-mode -1
@@ -110,6 +110,31 @@
         ;;         (if (and buffer-file-name (buffer-modified-p)) "● " "")
         ;;         (buffer-name)))
     )
+
+;;====================* 调试信息 *=====================================
+;;  正常情况，把这 2 行打开
+;; 启动过程中暂停 echo 消息与屏幕刷新，窗口完成后由 hook 恢复
+(when nil
+(setq 
+      inhibit-redisplay t
+        inhibit-message t
+))
+;; 当启动出错的时候，需要打开以下的两行设置
+;;  启动的时候需要显示完整的信息
+;;  出错的时候，把上面 when 中的 t 改为 nil，下面 when 中的 nil 改为 t 即可
+(when t
+(unless init-file-debug
+  (setq inhibit-message t
+        inhibit-redisplay t))
+;;  包括使用包的时候，也需要显示完整的信息
+(when init-file-debug
+  (setq debug-on-error t
+        use-package-verbose t
+        use-package-expand-minimally nil
+        use-package-compute-statistics t))
+)
+;;=====================* end *======================================
+
 
   ;; 保存文件名 handler 和加载后缀；启动期只查 Elisp 与当前平台的原生模块。
   ;; 启动完成后恢复原值，以缩减目录扫描开销且不阻断 vterm 等模块。

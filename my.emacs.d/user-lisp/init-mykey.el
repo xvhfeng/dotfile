@@ -48,7 +48,7 @@
 ;;  (next-line 1))
 
 ;; 删除当前整行但不写入 kill-ring，避免覆盖刚复制/剪切的内容。
-(defun my-delete-whole-line-no-kill ()
+(defun my-delete-whole-line-no-killring ()
   (interactive)
   (delete-region (line-beginning-position) (line-beginning-position 2)))
 
@@ -167,7 +167,7 @@
         (insert (string new-char))))))
 
 ;; 在 START 到 END（默认选区或缓冲区）内把 FROM 替换为 TO；DELIMITED 限制完整单词。
-(defun my-replace-region-or-buffer (from to &optional delimited start end)
+(defun my-replace-dwim (from to &optional delimited start end)
 ;; 区域/全缓冲区全局字符串替换
   (interactive
    (let ((beg (if (use-region-p) (region-beginning) (point-min)))
@@ -197,28 +197,50 @@
 
 
 ;; 将文本向上滚动当前窗口高度的一半。
-(defun scroll-half-screen-up ()
+(defun my-scroll-half-screen-up ()
   "向下滚动半屏（文字向上移动）。"
   (interactive)
   (scroll-up (/ (window-body-height) 2)))
 
 ;; 将文本向下滚动当前窗口高度的一半。
-(defun scroll-half-screen-down ()
+(defun my-scroll-half-screen-down ()
   "向上滚动半屏（文字向下移动）。"
   (interactive)
   (scroll-down (/ (window-body-height) 2)))
 
 ;; 绑定快捷键（可以根据个人习惯修改）
 
+;;============*  设置 my 序列改进设置 *========================
 ;; 上翻半页
-(keymap-global-set "C-c d"  #'scroll-half-screen-up)
+(keymap-global-set "C-c d"  #'my-scroll-half-screen-up)
 ;; 下翻半页
-(keymap-global-set "C-c u"  #'scroll-half-screen-down)
-;; 把esc设置为取消退出
+(keymap-global-set "C-c u"  #'my-scroll-half-screen-down)
+
+(keymap-global-set "M-w" #'my-copy-dwim)
+(keymap-global-set "C-k" #'my-cut-dwim)
+(keymap-global-set "M-k" #'my-move-line-up)
+(keymap-global-set "M-j" #'my-move-line-down)
+(keymap-global-set "C-x C-d" #'my-delete-whole-line-no-killring)
+(keymap-global-set "M-l" #'my-lower-dwim)
+(keymap-global-set "M-u" #'my-upper-dwim)
+(keymap-global-set "M-c" #'my-capitalize-dwim)
+(keymap-global-set "C-x C-k" #'my-kill-with-save-and-delete-split-window)
+(keymap-global-set "C-!" #'my-replace-dwim)
+
+;;============= *  更改 EMACS 自身的某些设置 *=====================
+;; 把ESC设置为取消退出
 (keymap-global-set "<escape>" #'keyboard-escape-quit)
+ ;; 把 c-k 设置为不管什么位姿都删除当前行
+;; (global-set-key (kbd "C-k") 'kill-whole-line)
+(keymap-global-set "C-'" #'imenu)
+(keymap-global-set "C-9" #'scroll-up-command)
+(keymap-global-set "C-0" #'scroll-down-command)
+(keymap-global-set "C-l" #'recenter-top-bottom)
+(keymap-global-set "C-S-a" #'move-beginning-of-line)
 
 
-(keymap-global-set "C-!" #'my-replace)
+
+;;(keymap-global-set "C-!" #'my-replace)
 (keymap-global-set "C-c o f" #'my-split-right-and-switch)
 (keymap-global-set "C-c o b" #'my-split-left-and-switch)
 (keymap-global-set "C-c o n" #'my-split-below-and-switch)
@@ -231,26 +253,20 @@
 (keymap-global-set "C-c w R" #'my-surround-replace-pair)
 (keymap-global-set "C-c w w" #'my-surround-word)
 (keymap-global-set "C-c C-r" #'my-switch-to-project-root)
-(keymap-global-set "C-c C-j" #'project-dired)
-(keymap-global-set "M-w" #'my-copy)
-(keymap-global-set "C-w" #'my-cut)
-(keymap-global-set "C-x k" #'my-kill)
-(keymap-global-set "C-x C-k" #'kill-buffer)
-(keymap-global-set "C-x C-d" #'my-delete-whole-line-no-kill)
-(keymap-global-set "C-," #'my-copy-line-and-move-down)
-(keymap-global-set "C-~" #'my-home-dired)
-(keymap-global-set "C-'" #'imenu)
-(keymap-global-set "C-9" #'scroll-up-command)
-(keymap-global-set "C-0" #'scroll-down-command)
-(keymap-global-set "C-l" #'recenter-top-bottom)
+;;(keymap-global-set "C-c C-j" #'project-dired)
+;;(keymap-global-set "M-w" #'my-copy)
+;;(keymap-global-set "C-w" #'my-cut)
+;;(keymap-global-set "C-x k" #'my-kill)
+;;(keymap-global-set "C-x C-k" #'kill-buffer)
+;;(keymap-global-set "C-," #'my-copy-line-and-move-down)
+;;(keymap-global-set "C-~" #'my-home-dired)
 ;; (keymap-global-set "S-<tab>" #'indent-rigidly-left-to-tab-stop)
 ;; (keymap-global-set "C-<tab>" #'next-buffer)
 ;; (keymap-global-set "C-S-<tab>" #'bs-cycle-previous)
-(keymap-global-set "C-a" #'back-to-indentation)
-(keymap-global-set "C-M-a" #'move-beginning-of-line)
-(keymap-global-set "C-v" #'yank)
-(keymap-global-set "C-z" #'undo)
-(keymap-global-set "C-S-z" #'undo-redo)
+    ;;(keymap-global-set "C-a" #'back-to-indentation)
+;;(keymap-global-set "C-v" #'yank)
+;;(keymap-global-set "C-z" #'undo)
+;;(keymap-global-set "C-S-z" #'undo-redo)
 (keymap-global-set "C-c w k" #'windmove-up)
 (keymap-global-set "C-c w j" #'windmove-down)
 (keymap-global-set "C-c w h" #'windmove-left)
@@ -260,9 +276,7 @@
 (keymap-global-set "M-S-h" #'enlarge-window-horizontally)
 (keymap-global-set "M-S-j" #'shrink-window)
 (keymap-global-set "M-S-k" #'enlarge-window)
-(keymap-global-set "M-l" #'my-downcase-dwim)
-(keymap-global-set "M-r" #'my-upcase-dwim)
-(keymap-global-set "M-k" #'my-move-line-up)
-(keymap-global-set "M-j" #'my-move-line-down)
+;;(keymap-global-set "M-l" #'my-downcase-dwim)
+;;(keymap-global-set "M-r" #'my-upcase-dwim)
 
-(provide 'init-keybind)
+(provide 'init-mykey)
