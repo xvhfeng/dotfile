@@ -205,41 +205,6 @@
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 7. straight.el + use-package 包管理器集成 ;; 包管理器集成模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
-(defmacro my/setup-straight-and-use-package-d ()
-  "自动化初始化 straight.el 并将其作为全局包管理器。"
-  `(progn
-     (setq package-enable-at-startup nil)
-     (setq straight-vc-git-default-clone-depth 1)
-     (setq straight-check-for-modifications nil)
-
-     (defvar bootstrap-version)
-     (let ((bootstrap-file
-            (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-           (bootstrap-version 6))
-       (unless (file-exists-p bootstrap-file)
-         (condition-case err
-             (let ((buffer
-                    (url-retrieve-synchronously
-                     "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-                     'silent 'inhibit-cookies)))
-               (unless buffer
-                 (error "下载 straight.el 安装脚本时没有收到响应"))
-               (unwind-protect
-                   (with-current-buffer buffer
-                     (goto-char (point-min))
-                     (unless (re-search-forward "^$" nil t)
-                       (error "straight.el 安装脚本响应格式无效"))
-                     (eval-print-last-sexp))
-                 (kill-buffer buffer)))
-           (error
-            (message "straight.el 未安装：%s；Emacs 将继续启动。" (error-message-string err)))))
-       (when (file-exists-p bootstrap-file)
-         (load bootstrap-file nil 'nomessage)
-         (straight-use-package 'use-package)
-         (setq straight-use-package-by-default t
-               use-package-always-defer t
-               use-package-expand-minimally t)))))
-
 (defmacro my/setup-straight-and-use-package ()
   "自动化初始化 straight.el：若本地不存在则先自动用 git clone 拉取，再加载。"
   `(progn

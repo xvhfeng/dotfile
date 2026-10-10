@@ -17,18 +17,7 @@
   (setq magit-display-buffer-function
         #'magit-display-buffer-same-window-except-diff-v1))
 
-;; 2. Ediff 并排分屏与界面优化（与 Magit 配合使用）
-(use-package ediff
-  :ensure nil ; Ediff 是 Emacs 内置包，无需下载
-  :custom
-  ;; 1. 将控制小窗口整合在同一个 Frame 内，避免弹出独立的 Control Frame
-  (ediff-window-setup-function #'ediff-setup-windows-plain)
-  ;; 2. 默认采用左右并排分屏（Side-by-side），方便对比两边代码
-  (ediff-split-window-function #'split-window-horizontally)
-  ;; 3. 忽略空白字符变化的干扰（可选，看个人习惯）
-  (ediff-diff-options "-w"))
-
-;; 3. 在内置的 project.el 中集成 Magit (可选)
+;; 2. 在内置的 project.el 中集成 Magit (可选)
 (with-eval-after-load 'project
   (define-key project-prefix-map (kbd "m") #'magit-project-status)
   (add-to-list 'project-switch-commands '(magit-project-status "Magit" ?m)))
