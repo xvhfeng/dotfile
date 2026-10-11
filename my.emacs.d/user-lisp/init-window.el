@@ -58,5 +58,28 @@
     ;; 4. 窗口平衡 (Balance)
     "w =" '(balance-windows        :which-key "balance windows size")))
 
+(use-package dimmer
+  :straight t
+  :custom
+  ;; 设置非活动窗口的变暗比例（0.0 到 1.0 之间，数值越小背景压得越暗）
+  ;; 0.15 - 0.25 是一个既能清晰区分主次，又不会看不清文字的黄金区间
+  (dimmer-fraction 0.35)
+
+;; 2. 更改调整模式：使用更明显的颜色计算方式
+  ;; 可选值有 :foreground, :background, 或组合。使用 background 调整背景色对比度最高
+  (dimmer-adjustment-mode :background)
+
+  ;; 排除某些特定的特殊窗口（如 Which-key、Help、Side 窗口等），避免不必要的闪烁
+  (dimmer-exclusion-regexps
+   '("^ \\*which-key\\*"
+     "^\\*Minibuf"
+     "^\\* компас"
+     "^\\*Completions\\*"))
+
+  :config
+  ;; 开启全局 Dimmer 模式
+  (dimmer-mode t))
+
+
 (provide 'init-window)
 ;;; init-window.el ends here

@@ -6,7 +6,8 @@
   :ensure nil
   :if (treesit-language-available-p 'json)
   :mode "\\.json\\'"
-  ;; :hook (json-ts-mode . eglot-ensure)
+  ;; 中文说明：仅在本地 JSON 服务器存在时提供 JSON Schema 诊断与补全。
+  :hook (json-ts-mode . my/lsp-maybe-ensure)
   :init (add-to-list 'treesit-language-source-alist
                      '(json . ("https://github.com/tree-sitter/tree-sitter-json"))))
 

@@ -16,7 +16,27 @@
     (make-directory my/treesit-grammar-dir t))
 
   ;; 告诉 Emacs 优先从此路径加载编译好的语法动态库 (.so / .dylib)
-  (add-to-list 'treesit-extra-load-path my/treesit-grammar-dir))
+  (add-to-list 'treesit-extra-load-path my/treesit-grammar-dir)
+
+  ;; 集中登记 lang/ 中涉及语言的官方语法仓库；只登记来源，不在启动时强制编译。
+  ;; 可通过 M-x treesit-install-language-grammar 或 treesit-auto 的提示按需安装。
+  (dolist (source
+           '((c . ("https://github.com/tree-sitter/tree-sitter-c"))
+             (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+             (java . ("https://github.com/tree-sitter/tree-sitter-java"))
+             (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+             (lua . ("https://github.com/tree-sitter-grammars/tree-sitter-lua"))
+             (bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+             (elisp . ("https://github.com/Wilfred/tree-sitter-elisp"))
+             (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+             (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+             (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
+             (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+             (yaml . ("https://github.com/tree-sitter-grammars/tree-sitter-yaml"))
+             (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown"))
+             (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" nil "typescript/src"))
+             (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" nil "tsx/src"))))
+    (add-to-list 'treesit-language-source-alist source)))
 
   ;; ============================================================================
 ;; 2. Treesit-auto: 自动下载并编译到指定目录

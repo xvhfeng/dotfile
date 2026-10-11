@@ -55,8 +55,11 @@ As seen on: https://www.reddit.com/r/emacs/comments/1kfblch/need_help_with_addin
 
 (use-package js-ts-mode
   :ensure nil
-  :if (treesit-language-available-p 'json)
-  :mode "\\.[mc]?js\\'")
+  ;; 中文说明：只有 JavaScript 语法可用时才切换 Tree-sitter 模式，缺失时回退 js-mode。
+  :if (treesit-language-available-p 'javascript)
+  :mode "\\.[mc]?js\\'"
+  ;; 中文说明：服务器存在时再启动 LSP，避免未安装 TypeScript 工具链时报错。
+  :hook (js-ts-mode . my/lsp-maybe-ensure))
 
 (use-package typescript-ts-mode
   :ensure nil
@@ -66,9 +69,9 @@ As seen on: https://www.reddit.com/r/emacs/comments/1kfblch/need_help_with_addin
   ("\\.ts\\'" . typescript-ts-mode)
   ("\\.tsx\\'" . tsx-ts-mode)
   :hook
-  (tsx-ts-mode . eglot-ensure)
+  (tsx-ts-mode . my/lsp-maybe-ensure)
   (tsx-ts-mode . my-add-jsdoc-in-typescript-ts-mode)
-  (typescript-ts-mode . eglot-ensure)
+  (typescript-ts-mode . my/lsp-maybe-ensure)
   (typescript-ts-mode . my-add-jsdoc-in-typescript-ts-mode)
   :init
   (add-to-list 'treesit-language-source-alist

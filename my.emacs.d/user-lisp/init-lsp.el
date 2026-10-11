@@ -1,0 +1,172 @@
+;;; init-lsp.el --- Eglot LSP、代码补全与结构大纲 -*- lexical-binding: t; -*-
+
+;; ============================================================================
+;; 1. Corfu: 光标处的代码补全浮窗 (In-Buffer Completion UI)
+;; ============================================================================
+;; 中文说明：Corfu 属于可选显示组件，安装失败时只跳过浮窗，不影响后续 Eglot/Flymake。
+(condition-case err
+    (use-package corfu
+      :straight t
+      :custom
+      (corfu-cycle t) (corfu-auto t) (corfu-auto-prefix 2) (corfu-auto-delay 0.1)
+      (corfu-quit-at-boundary 'separator) (corfu-echo-documentation nil)
+      :init
+      (global-corfu-mode 1)
+      (corfu-popupinfo-mode 1))
+  (error (message "Corfu 未加载：%s" (error-message-string err))))
+
+
+;; 让 Corfu 也能在代码补全中使用 Orderless 的无序空格匹配能力
+(use-package orderless
+  :config
+  ;; 增强代码补全匹配体验
+  (add-hook 'corfu-mode-hook
+            (lambda ()
+              (setq-local completion-styles '(orderless basic)))))
+
+;; 为 Corfu 补全浮窗加上漂亮的图标 (可选增强)
+;; 中文说明：图标仅增强补全外观，不能影响核心语言服务的加载。
+(condition-case err
+    (use-package kind-icon
+      :straight t
+      :after corfu
+      :custom (kind-icon-default-face 'corfu-default)
+      :config (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+  (error (message "kind-icon 未加载：%s" (error-message-string err))))
+
+;; ============================================================================
+;; 2. Cape: 扩展代码补全补全源 (提供补全文件名、Dict、Snippet 等)
+;; ============================================================================
+;; 中文说明：Cape 缺失时 Eglot 仍保留原生 CAPF 补全与诊断能力。
+(condition-case err
+    (use-package cape
+      :straight t
+      :init
+      (add-to-list 'completion-at-point-functions #'cape-file)
+      (add-to-list 'completion-at-point-functions #'cape-dabbrev))
+  (error (message "Cape 未加载：%s" (error-message-string err))))
+
+;; ============================================================================
+;; 3. Eglot: 原生轻量级 LSP 客户端 (Emacs 29+ 内置)
+;; ============================================================================
+(defconst my/lsp-server-commands
+  '((c-mode . "clangd") (c++-mode . "clangd")
+    (c-ts-mode . "clangd") (c++-ts-mode . "clangd")
+    (java-mode . "jdtls") (java-ts-mode . "jdtls")
+    (python-mode . "pyright-langserver") (python-ts-mode . "pyright-langserver")
+    (lua-mode . "lua-language-server") (lua-ts-mode . "lua-language-server")
+    (js-mode . "typescript-language-server") (js-ts-mode . "typescript-language-server")
+    (typescript-ts-mode . "typescript-language-server") (tsx-ts-mode . "typescript-language-server")
+    (json-ts-mode . "vscode-json-language-server") (yaml-ts-mode . "yaml-language-server")
+    (sh-mode . "bash-language-server"))
+  "主模式与对应 LSP 可执行文件的映射；用于避免缺少服务器时影响编辑。")
+
+;; 仅当对应服务器存在时启动 Eglot，缺失依赖只给出提示而不让打开文件报错。
+(defun my/lsp-maybe-ensure ()
+  "在当前主模式存在本地语言服务器时安全启动 Eglot。"
+  (let ((server (alist-get major-mode my/lsp-server-commands)))
+    (when (and server (executable-find server))
+      (eglot-ensure))))
+
+(use-package eglot
+  ;; Eglot 在 Emacs 29+ 为内置，若使用旧版可解开下面这行的注释
+  ;; :straight t
+  :defer t
+  :hook
+  ;; 统一由安全 Hook 启动，避免未安装语言服务器时干扰现有 major mode。
+  ((c-mode
+    c++-mode
+    c-ts-mode
+    c++-ts-mode
+    java-mode
+    java-ts-mode
+    python-mode
+    python-ts-mode
+    lua-mode
+    lua-ts-mode
+    js-mode
+    js-ts-mode
+    typescript-ts-mode
+    tsx-ts-mode
+    json-ts-mode
+    yaml-ts-mode
+    sh-mode) . my/lsp-maybe-ensure)
+
+    :custom
+  ;; 避免 LSP 频繁在 minibuffer 输出冗长的提示信息
+  (eglot-ignored-server-capabilities '(:inlayHintProvider))
+  ;; 禁用 Eglot 自动修改事件日志，提升高频输入性能
+  (eglot-events-buffer-size 0)
+
+  :config
+  ;; 优化 performance：提高与 LSP 服务器通信吞吐量
+  (setq read-process-output-max (* 1024 1024)) ; 1MB
+  ;; 关闭不必要的 Eglot 详细日志以提升性能
+  (setq eglot-events-buffer-size 0)
+  ;; 显式声明常见服务器命令，保证 Mason 安装到本地 bin/ 后能被 Eglot 正确调用。
+  (dolist (entry '((java-mode . ("jdtls")) (java-ts-mode . ("jdtls"))
+                   (python-mode . ("pyright-langserver" "--stdio"))
+                   (python-ts-mode . ("pyright-langserver" "--stdio"))
+                   (lua-mode . ("lua-language-server")) (lua-ts-mode . ("lua-language-server"))
+                   (js-mode . ("typescript-language-server" "--stdio"))
+                   (js-ts-mode . ("typescript-language-server" "--stdio"))
+                   (typescript-ts-mode . ("typescript-language-server" "--stdio"))
+                   (tsx-ts-mode . ("typescript-language-server" "--stdio"))
+                   (json-ts-mode . ("vscode-json-language-server" "--stdio"))
+                   (yaml-ts-mode . ("yaml-language-server" "--stdio"))
+                   (sh-mode . ("bash-language-server" "start"))))
+    (add-to-list 'eglot-server-programs entry))
+  ;; 中文说明：Cape 可用时组合文件补全；否则使用 Eglot 原生补全，避免可选包影响 LSP。
+  (add-hook 'eglot-managed-mode-hook
+            (lambda ()
+              (setq-local completion-at-point-functions
+                          (if (fboundp 'cape-super-capf)
+                              (list (cape-super-capf #'eglot-completion-at-point
+                                                    #'cape-file))
+                            (list #'eglot-completion-at-point)))))
+                                 
+  ;; 保存文件时自动格式化 (可选)
+  ;; (add-hook 'before-save-hook #'eglot-format-buffer)
+  )
+
+;; ============================================================================
+;; 4. Outline / 代码结构大纲体系
+;; ============================================================================
+
+;; 方案 A: 实时搜索跳转的大纲 (结合已安装的 Consult)
+;; 触发命令：`consult-imenu`
+
+;; 方案 B: 侧边栏树状代码大纲 (Imenu-list)
+;; 中文说明：大纲侧栏为可选界面；Consult Imenu 在该包不可用时仍可使用。
+(condition-case err
+    (use-package imenu-list
+      :straight t
+      :defer t
+      :custom
+      (imenu-list-auto-resize t)
+      (imenu-list-focus-after-activation t))
+  (error (message "imenu-list 未加载：%s" (error-message-string err))))
+
+;; ============================================================================
+;; 5. 配合 General.el 集中绑定 Leader 键
+;; ============================================================================
+(with-eval-after-load 'general
+  (my-leader-def
+    ;; LSP 相关功能 (Code / LSP)
+    "c"   '(:ignore t :which-key "Code / LSP")
+    "ca"  '(eglot-code-actions      :which-key "code action / quick fix")
+    "cr"  '(eglot-rename            :which-key "rename symbol")
+    "cf"  '(eglot-format            :which-key "format buffer/region")
+    "cd"  '(xref-find-definitions   :which-key "go to definition")
+    "cD"  '(xref-find-references    :which-key "find references")
+    "ch"  '(eldoc                   :which-key "show hover doc")
+    "cq"  '(eglot-shutdown          :which-key "stop lsp server")
+
+    ;; 代码大纲与导航 (Outline / Imenu)
+    "o"   '(:ignore t :which-key "Outline / Views")
+    "oi"  '(consult-imenu           :which-key "jump to symbol (imenu)")
+    "oI"  '(consult-imenu-multi     :which-key "jump to symbol (all buffers)")
+    "ot"  '(imenu-list-smart-toggle :which-key "toggle outline sidebar")))
+
+(provide 'init-lsp)
+;;; init-lsp.el ends here

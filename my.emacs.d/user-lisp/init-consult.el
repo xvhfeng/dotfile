@@ -24,7 +24,8 @@
   :bind (("C-c p s" . consult-ripgrep)       ; 全局/项目根目录 Ripgrep 实时预览搜索
          ("M-s r"   . consult-ripgrep)       ; 遵循 Emacs 标准 M-s 前缀
          ("M-s l"   . consult-line)          ; 当前 Buffer 实时文本搜索
-         ("M-s f"   . consult-find))         ; 实时预览文件名搜索
+         ("M-s f"   . consult-find)        ; 实时预览文件名搜索
+        ("C-c ! l" . consult-flymake))
 
   :custom
   ;; 开启光标移动即时预览
@@ -41,6 +42,15 @@
         (lambda (&optional dir)
           (when-let ((proj (project-current nil dir)))
             (project-root proj)))))
+
+
+
+;; 挂载到 General.el 体系下的 Leader 键 (SPC c !)
+(with-eval-after-load 'general
+  (with-eval-after-load 'consult
+    (my-leader-def
+      "c !" '(consult-flymake :which-key "consult flymake diagnostics"))))
+
 
 ;; ============================================================================
 ;; Embark + wgrep: 搜索结果导出与批量重构 (可选但强烈推荐)

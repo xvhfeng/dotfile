@@ -10,6 +10,8 @@
   ;; 2. Fontify command substitution in double quotes
   ;; 3. Fontify built-in/common commands (see `+sh-builtin-keywords')
   (sh-mode . my-sh-init-extra-fontification-h)
+  ;; 中文说明：bash-language-server 安装后自动启用 Shell LSP，否则保持原有编辑能力。
+  (sh-mode . my/lsp-maybe-ensure)
   :custom (sh-indent-after-continuation 'always)
   :config
   (add-to-list 'sh-imenu-generic-expression

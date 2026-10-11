@@ -280,7 +280,19 @@
 (require 'init-magit) ;;git的版本控制
 (require 'init-vundo) ;;  撤回
 (require 'init-mykey) ;; emacs 自身快捷键行为的设定和自身的一些快捷键偏好设定
+(require 'init-avy)
+(require 'init-window)
+;; 编程能力总入口：先准备外部工具路径，再启用补全、语法树、LSP、诊断和语言模块。
+;; 各模块内部均按需加载，某个可选依赖缺失时不会阻断既有 Emacs 功能。
+(defun my/require-programming-module (feature)
+  "安全加载 FEATURE；可选编程依赖下载失败时保留其余 Emacs 配置可用。"
+  (condition-case err
+      (require feature)
+    (error
+     (message "编程模块 %s 未加载：%s" feature (error-message-string err)))))
 
+(mapc #'my/require-programming-module
+      '(init-mason init-completion init-treesitter init-lsp init-flymake init-lang))
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 9. 启动时间统计与 GC 恢复Hook ;; 启动统计与收尾模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
