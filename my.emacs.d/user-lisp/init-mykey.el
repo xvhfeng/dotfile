@@ -208,19 +208,37 @@
   (interactive)
   (scroll-down (/ (window-body-height) 2)))
 
+;;; --- 自定义保持光标不动的开辟空行函数 ---
+
+(defun my-open-line-below ()
+  "在当前行下方插入一个空行，并保持光标位置不动。"
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (open-line 1)))
+
+(defun my-open-line-above ()
+  "在当前行上方插入一个空行，并保持光标位置不动。"
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (open-line 1)))
+
 ;; 绑定快捷键（可以根据个人习惯修改）
 
 ;;============*  设置 my 序列改进设置 *========================
 ;; 上翻半页
-(keymap-global-set "C-c d"  #'my-scroll-half-screen-up)
+(keymap-global-set "C-c C-d"  #'my-scroll-half-screen-up)
 ;; 下翻半页
-(keymap-global-set "C-c u"  #'my-scroll-half-screen-down)
+(keymap-global-set "C-c C-u"  #'my-scroll-half-screen-down)
+(keymap-global-set "C-o"  #'my-open-line-below)
+(keymap-global-set "C-S-o"  #'my-open-line-above)
 
 (keymap-global-set "M-w" #'my-copy-dwim)
 (keymap-global-set "C-k" #'my-cut-dwim)
 (keymap-global-set "M-k" #'my-move-line-up)
 (keymap-global-set "M-j" #'my-move-line-down)
-(keymap-global-set "C-x C-d" #'my-delete-whole-line-no-killring)
+(keymap-global-set "C-x d" #'my-delete-whole-line-no-killring)
 (keymap-global-set "M-l" #'my-lower-dwim)
 (keymap-global-set "M-u" #'my-upper-dwim)
 (keymap-global-set "M-c" #'my-capitalize-dwim)
@@ -229,7 +247,9 @@
 
 ;;============= *  更改 EMACS 自身的某些设置 *=====================
 ;; 把ESC设置为取消退出
-(keymap-global-set "<escape>" #'keyboard-escape-quit)
+;; 将单独按下的 ESC 映射为 C-g (keyboard-quit)
+(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+;;(keymap-global-set "<escape>" #'keyboard-escape-quit)
  ;; 把 c-k 设置为不管什么位姿都删除当前行
 ;; (global-set-key (kbd "C-k") 'kill-whole-line)
 (keymap-global-set "C-'" #'imenu)

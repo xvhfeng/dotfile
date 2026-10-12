@@ -32,6 +32,39 @@
           (?o delete-other-windows "Maximize Window")
           (?? aw-show-dispatch-help))))
 
+
+(use-package hydra
+  :straight t
+  :config
+  ;; 定义一个专门用于调整窗口大小的 Transient Hydra 键盘态
+  (defhydra hydra-window-resize (:hint nil)
+;;    "
+;;  ^Resizing Window^
+;;  -----------------------------------------
+;;  _h_ / _<left>_  : 缩小宽度 (Narrow)
+;;  _l_ / _<right>_ : 放大宽度 (Widen)
+;;  _k_ / _<up>_    : 缩小高度 (Shrink)
+;;  _j_ / _<down>_  : 放大高度 (Enlarge)
+;;  _=_             : 均分所有窗口 (Balance)
+;;  _q_ / _<return>_: 退出 (Quit)
+;;  "
+    ("h" shrink-window-horizontally)
+    ("l" enlarge-window-horizontally)
+    ("j" enlarge-window)
+    ("k" shrink-window)
+    ("<up>" shrink-window)
+    ("=" balance-windows)
+    ("q" nil :exit t)
+    ("<return>" nil :exit t)))
+
+;; 挂载到 General.el 的 Leader 键体系（SPC w r）
+(with-eval-after-load 'general
+  (with-eval-after-load 'hydra
+    (my-leader-def
+      "w r" '(hydra-window-resize/body :which-key "resize window mode")
+      "w =" '(balance-windows          :which-key "balance windows"))))
+
+
 ;; ============================================================================
 ;; 2. 配合 General.el 集中绑定 Leader 键
 ;; ============================================================================

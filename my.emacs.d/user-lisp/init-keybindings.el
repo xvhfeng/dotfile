@@ -22,33 +22,17 @@
 ;; ============================================================================
 (use-package which-key
   :straight t
+  :demand t
   :init
   (setq which-key-idle-delay 0.4          ; 停顿 0.4 秒后弹出提示
         which-key-popup-type 'side-window ; 在底部侧边窗口显示
         which-key-side-window-location 'bottom)
   :config
-  (which-key-mode 1))
+  (which-key-mode 1)
+  (which-key-add-key-based-replacements "C-t" "Windows"))
 
 ;; ============================================================================
-;; 2. Hydra: 定义连续/反复操作的微型状态机
-;; ============================================================================
-(use-package hydra
-  :straight t)
-
-;; 示例：定义一个窗口调整的 Hydra
-(defhydra hydra-window-resize (:hint nil)
-  "
-  Window Size: _j_ Shrink-V  _k_ Enlarge-V  _h_ Shrink-H  _l_ Enlarge-H  _=_ Balance  _q_ Quit
-  "
-  ("j" shrink-window "shrink vertical")
-  ("k" enlarge-window "enlarge vertical")
-  ("h" shrink-window-horizontally "shrink horizontal")
-  ("l" enlarge-window-horizontally "enlarge horizontal")
-  ("=" balance-windows "balance")
-  ("q" nil "quit" :exit t))
-
-;; ============================================================================
-;; 3. General.el: 统筹全局，绑定 Leader 键并联动 Hydra 和 Which-Key
+;; 2. General.el: 统筹全局，绑定 Leader 键并联动 Hydra 和 Which-Key
 ;; ============================================================================
 (use-package general
   :straight t
@@ -70,7 +54,10 @@
 
     ;; 重点：将 Hydra 挂载到 General 的 Leader 键菜单上！
     "w" '(:ignore t :which-key "Windows")
-    "wr" '(hydra-window-resize/body :which-key "resize-hydra")))
+    "wr" '(hydra-window-resize/body :which-key "resize-hydra"))
+
+  ;; C-t 与 C-c w 共用同一个窗口命令 keymap，按 C-t 即可触发 Which-Key。
+  (keymap-global-set "C-t" (key-binding (kbd "C-c w"))))
 
 
 ;; 使用general参数代替bind的示例

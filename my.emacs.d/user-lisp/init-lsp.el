@@ -147,6 +147,48 @@
       (imenu-list-focus-after-activation t))
   (error (message "imenu-list 未加载：%s" (error-message-string err))))
 
+
+(use-package treemacs
+  :straight t
+  :defer t
+  :custom
+  (treemacs-width 35)
+  ;; 避免 C-x o (other-window) 切换光标时误入侧边栏
+ ;; (treemacs-is-never-other-window t)
+)
+
+(use-package lsp-treemacs
+  :straight t
+  :after (treemacs)
+  :config
+  ;; 自动随当前编辑的 Buffer 同步高亮对应的符号
+  (setq lsp-treemacs-sync-mode 1))
+
+;; 挂载到 General.el 的 Leader 键体系 (SPC c S)
+(with-eval-after-load 'general
+  (my-leader-def
+    "f t" '(treemacs :which-key "toggle treemacs file tree")
+    "c S" '(lsp-treemacs-symbols :which-key "toggle symbols tree sidebar")))
+
+(use-package zoutline
+  :straight (:host github :repo "abo-abo/zoutline")
+  :defer t
+  :init
+  ;; 在大纲模式或代码模式下按需开启 zoutline 模式
+  (add-hook 'outline-mode-hook #'zoutline-mode)
+  (add-hook 'org-mode-hook #'zoutline-mode)
+  :config
+  ;; 核心命令说明：
+  ;; zoutline-clear-overlays  - 清理生成的行概要悬浮层
+  )
+
+;; 挂载到 General.el 的 Leader 键体系 (SPC z)
+(with-eval-after-load 'general
+  (my-leader-def
+    "z"   '(:ignore t :which-key "zoutline/fold")
+    "z o" '(zoutline-mode :which-key "toggle zoutline mode")
+    "z c" '(zoutline-clear-overlays :which-key "clear zoutline overlays")))
+
 ;; ============================================================================
 ;; 5. 配合 General.el 集中绑定 Leader 键
 ;; ============================================================================
