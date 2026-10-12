@@ -4,7 +4,7 @@
 
 
 (use-package java-ts-mode
-  :ensure nil
+  :straight nil
   :mode "\\.java\\'"
   :hook (java-ts-mode . my/lsp-maybe-ensure)
   :config

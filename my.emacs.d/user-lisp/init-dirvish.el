@@ -32,7 +32,7 @@
   (my-leader-def
     ;; 目录与文件管理器 (Directory / Dired)
     "d"   '(:ignore t :which-key "Directory / File Manager")
-    "d d" '(dirvish                 :which-key "open dirvish (full frame)")
+    "d v" '(dirvish                 :which-key "open dirvish (full frame)")
     "d s" '(dirvish-side            :which-key "toggle side-bar file tree") ; 类似 VSCode 侧边栏
     "d f" '(dirvish-fd              :which-key "fd search in directory")
     "d j" '(dirvish-fd-jump         :which-key "quick jump to directory")

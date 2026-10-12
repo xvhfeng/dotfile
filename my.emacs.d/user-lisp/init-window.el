@@ -57,39 +57,35 @@
     ("q" nil :exit t)
     ("<return>" nil :exit t)))
 
-;; 挂载到 General.el 的 Leader 键体系（SPC w r）
-(with-eval-after-load 'general
-  (with-eval-after-load 'hydra
-    (my-leader-def
-      "w r" '(hydra-window-resize/body :which-key "resize window mode")
-      "w =" '(balance-windows          :which-key "balance windows"))))
-
-
 ;; ============================================================================
-;; 2. 配合 General.el 集中绑定 Leader 键
+;; 2. 将所有窗口操作集中到 C-c w（C-t 是同一 keymap 的别名）
 ;; ============================================================================
 (with-eval-after-load 'general
-  (my-leader-def
-    ;; 窗口管理主菜单 (Window)
-    "w"   '(:ignore t :which-key "Windows")
+  (my-window-def
+    ;; 窗口方向移动
+    "h" '(windmove-left           :which-key "move left")
+    "j" '(windmove-down           :which-key "move down")
+    "k" '(windmove-up             :which-key "move up")
+    "l" '(windmove-right          :which-key "move right")
 
-    ;; 1. 窗口跳转 (Jump)
-    "w w" '(ace-window             :which-key "ace window select/jump")
-    "w M" '(ace-swap-window        :which-key "swap window with target")
+    ;; 窗口选择与交换
+    "w" '(ace-window              :which-key "ace window select/jump")
+    "M" '(ace-swap-window         :which-key "swap window with target")
 
-    ;; 2. 窗口切分 (Split)
-    "w v" '(split-window-right     :which-key "split vertically (|)")   ; 左右切分(生成竖向分界线)
-    "w s" '(split-window-below     :which-key "split horizontally (-)") ; 上下切分(生成横向分界线)
-    "w b" '(split-window-below     :which-key "split horizontally (-)")
+    ;; 窗口切分
+    "v" '(split-window-right      :which-key "split vertically (|)")
+    "s" '(split-window-below      :which-key "split horizontally (-)")
+    "b" '(split-window-below      :which-key "split horizontally (-)")
 
-    ;; 3. 窗口关闭与全屏 (Delete/Maximize)
-    "w d" '(delete-window          :which-key "delete current window")
-    "w x" '(ace-delete-window      :which-key "delete target window")
-    "w m" '(delete-other-windows   :which-key "maximize current window")
-    "w o" '(delete-other-windows   :which-key "delete other windows")
+    ;; 窗口关闭与全屏
+    "d" '(delete-window           :which-key "delete current window")
+    "x" '(ace-delete-window       :which-key "delete target window")
+    "m" '(delete-other-windows    :which-key "maximize current window")
+    "o" '(delete-other-windows    :which-key "delete other windows")
 
-    ;; 4. 窗口平衡 (Balance)
-    "w =" '(balance-windows        :which-key "balance windows size")))
+    ;; 窗口尺寸
+    "r" '(hydra-window-resize/body :which-key "resize window mode")
+    "=" '(balance-windows          :which-key "balance windows size")))
 
 (use-package dimmer
   :straight t

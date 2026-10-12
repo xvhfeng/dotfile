@@ -11,8 +11,9 @@
 ;; ============================================================================
 (use-package change-inner
   :straight t
-  :bind (("M-i" . change-inner)      ; M-i + 引号/括号 -> 清空内部并进入编辑 (对应 ci)
-         ("M-o" . change-outer)))     ; M-o + 引号/括号 -> 连同符号一起清除并编辑 (对应 ca)
+  :general
+  ("M-i" '(change-inner :which-key "change inner"))
+  ("M-o" '(change-outer :which-key "change outer")))
 
 ;; ============================================================================
 ;; 2. Embrace: 实现类似 Vim 的 ys / cs / ds (Surround 围栏符号增删改)
@@ -20,7 +21,8 @@
 (use-package embrace
   :straight t
   ;; 绑定快捷键唤出 embrace 菜单 (a: 增加, c: 修改, d: 删除)
-  :bind ("C-c e" . embrace-commander)
+  :general
+  ("C-c e" '(embrace-commander :which-key "surround menu"))
   :config
   ;; 为常见的 major-mode 启用官方内置的扩展配置 (例如 org-mode, elisp 等)
   (add-hook 'org-mode-hook #'embrace-org-mode-hook)
@@ -31,18 +33,48 @@
 ;; ============================================================================
 (use-package expand-region
   :straight t
-  :bind (("C-=" . er/expand-region)  ; 按 C-= 逐步扩大选中区域 (字符 -> 单词 -> 符号 -> 函数)
-         ("C--" . er/contract-region))) ; 按 C-- 逐步缩小选中区域
+  :general
+  ("C-=" '(er/expand-region :which-key "expand selection"))
+  ("C--" '(er/contract-region :which-key "contract selection")))
 
 ;; ============================================================================
 ;; 4. Multiple-Cursors: 多光标并发编辑
 ;; ============================================================================
 (use-package multiple-cursors
   :straight t
-  :bind (("C-S-c C-S-c" . mc/edit-lines)              ; 选中多行后，在每行首插入光标
-         ("C->"         . mc/mark-next-like-this)     ; 标记选中下一个相同的词/变量
-         ("C-<"         . mc/mark-previous-like-this) ; 标记选中上一个相同的词/变量
-         ("C-c C-<"     . mc/mark-all-like-this)))     ; 一键高亮选中所有匹配项
+  :general
+  ("C-S-c C-S-c" '(mc/edit-lines :which-key "multiple cursors on lines"))
+  ("C->" '(mc/mark-next-like-this :which-key "mark next occurrence"))
+  ("C-<" '(mc/mark-previous-like-this :which-key "mark previous occurrence"))
+  ("C-c C-<" '(mc/mark-all-like-this :which-key "mark all occurrences")))
+
+
+;; 另一个多光标的编辑软件，非常轻量
+(use-package iedit
+  :straight t
+  :defer t
+  :init
+  ;; 禁用包自带的 C-; 绑定，统一交由 General.el 管理。
+  (setq iedit-toggle-key-default nil))
+
+;; --- 挂载到 General.el / C-z e 编辑前缀 ---
+(with-eval-after-load 'general
+  ;; 全局快捷键：快速编辑光标下的所有匹配项。
+  (general-define-key
+    "C-;" '(iedit-mode :which-key "iedit occurrences"))
+
+  (my-leader-def
+    "e i" '(change-inner :which-key "change inner")
+    "e o" '(change-outer :which-key "change outer")
+    "e s" '(embrace-commander :which-key "surround menu")
+    "e +" '(er/expand-region :which-key "expand selection")
+    "e -" '(er/contract-region :which-key "contract selection")
+    "e l" '(mc/edit-lines :which-key "multiple cursors on lines")
+    "e n" '(mc/mark-next-like-this :which-key "mark next occurrence")
+    "e p" '(mc/mark-previous-like-this :which-key "mark previous occurrence")
+    "e a" '(mc/mark-all-like-this :which-key "mark all occurrences")
+    "e e" '(iedit-mode :which-key "iedit occurrences")
+    "e f" '(iedit-mode-toggle-on-function :which-key "iedit current function")))
 
 (provide 'init-edit)
 ;;; init-editing.el ends here

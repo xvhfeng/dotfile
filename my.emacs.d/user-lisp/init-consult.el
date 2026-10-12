@@ -21,11 +21,12 @@
 
 (use-package consult
   :straight t
-  :bind (("C-c p s" . consult-ripgrep)       ; 全局/项目根目录 Ripgrep 实时预览搜索
-         ("M-s r"   . consult-ripgrep)       ; 遵循 Emacs 标准 M-s 前缀
-         ("M-s l"   . consult-line)          ; 当前 Buffer 实时文本搜索
-         ("M-s f"   . consult-find)        ; 实时预览文件名搜索
-        ("C-c ! l" . consult-flymake))
+  :general
+  ("C-c p s" '(consult-ripgrep :which-key "search project"))
+  ("M-s r" '(consult-ripgrep :which-key "ripgrep project"))
+  ("M-s l" '(consult-line :which-key "search current buffer"))
+  ("M-s f" '(consult-find :which-key "find file"))
+  ("C-c ! l" '(consult-flymake :which-key "list diagnostics"))
 
   :custom
   ;; 开启光标移动即时预览
@@ -45,11 +46,11 @@
 
 
 
-;; 挂载到 General.el 体系下的 Leader 键 (SPC c !)
+;; 挂载到 General.el 体系下的诊断菜单 (C-z c d ...)
 (with-eval-after-load 'general
-  (with-eval-after-load 'consult
-    (my-leader-def
-      "c !" '(consult-flymake :which-key "consult flymake diagnostics"))))
+  (my-leader-def
+    "c d" '(:ignore t :which-key "Diagnostics")
+    "c d l" '(consult-flymake :which-key "search diagnostics")))
 
 
 ;; ============================================================================
@@ -58,7 +59,8 @@
 
 (use-package embark
   :straight t
-  :bind (("C-c E" . embark-export)))         ; 在 consult-ripgrep 中按 C-c E 导出为 Buffer
+  :general
+  ("C-c E" '(embark-export :which-key "export results")))
 
 (use-package wgrep
   :straight t

@@ -1,4 +1,3 @@
-
 ;;; -*- lexical-binding: t; -*-
 
 ;; ----------------------------------------------------------------------------
@@ -47,23 +46,17 @@
   ;; 2) 循环滚动：光标移到最底下时，按 C-n 回到最顶部
   (vertico-cycle t)
 
-  :bind (:map vertico-map
-              ;; --- [要求 1] 使用 C-n / C-p 进行上下移动 ---
-              ("C-n" . vertico-next)
-              ("C-p" . vertico-previous)
-
-              ;; --- [要求 2] 输入 TAB 选择当前高亮的文件/文件夹 ---
-              ;; 注：按 TAB 会将高亮项补全/确认为当前输入，若是文件则打开，若是目录则进入
-              ("TAB"   . vertico-insert)
-              ("<tab>" . vertico-insert)
-
-              ;; --- [要求 3] 按 回车 (RET) 打开选中的文件或进入选中的文件夹 ---
-              ("RET"   . vertico-directory-enter)
-              ("<return>" . vertico-directory-enter)
-
-              ;; --- [辅助] 删除路径增强：按 Backspace 快速退回上一级目录 ---
-              ("DEL"   . vertico-directory-delete-char)
-              ("M-DEL" . vertico-directory-delete-word))
+  :general
+  (:keymaps 'vertico-map
+   "C-n" '(vertico-next :which-key "next candidate")
+   "C-p" '(vertico-previous :which-key "previous candidate")
+   "TAB" '(vertico-insert :which-key "insert candidate")
+   "<tab>" '(vertico-insert :which-key "insert candidate")
+   "RET" '(vertico-directory-enter :which-key "enter/open candidate")
+   "<return>" '(vertico-directory-enter :which-key "enter/open candidate")
+   "DEL" '(vertico-directory-delete-char :which-key "delete path char")
+   "M-DEL" '(vertico-directory-delete-word :which-key "delete path component")
+   "/" '(my/vertico-insert-slash :which-key "enter selected directory"))
 
   :config
   ;; --- [要求 4] 输入 "/" 智能进入选中的文件夹 ---
@@ -80,9 +73,7 @@
           (vertico-insert)
           (unless (string-suffix-p "/" (minibuffer-contents))
             (insert "/")))
-      (insert "/")))
-
-  (define-key vertico-map (kbd "/") #'my/vertico-insert-slash))
+      (insert "/"))))
 
 
 ;; ----------------------------------------------------------------------------

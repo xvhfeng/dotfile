@@ -293,6 +293,8 @@
 
 (mapc #'my/require-programming-module
       '(init-mason init-completion init-treesitter init-lsp init-flymake init-lang))
+;; (require 'init-ivy)
+;; (require 'init-dirvish)
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 9. 启动时间统计与 GC 恢复Hook ;; 启动统计与收尾模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线

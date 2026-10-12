@@ -2,13 +2,13 @@
 
 ;;; 中文导读：Org 工作流配置。Org 管理大纲/任务/链接，Agenda 汇总日程，Capture
 ;;; 快速记录，Clock 计时，Crypt 加密条目，Babel/org-src 编辑和执行代码块，
-;;; org-modern 美化显示。全局 C-c o a/b/x 打开议程、切换 Org 缓冲区、捕获；
+;;; org-modern 美化显示。Leader C-z n a/b/c 打开议程、切换 Org 缓冲区、捕获；
 ;;; Org 中 C-RET/C-S-RET/C-M-RET 插入标题/TODO/子标题，C-c C-t 改 TODO，
 ;;; C-c C-q 设标签，C-c C-d/C-s 设截止/计划，C-c ./! 插活动/非活动时间戳，
 ;;; C-c C-o 开链接，C-c @ 插引用，C-c C-x e 导出，C-c C-x C-w/C-a 剪切/归档
 ;;; 子树。Agenda 中 t/r/q/d/s 修改 TODO/归档/标签/截止/计划，C-SPC 预览条目。
 (use-package ol
-  :ensure nil
+  :straight nil
   :config
   (org-link-set-parameters
    "file"
@@ -24,31 +24,28 @@
        '(warning org-link)))))
 
 (use-package org
-  :ensure nil
-  :bind
-  (("C-c o a" . org-agenda)
-   ("C-c o b" . org-switchb)
-   ("C-c o x" . org-capture)
-   (:map org-mode-map
-    ("C-c C-S-l"    . org-toggle-link-display)
-    ("C-<return>"   . org-insert-heading-respect-content)
-    ("C-S-<return>" . org-insert-todo-heading-respect-content)
-    ("C-M-<return>" . org-insert-subheading)
-    ("C-c '"        . org-edit-special)
-    ("C-c C-,"      . org-insert-structure-template)
-    ("C-c C-t"      . org-todo)
-    ("C-c C-q"      . org-set-tags-command)
-    ("C-c C-d"      . org-deadline)
-    ("C-c C-s"      . org-schedule)
-    ("C-c ."        . org-time-stamp)
-    ("C-c !"        . org-time-stamp-inactive)
-    ("C-c C-o"      . org-open-at-point)
-    ("C-c @"        . org-cite-insert)
-    ("C-c *"        . org-ctrl-c-star)
-    ("C-c -"        . org-ctrl-c-minus)
-    ("C-c C-x e"    . org-export-dispatch)
-    ("C-c C-x C-w"  . org-cut-subtree)
-    ("C-c C-x C-a"  . org-archive-subtree-default)))
+  :straight nil
+  :general
+  (:keymaps 'org-mode-map
+   "C-c C-S-l" '(org-toggle-link-display :which-key "toggle link display")
+   "C-<return>" '(org-insert-heading-respect-content :which-key "insert heading")
+   "C-S-<return>" '(org-insert-todo-heading-respect-content :which-key "insert TODO heading")
+   "C-M-<return>" '(org-insert-subheading :which-key "insert subheading")
+   "C-c '" '(org-edit-special :which-key "edit source block")
+   "C-c C-," '(org-insert-structure-template :which-key "insert structure")
+   "C-c C-t" '(org-todo :which-key "change TODO state")
+   "C-c C-q" '(org-set-tags-command :which-key "set tags")
+   "C-c C-d" '(org-deadline :which-key "set deadline")
+   "C-c C-s" '(org-schedule :which-key "schedule")
+   "C-c ." '(org-time-stamp :which-key "insert timestamp")
+   "C-c !" '(org-time-stamp-inactive :which-key "insert inactive timestamp")
+   "C-c C-o" '(org-open-at-point :which-key "open at point")
+   "C-c @" '(org-cite-insert :which-key "insert citation")
+   "C-c *" '(org-ctrl-c-star :which-key "toggle heading")
+   "C-c -" '(org-ctrl-c-minus :which-key "toggle list item")
+   "C-c C-x e" '(org-export-dispatch :which-key "export")
+   "C-c C-x C-w" '(org-cut-subtree :which-key "cut subtree")
+   "C-c C-x C-a" '(org-archive-subtree-default :which-key "archive subtree"))
   :hook ((org-babel-after-execute org-mode) . org-redisplay-inline-images)
   :custom
   (org-persist-directory (concat nn-directory "org/persist/"))
@@ -116,15 +113,15 @@
     (add-to-list 'org-link-abbrev-alist abbrev)))
 
 (use-package org-agenda
-  :ensure nil
-  :bind
-  (:map org-agenda-mode-map
-   ("t" . org-agenda-todo)
-   ("r" . org-agenda-refile)
-   ("q" . org-agenda-set-tags)
-   ("d" . org-agenda-deadline)
-   ("s" . org-agenda-schedule)
-   ("C-SPC" . org-agenda-show-and-scroll-up))
+  :straight nil
+  :general
+  (:keymaps 'org-agenda-mode-map
+   "t" '(org-agenda-todo :which-key "change TODO state")
+   "r" '(org-agenda-refile :which-key "refile")
+   "q" '(org-agenda-set-tags :which-key "set tags")
+   "d" '(org-agenda-deadline :which-key "set deadline")
+   "s" '(org-agenda-schedule :which-key "schedule")
+   "C-SPC" '(org-agenda-show-and-scroll-up :which-key "preview entry"))
   :custom
   (org-agenda-files '("~/agenda.org"))
   (org-agenda-window-setup 'current-window)
@@ -134,8 +131,16 @@
   (org-agenda-start-day "-3d")
   (org-agenda-inhibit-startup t))
 
+(with-eval-after-load 'general
+  (my-leader-def
+    "n a" '(org-agenda :which-key "agenda")
+    "n b" '(org-switchb :which-key "switch Org buffer")
+    "n c" '(org-capture :which-key "capture")
+    "n e" '(org-export-dispatch :which-key "export")
+    "n t" '(org-todo-list :which-key "TODO list")))
+
 (use-package org-src
-  :ensure nil
+  :straight nil
   :custom
   (org-src-preserve-indentation t)
   (org-src-lang-modes
@@ -149,7 +154,7 @@
      ("c" . c) ("c++" . c++) ("cpp" . c++) ("glsl" . c))))
 
 (use-package org-capture
-  :ensure nil
+  :straight nil
   :custom
   (org-capture-templates
    `(("i" "Idea" entry (file ,(concat org-directory "/idea.org"))
@@ -166,14 +171,14 @@
       "* Topic: %^{Description} %^g %? Added: %U"))))
 
 (use-package org-entities
-  :ensure nil
+  :straight nil
   :custom
   (org-entities-user
    '(("flat"  "\\flat" nil "" "" "266D" "♭")
      ("sharp" "\\sharp" nil "" "" "266F" "♯"))))
 
 (use-package org-clock
-  :ensure nil
+  :straight nil
   :commands org-clock-save
   :custom
   (org-clock-persist-file (concat nn-directory "org/clock-persist.el"))
@@ -186,11 +191,11 @@
     (advice-add cmd :before #'org-clock-load)))
 
 (use-package org-crypt
-  :ensure nil
+  :straight nil
   :config (org-crypt-use-before-save-magic))
 
 (use-package org-faces
-  :ensure nil
+  :straight nil
   :custom
   (org-priority-faces
    '((?A . error)

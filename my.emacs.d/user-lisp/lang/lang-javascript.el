@@ -48,13 +48,13 @@ As seen on: https://www.reddit.com/r/emacs/comments/1kfblch/need_help_with_addin
                   (append treesit-font-lock-settings my/treesit-font-lock-settings-jsdoc)))))
 
 (use-package js
-  :ensure nil
+  :straight nil
   :custom
   (js-chain-indent t)
   (js-indent-level nn-indent-offset))
 
 (use-package js-ts-mode
-  :ensure nil
+  :straight nil
   ;; 中文说明：只有 JavaScript 语法可用时才切换 Tree-sitter 模式，缺失时回退 js-mode。
   :if (treesit-language-available-p 'javascript)
   :mode "\\.[mc]?js\\'"
@@ -62,7 +62,7 @@ As seen on: https://www.reddit.com/r/emacs/comments/1kfblch/need_help_with_addin
   :hook (js-ts-mode . my/lsp-maybe-ensure))
 
 (use-package typescript-ts-mode
-  :ensure nil
+  :straight nil
   :if (or (treesit-language-available-p 'typescript)
           (treesit-language-available-p 'tsx))
   :mode

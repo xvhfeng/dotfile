@@ -38,12 +38,17 @@
 ;; 4. Dired 快捷按键优化 (类似 Ranger / Vim)
 ;; ============================================================================
 (use-package dired
-  :bind (:map dired-mode-map
-              ("h" . dired-up-directory)             ; h 返回上一级目录
-              ("l" . dired-find-alternate-file)      ; l 进入目录/打开文件 (不留多余 Buffer)
-              ("j" . dired-next-line)                ; j 向下
-              ("k" . dired-previous-line)            ; k 向上
-              ("f" . dired-goto-file)                ; f 快速搜索当前目录文件名
-              ("z" . dired-hide-details-mode)))      ; z 切换显示/隐藏文件权限等详细信息
+  :general
+  (:keymaps 'dired-mode-map
+   "h" '(dired-up-directory :which-key "parent directory")
+   "l" '(dired-find-alternate-file :which-key "open file/directory")
+   "j" '(dired-next-line :which-key "next entry")
+   "k" '(dired-previous-line :which-key "previous entry")
+   "f" '(dired-goto-file :which-key "find entry")
+   "z" '(dired-hide-details-mode :which-key "toggle details")))
+
+(with-eval-after-load 'general
+  (my-leader-def
+    "d d" '(dired-jump :which-key "Dired current directory")))
 
 (provide 'init-dired)

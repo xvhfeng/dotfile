@@ -7,7 +7,7 @@
 ;;; 滚动：C-c C-d/C-c C-u 半屏上/下滚，C-1/C-2 整屏滚，C-3 重定位。
 ;;; 窗口：C-c o f/b/n/p（或 l/h/j/k）向右/左/下/上分割并进入；C-M-h/j/k/l
 ;;; 切换窗口；M-S-h/l 加宽/缩窄，M-S-k/j 增高/降低；M-F11 全屏。
-;;; 编辑：ESC 取消，C-! 替换，C-c w r/R/w 替换包围符/成对替换/包围单词；M-w
+;;; 编辑：ESC 取消，C-! 替换，C-c s r/R/w 替换包围符/成对替换/包围单词；M-w
 ;;; 复制、C-w 剪切、C-v 粘贴、C-z/C-S-z 撤销/重做；C-x C-d 删除整行但不进
 ;;; kill-ring，C-, 复制当前行并下移，M-k/M-j 上下移动行，M-l/M-r 转小/大写。
 ;;; 导航：C-c C-r 到项目根，C-c C-j 打开项目 Dired，C-~ 打开主目录，C-' 打开
@@ -224,6 +224,28 @@
     (beginning-of-line)
     (open-line 1)))
 
+;;; --- 自定义 Toggle Mark 函数 ---
+
+(defun my/toggle-mark-command ()
+;;  "类似 C-@ / C-SPC 的 Toggle 函数：
+;; 若选区未激活，则开启标记 (Set Mark)；
+;; 若选区已激活，则关闭/取消选区 (Deactivate Mark)。"
+  (interactive)
+  (if (use-region-p)
+      (deactivate-mark)
+    (set-mark-command nil)))
+
+;; --- 快捷键绑定 ---
+
+;; 1. 原生 global-set-key 方式 (覆盖原生 C-2 的 digit-argument)
+(global-set-key (kbd "C-2") #'my/toggle-mark-command)
+
+;; 2. 如果使用 General.el 体系，可写为：
+(with-eval-after-load 'general
+  (general-def
+    "C-2" #'my/toggle-mark-command))
+
+
 ;; 绑定快捷键（可以根据个人习惯修改）
 
 ;;============*  设置 my 序列改进设置 *========================
@@ -257,7 +279,8 @@
 (keymap-global-set "C-0" #'scroll-down-command)
 (keymap-global-set "C-l" #'recenter-top-bottom)
 (keymap-global-set "C-S-a" #'move-beginning-of-line)
-
+;; 方案 A：直接用 comment-line 覆盖原生的 M-; (最顺手)
+(global-set-key (kbd "M-;") #'comment-line)
 
 
 ;;(keymap-global-set "C-!" #'my-replace)
@@ -269,9 +292,14 @@
 (keymap-global-set "C-c o h" #'my-split-left-and-switch)
 (keymap-global-set "C-c o j" #'my-split-below-and-switch)
 (keymap-global-set "C-c o k" #'my-split-above-and-switch)
-(keymap-global-set "C-c w r" #'my-surround-replace)
-(keymap-global-set "C-c w R" #'my-surround-replace-pair)
-(keymap-global-set "C-c w w" #'my-surround-word)
+(defvar-keymap my-surround-map
+  :doc "以 C-c s 开始的文本包围操作。"
+  "r" #'my-surround-replace
+  "R" #'my-surround-replace-pair
+  "w" #'my-surround-word)
+(keymap-global-set "C-c s" my-surround-map)
+(with-eval-after-load 'which-key
+  (which-key-add-key-based-replacements "C-c s" "Surround"))
 (keymap-global-set "C-c C-r" #'my-switch-to-project-root)
 ;;(keymap-global-set "C-c C-j" #'project-dired)
 ;;(keymap-global-set "M-w" #'my-copy)
@@ -285,12 +313,8 @@
 ;; (keymap-global-set "C-S-<tab>" #'bs-cycle-previous)
     ;;(keymap-global-set "C-a" #'back-to-indentation)
 ;;(keymap-global-set "C-v" #'yank)
-;;(keymap-global-set "C-z" #'undo)
+;; C-z 已作为 General Leader 前缀使用。
 ;;(keymap-global-set "C-S-z" #'undo-redo)
-(keymap-global-set "C-c w k" #'windmove-up)
-(keymap-global-set "C-c w j" #'windmove-down)
-(keymap-global-set "C-c w h" #'windmove-left)
-(keymap-global-set "C-c w l" #'windmove-right)
 (keymap-global-set "M-<f11>" #'toggle-frame-fullscreen)
 (keymap-global-set "M-S-l" #'shrink-window-horizontally)
 (keymap-global-set "M-S-h" #'enlarge-window-horizontally)

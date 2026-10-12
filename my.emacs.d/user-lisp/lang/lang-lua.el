@@ -3,7 +3,7 @@
 ;; 中文说明：使用本地 bin/ 中由 Mason 管理的 lua-language-server，未安装时静默回退。
 
 (use-package lua-ts-mode
-  :ensure nil
+  :straight nil
   :mode "\\.lua\\'"
   :hook (lua-ts-mode . my/lsp-maybe-ensure)
   :config

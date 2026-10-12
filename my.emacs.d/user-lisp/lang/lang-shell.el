@@ -3,7 +3,7 @@
 ;;; 中文导读：Shell 语言配置。sh-script 处理 sh/bash/zsh 等脚本，PowerShell 包
 ;;; 处理 *.ps1；这里设置解释器关联、缩进和通用语言工具接入。
 (use-package sh-script
-  :ensure nil
+  :straight nil
   :mode "\\.\$$?:bats\\|zunit\\|env\\\'" "/bspwmrc\\'"
   :hook
   ;; 1. Fontifies variables in double quotes

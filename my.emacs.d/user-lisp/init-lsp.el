@@ -164,10 +164,10 @@
   ;; 自动随当前编辑的 Buffer 同步高亮对应的符号
   (setq lsp-treemacs-sync-mode 1))
 
-;; 挂载到 General.el 的 Leader 键体系 (SPC c S)
+;; 挂载到 General.el 的 Leader 键体系 (C-z c S)
 (with-eval-after-load 'general
   (my-leader-def
-    "f t" '(treemacs :which-key "toggle treemacs file tree")
+    "d t" '(treemacs :which-key "toggle treemacs file tree")
     "c S" '(lsp-treemacs-symbols :which-key "toggle symbols tree sidebar")))
 
 (use-package zoutline
@@ -182,7 +182,7 @@
   ;; zoutline-clear-overlays  - 清理生成的行概要悬浮层
   )
 
-;; 挂载到 General.el 的 Leader 键体系 (SPC z)
+;; 挂载到 General.el 的 Leader 键体系 (C-z z)
 (with-eval-after-load 'general
   (my-leader-def
     "z"   '(:ignore t :which-key "zoutline/fold")
@@ -199,10 +199,13 @@
     "ca"  '(eglot-code-actions      :which-key "code action / quick fix")
     "cr"  '(eglot-rename            :which-key "rename symbol")
     "cf"  '(eglot-format            :which-key "format buffer/region")
-    "cd"  '(xref-find-definitions   :which-key "go to definition")
-    "cD"  '(xref-find-references    :which-key "find references")
-    "ch"  '(eldoc                   :which-key "show hover doc")
     "cq"  '(eglot-shutdown          :which-key "stop lsp server")
+
+    ;; 代码跳转集中到 Code / Go 子菜单，给 Diagnostics 留出独立命名空间。
+    "c g"   '(:ignore t :which-key "Go to")
+    "c g d" '(xref-find-definitions :which-key "definition")
+    "c g r" '(xref-find-references  :which-key "references")
+    "c g h" '(eldoc                  :which-key "hover documentation")
 
     ;; 代码大纲与导航 (Outline / Imenu)
     "o"   '(:ignore t :which-key "Outline / Views")

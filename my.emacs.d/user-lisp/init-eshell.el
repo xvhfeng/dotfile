@@ -48,14 +48,15 @@
 (use-package vterm
   :straight t
   :demand t
-  :bind (("C-c t" . vterm)              ; 全局快捷键 C-c t 快速调出/新建 vterm
-         :map vterm-mode-map
-         ("C-y"     . vterm-yank)       ; 支持 Emacs 剪贴板粘贴
-         ("M-x"     . execute-extended-command)
-         ("C-x C-f" . find-file)
-         ("C-x b"   . switch-to-buffer)
-         ("C-x k"   . kill-current-buffer)
-         ("C-x o"   . other-window))
+  :general
+  ("C-c t" '(vterm :which-key "open terminal"))
+  (:keymaps 'vterm-mode-map
+   "C-y" '(vterm-yank :which-key "paste")
+   "M-x" '(execute-extended-command :which-key "M-x")
+   "C-x C-f" '(find-file :which-key "find file")
+   "C-x b" '(switch-to-buffer :which-key "switch buffer")
+   "C-x k" '(kill-current-buffer :which-key "kill buffer")
+   "C-x o" '(other-window :which-key "other window"))
   :custom
   ;; 指定调用的 Shell 为 macOS 的 Bash
   (vterm-shell "/bin/bash")
@@ -73,5 +74,9 @@
                 (display-line-numbers-mode -1))
               (when (fboundp 'hl-line-mode)
                 (hl-line-mode -1)))))
+
+(with-eval-after-load 'general
+  (my-leader-def
+    "x t" '(vterm :which-key "terminal")))
 
 (provide 'init-eshell)

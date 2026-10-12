@@ -46,7 +46,7 @@
           "lemminx"               ; XML 语言服务器
           "bash-language-server"  ; Shell / Bash 语言服务器
           "typescript-language-server" ; JavaScript / TypeScript 语言服务器
-          "vscode-json-language-server" ; JSON 语言服务器
+          "json-lsp"              ; JSON 语言服务器（可执行文件名仍为 vscode-json-language-server）
 
           ;; --- 代码格式化工具 (Formatters) ---
           "clang-format"          ; C / C++ 代码格式化
@@ -58,10 +58,9 @@
           "luacheck"              ; Lua 静态检查
           ))
 
-  ;; 先初始化 Mason 的运行环境，再仅安装尚未安装的工具；安装失败不会阻断 Emacs。
-  (when (fboundp 'mason-setup)
-    (mason-setup))
-  (when (and (fboundp 'mason-install) (fboundp 'mason-installed-p))
+  ;; `mason-setup' 可能需要异步刷新注册表，因此安装必须放在它的回调体中。
+  ;; 否则首次启动会在注册表尚未就绪时调用 `mason-installed-p'。
+  (mason-setup
     (dolist (package mason-ensure-packages)
       (unless (mason-installed-p package)
         (condition-case err
@@ -71,9 +70,12 @@
 ;; ============================================================================
 ;; 3. Mason 管理界面与常用快捷操作 (交互入口)
 ;; ============================================================================
-;; 中文说明：Mason 当前的管理命令为 mason-manager；C-c m 打开本地工具管理界面。
-(with-eval-after-load 'mason
-  (global-set-key (kbd "C-c m") #'mason-manager))
+;; 中文说明：Mason 当前的管理命令为 mason-manager；保留 C-c m 兼容入口。
+(with-eval-after-load 'general
+  (general-define-key
+    "C-c m" '(mason-manager :which-key "Mason manager"))
+  (my-leader-def
+    "x m" '(mason-manager :which-key "Mason tool manager")))
 
 (provide 'init-mason)
 ;;; init-mason.el ends here

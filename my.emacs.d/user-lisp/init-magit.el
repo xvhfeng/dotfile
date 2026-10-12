@@ -3,9 +3,10 @@
 ;; 1. Magit 核心配置
 (use-package magit
   :ensure t
-  :bind (("C-x g" . magit-status)           ; 打开 Git 状态面板
-         ("C-x M-g" . magit-dispatch)       ; 调用特定 Magit 命令快捷弹框
-         ("C-c f g" . magit-file-dispatch)) ; 对当前文件执行 Git 操作（如 Blame、Log）
+  :general
+  ("C-x g" '(magit-status :which-key "Magit status"))
+  ("C-x M-g" '(magit-dispatch :which-key "Magit dispatch"))
+  ("C-c f g" '(magit-file-dispatch :which-key "Magit file actions"))
 
   :custom
   ;; 性能与显示优化
@@ -19,8 +20,17 @@
 
 ;; 2. 在内置的 project.el 中集成 Magit (可选)
 (with-eval-after-load 'project
-  (define-key project-prefix-map (kbd "m") #'magit-project-status)
+  (general-define-key
+    :keymaps 'project-prefix-map
+    "m" '(magit-project-status :which-key "Magit project status"))
   (add-to-list 'project-switch-commands '(magit-project-status "Magit" ?m)))
+
+(with-eval-after-load 'general
+  (my-leader-def
+    "g s" '(magit-status :which-key "status")
+    "g d" '(magit-dispatch :which-key "dispatch")
+    "g f" '(magit-file-dispatch :which-key "file actions")
+    "g p" '(magit-project-status :which-key "project status")))
 
 (provide 'init-magit)
 ;;; init-magit.el ends herejj

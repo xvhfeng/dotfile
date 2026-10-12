@@ -13,7 +13,11 @@
 ;; 1. Flymake 核心配置与外观增强
 ;; ============================================================================
 (use-package flymake
-  :ensure nil                          ; 内置包无需从外部下载
+  :straight nil                        ; 内置包无需从外部下载
+  :general
+  (:keymaps 'flymake-mode-map
+   "M-n" '(flymake-goto-next-error :which-key "next diagnostic")
+   "M-p" '(flymake-goto-prev-error :which-key "previous diagnostic"))
   :hook
   ;; 中文说明：为全部编程模式和常见 Web/配置代码模式自动开启 Flymake。
   ;; C、Java、Python 等的语义诊断由 Eglot 已连接的语言服务器提供。
@@ -33,12 +37,7 @@
   ;; 输入停顿时触发校验的延迟时间（0.5秒），兼顾流畅度与性能
   (flymake-no-changes-timeout 0.5)
   ;; 光标移动到错误行时，自动在 Echo Area 显示详细错误信息
-  (flymake-show-diagnostics-at-end-of-line nil)
-
-  :config
-  ;; 优化原生跳转快捷键
-  (define-key flymake-mode-map (kbd "M-n") #'flymake-goto-next-error)
-  (define-key flymake-mode-map (kbd "M-p") #'flymake-goto-prev-error))
+  (flymake-show-diagnostics-at-end-of-line nil))
 
 ;; ============================================================================
 ;; 2. 与 Eglot 的深度无缝联动
@@ -57,23 +56,28 @@
 ;; 如果你的配置中使用了 Consult，可以使用 consult-flymake 随时弹窗预览所有错误
 (with-eval-after-load 'consult
   (with-eval-after-load 'flymake
-    (define-key flymake-mode-map (kbd "C-c ! l") #'consult-flymake)))
+    (general-define-key
+      :keymaps 'flymake-mode-map
+      "C-c ! l" '(consult-flymake :which-key "list diagnostics"))))
 
 ;; ============================================================================
-;; 4. 挂载到 General.el Leader 键体系 (SPC c ...)
+;; 4. 挂载到 General.el Leader 键体系 (C-z c ...)
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "c !" '(flymake-show-buffer-diagnostics :which-key "list buffer diagnostics")
-    "c n" '(flymake-goto-next-error          :which-key "next error")
-    "c p" '(flymake-goto-prev-error          :which-key "previous error")
-    "c B" '(flymake-show-project-diagnostics :which-key "list project diagnostics")))
+    "c d" '(:ignore t :which-key "Diagnostics")
+    "c d b" '(flymake-show-buffer-diagnostics :which-key "buffer diagnostics")
+    "c d a" '(flymake-show-project-diagnostics :which-key "all project diagnostics")
+    "c d n" '(flymake-goto-next-error          :which-key "next diagnostic")
+    "c d p" '(flymake-goto-prev-error          :which-key "previous diagnostic")))
 
 
-(use-package flymake-popon
-  :straight t
-  :hook (flymake-mode . flymake-popon-mode)
-  :custom
-  (flymake-popon-method 'overlay)) ; 使用 overlay 浮窗在光标旁直接展示错误描述
+(condition-case err
+    (use-package flymake-popon
+      :straight t
+      :hook (flymake-mode . flymake-popon-mode)
+      :custom
+      (flymake-popon-method 'overlay)) ; 使用 overlay 浮窗在光标旁直接展示错误描述
+  (error (message "flymake-popon 未加载：%s" (error-message-string err))))
 
 (provide 'init-flymake)

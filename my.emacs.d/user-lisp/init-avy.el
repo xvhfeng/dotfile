@@ -6,10 +6,10 @@
 (use-package avy
   :straight t
   :defer t
-  ;; 绑定常用的全局直达快捷键（也可以统一写在 general 里）
-  :bind (("C-:" . avy-goto-char-timer)
-         ("M-g f" . avy-goto-line)
-         ("M-g w" . avy-goto-word-1))
+  :general
+  ("C-:" '(avy-goto-char-timer :which-key "jump by chars"))
+  ("M-g f" '(avy-goto-line :which-key "jump to visible line"))
+  ("M-g w" '(avy-goto-word-1 :which-key "jump to visible word"))
   :config
   ;; ============================================================================
   ;; 1. 核心体验与键位设置

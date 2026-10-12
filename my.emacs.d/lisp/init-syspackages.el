@@ -55,10 +55,10 @@
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "h b" '(:ignore t :which-key "Homebrew / System Packages")
-    "h b i" '(system-packages-install :which-key "brew install package")
-    "h b u" '(system-packages-update  :which-key "brew update & upgrade")
-    "h b s" '(system-packages-search  :which-key "search brew packages")))
+    "x p" '(:ignore t :which-key "System packages")
+    "x p i" '(system-packages-install :which-key "install package")
+    "x p u" '(system-packages-update  :which-key "update packages")
+    "x p s" '(system-packages-search  :which-key "search packages")))
 
 (provide 'init-syspackages)
 ;;; init-syspackages.el ends here

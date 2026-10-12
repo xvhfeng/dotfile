@@ -2,7 +2,7 @@
 
 ;; 中文说明：优先使用本地 bin/ 中由 Mason 管理的 pyright，不改动系统 Python 环境。
 (use-package python
-  :ensure nil
+  :straight nil
   :mode ("\\.py\\'" . python-ts-mode)
   :hook (python-ts-mode . my/lsp-maybe-ensure)
   :config

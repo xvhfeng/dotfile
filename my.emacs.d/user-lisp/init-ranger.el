@@ -12,7 +12,8 @@
 (use-package ranger
   :straight (:host github :repo "punassuming/ranger.el")
  :after hydra
-  :bind ("C-c r" . ranger)
+  :general
+  ("C-c r" '(ranger :which-key "Ranger file manager"))
   
   :custom
   ;; 1. 是否在启动 dired 时自动替换为 ranger 界面（建议先设为 nil，用 C-c r 手动调出）
@@ -37,6 +38,10 @@
 
   ;; 设置标题栏样式
   (setq ranger-header-func 'ranger-header-line))
+
+(with-eval-after-load 'general
+  (my-leader-def
+    "d r" '(ranger :which-key "Ranger file manager")))
 
 
 

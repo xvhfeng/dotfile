@@ -23,7 +23,7 @@
                (expand-file-name (if proj (project-root proj) default-directory))))))
 
 (use-package cc-mode
-  :ensure nil
+  :straight nil
   :mode "\\.\\(c\\|h\\|cpp\\|hpp\\|cppm\\|ixx\\)\\'"
   :config
   (with-eval-after-load 'eglot

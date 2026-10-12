@@ -4,10 +4,10 @@
 ;;; 展示函数/变量文档，并增加配置调试与 hook 管理辅助。F12 查光标处函数，
 ;;; C-F12 查变量；Help 缓冲区中 r 可移除光标处显示的 hook 函数。
 (use-package elisp-mode
-  :ensure nil
-  :bind
-  ("<f12>" . find-function-at-point)
-  ("C-<f12>" . find-variable-at-point)
+  :straight nil
+  :general
+  ("<f12>" '(find-function-at-point :which-key "find function definition"))
+  ("C-<f12>" '(find-variable-at-point :which-key "find variable definition"))
   :hook (emacs-lisp-mode . prettify-symbols-mode)
   :custom
   (emacs-lisp-indent-offset nn-indent-offset)
@@ -274,11 +274,13 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
         ret))))
 
 (use-package help-mode
-  :ensure nil
+  :straight nil
   :hook
   (help-mode . visual-line-mode)
   (help-mode . cursor-sensor-mode)
-  :bind (:map help-mode-map ("r" . my-remove-hook-at-point))
+  :general
+  (:keymaps 'help-mode-map
+   "r" '(my-remove-hook-at-point :which-key "remove hook at point"))
   :config
   ;; 返回安装在 FUNCTION 上的所有 advice 函数列表。
   (defun my-function-advices (function)

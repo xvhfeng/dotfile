@@ -6,20 +6,20 @@
 ;;; 跳属性、C-c C-f 折叠、C-c C-w/k/r/c 包裹/删除/重命名/克隆元素、C-c /
 ;;; 闭合元素、C-c t s/m 选择/匹配标签；M-E 展开 Emmet 缩写。
 (use-package css-mode
-  :ensure nil
+  :straight nil
   :custom (css-fontify-colors nil))
 
 (use-package css-ts-mode
-  :ensure nil
+  :straight nil
   :if (treesit-language-available-p 'css)
   :mode "\\.css\\'")
 
 (use-package html-ts-mode
-  :ensure nil
+  :straight nil
   :if (treesit-language-available-p 'html))
 
 (use-package mhtml-ts-mode
-  :ensure nil
+  :straight nil
   :if (and (treesit-language-available-p 'html)
            (treesit-language-available-p 'css)
            (treesit-language-available-p 'javascript))
@@ -44,22 +44,22 @@
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"
   :mode "\\.vue\\'"
-  :bind
-  (:map web-mode-map
-   ("C-c C-h" . web-mode-reload)
-   ("C-c C-i" . web-mode-buffer-indent)
-   ("M-]" . web-mode-tag-next)
-   ("M-[" . web-mode-tag-previous)
-   ("C-M-]" . web-mode-attribute-next)
-   ("C-M-[" . web-mode-attribute-previous)
-   ("C-c C-f" . web-mode-fold-or-unfold)
-   ("C-c C-w" . web-mode-element-wrap)
-   ("C-c C-k" . web-mode-element-kill)
-   ("C-c C-r" . web-mode-element-rename)
-   ("C-c C-c" . web-mode-element-clone)
-   ("C-c /" . web-mode-element-close)
-   ("C-c t s" . web-mode-tag-select)
-   ("C-c t m" . web-mode-tag-match))
+  :general
+  (:keymaps 'web-mode-map
+   "C-c C-h" '(web-mode-reload :which-key "reload")
+   "C-c C-i" '(web-mode-buffer-indent :which-key "indent buffer")
+   "M-]" '(web-mode-tag-next :which-key "next tag")
+   "M-[" '(web-mode-tag-previous :which-key "previous tag")
+   "C-M-]" '(web-mode-attribute-next :which-key "next attribute")
+   "C-M-[" '(web-mode-attribute-previous :which-key "previous attribute")
+   "C-c C-f" '(web-mode-fold-or-unfold :which-key "toggle fold")
+   "C-c C-w" '(web-mode-element-wrap :which-key "wrap element")
+   "C-c C-k" '(web-mode-element-kill :which-key "kill element")
+   "C-c C-r" '(web-mode-element-rename :which-key "rename element")
+   "C-c C-c" '(web-mode-element-clone :which-key "clone element")
+   "C-c /" '(web-mode-element-close :which-key "close element")
+   "C-c t s" '(web-mode-tag-select :which-key "select tag")
+   "C-c t m" '(web-mode-tag-match :which-key "match tag"))
   :custom
   (web-mode-auto-close-style 1)
   (web-mode-markup-indent-offset nn-indent-offset)
@@ -75,10 +75,10 @@
   (add-to-list 'web-mode-engines-alist '("phoenix" . "\\.[lh]eex\\'")))
 
 (use-package emmet-mode
-  :bind
-  (:map emmet-mode-keymap
-   ([tab] . my-web/indent-or-yas-or-emmet-expand )
-   ("M-E" . emmet-expand-line))
+  :general
+  (:keymaps 'emmet-mode-keymap
+   [tab] '(my-web/indent-or-yas-or-emmet-expand :which-key "expand/indent")
+   "M-E" '(emmet-expand-line :which-key "expand Emmet abbreviation"))
   :hook (web-mode html-mode html-ts-mode mhtml-mode mhtml-ts-mode css-mode css-ts-mode)
   :custom
   (emmet-move-cursor-between-quotes t)

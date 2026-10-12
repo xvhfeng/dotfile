@@ -6,10 +6,10 @@
              :ensure t
              :init
              (vertico-mode 1)
-             :bind (:map vertico-map
-                          ("TAB" . vertico-next)
-                        ("<backtab>" . vertico-previous)
-                         ;; 当输入 / 且当前高亮是目录时，直接进入
-                         ("/" . vertico-insert)))
+             :general
+             (:keymaps 'vertico-map
+              "TAB" '(vertico-next :which-key "next candidate")
+              "<backtab>" '(vertico-previous :which-key "previous candidate")
+              "/" '(vertico-insert :which-key "insert candidate")))
 
 (provide 'init-vertico)

@@ -64,9 +64,10 @@
   :defer t
   :init
   ;; 设置 C-. 为超级右键菜单（在任何位置/补全列表中触发）
-  :bind (("C-." . embark-act)
-         ("M-." . embark-dwim)
-         ("C-h B" . embark-bindings))
+  :general
+  ("C-." '(embark-act :which-key "context actions"))
+  ("M-." '(embark-dwim :which-key "default context action"))
+  ("C-h B" '(embark-bindings :which-key "Embark bindings"))
   :config
   ;; 执行动作后隐藏 Embark 提示框
   (add-hook 'embark-collect-post-revert-hook #'consult-revert-config))
@@ -98,10 +99,15 @@
     "b B" '(consult-buffer-other-window :which-key "switch buffer other window")
     "f r" '(consult-recent-file   :which-key "recent files")
 
-    ;; 跳转与历史 (Go/History)
-    "g m" '(consult-mark          :which-key "jump to mark")
-    "g y" '(consult-yank-pop      :which-key "browse kill-ring (paste history)")
-    "g e" '(consult-compile-error :which-key "jump to compile error")))
+    ;; 跳转与历史 (Jump/History)
+    "j m" '(consult-mark          :which-key "jump to mark")
+    "j y" '(consult-yank-pop      :which-key "browse kill-ring")
+    "j e" '(consult-compile-error :which-key "jump to compile error")
+
+    ;; 上下文动作
+    "e ." '(embark-act            :which-key "context actions")
+    "e RET" '(embark-dwim         :which-key "default context action")
+    "e B" '(embark-bindings       :which-key "show action bindings")))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
