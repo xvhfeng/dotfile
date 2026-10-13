@@ -46,20 +46,20 @@
   :mode "\\.vue\\'"
   :general
   (:keymaps 'web-mode-map
-   "C-c C-h" '(web-mode-reload :which-key "reload")
-   "C-c C-i" '(web-mode-buffer-indent :which-key "indent buffer")
-   "M-]" '(web-mode-tag-next :which-key "next tag")
-   "M-[" '(web-mode-tag-previous :which-key "previous tag")
-   "C-M-]" '(web-mode-attribute-next :which-key "next attribute")
-   "C-M-[" '(web-mode-attribute-previous :which-key "previous attribute")
-   "C-c C-f" '(web-mode-fold-or-unfold :which-key "toggle fold")
-   "C-c C-w" '(web-mode-element-wrap :which-key "wrap element")
-   "C-c C-k" '(web-mode-element-kill :which-key "kill element")
-   "C-c C-r" '(web-mode-element-rename :which-key "rename element")
-   "C-c C-c" '(web-mode-element-clone :which-key "clone element")
-   "C-c /" '(web-mode-element-close :which-key "close element")
-   "C-c t s" '(web-mode-tag-select :which-key "select tag")
-   "C-c t m" '(web-mode-tag-match :which-key "match tag"))
+   "C-c C-h" '("reload" . web-mode-reload)
+   "C-c C-i" '("indent buffer" . web-mode-buffer-indent)
+   "M-]" '("next tag" . web-mode-tag-next)
+   "M-[" '("previous tag" . web-mode-tag-previous)
+   "C-M-]" '("next attribute" . web-mode-attribute-next)
+   "C-M-[" '("previous attribute" . web-mode-attribute-previous)
+   "C-c C-f" '("toggle fold" . web-mode-fold-or-unfold)
+   "C-c C-w" '("wrap element" . web-mode-element-wrap)
+   "C-c C-k" '("kill element" . web-mode-element-kill)
+   "C-c C-r" '("rename element" . web-mode-element-rename)
+   "C-c C-c" '("clone element" . web-mode-element-clone)
+   "C-c /" '("close element" . web-mode-element-close)
+   "C-c t s" '("select tag" . web-mode-tag-select)
+   "C-c t m" '("match tag" . web-mode-tag-match))
   :custom
   (web-mode-auto-close-style 1)
   (web-mode-markup-indent-offset nn-indent-offset)
@@ -70,6 +70,14 @@
   (web-mode-enable-current-element-highlight t)
   (web-mode-enable-html-entities-fontification t)
   :config
+  (which-key-add-keymap-based-replacements
+    web-mode-map
+    "C-c C-a" "Attributes"
+    "C-c C-b" "Blocks"
+    "C-c C-d" "DOM"
+    "C-c C-e" "Elements"
+    "C-c C-t" "Tags"
+    "C-c t" "Tags")
   (setf (alist-get "javascript" web-mode-comment-formats nil nil #'equal) "//")
   (add-to-list 'web-mode-engines-alist '("elixir" . "\\.eex\\'"))
   (add-to-list 'web-mode-engines-alist '("phoenix" . "\\.[lh]eex\\'")))
@@ -77,8 +85,8 @@
 (use-package emmet-mode
   :general
   (:keymaps 'emmet-mode-keymap
-   [tab] '(my-web/indent-or-yas-or-emmet-expand :which-key "expand/indent")
-   "M-E" '(emmet-expand-line :which-key "expand Emmet abbreviation"))
+   [tab] '("expand/indent" . my-web/indent-or-yas-or-emmet-expand)
+   "M-E" '("expand Emmet abbreviation" . emmet-expand-line))
   :hook (web-mode html-mode html-ts-mode mhtml-mode mhtml-ts-mode css-mode css-ts-mode)
   :custom
   (emmet-move-cursor-between-quotes t)

@@ -24,7 +24,12 @@
 
 (use-package cc-mode
   :straight nil
-  :mode "\\.\\(c\\|h\\|cpp\\|hpp\\|cppm\\|ixx\\)\\'"
+  ;; `cc-mode' 是库名，不是可调用的 major mode。扩展名必须明确映射到
+  ;; `c-mode' / `c++-mode'，否则自动加载会寻找不存在的 `cc-mode' 函数。
+  :mode (("\\.c\\'" . c-mode)
+         ("\\.h\\'" . c-or-c++-mode)
+         ("\\.\\(cc\\|cpp\\|cxx\\|hh\\|hpp\\|hxx\\|cppm\\|ixx\\)\\'" . c++-mode))
+  :hook ((c-mode c++-mode c-ts-mode c++-ts-mode) . outline-minor-mode)
   :config
   (with-eval-after-load 'eglot
     ;; 为传统 C/C++ 模式和 Tree-sitter 模式复用同一份 clangd 参数。

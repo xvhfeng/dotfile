@@ -55,10 +55,9 @@
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "x p" '(:ignore t :which-key "System packages")
-    "x p i" '(system-packages-install :which-key "install package")
-    "x p u" '(system-packages-update  :which-key "update packages")
-    "x p s" '(system-packages-search  :which-key "search packages")))
+    "x p i" '("install package" . system-packages-install)
+    "x p u" '("update packages" . system-packages-update)
+    "x p s" '("search packages" . system-packages-search)))
 
 (provide 'init-syspackages)
 ;;; init-syspackages.el ends here

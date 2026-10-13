@@ -65,9 +65,9 @@
   :init
   ;; 设置 C-. 为超级右键菜单（在任何位置/补全列表中触发）
   :general
-  ("C-." '(embark-act :which-key "context actions"))
-  ("M-." '(embark-dwim :which-key "default context action"))
-  ("C-h B" '(embark-bindings :which-key "Embark bindings"))
+  ("C-." '("context actions" . embark-act))
+  ("M-." '("default context action" . embark-dwim))
+  ("C-h B" '("Embark bindings" . embark-bindings))
   :config
   ;; 执行动作后隐藏 Embark 提示框
   (add-hook 'embark-collect-post-revert-hook #'consult-revert-config))
@@ -85,29 +85,31 @@
 (with-eval-after-load 'general
   (my-leader-def
     ;; 搜索与定位 (Search)
-    "s"   '(:ignore t :which-key "Search/Consult")
-    "ss"  '(consult-line          :which-key "search current buffer")
-    "sS"  '(consult-line-multi    :which-key "search open buffers")
-    "sp"  '(consult-ripgrep       :which-key "search project (rg)")
-    "sf"  '(consult-find          :which-key "find file with fd/find")
-    "sg"  '(consult-git-grep      :which-key "search git repo")
-    "si"  '(consult-imenu         :which-key "imenu code symbols")
-    "sb"  '(consult-bookmark      :which-key "bookmarks")
+    "ss"  '("search current buffer" . consult-line)
+    "sS"  '("search open buffers" . consult-line-multi)
+    "sp"  '("search project (rg)" . consult-ripgrep)
+    "sf"  '("find file with fd/find" . consult-find)
+    "sg"  '("search git repo" . consult-git-grep)
+    "si"  '("imenu code symbols" . consult-imenu)
+    "sb"  '("bookmarks" . consult-bookmark)
 
     ;; Buffer 与文件增强
-    "b b" '(consult-buffer        :which-key "switch buffer/recentf")
-    "b B" '(consult-buffer-other-window :which-key "switch buffer other window")
-    "f r" '(consult-recent-file   :which-key "recent files")
+    "b b" '("switch buffer/recentf" . consult-buffer)
+    "b B" '("switch buffer other window" . consult-buffer-other-window)
+    "f r" '("recent files" . consult-recent-file)
 
-    ;; 跳转与历史 (Jump/History)
-    "j m" '(consult-mark          :which-key "jump to mark")
-    "j y" '(consult-yank-pop      :which-key "browse kill-ring")
-    "j e" '(consult-compile-error :which-key "jump to compile error")
+    ;; 跳转
+    "j m" '("jump to mark" . consult-mark)
+    "j e" '("jump to compile error" . consult-compile-error)
+
+    ;; 剪贴历史是独立命令，不混入跳转菜单。
+    "y" '("browse kill-ring" . consult-yank-pop)
 
     ;; 上下文动作
-    "e ." '(embark-act            :which-key "context actions")
-    "e RET" '(embark-dwim         :which-key "default context action")
-    "e B" '(embark-bindings       :which-key "show action bindings")))
+    "a a" '("context actions" . embark-act)
+    "a d" '("default context action" . embark-dwim)
+    "a b" '("show action bindings" . embark-bindings)
+    "a e" '("export results" . embark-export)))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here

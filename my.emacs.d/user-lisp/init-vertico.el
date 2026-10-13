@@ -8,8 +8,8 @@
              (vertico-mode 1)
              :general
              (:keymaps 'vertico-map
-              "TAB" '(vertico-next :which-key "next candidate")
-              "<backtab>" '(vertico-previous :which-key "previous candidate")
-              "/" '(vertico-insert :which-key "insert candidate")))
+              "TAB" '("next candidate" . vertico-next)
+              "<backtab>" '("previous candidate" . vertico-previous)
+              "/" '("insert candidate" . vertico-insert)))
 
 (provide 'init-vertico)

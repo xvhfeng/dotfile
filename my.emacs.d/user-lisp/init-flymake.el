@@ -16,8 +16,8 @@
   :straight nil                        ; 内置包无需从外部下载
   :general
   (:keymaps 'flymake-mode-map
-   "M-n" '(flymake-goto-next-error :which-key "next diagnostic")
-   "M-p" '(flymake-goto-prev-error :which-key "previous diagnostic"))
+   "M-n" '("next diagnostic" . flymake-goto-next-error)
+   "M-p" '("previous diagnostic" . flymake-goto-prev-error))
   :hook
   ;; 中文说明：为全部编程模式和常见 Web/配置代码模式自动开启 Flymake。
   ;; C、Java、Python 等的语义诊断由 Eglot 已连接的语言服务器提供。
@@ -58,18 +58,17 @@
   (with-eval-after-load 'flymake
     (general-define-key
       :keymaps 'flymake-mode-map
-      "C-c ! l" '(consult-flymake :which-key "list diagnostics"))))
+      "C-c ! l" '("list diagnostics" . consult-flymake))))
 
 ;; ============================================================================
 ;; 4. 挂载到 General.el Leader 键体系 (C-z c ...)
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "c d" '(:ignore t :which-key "Diagnostics")
-    "c d b" '(flymake-show-buffer-diagnostics :which-key "buffer diagnostics")
-    "c d a" '(flymake-show-project-diagnostics :which-key "all project diagnostics")
-    "c d n" '(flymake-goto-next-error          :which-key "next diagnostic")
-    "c d p" '(flymake-goto-prev-error          :which-key "previous diagnostic")))
+    "c d b" '("buffer diagnostics" . flymake-show-buffer-diagnostics)
+    "c d a" '("all project diagnostics" . flymake-show-project-diagnostics)
+    "c d n" '("next diagnostic" . flymake-goto-next-error)
+    "c d p" '("previous diagnostic" . flymake-goto-prev-error)))
 
 
 (condition-case err

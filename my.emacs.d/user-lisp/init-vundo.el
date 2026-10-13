@@ -6,18 +6,18 @@
 (use-package vundo
   :straight t
   :general
-  ("C-x u" '(vundo :which-key "visual undo tree"))
+  ("C-x u" '("visual undo tree" . vundo))
   (:keymaps 'vundo-mode-map
-   "h" '(vundo-backward :which-key "previous branch")
-   "l" '(vundo-forward :which-key "next branch")
-   "j" '(vundo-next :which-key "next node")
-   "k" '(vundo-previous :which-key "previous node")
-   "a" '(vundo-stem-root :which-key "branch root")
-   "e" '(vundo-stem-end :which-key "branch end")
-   "d" '(vundo-diff :which-key "show diff")
-   "q" '(vundo-quit :which-key "quit")
-   "C-g" '(vundo-confirm :which-key "confirm")
-   "RET" '(vundo-confirm :which-key "confirm"))
+   "h" '("previous branch" . vundo-backward)
+   "l" '("next branch" . vundo-forward)
+   "j" '("next node" . vundo-next)
+   "k" '("previous node" . vundo-previous)
+   "a" '("branch root" . vundo-stem-root)
+   "e" '("branch end" . vundo-stem-end)
+   "d" '("show diff" . vundo-diff)
+   "q" '("quit" . vundo-quit)
+   "C-g" '("confirm" . vundo-confirm)
+   "RET" '("confirm" . vundo-confirm))
   :custom
   ;; 限制分支树高亮显示的节点数量，提升大文件或历史记录较长时的渲染性能
   (vundo-compact-display t)
@@ -35,7 +35,7 @@
 ;; Leader 键入口。
 (with-eval-after-load 'general
   (my-leader-def
-    "u" '(vundo :which-key "undo tree (vundo)")))
+    "u" '("undo tree (vundo)" . vundo)))
 
 (provide 'init-vundo)
 ;;; init-vundo.el ends here

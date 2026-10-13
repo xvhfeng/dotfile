@@ -40,15 +40,15 @@
 (use-package dired
   :general
   (:keymaps 'dired-mode-map
-   "h" '(dired-up-directory :which-key "parent directory")
-   "l" '(dired-find-alternate-file :which-key "open file/directory")
-   "j" '(dired-next-line :which-key "next entry")
-   "k" '(dired-previous-line :which-key "previous entry")
-   "f" '(dired-goto-file :which-key "find entry")
-   "z" '(dired-hide-details-mode :which-key "toggle details")))
+   "h" '("parent directory" . dired-up-directory)
+   "l" '("open file/directory" . dired-find-alternate-file)
+   "j" '("next entry" . dired-next-line)
+   "k" '("previous entry" . dired-previous-line)
+   "f" '("find entry" . dired-goto-file)
+   "z" '("toggle details" . dired-hide-details-mode)))
 
 (with-eval-after-load 'general
   (my-leader-def
-    "d d" '(dired-jump :which-key "Dired current directory")))
+    "d d" '("Dired current directory" . dired-jump)))
 
 (provide 'init-dired)

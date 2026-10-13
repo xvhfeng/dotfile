@@ -23,6 +23,20 @@
       '(lang-cc lang-elisp lang-java lang-javascript lang-lua lang-python
         lang-web lang-shell lang-org lang-markdown lang-json lang-yaml))
 
+(defun my/language-common-setup ()
+  "Enable the common highlighting, completion and outline baseline."
+  (font-lock-mode 1)
+  (outline-minor-mode 1)
+  ;; 一些 major mode 会把 CAPF 改成 buffer-local，因此在语言 Hook 中
+  ;; 重新补上通用的文件名和缓冲区词汇补全。
+  (dolist (capf '(cape-file cape-dabbrev))
+    (when (fboundp capf)
+      (add-hook 'completion-at-point-functions capf 90 t))))
+
+(add-hook 'prog-mode-hook #'my/language-common-setup)
+(add-hook 'markdown-mode-hook #'my/language-common-setup)
+(add-hook 'markdown-ts-mode-hook #'my/language-common-setup)
+
 (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.\\(\\(s[ac]\\|le\\)ss\\|styl\\)\\'" "\\1\\.css\\'"))
 (add-to-list 'find-sibling-rules '("/\\([^/]+\\)\\.css\\'" "\\1\\.\\(\\(s[ac]\\|le\\)ss\\|styl\\)\\'"))
 

@@ -49,14 +49,14 @@
   :straight t
   :demand t
   :general
-  ("C-c t" '(vterm :which-key "open terminal"))
+  ("C-c t" '("open terminal" . vterm))
   (:keymaps 'vterm-mode-map
-   "C-y" '(vterm-yank :which-key "paste")
-   "M-x" '(execute-extended-command :which-key "M-x")
-   "C-x C-f" '(find-file :which-key "find file")
-   "C-x b" '(switch-to-buffer :which-key "switch buffer")
-   "C-x k" '(kill-current-buffer :which-key "kill buffer")
-   "C-x o" '(other-window :which-key "other window"))
+   "C-y" '("paste" . vterm-yank)
+   "M-x" '("M-x" . execute-extended-command)
+   "C-x C-f" '("find file" . find-file)
+   "C-x b" '("switch buffer" . switch-to-buffer)
+   "C-x k" '("kill buffer" . kill-current-buffer)
+   "C-x o" '("other window" . other-window))
   :custom
   ;; 指定调用的 Shell 为 macOS 的 Bash
   (vterm-shell "/bin/bash")
@@ -77,6 +77,6 @@
 
 (with-eval-after-load 'general
   (my-leader-def
-    "x t" '(vterm :which-key "terminal")))
+    "x t" '("terminal" . vterm)))
 
 (provide 'init-eshell)

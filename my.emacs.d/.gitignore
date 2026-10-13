@@ -6,3 +6,7 @@ docs
 bin
 mason
 transient
+.cache
+elpa
+outputs
+.tool-versions

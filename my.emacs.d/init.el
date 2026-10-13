@@ -268,33 +268,47 @@
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 8. 常用现代化生态插件配置 ;; 现代化插件配置模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
-(require 'init-base) ;; 加载基础配置模块 init-base.el
-(require 'init-keybindings) ;; 加载快捷键配置模块 init-keybindings.el
-(require 'init-themes) ;; 加载主题配置模块 init-themes.el
-(require 'init-minbuffer) ;; 加载 Minibuffer 配置模块 init-minbuffer.el
-(require 'init-eshell) ;; 加载shell，让emacs和系统（mac/linux）具有同样的bash环境
-(require 'init-ranger) ;; 加载ranger，目录选择器
-(require 'init-consult) ;; 加载搜索等一系列的插件
-(require 'init-rainbow) ;; 彩虹括号
-(require 'init-edit) ;; 使用插件的编辑操作，黄金3插件
-(require 'init-magit) ;;git的版本控制
-(require 'init-vundo) ;;  撤回
-(require 'init-mykey) ;; emacs 自身快捷键行为的设定和自身的一些快捷键偏好设定
-(require 'init-avy)
-(require 'init-window)
-;; 编程能力总入口：先准备外部工具路径，再启用补全、语法树、LSP、诊断和语言模块。
-;; 各模块内部均按需加载，某个可选依赖缺失时不会阻断既有 Emacs 功能。
-(defun my/require-programming-module (feature)
-  "安全加载 FEATURE；可选编程依赖下载失败时保留其余 Emacs 配置可用。"
-  (condition-case err
-      (require feature)
-    (error
-     (message "编程模块 %s 未加载：%s" feature (error-message-string err)))))
+(defun my/require-modules (features)
+  "按顺序安全加载 FEATURES 中的每一个 feature。
+单个模块加载失败时记录错误并继续加载后续模块。"
+  (dolist (feature features)
+    (condition-case err
+        (require feature)
+      (error
+       (message "配置模块 %s 未加载：%s"
+                feature (error-message-string err))))))
 
-(mapc #'my/require-programming-module
-      '(init-mason init-completion init-treesitter init-lsp init-flymake init-lang))
-;; (require 'init-ivy)
-;; (require 'init-dirvish)
+;; 所有配置模块统一在这里维护。新增模块时，只需在列表末尾加入其 feature。
+(defconst my/init-modules
+  '(init-base
+    init-keybindings
+    init-themes
+    init-minbuffer
+    init-eshell
+    init-ranger
+    init-consult
+    init-rainbow
+    init-edit
+    init-magit
+    init-vundo
+    init-mykey
+    init-avy
+    init-window
+    ;; 编程能力模块：外部工具、补全、语法树、LSP、诊断和语言配置。
+    init-mason
+    init-completion
+    init-treesitter
+    init-lsp
+    init-flymake
+    init-lang
+    init-modeline)
+  "Emacs 启动时按顺序加载的配置模块列表。")
+
+(my/require-modules my/init-modules)
+
+;; 暂未启用的模块，需要时移动到 `my/init-modules' 列表中。
+;; init-ivy
+;; init-dirvish
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 9. 启动时间统计与 GC 恢复Hook ;; 启动统计与收尾模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线

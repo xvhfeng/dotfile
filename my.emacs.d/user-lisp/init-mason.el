@@ -13,12 +13,12 @@
 
 ;; ============================================================================
 ;; 2. Mason.el 配置 (自动下载与注册第三方二进制程序)
-;; 说明：所有由 Mason 安装的语言服务器和格式化程序均放在配置根目录的 bin/，
+;; 说明：所有由 Mason 安装的语言服务器和格式化程序均放在配置根目录的 mason/bin/，
 ;; 不写入系统目录；即使 Mason 尚未安装，也会预先把该目录加入当前 Emacs 的 PATH。
 ;; ============================================================================
 (defvar my/local-bin-directory
-  (expand-file-name "bin/" user-emacs-directory)
-  "配置根目录下保存语言服务器等本地可执行文件的目录。")
+  (expand-file-name "mason/bin/" user-emacs-directory)
+  "Mason 管理的语言服务器可执行文件目录。")
 
 ;; 创建本地二进制目录并同步到 Emacs/子进程 PATH，保证 Eglot 可找到服务器。
 (make-directory my/local-bin-directory t)
@@ -73,9 +73,9 @@
 ;; 中文说明：Mason 当前的管理命令为 mason-manager；保留 C-c m 兼容入口。
 (with-eval-after-load 'general
   (general-define-key
-    "C-c m" '(mason-manager :which-key "Mason manager"))
+    "C-c m" '("Mason manager" . mason-manager))
   (my-leader-def
-    "x m" '(mason-manager :which-key "Mason tool manager")))
+    "x m" '("Mason tool manager" . mason-manager)))
 
 (provide 'init-mason)
 ;;; init-mason.el ends here

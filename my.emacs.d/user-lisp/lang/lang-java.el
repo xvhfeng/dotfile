@@ -3,13 +3,14 @@
 ;; 中文说明：依赖本地 bin/ 中由 Mason 管理的 jdtls；缺失时仍可正常编辑 Java 文件。
 
 
-(use-package java-ts-mode
+(use-package cc-mode
   :straight nil
-  :mode "\\.java\\'"
-  :hook (java-ts-mode . my/lsp-maybe-ensure)
+  ;; java-mode 不依赖 grammar；grammar 就绪时由 treesit-auto 自动升级。
+  :mode ("\\.java\\'" . java-mode)
+  :hook ((java-mode java-ts-mode) . my/lsp-maybe-ensure)
   :config
-  ;; 设置 Java 缩进策略
-  (setq java-ts-mode-indent-offset 4))
+  (setq c-basic-offset 4
+        java-ts-mode-indent-offset 4))
 
 (provide 'lang-java)
 ;;; lang-java.el ends here

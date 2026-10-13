@@ -5,7 +5,7 @@
 ;;; org-modern 美化显示。Leader C-z n a/b/c 打开议程、切换 Org 缓冲区、捕获；
 ;;; Org 中 C-RET/C-S-RET/C-M-RET 插入标题/TODO/子标题，C-c C-t 改 TODO，
 ;;; C-c C-q 设标签，C-c C-d/C-s 设截止/计划，C-c ./! 插活动/非活动时间戳，
-;;; C-c C-o 开链接，C-c @ 插引用，C-c C-x e 导出，C-c C-x C-w/C-a 剪切/归档
+;;; C-c C-o 开链接，C-c @ 插引用；Leader C-z n e 导出，C-z n s k/a 剪切/归档
 ;;; 子树。Agenda 中 t/r/q/d/s 修改 TODO/归档/标签/截止/计划，C-SPC 预览条目。
 (use-package ol
   :straight nil
@@ -27,25 +27,22 @@
   :straight nil
   :general
   (:keymaps 'org-mode-map
-   "C-c C-S-l" '(org-toggle-link-display :which-key "toggle link display")
-   "C-<return>" '(org-insert-heading-respect-content :which-key "insert heading")
-   "C-S-<return>" '(org-insert-todo-heading-respect-content :which-key "insert TODO heading")
-   "C-M-<return>" '(org-insert-subheading :which-key "insert subheading")
-   "C-c '" '(org-edit-special :which-key "edit source block")
-   "C-c C-," '(org-insert-structure-template :which-key "insert structure")
-   "C-c C-t" '(org-todo :which-key "change TODO state")
-   "C-c C-q" '(org-set-tags-command :which-key "set tags")
-   "C-c C-d" '(org-deadline :which-key "set deadline")
-   "C-c C-s" '(org-schedule :which-key "schedule")
-   "C-c ." '(org-time-stamp :which-key "insert timestamp")
-   "C-c !" '(org-time-stamp-inactive :which-key "insert inactive timestamp")
-   "C-c C-o" '(org-open-at-point :which-key "open at point")
-   "C-c @" '(org-cite-insert :which-key "insert citation")
-   "C-c *" '(org-ctrl-c-star :which-key "toggle heading")
-   "C-c -" '(org-ctrl-c-minus :which-key "toggle list item")
-   "C-c C-x e" '(org-export-dispatch :which-key "export")
-   "C-c C-x C-w" '(org-cut-subtree :which-key "cut subtree")
-   "C-c C-x C-a" '(org-archive-subtree-default :which-key "archive subtree"))
+   "C-c C-S-l" '("toggle link display" . org-toggle-link-display)
+   "C-<return>" '("insert heading" . org-insert-heading-respect-content)
+   "C-S-<return>" '("insert TODO heading" . org-insert-todo-heading-respect-content)
+   "C-M-<return>" '("insert subheading" . org-insert-subheading)
+   "C-c '" '("edit source block" . org-edit-special)
+   "C-c C-," '("insert structure" . org-insert-structure-template)
+   "C-c C-t" '("change TODO state" . org-todo)
+   "C-c C-q" '("set tags" . org-set-tags-command)
+   "C-c C-d" '("set deadline" . org-deadline)
+   "C-c C-s" '("schedule" . org-schedule)
+   "C-c ." '("insert timestamp" . org-time-stamp)
+   "C-c !" '("insert inactive timestamp" . org-time-stamp-inactive)
+   "C-c C-o" '("open at point" . org-open-at-point)
+   "C-c @" '("insert citation" . org-cite-insert)
+   "C-c *" '("toggle heading" . org-ctrl-c-star)
+   "C-c -" '("toggle list item" . org-ctrl-c-minus))
   :hook ((org-babel-after-execute org-mode) . org-redisplay-inline-images)
   :custom
   (org-persist-directory (concat nn-directory "org/persist/"))
@@ -93,6 +90,12 @@
      (js . t) (css . t)
      (plantuml . t)))
   :config
+  ;; Org 自带的多层快捷键也补充 keymap 局部名称，避免显示 +prefix。
+  (which-key-add-keymap-based-replacements
+    org-mode-map
+    "C-c C-x" "Org extras"
+    "C-c \"" "Table plots"
+    "C-c C-v" "Babel")
   (add-to-list 'org-structure-template-alist '("n" . "note"))
   (add-to-list 'org-tags-exclude-from-inheritance "crypt")
   (add-to-list 'org-file-apps
@@ -116,12 +119,12 @@
   :straight nil
   :general
   (:keymaps 'org-agenda-mode-map
-   "t" '(org-agenda-todo :which-key "change TODO state")
-   "r" '(org-agenda-refile :which-key "refile")
-   "q" '(org-agenda-set-tags :which-key "set tags")
-   "d" '(org-agenda-deadline :which-key "set deadline")
-   "s" '(org-agenda-schedule :which-key "schedule")
-   "C-SPC" '(org-agenda-show-and-scroll-up :which-key "preview entry"))
+   "t" '("change TODO state" . org-agenda-todo)
+   "r" '("refile" . org-agenda-refile)
+   "q" '("set tags" . org-agenda-set-tags)
+   "d" '("set deadline" . org-agenda-deadline)
+   "s" '("schedule" . org-agenda-schedule)
+   "C-SPC" '("preview entry" . org-agenda-show-and-scroll-up))
   :custom
   (org-agenda-files '("~/agenda.org"))
   (org-agenda-window-setup 'current-window)
@@ -133,11 +136,13 @@
 
 (with-eval-after-load 'general
   (my-leader-def
-    "n a" '(org-agenda :which-key "agenda")
-    "n b" '(org-switchb :which-key "switch Org buffer")
-    "n c" '(org-capture :which-key "capture")
-    "n e" '(org-export-dispatch :which-key "export")
-    "n t" '(org-todo-list :which-key "TODO list")))
+    "n a" '("agenda" . org-agenda)
+    "n b" '("switch Org buffer" . org-switchb)
+    "n c" '("capture" . org-capture)
+    "n e" '("export" . org-export-dispatch)
+    "n t" '("TODO list" . org-todo-list)
+    "n s k" '("cut subtree" . org-cut-subtree)
+    "n s a" '("archive subtree" . org-archive-subtree-default)))
 
 (use-package org-src
   :straight nil

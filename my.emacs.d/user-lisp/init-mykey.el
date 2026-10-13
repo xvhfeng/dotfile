@@ -250,9 +250,9 @@
 
 ;;============*  设置 my 序列改进设置 *========================
 ;; 上翻半页
-(keymap-global-set "C-c C-d"  #'my-scroll-half-screen-up)
+(keymap-global-set "C-7"  #'my-scroll-half-screen-up)
 ;; 下翻半页
-(keymap-global-set "C-c C-u"  #'my-scroll-half-screen-down)
+(keymap-global-set "C-8"  #'my-scroll-half-screen-down)
 (keymap-global-set "C-o"  #'my-open-line-below)
 (keymap-global-set "C-S-o"  #'my-open-line-above)
 

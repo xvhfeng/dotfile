@@ -49,6 +49,7 @@ As seen on: https://www.reddit.com/r/emacs/comments/1kfblch/need_help_with_addin
 
 (use-package js
   :straight nil
+  :mode ("\\.[mc]?js\\'" . js-mode)
   :custom
   (js-chain-indent t)
   (js-indent-level nn-indent-offset))
@@ -57,17 +58,28 @@ As seen on: https://www.reddit.com/r/emacs/comments/1kfblch/need_help_with_addin
   :straight nil
   ;; 中文说明：只有 JavaScript 语法可用时才切换 Tree-sitter 模式，缺失时回退 js-mode。
   :if (treesit-language-available-p 'javascript)
-  :mode "\\.[mc]?js\\'"
   ;; 中文说明：服务器存在时再启动 LSP，避免未安装 TypeScript 工具链时报错。
   :hook (js-ts-mode . my/lsp-maybe-ensure))
+
+(use-package typescript-mode
+  :straight t
+  :mode ("\\.ts\\'" . typescript-mode)
+  :hook (typescript-mode . my/lsp-maybe-ensure)
+  :custom (typescript-indent-level nn-indent-offset))
+
+(defun my/typescript-tsx-mode ()
+  "Use `tsx-ts-mode' when its grammar exists, otherwise use `typescript-mode'."
+  (interactive)
+  (if (and (fboundp 'tsx-ts-mode) (treesit-ready-p 'tsx t))
+      (tsx-ts-mode)
+    (typescript-mode)))
+
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . my/typescript-tsx-mode))
 
 (use-package typescript-ts-mode
   :straight nil
   :if (or (treesit-language-available-p 'typescript)
           (treesit-language-available-p 'tsx))
-  :mode
-  ("\\.ts\\'" . typescript-ts-mode)
-  ("\\.tsx\\'" . tsx-ts-mode)
   :hook
   (tsx-ts-mode . my/lsp-maybe-ensure)
   (tsx-ts-mode . my-add-jsdoc-in-typescript-ts-mode)

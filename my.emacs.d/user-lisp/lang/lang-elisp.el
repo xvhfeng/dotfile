@@ -6,8 +6,8 @@
 (use-package elisp-mode
   :straight nil
   :general
-  ("<f12>" '(find-function-at-point :which-key "find function definition"))
-  ("C-<f12>" '(find-variable-at-point :which-key "find variable definition"))
+  ("<f12>" '("find function definition" . find-function-at-point))
+  ("C-<f12>" '("find variable definition" . find-variable-at-point))
   :hook (emacs-lisp-mode . prettify-symbols-mode)
   :custom
   (emacs-lisp-indent-offset nn-indent-offset)
@@ -280,7 +280,7 @@ Adapted from URL `https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_
   (help-mode . cursor-sensor-mode)
   :general
   (:keymaps 'help-mode-map
-   "r" '(my-remove-hook-at-point :which-key "remove hook at point"))
+   "r" '("remove hook at point" . my-remove-hook-at-point))
   :config
   ;; 返回安装在 FUNCTION 上的所有 advice 函数列表。
   (defun my-function-advices (function)

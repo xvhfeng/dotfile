@@ -2,10 +2,14 @@
 
 ;;; 中文导读：Markdown 配置。markdown-ts-mode 使用 Tree-sitter 展示标题、列表、
 ;;; 代码块与链接结构，并调整换行、字体与文件关联，适用于 README 和普通文档。
+(use-package markdown-mode
+  :straight t
+  :mode (("\\.md\\'" . markdown-mode)
+         ("/README\\'" . markdown-mode)))
+
 (use-package markdown-ts-mode
   :straight nil
   :if (treesit-language-available-p 'markdown)
-  :mode "\\.md\\'" "/README\\'"
   :init
   (add-to-list 'treesit-language-source-alist
                '(markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown"

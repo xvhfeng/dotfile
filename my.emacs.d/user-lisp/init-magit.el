@@ -4,9 +4,9 @@
 (use-package magit
   :ensure t
   :general
-  ("C-x g" '(magit-status :which-key "Magit status"))
-  ("C-x M-g" '(magit-dispatch :which-key "Magit dispatch"))
-  ("C-c f g" '(magit-file-dispatch :which-key "Magit file actions"))
+  ("C-x g" '("Magit status" . magit-status))
+  ("C-x M-g" '("Magit dispatch" . magit-dispatch))
+  ("C-c f g" '("Magit file actions" . magit-file-dispatch))
 
   :custom
   ;; 性能与显示优化
@@ -22,15 +22,15 @@
 (with-eval-after-load 'project
   (general-define-key
     :keymaps 'project-prefix-map
-    "m" '(magit-project-status :which-key "Magit project status"))
+    "m" '("Magit project status" . magit-project-status))
   (add-to-list 'project-switch-commands '(magit-project-status "Magit" ?m)))
 
 (with-eval-after-load 'general
   (my-leader-def
-    "g s" '(magit-status :which-key "status")
-    "g d" '(magit-dispatch :which-key "dispatch")
-    "g f" '(magit-file-dispatch :which-key "file actions")
-    "g p" '(magit-project-status :which-key "project status")))
+    "g s" '("status" . magit-status)
+    "g d" '("dispatch" . magit-dispatch)
+    "g f" '("file actions" . magit-file-dispatch)
+    "g p" '("project status" . magit-project-status)))
 
 (provide 'init-magit)
 ;;; init-magit.el ends herejj

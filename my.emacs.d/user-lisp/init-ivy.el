@@ -33,23 +33,20 @@
 (with-eval-after-load 'general
   ;; 1. 替换原生快捷键 (不影响 C-o / C-S-o 和 C-z)
   (general-define-key
-    "C-s" '(swiper :which-key "search buffer")
-    "M-x" '(counsel-m-x :which-key "execute command")
-    "C-x b" '(counsel-switch-buffer :which-key "switch buffer"))
+    "C-s" '("search buffer" . swiper)
+    "M-x" '("execute command" . counsel-m-x)
+    "C-x b" '("switch buffer" . counsel-switch-buffer))
 
   ;; 2. 挂载到你的 C-z 前缀定义器 (my-cz-def) 下
   (my-leader-def
-    "s"   '(:ignore t :which-key "search/ivy")
-    "s s" '(swiper :which-key "swiper search line")
-    "s r" '(counsel-rg :which-key "ripgrep project")
-    "s i" '(counsel-imenu :which-key "imenu symbols")
+    "s s" '("swiper search line" . swiper)
+    "s r" '("ripgrep project" . counsel-rg)
+    "s i" '("imenu symbols" . counsel-imenu)
     
-    "f"   '(:ignore t :which-key "files")
-    "f f" '(counsel-find-file :which-key "find file")
-    "f r" '(counsel-recentf :which-key "recent files")
+    "f f" '("find file" . counsel-find-file)
+    "f r" '("recent files" . counsel-recentf)
     
-    "b"   '(:ignore t :which-key "buffers")
-    "b b" '(counsel-switch-buffer :which-key "switch buffer")))
+    "b b" '("switch buffer" . counsel-switch-buffer)))
 
 (provide 'init-ivy)
 ;;; init-ivy.el ends here

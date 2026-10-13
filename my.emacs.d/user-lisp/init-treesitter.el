@@ -52,8 +52,10 @@
       :straight t
       :demand t
       :custom
-      ;; 自动安装策略：'prompt 为弹窗提示后下载，t 为完全静默下载
-      (treesit-auto-install 'prompt)
+      ;; 打开文件时不强制下载 grammar；已安装时自动切换到
+      ;; *-ts-mode，缺失时稳定回退到传统 major mode。需要时可用
+      ;; M-x treesit-auto-install-all 一次性安装。
+      (treesit-auto-install nil)
 
       :config
       ;; 关键：强行指定 treesit-auto 将源码编译安装到我们自定义的路径
@@ -91,11 +93,10 @@
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "t"   '(:ignore t :which-key "Treesitter / Toggle")
-    "t f" '(treesit-fold-toggle   :which-key "toggle code fold")
-    "t F" '(treesit-fold-open-all :which-key "open all folds in buffer")
-    "t i" '(treesit-inspect-mode  :which-key "inspect AST at point")
-    "t a" '(treesit-auto-install-all :which-key "batch install all grammars")))
+    "t f" '("toggle code fold" . treesit-fold-toggle)
+    "t F" '("open all folds in buffer" . treesit-fold-open-all)
+    "t i" '("inspect AST at point" . treesit-inspect-mode)
+    "t a" '("batch install all grammars" . treesit-auto-install-all)))
 
 (provide 'init-treesitter)
 ;;; init-treesitter.el ends here

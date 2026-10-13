@@ -7,9 +7,9 @@
   :straight t
   :defer t
   :general
-  ("C-:" '(avy-goto-char-timer :which-key "jump by chars"))
-  ("M-g f" '(avy-goto-line :which-key "jump to visible line"))
-  ("M-g w" '(avy-goto-word-1 :which-key "jump to visible word"))
+  ("C-:" '("jump by chars" . avy-goto-char-timer))
+  ("M-g f" '("jump to visible line" . avy-goto-line))
+  ("M-g w" '("jump to visible word" . avy-goto-word-1))
   :config
   ;; ============================================================================
   ;; 1. 核心体验与键位设置
@@ -72,14 +72,13 @@
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "j"   '(:ignore t :which-key "Jump (EasyMotion)")
-    "jj"  '(avy-goto-char-timer :which-key "char timer (2-3 chars)")
-    "jc"  '(avy-goto-char       :which-key "single char")
-    "jl"  '(avy-goto-line       :which-key "line")
-    "jw"  '(avy-goto-word-1     :which-key "word start")
-    "js"  '(avy-goto-symbol-1   :which-key "symbol")
-    "jy"  '(my/avy-copy-region  :which-key "remote copy region")
-    "jL"  '(my/avy-select-line  :which-key "select line")))
+    "jj"  '("char timer (2-3 chars)" . avy-goto-char-timer)
+    "jc"  '("single char" . avy-goto-char)
+    "jl"  '("line" . avy-goto-line)
+    "jw"  '("word start" . avy-goto-word-1)
+    "js"  '("symbol" . avy-goto-symbol-1)
+    "jy"  '("remote copy region" . my/avy-copy-region)
+    "jL"  '("select line" . my/avy-select-line)))
 
 (provide 'init-avy)
 ;;; init-avy.el ends here

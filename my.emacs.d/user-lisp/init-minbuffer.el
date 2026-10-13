@@ -48,15 +48,15 @@
 
   :general
   (:keymaps 'vertico-map
-   "C-n" '(vertico-next :which-key "next candidate")
-   "C-p" '(vertico-previous :which-key "previous candidate")
-   "TAB" '(vertico-insert :which-key "insert candidate")
-   "<tab>" '(vertico-insert :which-key "insert candidate")
-   "RET" '(vertico-directory-enter :which-key "enter/open candidate")
-   "<return>" '(vertico-directory-enter :which-key "enter/open candidate")
-   "DEL" '(vertico-directory-delete-char :which-key "delete path char")
-   "M-DEL" '(vertico-directory-delete-word :which-key "delete path component")
-   "/" '(my/vertico-insert-slash :which-key "enter selected directory"))
+   "C-n" '("next candidate" . vertico-next)
+   "C-p" '("previous candidate" . vertico-previous)
+   "TAB" '("insert candidate" . vertico-insert)
+   "<tab>" '("insert candidate" . vertico-insert)
+   "RET" '("enter/open candidate" . vertico-directory-enter)
+   "<return>" '("enter/open candidate" . vertico-directory-enter)
+   "DEL" '("delete path char" . vertico-directory-delete-char)
+   "M-DEL" '("delete path component" . vertico-directory-delete-word)
+   "/" '("enter selected directory" . my/vertico-insert-slash))
 
   :config
   ;; --- [要求 4] 输入 "/" 智能进入选中的文件夹 ---

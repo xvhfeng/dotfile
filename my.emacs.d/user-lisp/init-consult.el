@@ -22,11 +22,11 @@
 (use-package consult
   :straight t
   :general
-  ("C-c p s" '(consult-ripgrep :which-key "search project"))
-  ("M-s r" '(consult-ripgrep :which-key "ripgrep project"))
-  ("M-s l" '(consult-line :which-key "search current buffer"))
-  ("M-s f" '(consult-find :which-key "find file"))
-  ("C-c ! l" '(consult-flymake :which-key "list diagnostics"))
+  ("C-c p s" '("search project" . consult-ripgrep))
+  ("M-s r" '("ripgrep project" . consult-ripgrep))
+  ("M-s l" '("search current buffer" . consult-line))
+  ("M-s f" '("find file" . consult-find))
+  ("C-c ! l" '("list diagnostics" . consult-flymake))
 
   :custom
   ;; 开启光标移动即时预览
@@ -49,8 +49,7 @@
 ;; 挂载到 General.el 体系下的诊断菜单 (C-z c d ...)
 (with-eval-after-load 'general
   (my-leader-def
-    "c d" '(:ignore t :which-key "Diagnostics")
-    "c d l" '(consult-flymake :which-key "search diagnostics")))
+    "c d l" '("search diagnostics" . consult-flymake)))
 
 
 ;; ============================================================================
@@ -60,7 +59,7 @@
 (use-package embark
   :straight t
   :general
-  ("C-c E" '(embark-export :which-key "export results")))
+  ("C-c E" '("export results" . embark-export)))
 
 (use-package wgrep
   :straight t

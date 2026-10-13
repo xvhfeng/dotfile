@@ -32,6 +32,30 @@
           (?o delete-other-windows "Maximize Window")
           (?? aw-show-dispatch-help))))
 
+;; Treemacs 的兼容层默认会把 `treemacs-mode' 加进
+;; `aw-ignored-buffers'，导致侧栏不参与 ace-window 的候选选择。
+;; 同时等待 Treemacs 和 ace-window 加载完成，既避免加载顺序造成变量未定义，
+;; 也确保移除动作发生在 Treemacs 的兼容代码之后。
+(with-eval-after-load 'treemacs
+  (with-eval-after-load 'ace-window
+    (setq aw-ignored-buffers
+          (delq 'treemacs-mode aw-ignored-buffers))))
+
+(defun my/window-shrink-horizontally ()
+  "Shrink the selected window, using Treemacs' own width API when needed."
+  (interactive)
+  (if (and (derived-mode-p 'treemacs-mode)
+           (fboundp 'treemacs-decrease-width))
+      (treemacs-decrease-width)
+    (shrink-window-horizontally 1)))
+
+(defun my/window-enlarge-horizontally ()
+  "Enlarge the selected window, using Treemacs' own width API when needed."
+  (interactive)
+  (if (and (derived-mode-p 'treemacs-mode)
+           (fboundp 'treemacs-increase-width))
+      (treemacs-increase-width)
+    (enlarge-window-horizontally 1)))
 
 (use-package hydra
   :straight t
@@ -45,15 +69,16 @@
 ;;  _l_ / _<right>_ : 放大宽度 (Widen)
 ;;  _k_ / _<up>_    : 缩小高度 (Shrink)
 ;;  _j_ / _<down>_  : 放大高度 (Enlarge)
-;;  _=_             : 均分所有窗口 (Balance)
 ;;  _q_ / _<return>_: 退出 (Quit)
 ;;  "
-    ("h" shrink-window-horizontally)
-    ("l" enlarge-window-horizontally)
+    ("h" my/window-shrink-horizontally)
+    ("l" my/window-enlarge-horizontally)
     ("j" enlarge-window)
     ("k" shrink-window)
+    ("<left>" my/window-shrink-horizontally)
+    ("<right>" my/window-enlarge-horizontally)
+    ("<down>" enlarge-window)
     ("<up>" shrink-window)
-    ("=" balance-windows)
     ("q" nil :exit t)
     ("<return>" nil :exit t)))
 
@@ -63,51 +88,47 @@
 (with-eval-after-load 'general
   (my-window-def
     ;; 窗口方向移动
-    "h" '(windmove-left           :which-key "move left")
-    "j" '(windmove-down           :which-key "move down")
-    "k" '(windmove-up             :which-key "move up")
-    "l" '(windmove-right          :which-key "move right")
+    "h" '("move left" . windmove-left)
+    "j" '("move down" . windmove-down)
+    "k" '("move up" . windmove-up)
+    "l" '("move right" . windmove-right)
 
     ;; 窗口选择与交换
-    "w" '(ace-window              :which-key "ace window select/jump")
-    "M" '(ace-swap-window         :which-key "swap window with target")
+    "w" '("ace window select/jump" . ace-window)
+    "M" '("swap window with target" . ace-swap-window)
 
     ;; 窗口切分
-    "v" '(split-window-right      :which-key "split vertically (|)")
-    "s" '(split-window-below      :which-key "split horizontally (-)")
-    "b" '(split-window-below      :which-key "split horizontally (-)")
+    "v" '("split vertically (|)" . split-window-right)
+    "s" '("split horizontally (-)" . split-window-below)
+    "b" '("split horizontally (-)" . split-window-below)
 
     ;; 窗口关闭与全屏
-    "d" '(delete-window           :which-key "delete current window")
-    "x" '(ace-delete-window       :which-key "delete target window")
-    "m" '(delete-other-windows    :which-key "maximize current window")
-    "o" '(delete-other-windows    :which-key "delete other windows")
+    "d" '("delete current window" . delete-window)
+    "x" '("delete target window" . ace-delete-window)
+    "m" '("maximize current window" . delete-other-windows)
+    "o" '("delete other windows" . delete-other-windows)
 
     ;; 窗口尺寸
-    "r" '(hydra-window-resize/body :which-key "resize window mode")
-    "=" '(balance-windows          :which-key "balance windows size")))
+    "r" '("resize window mode" . hydra-window-resize/body)))
 
 (use-package dimmer
   :straight t
+  ;; 全局启用了 `use-package-always-defer'，必须主动加载，否则下面的
+  ;; `dimmer-mode' 永远不会执行。
+  :demand t
   :custom
-  ;; 设置非活动窗口的变暗比例（0.0 到 1.0 之间，数值越小背景压得越暗）
-  ;; 0.15 - 0.25 是一个既能清晰区分主次，又不会看不清文字的黄金区间
-  (dimmer-fraction 0.35)
-
-;; 2. 更改调整模式：使用更明显的颜色计算方式
-  ;; 可选值有 :foreground, :background, 或组合。使用 background 调整背景色对比度最高
+  ;; 非活动窗口的背景向前景色靠近 35%，让当前窗口保持原色并明显突出。
+  (dimmer-fraction 0.2)
   (dimmer-adjustment-mode :background)
-
-  ;; 排除某些特定的特殊窗口（如 Which-key、Help、Side 窗口等），避免不必要的闪烁
-  (dimmer-exclusion-regexps
-   '("^ \\*which-key\\*"
-     "^\\*Minibuf"
-     "^\\* компас"
-     "^\\*Completions\\*"))
+  ;; 不要在 Emacs 失去系统焦点时把所有窗口一起变暗，否则当前窗口也会失去强调。
+  (dimmer-watch-frame-focus-events nil)
 
   :config
-  ;; 开启全局 Dimmer 模式
-  (dimmer-mode t))
+  ;; 使用 Dimmer 提供的兼容配置，保留 minibuffer/echo-area 的默认排除项。
+  (dimmer-configure-which-key)
+  (dimmer-configure-hydra)
+  (dimmer-configure-magit)
+  (dimmer-mode 1))
 
 
 (provide 'init-window)

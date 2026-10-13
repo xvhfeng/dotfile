@@ -31,13 +31,12 @@
 (with-eval-after-load 'general
   (my-leader-def
     ;; 目录与文件管理器 (Directory / Dired)
-    "d"   '(:ignore t :which-key "Directory / File Manager")
-    "d v" '(dirvish                 :which-key "open dirvish (full frame)")
-    "d s" '(dirvish-side            :which-key "toggle side-bar file tree") ; 类似 VSCode 侧边栏
-    "d f" '(dirvish-fd              :which-key "fd search in directory")
-    "d j" '(dirvish-fd-jump         :which-key "quick jump to directory")
-    "d h" '(dirvish-history         :which-key "directory history")
-    "d m" '(dirvish-mark-menu       :which-key "mark actions menu")))
+    "d v" '("open dirvish (full frame)" . dirvish)
+    "d s" '("toggle side-bar file tree" . dirvish-side) ; 类似 VSCode 侧边栏
+    "d f" '("fd search in directory" . dirvish-fd)
+    "d j" '("quick jump to directory" . dirvish-fd-jump)
+    "d h" '("directory history" . dirvish-history)
+    "d m" '("mark actions menu" . dirvish-mark-menu)))
 
 ;; ============================================================================
 ;; 3. Dirvish 内部常用快捷键提示 (原生 Dired 扩展)

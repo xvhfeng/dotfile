@@ -28,10 +28,54 @@
         which-key-side-window-location 'bottom)
   :config
   (which-key-mode 1)
-  (which-key-add-key-based-replacements
+  ;; 所有说明都绑定到实际 keymap，避免 General 的全局正则说明污染
+  ;; 其他前缀（例如 C-c t 的 vterm 或 web-mode 标签菜单）。
+  (which-key-add-keymap-based-replacements
+    global-map
     "C-z" "Leader"
+    "C-t" "Windows"
     "C-c w" "Windows"
-    "C-t" "Windows"))
+    "C-c p" "Project"
+    "C-c !" "Diagnostics"
+    "C-c f" "File Git actions"
+    "C-S-c" "Multiple cursors"
+    ;; 下面两个前缀由 init-mykey.el 定义；这里只补显示说明，不修改该文件。
+    "C-c o" "Split and switch"
+    "C-c s" "Surround")
+  (which-key-add-keymap-based-replacements
+    my-leader-map
+    "f" "Files"
+    "b" "Buffers"
+    "s" "Search"
+    "e" "Editing"
+    "a" "Context actions"
+    "g" "Git"
+    "j" "Jump"
+    "c" "Code"
+    "c g" "Code navigation"
+    "c d" "Diagnostics"
+    "d" "Directories"
+    "n" "Notes / Org"
+    "n s" "Org subtree"
+    "o" "Code outline"
+    "t" "Syntax trees"
+    "x" "Tools / System"
+    "x p" "System packages"))
+
+(defun my/refresh-which-key-prefix-labels ()
+  "Restore scoped Which-Key labels after all feature keymaps are installed."
+  (when-let ((c-c-map (lookup-key global-map (kbd "C-c"))))
+    (which-key-add-keymap-based-replacements
+      c-c-map
+      "w" "Windows"
+      "p" "Project"
+      "!" "Diagnostics"
+      "f" "File Git actions"
+      "o" "Split and switch"
+      "s" "Surround")))
+
+;; init-mykey.el 在本文件之后安装 C-c o/C-c s；启动末尾重新附加局部说明。
+(add-hook 'after-init-hook #'my/refresh-which-key-prefix-labels)
 
 ;; ============================================================================
 ;; 2. General.el: 统筹全局，绑定 Leader 键并联动 Hydra 和 Which-Key
@@ -42,10 +86,10 @@
   :config
   ;; 所有全局前缀与兼容快捷键都由 General 安装。
   (general-define-key
-    "C-z" my-leader-map
-    "C-c w" my-window-map
-    "C-t" my-window-map
-    "C-x C-b" '(electric-buffer-list :which-key "electric buffer list"))
+    "C-z" (cons "Leader" my-leader-map)
+    "C-c w" (cons "Windows" my-window-map)
+    "C-t" (cons "Windows" my-window-map)
+    "C-x C-b" '("electric buffer list" . electric-buffer-list))
 
   ;; Leader 与窗口命令使用独立 keymap，避免 C-c w 混入非窗口操作。
   (general-create-definer my-leader-def
@@ -55,26 +99,13 @@
     :keymaps 'my-window-map)
 
   (my-leader-def
-    ;; 顶层菜单按命令语义统一命名，子模块只负责注册具体命令。
-    "f" '(:ignore t :which-key "Files")
-    "b" '(:ignore t :which-key "Buffers")
-    "s" '(:ignore t :which-key "Search")
-    "e" '(:ignore t :which-key "Edit/Refactor")
-    "g" '(:ignore t :which-key "Git")
-    "j" '(:ignore t :which-key "Jump/History")
-    "c" '(:ignore t :which-key "Code/LSP")
-    "d" '(:ignore t :which-key "Directory")
-    "n" '(:ignore t :which-key "Notes/Org")
-    "o" '(:ignore t :which-key "Outline/Views")
-    "t" '(:ignore t :which-key "Syntax/Treesitter")
-    "x" '(:ignore t :which-key "Tools/System")
-
-    "f f" '(find-file :which-key "find file")
-    "f r" '(recentf-open-files :which-key "recent files")
-    "b b" '(switch-to-buffer :which-key "switch buffer")
-    "b k" '(kill-current-buffer :which-key "kill current buffer")
-    "b l" '(electric-buffer-list :which-key "electric buffer list")
-    "d d" '(dired-jump :which-key "Dired current directory")))
+    ;; 子模块负责注册命令；前缀名称在上面按 keymap 集中维护。
+    "f f" '("find file" . find-file)
+    "f r" '("recent files" . recentf-open-files)
+    "b b" '("switch buffer" . switch-to-buffer)
+    "b k" '("kill current buffer" . kill-current-buffer)
+    "b l" '("electric buffer list" . electric-buffer-list)
+    "d d" '("Dired current directory" . dired-jump)))
 
 
 ;; 使用general参数代替bind的示例
