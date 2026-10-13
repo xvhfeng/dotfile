@@ -1,54 +1,97 @@
-;;; -*- lexical-binding: t; -*-
+;;; init-dired.el --- Polished native Dired configuration -*- lexical-binding: t; -*-
 
-;; ============================================================================
-;; 1. 内置 Dired 基础增强与性能优化
-;; ============================================================================
+(require 'dired)
+(require 'dired-x)
+
+(defvar my/native-dired-ui-allowed t
+  "Non-nil means a new Dired buffer may enable the native Dired UI.
+Ranger dynamically binds this to nil while it creates its own buffers.")
+
+(defconst my/dired-gnu-ls
+  (or (and (eq system-type 'darwin) (executable-find "gls"))
+      (and (not (memq system-type '(darwin berkeley-unix)))
+           (executable-find "ls")))
+  "GNU ls executable used by Dired, or nil when unavailable.")
+
+(defun my/dired-visual-setup ()
+  "Apply a compact, icon-friendly presentation to the current Dired buffer."
+  (when my/native-dired-ui-allowed
+    (my/dired-ui-mode 1)
+    (dired-hide-details-mode 1)
+    (hl-line-mode 1)
+    (display-line-numbers-mode -1)
+    (setq-local truncate-lines t
+                header-line-format
+                '(:eval
+                  (propertize
+                   (concat "  " (abbreviate-file-name default-directory))
+                   'face 'dired-directory)))))
+
+(defvar-keymap my/dired-ui-mode-map
+  :doc "Only active in native Dired buffers.")
+
+(define-minor-mode my/dired-ui-mode
+  "Presentation and key bindings used only by native Dired."
+  :init-value nil
+  :lighter nil
+  :keymap my/dired-ui-mode-map)
+
+(defun my/dired-enable-nerd-icons ()
+  "Enable Nerd Icons only for native Dired, never for Ranger buffers."
+  (when my/native-dired-ui-allowed
+    (nerd-icons-dired-mode 1)))
+
 (use-package dired
-  :straight nil                          ; 内置包，无需 straight 安装
+  :straight nil
   :custom
-  (dired-listing-switches "-lhA --group-directories-first") ; 人类可读文件大小 + 目录优先排列
-  (dired-recursive-copies 'always)       ; 递归复制无需反复询问
-  (dired-recursive-deletes 'always)     ; 递归删除无需反复询问
-  (dired-dwim-target t)                  ; 开启双窗口时，自动以另一个窗口作为复制/移动的目标路径
+  (dired-auto-revert-buffer t)
+  (dired-dwim-target t)
+  (dired-free-space nil)
+  (dired-kill-when-opening-new-dired-buffer t)
+  (dired-recursive-copies 'always)
+  (dired-recursive-deletes 'always)
+  :init
+  ;; macOS 自带 BSD ls 不支持目录优先；已安装 GNU coreutils 时使用 gls。
+  (if my/dired-gnu-ls
+      (setq insert-directory-program my/dired-gnu-ls
+            dired-use-ls-dired t
+            dired-listing-switches
+            "-alh --group-directories-first --time-style=long-iso")
+    (setq dired-use-ls-dired nil
+          dired-listing-switches "-alh"))
+  :hook (dired-mode . my/dired-visual-setup)
   :config
-  ;; 按 a 键直接在当前窗口打开目录/文件，防止产生大量不必要的 Dired Buffer
   (put 'dired-find-alternate-file 'disabled nil))
 
-;; ============================================================================
-;; 2. Dired 智能文件预览 (dired-preview)
-;; ============================================================================
-(use-package dired-preview
-  :straight t
-  :after dired
-  :custom
-  (dired-preview-delay 0.1)              ; 延迟 0.1 秒预览，滑动列表时极度流畅
-  (dired-preview-max-size 10000000)      ; 超过 10MB 的文件跳过预览
-  :config
-  (dired-preview-global-mode 1))         ; 全局开启 Dired 侧边/弹窗实时预览
-
-;; ============================================================================
-;; 3. Dired 文件图标显示 (nerd-icons-dired)
-;; ============================================================================
+;; 与 doom-modeline 共用同一套 Nerd Font 图标，不再混用 all-the-icons。
 (use-package nerd-icons-dired
-  :straight t
-  :after dired
-  :hook (dired-mode . nerd-icons-dired-mode))
+  :straight (:host github :repo "rainstormstudio/nerd-icons-dired")
+  :after (dired nerd-icons)
+  :hook (dired-mode . my/dired-enable-nerd-icons))
 
-;; ============================================================================
-;; 4. Dired 快捷按键优化 (类似 Ranger / Vim)
-;; ============================================================================
-(use-package dired
-  :general
-  (:keymaps 'dired-mode-map
+;; 光标移动到文件时可按需显示预览；默认关闭，避免打开 Dired 就改变窗口布局。
+(use-package dired-preview
+  :straight (:host github :repo "protesilaos/dired-preview")
+  :commands dired-preview-mode
+  :custom
+  (dired-preview-delay 0.15)
+  (dired-preview-max-size (* 10 1024 1024)))
+
+(with-eval-after-load 'general
+  (general-define-key
+   :keymaps 'my/dired-ui-mode-map
    "h" '("parent directory" . dired-up-directory)
-   "l" '("open file/directory" . dired-find-alternate-file)
+   "l" '("open here" . dired-find-alternate-file)
    "j" '("next entry" . dired-next-line)
    "k" '("previous entry" . dired-previous-line)
    "f" '("find entry" . dired-goto-file)
-   "z" '("toggle details" . dired-hide-details-mode)))
-
-(with-eval-after-load 'general
+   "." '("toggle hidden files" . dired-omit-mode)
+   "z" '("toggle details" . dired-hide-details-mode)
+   "P" '("toggle file preview" . dired-preview-mode)
+   "g" '("refresh directory" . revert-buffer))
   (my-leader-def
-    "d d" '("Dired current directory" . dired-jump)))
+    "d d" '("Dired current directory" . dired-jump)
+    "d p" '("Dired project root" . project-dired)))
 
 (provide 'init-dired)
+;;; init-dired.el ends here

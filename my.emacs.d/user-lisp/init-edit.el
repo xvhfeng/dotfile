@@ -57,6 +57,7 @@
   ;; 禁用包自带的 C-; 绑定，统一交由 General.el 管理。
   (setq iedit-toggle-key-default nil))
 
+;;  取消 ： 选中使用 tba 进行选着，移动到不需要修改的单词上，M-； 
 ;; --- 挂载到 General.el / C-z e 编辑前缀 ---
 (with-eval-after-load 'general
   ;; 全局快捷键：快速编辑光标下的所有匹配项。

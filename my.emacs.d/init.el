@@ -285,6 +285,7 @@
     init-themes
     init-minbuffer
     init-eshell
+    init-dired
     init-ranger
     init-consult
     init-rainbow
@@ -301,6 +302,7 @@
     init-lsp
     init-flymake
     init-lang
+    init-debug
     init-modeline)
   "Emacs 启动时按顺序加载的配置模块列表。")
 
