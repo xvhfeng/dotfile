@@ -157,6 +157,65 @@
       (imenu-list-focus-after-activation t))
   (error (message "imenu-list 未加载：%s" (error-message-string err))))
 
+;; 中文说明：Eglot 会把 LSP DocumentSymbol 的种类保存为名称上的
+;; `breadcrumb-kind` 文本属性。Imenu List 原样展示该索引；以下映射只为
+;; 有此属性的 LSP 符号增加中文分类，不猜测普通 Imenu 条目的类型。
+(defconst my/imenu-list-eglot-kind-categories
+  '(("函数与方法" . ("Function" "Method" "Constructor" "Operator"))
+    ("变量与成员" . ("Variable" "Field" "Property" "Constant"
+                     "EnumMember" "Key" "Array" "Object" "Boolean"
+                     "Number" "String" "Null" "Event"))
+    ("类型与模块" . ("Class" "Interface" "Struct" "Enum"
+                     "TypeParameter" "Module" "Namespace" "Package" "File")))
+  "Eglot LSP SymbolKind 到 Imenu List 中文分组标题的映射。")
+
+(defun my/imenu-list--eglot-entry-category (entry)
+  "返回 Eglot Imenu ENTRY 对应的中文分类；非 Eglot 条目返回 nil。"
+  (when-let* ((name (car-safe entry))
+              ((stringp name))
+              (kind (get-text-property 0 'breadcrumb-kind name)))
+    (or (seq-find (lambda (category)
+                    (member kind (cdr category)))
+                  my/imenu-list-eglot-kind-categories)
+        (cons "其他符号" nil))))
+
+(defun my/imenu-list--categorize-eglot-symbols (imenu-index)
+  "按 Eglot SymbolKind 为 IMENU-INDEX 增加分组，未标注的索引原样返回。"
+  (let ((groups nil)
+        (untyped-entries nil)
+        (has-eglot-symbol nil))
+    (dolist (entry imenu-index)
+      (if-let ((category (my/imenu-list--eglot-entry-category entry)))
+          (progn
+            (setq has-eglot-symbol t)
+            (let ((bucket (assoc (car category) groups)))
+              (if bucket
+                  (setcdr bucket (append (cdr bucket) (list entry)))
+                (setq groups (append groups (list (list (car category) entry)))))))
+        ;; 未标注条目先暂存；若同一索引含 Eglot 符号，稍后统一归入“其他符号”。
+        (setq untyped-entries (append untyped-entries (list entry)))))
+    (when (and has-eglot-symbol untyped-entries)
+      ;; 同一份 Eglot 索引中无法识别的条目也保留，绝不丢失可跳转符号。
+      (setq groups (append groups (list (cons "其他符号" untyped-entries)))))
+    (if has-eglot-symbol groups imenu-index)))
+
+;; 中文说明：只修改 Imenu List 自己保存的显示索引，不改写 Emacs 的全局 Imenu，
+;; 因而 `consult-imenu`、xref 与其他插件仍可使用原始 LSP 符号数据。
+(defun my/imenu-list--collect-and-categorize-eglot-symbols (original)
+  "执行 ORIGINAL 后，为当前 Eglot Buffer 的 Imenu List 索引添加分类。"
+  (funcall original)
+  (when (and (bound-and-true-p eglot-managed-mode)
+             imenu-list--imenu-entries)
+    (setq imenu-list--imenu-entries
+          (my/imenu-list--categorize-eglot-symbols imenu-list--imenu-entries))))
+
+(with-eval-after-load 'imenu-list
+  ;; 中文说明：通过 Imenu List 的采集入口分类，刷新大纲时也会自动更新分组。
+  (unless (advice-member-p #'my/imenu-list--collect-and-categorize-eglot-symbols
+                           #'imenu-list-collect-entries)
+    (advice-add #'imenu-list-collect-entries :around
+                #'my/imenu-list--collect-and-categorize-eglot-symbols)))
+
 ;; 方案 C: 在当前 frame 右侧用 Speedbar 显示当前文件的 Imenu 大纲。
 (condition-case err
     (use-package sr-speedbar
@@ -230,7 +289,23 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
  ;; (treemacs-is-never-other-window t)
 )
 
+;; 中文说明：Treemacs 仅负责稳定显示项目文件树；当前安装版本的“标签自动跟随”
+;; 无法处理 Eglot Document Symbol 的整数位置，会在 C/clangd 中报 markerp 错误。
+;; 代码大纲改由专门的 Imenu List 展示，避免让文件树功能影响 LSP 编辑。
+(defun my/treemacs-show-current-file-outline ()
+  "打开当前文件的 Imenu/LSP 代码大纲，不启用不兼容的 Treemacs 标签跟随。"
+  (interactive)
+  (if (require 'imenu-list nil t)
+      (imenu-list-smart-toggle)
+    ;; Imenu List 缺失时仍可使用 Emacs 内置 Imenu，不阻断代码跳转。
+    (call-interactively #'imenu)))
+
 (with-eval-after-load 'treemacs
+  ;; 中文说明：关闭 Treemacs 的标签自动跟随。该第三方实现把 Eglot 返回的整数
+  ;; 位置传给 `marker-position`，会持续产生 `wrong-type-argument markerp`。
+  ;; 此设置不影响 Treemacs 文件树、项目管理、Flymake 或 Imenu List 代码大纲。
+  (when (bound-and-true-p treemacs-tag-follow-mode)
+    (treemacs-tag-follow-mode -1))
   ;; Treemacs 中用 C-c w 直接打开 workspace 菜单；原来的
   ;; C-c C-w 局部菜单移除，让位给全局独占的 Ace Window。
   ;; 把普通窗口菜单设为父 keymap：workspace 键优先，其余键继续可用。
@@ -319,18 +394,12 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
   (advice-add #'treemacs-do-remove-project-from-workspace
               :around #'my/treemacs-allow-delete-last-project))
 
-(use-package lsp-treemacs
-  :straight t
-  :after (treemacs)
-  :config
-  ;; 自动随当前编辑的 Buffer 同步高亮对应的符号
-  (setq lsp-treemacs-sync-mode 1))
-
-;; 挂载到 General.el 的代码大纲分组 (C-c o s)
+;; 中文说明：lsp-treemacs 依赖 lsp-mode，与当前 Eglot 客户端不兼容；
+;; C-c o s 改用稳定的 Imenu List 代码大纲，兼容 LSP、Tree-sitter 与普通 major mode。
 (with-eval-after-load 'general
   (my-leader-def
     "d t" '("toggle treemacs file tree" . treemacs)
-    "o s" '("toggle symbols tree sidebar" . lsp-treemacs-symbols)))
+    "o s" '("show current file outline in treemacs" . my/treemacs-show-current-file-outline)))
 
 (use-package zoutline
   :straight (:host github :repo "abo-abo/zoutline")
@@ -377,7 +446,7 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; - Eglot 为 lang/ 中配置的语言提供补全、跳转、重命名、格式化和 Flymake 诊断。
 ;; - `C-c c a/r/f/q'：代码动作、重命名、格式化、停止 LSP；`C-c c g d/r/h'：定义/引用/文档。
 ;; - `C-c o i/I' 搜索当前/全部 Buffer 的符号；`C-c o t' 打开 Imenu List 大纲。
-;; - `C-c o b' 在 sr-speedbar 中开关当前 Buffer 大纲；`C-c o s' 打开 Treemacs 符号树。
+;; - `C-c o b' 在 sr-speedbar 中开关当前 Buffer 大纲；`C-c o s' 打开 Imenu List 大纲。
 ;; - `C-c o u/d/h/l' 在 zoutline 中到父级/下一标题/折叠/展开；`C-c d t' 开关文件树。
 ;; - Treemacs 允许重叠目录进入独立 workspace，也允许删除最后一个项目；窗口宽度手工调整。
 ;; - Treemacs Buffer 中 `C-c w' 为 workspace/窗口菜单；`C-c C-w' 专用于 Ace Window。

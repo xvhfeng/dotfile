@@ -70,14 +70,8 @@
     "c d n" '("next diagnostic" . flymake-goto-next-error)
     "c d p" '("previous diagnostic" . flymake-goto-prev-error)))
 
-
-(condition-case err
-    (use-package flymake-popon
-      :straight t
-      :hook (flymake-mode . flymake-popon-mode)
-      :custom
-      (flymake-popon-method 'overlay)) ; 使用 overlay 浮窗在光标旁直接展示错误描述
-  (error (message "flymake-popon 未加载：%s" (error-message-string err))))
+;; 中文说明：不加载 flymake-popon。它只是第三方错误浮窗，当前 Codeberg 网络不可用
+;; 时会在每次启动触发克隆失败；Flymake 原生的边栏、诊断列表和 Eglot 诊断不依赖它。
 
 (provide 'init-flymake)
 
@@ -87,5 +81,5 @@
 ;; - Flymake 在编程和常用 Web/配置模式中自动开启；Eglot 连接后提供语言服务器诊断。
 ;; - `M-n/M-p' 或 `C-c c d n/p' 跳到下一条/上一条诊断。
 ;; - `C-c c d b/a' 显示当前 Buffer/整个项目的诊断；`C-c c d l' 交互搜索诊断。
-;; - `C-c ! l' 是诊断列表的兼容入口；光标停在问题行时 flymake-popon 显示说明。
+;; - `C-c ! l' 是诊断列表的兼容入口；光标停在问题行时 Echo Area 显示说明。
 ;; - 本配置允许可信 Elisp 在检查期间执行代码；不要对未知来源代码盲目运行 Flymake。
