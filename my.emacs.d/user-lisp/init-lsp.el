@@ -1,5 +1,7 @@
 ;;; init-lsp.el --- Eglot LSP、代码补全与结构大纲 -*- lexical-binding: t; -*-
 
+(require 'seq)
+
 ;; ============================================================================
 ;; 1. Corfu: 光标处的代码补全浮窗 (In-Buffer Completion UI)
 ;; ============================================================================
@@ -198,10 +200,29 @@
       (my/sr-speedbar--expand-buffer-outline source-buffer))))
 
 
+(defun my/treemacs-find-stable-python ()
+  "Return a directly executable Python 3 binary for Treemacs helpers.
+Prefer system package-manager binaries over version-manager shims because GUI
+Emacs may find an asdf shim without having the `asdf' command in its PATH."
+  (let ((candidates
+         (append
+          (when (eq system-type 'darwin)
+            '("/opt/homebrew/bin/python3" "/usr/local/bin/python3"))
+          '("/usr/bin/python3")
+          (list (executable-find "python3")))))
+    (when-let ((python
+                (seq-find (lambda (candidate)
+                            (and candidate (file-executable-p candidate)))
+                          candidates)))
+      (file-truename python))))
+
 (use-package treemacs
   :straight t
   :defer t
   :custom
+  ;; Treemacs 的 Git 状态和目录折叠脚本会异步启动 Python。不要使用
+  ;; ~/.asdf/shims/python3：GUI Emacs 可能能找到 shim，却找不到 shim 依赖的 asdf。
+  (treemacs-python-executable (my/treemacs-find-stable-python))
   (treemacs-width 35)
   ;; 允许 C-c w r 中的窗口尺寸命令直接调整 Treemacs。
   (treemacs-width-is-initially-locked nil)
@@ -332,4 +353,16 @@
     "ot"  '("toggle outline sidebar" . imenu-list-smart-toggle)))
 
 (provide 'init-lsp)
+
+;; ---------------------------------------------------------------------------
+;; 使用说明
+;; ---------------------------------------------------------------------------
+;; - Eglot 为 lang/ 中配置的语言提供补全、跳转、重命名、格式化和 Flymake 诊断。
+;; - `C-z c a/r/f/q'：代码动作、重命名、格式化、停止 LSP；`C-z c g d/r/h'：定义/引用/文档。
+;; - `C-z o i/I' 搜索当前/全部 Buffer 的符号；`C-z o t' 打开 Imenu List 大纲。
+;; - `C-z o b' 在 sr-speedbar 中开关当前 Buffer 大纲；`C-z o s' 打开 Treemacs 符号树。
+;; - `C-z o u/d/h/l' 在 zoutline 中到父级/下一标题/折叠/展开；`C-z d t' 开关文件树。
+;; - Treemacs 允许重叠目录进入独立 workspace，也允许删除最后一个项目；窗口宽度手工调整。
+;; - Treemacs 的异步脚本固定使用真实 Python 3，避免 GUI PATH 下的 asdf shim 执行失败。
+;; - LSP 启动失败先确认 `C-z x m' 中对应服务器已安装，再查看 *eglot events*。
 ;;; init-lsp.el ends here

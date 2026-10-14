@@ -49,4 +49,12 @@
     "b b" '("switch buffer" . counsel-switch-buffer)))
 
 (provide 'init-ivy)
+
+;; ---------------------------------------------------------------------------
+;; 使用说明
+;; ---------------------------------------------------------------------------
+;; - 本模块当前未加入 `my/init-modules'，仅作为 Ivy/Counsel/Swiper 备选补全方案保留。
+;; - 启用后 `C-s' 搜索当前 Buffer，`M-x' 使用 Counsel，`C-x b' 切换 Buffer。
+;; - Leader 下 `C-z s s/r/i' 搜索行/项目/符号，`C-z f f/r' 文件/最近文件，`C-z b b' Buffer。
+;; - Ivy 与当前 Vertico/Consult 体系会争用全局键；若要启用，应先停用对应现代补全模块。
 ;;; init-ivy.el ends here

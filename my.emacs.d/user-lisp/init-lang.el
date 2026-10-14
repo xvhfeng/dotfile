@@ -21,7 +21,7 @@
 
 (mapc #'my/require-language-module
       '(lang-cc lang-elisp lang-java lang-javascript lang-lua lang-python
-        lang-web lang-shell lang-org lang-markdown lang-json lang-yaml))
+        lang-web lang-shell lang-markdown lang-json lang-yaml))
 
 (defun my/language-common-setup ()
   "Enable the common highlighting, completion and outline baseline."
@@ -55,3 +55,13 @@
   :mode "\\.env\\..*\\'" "\\.env\\'")
 
 (provide 'init-lang)
+
+;; ---------------------------------------------------------------------------
+;; 使用说明
+;; ---------------------------------------------------------------------------
+;; - 这是语言配置总入口，按顺序加载 `user-lisp/lang/' 下 C/C++、Elisp、Java、JS/TS、Lua、
+;;   Python、Web、Shell、Markdown、JSON 和 YAML 模块；单个语言失败不会阻断其余语言。
+;; - 编程语言统一启用语法高亮、Outline 和文件名/Buffer 词汇补全，默认缩进宽度为 2。
+;; - LSP/补全/诊断分别由 init-lsp、init-completion 和 init-flymake 提供。
+;; - 新增语言时创建 `lang-名称.el'、写入 `(provide 'lang-名称)'，再加入上方模块列表。
+;; - 打开文件后可用 `M-: major-mode' 确认模式，用 `M-x eglot' 手动检查服务器连接。

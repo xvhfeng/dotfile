@@ -165,3 +165,12 @@ This prevents an open Ranger session from changing native Dired buffers."
     "d r" '("Ranger file manager" . ranger)))
 
 (provide 'init-ranger)
+
+;; ---------------------------------------------------------------------------
+;; 使用说明
+;; ---------------------------------------------------------------------------
+;; - `C-c r' 或 `C-z d r' 打开 Ranger；它不会替换原生 Dired。
+;; - Ranger 使用原来的三栏目录/文件预览和 All The Icons，与 Dired 的 Nerd Icons 隔离。
+;; - 常用导航为 `h/j/k/l'，`RET' 打开，`q' 退出；具体包内操作可按 `?' 查看。
+;; - `/` 按文件名正则搜索，`n/N' 向后/向前重复；实现不进入 I-search。
+;; - 文件预览上限为 10 MB，二进制文件不预览，退出时会清理临时 Buffer。

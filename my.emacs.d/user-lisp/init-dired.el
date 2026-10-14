@@ -94,4 +94,14 @@ Ranger dynamically binds this to nil while it creates its own buffers.")
     "d p" '("Dired project root" . project-dired)))
 
 (provide 'init-dired)
+
+;; ---------------------------------------------------------------------------
+;; 使用说明
+;; ---------------------------------------------------------------------------
+;; - `C-z d d' 打开当前目录，`C-z d p' 打开项目根目录；本模块使用 Nerd Icons。
+;; - Dired 内 `h/l' 返回父目录/在当前 Buffer 打开，`j/k' 下移/上移，`g' 刷新。
+;; - `f' 定位文件，`.' 显示/隐藏忽略文件，`z' 显示/隐藏详情，`P' 开关文件预览。
+;; - 原生 Dired 的标记、复制、重命名和删除仍使用标准键 `m/u/C/R/D'。
+;; - macOS 安装 GNU coreutils 后会自动使用 gls 实现目录优先排序；未安装也可正常使用。
+;; - Dired 与 Ranger 的图标、局部变量和按键彼此隔离，调用 Ranger 不会接管 Dired。
 ;;; init-dired.el ends here

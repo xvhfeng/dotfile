@@ -282,6 +282,7 @@
 (defconst my/init-modules
   '(init-base
     init-keybindings
+    init-input-method
     init-themes
     init-minbuffer
     init-eshell
@@ -302,6 +303,8 @@
     init-lsp
     init-flymake
     init-lang
+    init-org
+    init-mail
     init-debug
     init-modeline)
   "Emacs 启动时按顺序加载的配置模块列表。")
@@ -329,3 +332,13 @@
     (file-error
      ;; 不能创建 server socket 不应阻断编辑器本身启动。
      (message "Emacs server 未启动：%s" (error-message-string err)))))
+
+;; ---------------------------------------------------------------------------
+;; 使用说明
+;; ---------------------------------------------------------------------------
+;; - 这是配置总入口：初始化目录、编码、straight.el/use-package、模块加载和 Emacs server。
+;; - 新增配置模块时，把其 provide 的 feature 加到 `my/init-modules' 列表即可。
+;; - `my/require-modules' 会逐个安全加载；单个模块失败只记录消息，不阻断其余模块。
+;; - `user-lisp/' 保存功能模块，`user-lisp/lang/' 保存语言模块，运行数据写入 `.local/'。
+;; - 自定义变量由 `.local/custom.el' 保存；不建议把 Custom 自动生成内容写回本文件。
+;; - 启动异常先查看 *Messages* 中“配置模块 ... 未加载”的具体模块和错误原因。
