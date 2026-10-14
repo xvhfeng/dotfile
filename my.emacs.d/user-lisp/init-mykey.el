@@ -5,9 +5,9 @@
 
 
 ;;; 滚动：C-c C-d/C-c C-u 半屏上/下滚，C-1/C-2 整屏滚，C-3 重定位。
-;;; 窗口：C-c o f/b/n/p（或 l/h/j/k）向右/左/下/上分割并进入；C-M-h/j/k/l
+;;; 窗口：C-c w f/b/n/p 向右/左/下/上分割并进入；C-M-h/j/k/l
 ;;; 切换窗口；M-S-h/l 加宽/缩窄，M-S-k/j 增高/降低；M-F11 全屏。
-;;; 编辑：ESC 取消，C-! 替换，C-c s r/R/w 替换包围符/成对替换/包围单词；M-w
+;;; 编辑：ESC 取消，C-! 替换，C-c e r/R/w 替换包围符/成对替换/包围单词；M-w
 ;;; 复制、C-w 剪切、C-v 粘贴、C-z/C-S-z 撤销/重做；C-x C-d 删除整行但不进
 ;;; kill-ring，C-, 复制当前行并下移，M-k/M-j 上下移动行，M-l/M-r 转小/大写。
 ;;; 导航：C-c C-r 到项目根，C-c C-j 打开项目 Dired，C-~ 打开主目录，C-' 打开
@@ -250,9 +250,9 @@
 
 ;;============*  设置 my 序列改进设置 *========================
 ;; 上翻半页
-(keymap-global-set "C-7"  #'my-scroll-half-screen-up)
+(keymap-global-set "C-9"  #'my-scroll-half-screen-up)
 ;; 下翻半页
-(keymap-global-set "C-8"  #'my-scroll-half-screen-down)
+(keymap-global-set "C-0"  #'my-scroll-half-screen-down)
 (keymap-global-set "C-o"  #'my-open-line-below)
 (keymap-global-set "C-S-o"  #'my-open-line-above)
 
@@ -275,8 +275,8 @@
  ;; 把 c-k 设置为不管什么位姿都删除当前行
 ;; (global-set-key (kbd "C-k") 'kill-whole-line)
 (keymap-global-set "C-'" #'imenu)
-(keymap-global-set "C-9" #'scroll-up-command)
-(keymap-global-set "C-0" #'scroll-down-command)
+(keymap-global-set "C-7" #'scroll-up-command)
+(keymap-global-set "C-8" #'scroll-down-command)
 (keymap-global-set "C-l" #'recenter-top-bottom)
 (keymap-global-set "C-S-a" #'move-beginning-of-line)
 ;; 方案 A：直接用 comment-line 覆盖原生的 M-; (最顺手)
@@ -284,22 +284,6 @@
 
 
 ;;(keymap-global-set "C-!" #'my-replace)
-(keymap-global-set "C-c o f" #'my-split-right-and-switch)
-(keymap-global-set "C-c o b" #'my-split-left-and-switch)
-(keymap-global-set "C-c o n" #'my-split-below-and-switch)
-(keymap-global-set "C-c o p" #'my-split-above-and-switch)
-(keymap-global-set "C-c o l" #'my-split-right-and-switch)
-(keymap-global-set "C-c o h" #'my-split-left-and-switch)
-(keymap-global-set "C-c o j" #'my-split-below-and-switch)
-(keymap-global-set "C-c o k" #'my-split-above-and-switch)
-(defvar-keymap my-surround-map
-  :doc "以 C-c s 开始的文本包围操作。"
-  "r" #'my-surround-replace
-  "R" #'my-surround-replace-pair
-  "w" #'my-surround-word)
-(keymap-global-set "C-c s" my-surround-map)
-(with-eval-after-load 'which-key
-  (which-key-add-key-based-replacements "C-c s" "Surround"))
 (keymap-global-set "C-c C-r" #'my-switch-to-project-root)
 ;;(keymap-global-set "C-c C-j" #'project-dired)
 ;;(keymap-global-set "M-w" #'my-copy)
@@ -313,8 +297,8 @@
 ;; (keymap-global-set "C-S-<tab>" #'bs-cycle-previous)
     ;;(keymap-global-set "C-a" #'back-to-indentation)
 ;;(keymap-global-set "C-v" #'yank)
-;; C-z 已作为 General Leader 前缀使用。
-;;(keymap-global-set "C-S-z" #'undo-redo)
+(keymap-global-set "C-z" #'undo)
+(keymap-global-set "C-S-z" #'undo-redo)
 (keymap-global-set "M-<f11>" #'toggle-frame-fullscreen)
 (keymap-global-set "M-S-l" #'shrink-window-horizontally)
 (keymap-global-set "M-S-h" #'enlarge-window-horizontally)

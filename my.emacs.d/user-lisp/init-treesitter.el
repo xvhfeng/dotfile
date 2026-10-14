@@ -104,8 +104,8 @@
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 已安装 grammar 时自动使用对应 `*-ts-mode'，缺失时回退传统 major mode，不阻断打开文件。
-;; - `C-z t a' 批量下载并编译全部 grammar；产物保存在 `runtimes/tree-sitter/'。
-;; - `C-z t f' 折叠/展开当前代码块，`C-z t F' 展开当前 Buffer 的全部折叠。
-;; - `C-z t i' 打开语法树检查模式，适合确认光标处 AST 节点及排查高亮问题。
+;; - `C-c t a' 批量下载并编译全部 grammar；产物保存在 `runtimes/tree-sitter/'。
+;; - `C-c t f' 折叠/展开当前代码块，`C-c t F' 展开当前 Buffer 的全部折叠。
+;; - `C-c t i' 打开语法树检查模式，适合确认光标处 AST 节点及排查高亮问题。
 ;; - 编译 grammar 需要 Git、C 编译器和可用网络；本配置启动时不会强制下载。
 ;;; init-treesitter.el ends here

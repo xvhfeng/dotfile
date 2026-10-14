@@ -208,9 +208,9 @@ When QUIET is non-nil, do not print a success message."
 ;;    Gmail、QQ、163 等通常要求使用“应用专用密码/授权码”，不是网页登录密码。
 ;;
 ;; 3. 全局入口：
-;;    - C-z m a       打开邮箱账号设置。
-;;    - C-z m m       打开 Gnus 收件箱。
-;;    - C-z m c       撰写新邮件。
+;;    - C-c m a       打开邮箱账号设置。
+;;    - C-c m m       打开 Gnus 收件箱。
+;;    - C-c m c       撰写新邮件。
 ;;
 ;; 4. Gnus 组列表（邮箱文件夹）快捷键：
 ;;    - g             检查新邮件。

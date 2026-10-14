@@ -3,8 +3,8 @@
 ;;; 中文导读：Web 文件编辑。web-mode 处理 HTML 与模板，html/mhtml/css 的
 ;;; Tree-sitter 模式处理标准标记和样式，Emmet 用缩写生成标签。web-mode 中
 ;;; C-c C-h 重载、C-c C-i 缩进缓冲区、M-]/M-[ 跳下/上一个标签、C-M-]/C-M-[
-;;; 跳属性、C-c C-f 折叠、C-c C-w/k/r/c 包裹/删除/重命名/克隆元素、C-c /
-;;; 闭合元素、C-c t s/m 选择/匹配标签；M-E 展开 Emmet 缩写。
+;;; 跳属性、C-c C-f 折叠、C-c C-k/r/c 删除/重命名/克隆元素、C-c /
+;;; 闭合元素、C-c t w/s/m 包裹/选择/匹配标签；M-E 展开 Emmet 缩写。
 (use-package css-mode
   :straight nil
   :custom (css-fontify-colors nil))
@@ -53,11 +53,11 @@
    "C-M-]" '("next attribute" . web-mode-attribute-next)
    "C-M-[" '("previous attribute" . web-mode-attribute-previous)
    "C-c C-f" '("toggle fold" . web-mode-fold-or-unfold)
-   "C-c C-w" '("wrap element" . web-mode-element-wrap)
    "C-c C-k" '("kill element" . web-mode-element-kill)
    "C-c C-r" '("rename element" . web-mode-element-rename)
    "C-c C-c" '("clone element" . web-mode-element-clone)
    "C-c /" '("close element" . web-mode-element-close)
+   "C-c t w" '("wrap element" . web-mode-element-wrap)
    "C-c t s" '("select tag" . web-mode-tag-select)
    "C-c t m" '("match tag" . web-mode-tag-match))
   :custom
@@ -70,6 +70,14 @@
   (web-mode-enable-current-element-highlight t)
   (web-mode-enable-html-entities-fontification t)
   :config
+  ;; web-mode 的标签命令与全局 Tree-sitter 命令同属“代码结构”。
+  ;; 让局部 C-c t map 继承全局 C-c t map，保留 s/m 标签操作的同时，
+  ;; 未被覆盖的 f/F/i/a 仍可使用全局结构命令。
+  (let ((web-structure-map (lookup-key web-mode-map (kbd "C-c t")))
+        (global-structure-map (lookup-key global-map (kbd "C-c t"))))
+    (when (and (keymapp web-structure-map)
+               (keymapp global-structure-map))
+      (set-keymap-parent web-structure-map global-structure-map)))
   (which-key-add-keymap-based-replacements
     web-mode-map
     "C-c C-a" "Attributes"
@@ -77,7 +85,7 @@
     "C-c C-d" "DOM"
     "C-c C-e" "Elements"
     "C-c C-t" "Tags"
-    "C-c t" "Tags")
+    "C-c t" "Code structure")
   (setf (alist-get "javascript" web-mode-comment-formats nil nil #'equal) "//")
   (add-to-list 'web-mode-engines-alist '("elixir" . "\\.eex\\'"))
   (add-to-list 'web-mode-engines-alist '("phoenix" . "\\.[lh]eex\\'")))

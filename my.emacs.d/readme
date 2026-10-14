@@ -18,3 +18,5 @@
 - 使用rg搜索，需要安装
   brew install ripgrep
 
+- 输入法切换
+  外部依赖 macism,目前只能在 mac 下使用，使用 brew install macism

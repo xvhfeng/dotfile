@@ -224,13 +224,24 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
   ;; ~/.asdf/shims/python3：GUI Emacs 可能能找到 shim，却找不到 shim 依赖的 asdf。
   (treemacs-python-executable (my/treemacs-find-stable-python))
   (treemacs-width 35)
-  ;; 允许 C-c w r 中的窗口尺寸命令直接调整 Treemacs。
+  ;; 允许 C-t r 中的窗口尺寸命令直接调整 Treemacs。
   (treemacs-width-is-initially-locked nil)
   ;; 避免 C-x o (other-window) 切换光标时误入侧边栏
  ;; (treemacs-is-never-other-window t)
 )
 
 (with-eval-after-load 'treemacs
+  ;; Treemacs 中用 C-c w 直接打开 workspace 菜单；原来的
+  ;; C-c C-w 局部菜单移除，让位给全局独占的 Ace Window。
+  ;; 把普通窗口菜单设为父 keymap：workspace 键优先，其余键继续可用。
+  (set-keymap-parent treemacs-workspace-map my-window-map)
+  (define-key treemacs-mode-map (kbd "C-c w") treemacs-workspace-map)
+  (define-key treemacs-mode-map (kbd "C-c C-w") nil)
+  (with-eval-after-load 'which-key
+    (which-key-add-keymap-based-replacements
+      treemacs-mode-map
+      "C-c w" "Treemacs workspaces / windows"))
+
   (defun my/treemacs--workspace-project-for-exact-path (path)
     "Return (WORKSPACE . PROJECT) whose project root is exactly PATH."
     (let ((canonical-path (-> path file-truename treemacs-canonical-path)))
@@ -309,7 +320,7 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
   ;; 自动随当前编辑的 Buffer 同步高亮对应的符号
   (setq lsp-treemacs-sync-mode 1))
 
-;; 挂载到 General.el 的代码大纲分组 (C-z o s)
+;; 挂载到 General.el 的代码大纲分组 (C-c o s)
 (with-eval-after-load 'general
   (my-leader-def
     "d t" '("toggle treemacs file tree" . treemacs)
@@ -322,7 +333,7 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
   ;; 声明命令以生成可靠的延迟加载入口。
   :commands (zo-up zo-down zo-left zo-right))
 
-;; 大纲显示相关操作统一放到 C-z o。
+;; 大纲显示相关操作统一放到 C-c o。
 (with-eval-after-load 'general
   (my-leader-def
     "o u" '("outline parent" . zo-up)
@@ -358,11 +369,13 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - Eglot 为 lang/ 中配置的语言提供补全、跳转、重命名、格式化和 Flymake 诊断。
-;; - `C-z c a/r/f/q'：代码动作、重命名、格式化、停止 LSP；`C-z c g d/r/h'：定义/引用/文档。
-;; - `C-z o i/I' 搜索当前/全部 Buffer 的符号；`C-z o t' 打开 Imenu List 大纲。
-;; - `C-z o b' 在 sr-speedbar 中开关当前 Buffer 大纲；`C-z o s' 打开 Treemacs 符号树。
-;; - `C-z o u/d/h/l' 在 zoutline 中到父级/下一标题/折叠/展开；`C-z d t' 开关文件树。
+;; - `C-c c a/r/f/q'：代码动作、重命名、格式化、停止 LSP；`C-c c g d/r/h'：定义/引用/文档。
+;; - `C-c o i/I' 搜索当前/全部 Buffer 的符号；`C-c o t' 打开 Imenu List 大纲。
+;; - `C-c o b' 在 sr-speedbar 中开关当前 Buffer 大纲；`C-c o s' 打开 Treemacs 符号树。
+;; - `C-c o u/d/h/l' 在 zoutline 中到父级/下一标题/折叠/展开；`C-c d t' 开关文件树。
 ;; - Treemacs 允许重叠目录进入独立 workspace，也允许删除最后一个项目；窗口宽度手工调整。
+;; - Treemacs Buffer 中 `C-c w' 为 workspace/窗口菜单；`C-c C-w' 专用于 Ace Window。
+;; - Treemacs 中 workspace 键 a/d/e/f/n/r/s 优先；需要同名窗口命令时使用 `C-t'。
 ;; - Treemacs 的异步脚本固定使用真实 Python 3，避免 GUI PATH 下的 asdf shim 执行失败。
-;; - LSP 启动失败先确认 `C-z x m' 中对应服务器已安装，再查看 *eglot events*。
+;; - LSP 启动失败先确认 `C-c x m' 中对应服务器已安装，再查看 *eglot events*。
 ;;; init-lsp.el ends here

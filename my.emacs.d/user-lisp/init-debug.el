@@ -200,10 +200,10 @@
 ;; ---------------------------------------------------------------------------
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
-;; - 调试统一位于 `C-z c D'；支持 C/C++、Python、JS/TS、Java、Lua、Bash 和 Emacs Lisp。
+;; - 调试统一位于 `C-c c D'；支持 C/C++、Python、JS/TS、Java、Lua、Bash 和 Emacs Lisp。
 ;; - 会话 `s s/r/q'：启动或选择/重启/退出；断点 `b b/l/c/h/a'：普通/日志/条件/次数/清空。
 ;; - 执行 `x c/p/n/i/o'：继续/暂停/跳过/进入/跳出；检查 `i e/v/r/w'：求值/信息/REPL/监视。
-;; - `C-z c D m' 补装调试适配器；它们由 Mason 保存在本配置目录内。
+;; - `C-c c D m' 补装调试适配器；它们由 Mason 保存在本配置目录内。
 ;; - C/C++ 默认调试当前目录的 `a.out'；开始调试时可在 Dape 配置中修改程序和参数。
-;; - Emacs Lisp 用 `C-z c D E d/e' instrument 当前函数/切换出错即调试，不经过 DAP。
+;; - Emacs Lisp 用 `C-c c D E d/e' instrument 当前函数/切换出错即调试，不经过 DAP。
 ;;; init-debug.el ends here

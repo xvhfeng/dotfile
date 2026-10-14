@@ -70,10 +70,8 @@
 ;; ============================================================================
 ;; 3. Mason 管理界面与常用快捷操作 (交互入口)
 ;; ============================================================================
-;; 中文说明：Mason 当前的管理命令为 mason-manager；保留 C-c m 兼容入口。
+;; 中文说明：Mason 属于工具操作，统一放在 C-c x m。
 (with-eval-after-load 'general
-  (general-define-key
-    "C-c m" '("Mason manager" . mason-manager))
   (my-leader-def
     "x m" '("Mason tool manager" . mason-manager)))
 
@@ -83,7 +81,7 @@
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - Mason 把语言服务器、格式化器和检查器安装到 `~/.emacs.d/mason/'，不修改系统目录。
-;; - `C-c m' 或 `C-z x m' 打开 Mason 管理器，查看、安装、更新或删除外部工具。
+;; - `C-c x m' 打开 Mason 管理器，查看、安装、更新或删除外部工具。
 ;; - 当前自动管理 clangd、pyright、jdtls、Lua/YAML/XML/Bash/TS/JSON LSP 等工具。
 ;; - GUI Emacs 会同步 Shell PATH，并把 `mason/bin/' 放到 Eglot 可搜索的最前面。
 ;; - 下载失败时先在 Mason 管理器重试，并检查网络、GitHub 访问和 *Messages* 的具体错误。

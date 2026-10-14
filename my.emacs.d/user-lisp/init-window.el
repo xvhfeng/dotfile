@@ -93,14 +93,17 @@
     "k" '("move up" . windmove-up)
     "l" '("move right" . windmove-right)
 
-    ;; 窗口选择与交换
-    "w" '("ace window select/jump" . ace-window)
+    ;; 窗口交换；Ace Window 选择独立使用 C-c C-w。
     "M" '("swap window with target" . ace-swap-window)
 
     ;; 窗口切分
     "v" '("split vertically (|)" . split-window-right)
     "s" '("split horizontally (-)" . split-window-below)
-    "b" '("split horizontally (-)" . split-window-below)
+    ;; init-mykey.el 的方向分屏命令在创建后立即进入新窗口。
+    "f" '("split right and focus" . my-split-right-and-switch)
+    "b" '("split left and focus" . my-split-left-and-switch)
+    "n" '("split below and focus" . my-split-below-and-switch)
+    "p" '("split above and focus" . my-split-above-and-switch)
 
     ;; 窗口关闭与全屏
     "d" '("delete current window" . delete-window)
@@ -136,9 +139,11 @@
 ;; ---------------------------------------------------------------------------
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
-;; - 所有窗口命令都可用 `C-t ...' 或兼容前缀 `C-c w ...'，两者完全等价。
-;; - `h/j/k/l' 移动窗口焦点；`w' 用 Ace Window 选窗口；`M' 与目标窗口交换。
-;; - `v' 左右分屏，`s' 或 `b' 上下分屏；`d' 关当前窗口，`x' 选择后关闭目标窗口。
+;; - 普通 Buffer 的窗口命令可用 `C-t ...' 或 `C-c w ...'，两者等价。
+;; - `C-c C-w' 使用 Ace Window 选择窗口，并以高优先级 keymap 防止其他模式覆盖。
+;; - `h/j/k/l' 移动窗口焦点；`M' 与目标窗口交换。
+;; - `v/s' 左右/上下分屏但不移动；`f/b/n/p' 向右/左/下/上分屏并进入新窗口。
+;; - `d' 关闭当前窗口，`x' 选择后关闭目标窗口。
 ;; - `m' 或 `o' 最大化当前窗口；`r' 进入尺寸调整，随后用 h/j/k/l 或方向键调整，q 退出。
 ;; - 调整尺寸只改变当前窗口，不做窗口均分；选中 Treemacs 时会调用其专用宽度接口。
 ;; - Ace Window 会把 Treemacs 也列为候选；Dimmer 自动变暗非活动窗口以突出当前窗口。

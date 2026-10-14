@@ -212,11 +212,11 @@
 ;;    修改 `my/org-directory' 后重启 Emacs。
 ;;
 ;; 2. 日常工作流：
-;;    - C-z n f       打开 inbox.org，直接记录内容。
-;;    - C-z n c       快速捕获；i=收件箱，t=任务，n=笔记，j=日志。
-;;    - C-z n a       打开 Agenda；选择 t 查看全部 TODO。
-;;    - C-z n t       直接显示 TODO 列表。
-;;    - C-z n l       在当前页面保存链接，Capture 时可用 %a 引用。
+;;    - C-c n f       打开 inbox.org，直接记录内容。
+;;    - C-c n c       快速捕获；i=收件箱，t=任务，n=笔记，j=日志。
+;;    - C-c n a       打开 Agenda；选择 t 查看全部 TODO。
+;;    - C-c n t       直接显示 TODO 列表。
+;;    - C-c n l       在当前页面保存链接，Capture 时可用 %a 引用。
 ;;
 ;; 3. Org 文件内常用快捷键：
 ;;    - TAB / S-TAB   折叠当前标题 / 循环整个文件显示状态。
@@ -236,8 +236,8 @@
 ;;    - g             刷新 Agenda；RET 跳转到原始 Org 条目。
 ;;
 ;; 5. 计时与归档：
-;;    - C-z n k i/o   开始/结束计时；C-z n k g 跳到当前计时任务。
-;;    - C-z n s a     归档当前子树；C-z n s k 剪切当前子树。
+;;    - C-c n k i/o   开始/结束计时；C-c n k g 跳到当前计时任务。
+;;    - C-c n s a     归档当前子树；C-c n s k 剪切当前子树。
 ;;
 ;; 6. Babel 示例：
 ;;      #+begin_src python

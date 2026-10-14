@@ -46,7 +46,7 @@
 
 
 
-;; 挂载到 General.el 体系下的诊断菜单 (C-z c d ...)
+;; 挂载到 General.el 体系下的诊断菜单 (C-c c d ...)
 (with-eval-after-load 'general
   (my-leader-def
     "c d l" '("search diagnostics" . consult-flymake)))
@@ -83,6 +83,6 @@
 ;; ---------------------------------------------------------------------------
 ;; - 含 `.projx' 的目录会被识别为项目根目录；项目搜索忽略 .git/node_modules/target/dist/log。
 ;; - `C-c p s' 或 `M-s r' 搜索项目，`M-s l' 搜索当前 Buffer，`M-s f' 查找文件。
-;; - `C-c ! l' 或 `C-z c d l' 汇总 Flymake 诊断；`C-c E' 导出当前候选结果。
+;; - `C-c ! l' 或 `C-c c d l' 汇总 Flymake 诊断；`C-c E' 导出当前候选结果。
 ;; - 批量替换流程：Consult 搜索 -> `C-. E' 导出 -> `C-c C-p' 进入 Wgrep。
 ;; - 在 Wgrep 中编辑后按 `C-c C-c' 写回文件，按 `C-c C-k' 放弃全部修改。
