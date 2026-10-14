@@ -1,5 +1,16 @@
 ;;; -*- lexical-binding: t; -*-
 
+;; 只向字节编译器声明 project.el API，不在这里提前加载 project.el。
+;; 这样既消除编译警告，也避免与 straight 安装的 project 包争抢 feature。
+(declare-function project-current "project" (&optional maybe-prompt dir))
+(declare-function project-root "project" (project))
+
+;; 必须先让 straight 将集成包加入 `load-path'。否则本文件在冷启动时
+;; 先加载 Consult 与 Embark，Embark 会误报 embark-consult 尚未安装。
+(use-package embark-consult
+  :straight t
+  :defer t)
+
 ;; ============================================================================
 ;; 1. 定义以 `.projx` 为标志的项目根目录查找逻辑
 ;; ============================================================================

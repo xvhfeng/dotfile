@@ -59,6 +59,9 @@
 
 (use-package hydra
   :straight t
+  ;; 全局开启了 `use-package-always-defer'；这里必须立即加载，
+  ;; 否则 `defhydra' 不会执行，按键只会指向一个未定义的符号。
+  :demand t
   :config
   ;; 定义一个专门用于调整窗口大小的 Transient Hydra 键盘态
   (defhydra hydra-window-resize (:hint nil)

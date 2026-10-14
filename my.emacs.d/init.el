@@ -269,11 +269,12 @@
 ;; 8. 常用现代化生态插件配置 ;; 现代化插件配置模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 (defun my/require-modules (features)
-  "按顺序安全加载 FEATURES 中的每一个 feature。
-单个模块加载失败时记录错误并继续加载后续模块。"
+  "按顺序安全加载 FEATURES 中的每一个 user-lisp feature。
+优先使用 runtimes/user-lisp 中的最新字节码；源文件更新时先加载源文件并
+重新编译。单个模块失败时记录错误并继续加载后续模块。"
   (dolist (feature features)
     (condition-case err
-        (require feature)
+        (my/require-user-lisp-feature feature)
       (error
        (message "配置模块 %s 未加载：%s"
                 feature (error-message-string err))))))
@@ -311,6 +312,10 @@
 
 (my/require-modules my/init-modules)
 
+;; 启用模块已经按“先加载源码、再编译”更新缓存；最后只编译
+;; 其余未启用的备用文件，避免为了编译而意外启用 Ivy、Dirvish 等配置。
+(my/byte-compile-stale-user-lisp-files)
+
 ;; 暂未启用的模块，需要时移动到 `my/init-modules' 列表中。
 ;; init-ivy
 ;; init-dirvish
@@ -339,6 +344,8 @@
 ;; - 这是配置总入口：初始化目录、编码、straight.el/use-package、模块加载和 Emacs server。
 ;; - 新增配置模块时，把其 provide 的 feature 加到 `my/init-modules' 列表即可。
 ;; - `my/require-modules' 会逐个安全加载；单个模块失败只记录消息，不阻断其余模块。
-;; - `user-lisp/' 保存功能模块，`user-lisp/lang/' 保存语言模块，运行数据写入 `.local/'。
+;; - 字节码保存到 `runtimes/user-lisp/' 的镜像目录；源文件更新时当次加载 .el 并重编译。
+;; - 未启用的备用模块只会更新 .elc，不会执行源码；也可手动运行 `my/byte-compile-stale-user-lisp-files'。
+;; - `user-lisp/' 保存功能模块，`user-lisp/lang/' 保存语言模块，运行数据写入 `runtimes/'。
 ;; - 自定义变量由 `.local/custom.el' 保存；不建议把 Custom 自动生成内容写回本文件。
 ;; - 启动异常先查看 *Messages* 中“配置模块 ... 未加载”的具体模块和错误原因。

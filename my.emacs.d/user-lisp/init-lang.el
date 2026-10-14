@@ -13,9 +13,9 @@
 (require 'treesit)
 
 (defun my/require-language-module (feature)
-  "加载语言模块 FEATURE；单个可选依赖失败时继续加载其余语言配置。"
+  "从源文件或运行时字节码加载语言模块 FEATURE。"
   (condition-case err
-      (require feature)
+      (my/require-user-lisp-feature feature)
     (error
      (message "语言模块 %s 未加载：%s" feature (error-message-string err)))))
 
@@ -63,5 +63,6 @@
 ;;   Python、Web、Shell、Markdown、JSON 和 YAML 模块；单个语言失败不会阻断其余语言。
 ;; - 编程语言统一启用语法高亮、Outline 和文件名/Buffer 词汇补全，默认缩进宽度为 2。
 ;; - LSP/补全/诊断分别由 init-lsp、init-completion 和 init-flymake 提供。
+;; - 语言模块的 .elc 保存在 `runtimes/user-lisp/lang/'；源文件更新后会自动重编译。
 ;; - 新增语言时创建 `lang-名称.el'、写入 `(provide 'lang-名称)'，再加入上方模块列表。
 ;; - 打开文件后可用 `M-: major-mode' 确认模式，用 `M-x eglot' 手动检查服务器连接。

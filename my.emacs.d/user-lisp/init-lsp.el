@@ -235,12 +235,18 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
   ;; C-c C-w 局部菜单移除，让位给全局独占的 Ace Window。
   ;; 把普通窗口菜单设为父 keymap：workspace 键优先，其余键继续可用。
   (set-keymap-parent treemacs-workspace-map my-window-map)
+  ;; 小写 r 保留统一的“调整窗口大小”语义；Treemacs 重命名改用 R。
+  (define-key treemacs-workspace-map (kbd "R") #'treemacs-rename-workspace)
+  (define-key treemacs-workspace-map (kbd "r") nil)
   (define-key treemacs-mode-map (kbd "C-c w") treemacs-workspace-map)
   (define-key treemacs-mode-map (kbd "C-c C-w") nil)
   (with-eval-after-load 'which-key
     (which-key-add-keymap-based-replacements
       treemacs-mode-map
-      "C-c w" "Treemacs workspaces / windows"))
+      "C-c w" "Treemacs workspaces / windows")
+    (which-key-add-keymap-based-replacements
+      treemacs-workspace-map
+      "R" "rename workspace"))
 
   (defun my/treemacs--workspace-project-for-exact-path (path)
     "Return (WORKSPACE . PROJECT) whose project root is exactly PATH."
@@ -375,7 +381,8 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; - `C-c o u/d/h/l' 在 zoutline 中到父级/下一标题/折叠/展开；`C-c d t' 开关文件树。
 ;; - Treemacs 允许重叠目录进入独立 workspace，也允许删除最后一个项目；窗口宽度手工调整。
 ;; - Treemacs Buffer 中 `C-c w' 为 workspace/窗口菜单；`C-c C-w' 专用于 Ace Window。
-;; - Treemacs 中 workspace 键 a/d/e/f/n/r/s 优先；需要同名窗口命令时使用 `C-t'。
+;; - Treemacs 中 `C-c w r' 调整窗口大小，`C-c w R' 重命名 Workspace。
+;; - 其他 workspace 键 a/d/e/f/n/s 优先；需要同名窗口命令时使用 `C-t'。
 ;; - Treemacs 的异步脚本固定使用真实 Python 3，避免 GUI PATH 下的 asdf shim 执行失败。
 ;; - LSP 启动失败先确认 `C-c x m' 中对应服务器已安装，再查看 *eglot events*。
 ;;; init-lsp.el ends here

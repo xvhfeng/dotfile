@@ -68,6 +68,148 @@
   (let ((default-directory user-lisp-directory))
     (normal-top-level-add-subdirs-to-load-path)))
 
+;; ---------------------------------------------------------------------------
+;; user-lisp 字节码缓存
+;; ---------------------------------------------------------------------------
+(require 'cl-lib)
+
+(defconst my/user-lisp-bytecode-directory
+  (file-name-as-directory (my/runtime-file "user-lisp/"))
+  "Mirror directory containing compiled user-lisp bytecode.")
+
+(defvar my/user-lisp-source-load-count 0
+  "Number of user-lisp source files loaded during this Emacs session.")
+(defvar my/user-lisp-bytecode-load-count 0
+  "Number of cached user-lisp bytecode files loaded during this session.")
+(defvar my/user-lisp-compile-count 0
+  "Number of user-lisp files compiled during this Emacs session.")
+
+(defun my/user-lisp--source-directories ()
+  "Return directories below `user-lisp-directory' that contain Elisp files."
+  (delete-dups
+   (cons (file-name-as-directory user-lisp-directory)
+         (mapcar #'file-name-directory
+                 (directory-files-recursively
+                  user-lisp-directory "\\.el\\'" nil t)))))
+
+(defvar my/user-lisp-source-directories
+  (my/user-lisp--source-directories)
+  "Directories searched for user-lisp source features.")
+
+(defun my/user-lisp-compiled-file (source)
+  "Return the mirrored runtime .elc path for user-lisp SOURCE."
+  (unless (file-in-directory-p source user-lisp-directory)
+    (error "user-lisp 源文件不在配置目录中：%s" source))
+  (expand-file-name
+   (concat (file-name-sans-extension
+            (file-relative-name source user-lisp-directory))
+           ".elc")
+   my/user-lisp-bytecode-directory))
+
+(defun my/user-lisp-source-file (feature)
+  "Return FEATURE's .el source file below `user-lisp-directory'."
+  (catch 'found
+    (dolist (directory my/user-lisp-source-directories)
+      (let ((file (expand-file-name
+                   (concat (symbol-name feature) ".el") directory)))
+        (when (file-readable-p file)
+          (throw 'found file))))))
+
+(defun my/user-lisp-refresh-bytecode-load-path ()
+  "Create and register runtime directories mirroring user-lisp sources."
+  (dolist (source-directory my/user-lisp-source-directories)
+    (let* ((relative (file-relative-name source-directory user-lisp-directory))
+           (runtime-directory
+            (file-name-as-directory
+             (expand-file-name relative my/user-lisp-bytecode-directory))))
+      (make-directory runtime-directory t)
+      ;; Runtime directories stay ahead of source directories for ordinary
+      ;; `require' calls; the managed loader below still chooses exact files.
+      (add-to-list 'load-path runtime-directory))))
+
+(my/user-lisp-refresh-bytecode-load-path)
+
+(defun my/byte-compile-user-lisp-file (source)
+  "Atomically compile user-lisp SOURCE into its mirrored runtime directory."
+  (require 'bytecomp)
+  (let* ((destination (my/user-lisp-compiled-file source))
+         (destination-directory (file-name-directory destination))
+         temporary)
+    (make-directory destination-directory t)
+    (unwind-protect
+        (condition-case err
+            (progn
+              (setq temporary
+                    (make-temp-file
+                     (expand-file-name ".byte-compile-" destination-directory)
+                     nil ".elc"))
+              (let ((byte-compile-dest-file-function
+                     (lambda (_source) temporary)))
+                (unless (eq (byte-compile-file source) t)
+                  (error "字节编译未生成可用产物")))
+              (rename-file temporary destination t)
+              (setq temporary nil)
+              (cl-incf my/user-lisp-compile-count)
+              destination)
+          (error
+           (display-warning
+            'user-lisp-bytecode
+            (format "%s 编译失败，下次仍会加载源文件：%s"
+                    source (error-message-string err))
+            :warning)
+           nil))
+      (when (and temporary (file-exists-p temporary))
+        (delete-file temporary)))))
+
+(defun my/byte-compile-stale-user-lisp-files ()
+  "Compile every missing or stale user-lisp source into the runtime mirror.
+This function does not load inactive modules, so backup configurations such as
+Ivy or Dirvish remain disabled until explicitly added to `my/init-modules'."
+  (interactive)
+  (dolist (source (directory-files-recursively
+                   user-lisp-directory "\\.el\\'" nil t))
+    (let ((compiled (my/user-lisp-compiled-file source)))
+      (when (or (not (file-readable-p compiled))
+                (file-newer-than-file-p source compiled))
+        (my/byte-compile-user-lisp-file source)))))
+
+(defun my/user-lisp--load-source-and-compile (feature source)
+  "Load FEATURE from SOURCE, then refresh its bytecode cache."
+  (load source nil 'nomessage t)
+  (unless (featurep feature)
+    (error "%s 未提供 feature %s" source feature))
+  (cl-incf my/user-lisp-source-load-count)
+  (my/byte-compile-user-lisp-file source)
+  feature)
+
+(defun my/require-user-lisp-feature (feature)
+  "Load FEATURE from current source or its mirrored runtime bytecode.
+When source is newer or bytecode is missing, load the .el file first and
+compile it for the next startup.  Broken bytecode automatically falls back to
+source and is rebuilt."
+  (let* ((source (my/user-lisp-source-file feature))
+         (compiled (and source (my/user-lisp-compiled-file source))))
+    (unless source
+      (error "user-lisp 中找不到 feature %s 的源文件" feature))
+    (if (and (file-readable-p compiled)
+             (not (file-newer-than-file-p source compiled)))
+        (condition-case err
+            (progn
+              (unless (featurep feature)
+                (load compiled nil 'nomessage t)
+                (cl-incf my/user-lisp-bytecode-load-count))
+              (unless (featurep feature)
+                (error "%s 未提供 feature %s" compiled feature))
+              feature)
+          (error
+           (display-warning
+            'user-lisp-bytecode
+            (format "%s 加载失败，回退到源文件：%s"
+                    compiled (error-message-string err))
+            :warning)
+           (my/user-lisp--load-source-and-compile feature source)))
+      (my/user-lisp--load-source-and-compile feature source))))
+
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=81506
 ;; (setq w32-ime-preedit t)
