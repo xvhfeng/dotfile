@@ -64,8 +64,8 @@
           (when-let ((proj (project-current nil dir)))
             (project-root proj))))
 
-  ;; 快速移动候选时不再逐个打开文件。停留 0.4 秒仍会自动预览，
-  ;; 因此保留了原有实时预览能力，只减少无意义的磁盘读取和重绘。
+  ;; 快速移动候选时不再逐个打开文件。停留 1 秒后才自动预览，
+  ;; 从而进一步减少大项目中无意义的磁盘读取和窗口重绘。
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep consult-man
    consult-bookmark consult-recent-file consult-xref
@@ -73,7 +73,7 @@
    consult-source-recent-file consult-source-project-recent-file
    consult-source-buffer consult-source-project-buffer
    consult-source-buffer-register
-   :preview-key '(:debounce 0.4  any)))
+   :preview-key '(:debounce 1 any)))
 
 
 
