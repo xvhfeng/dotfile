@@ -8,10 +8,11 @@
   :straight t
   :custom
   (orderless-matching-styles '(orderless-literal orderless-regexp))
-  ;; 优先使用 orderless 和 substring，彻底取消必须从开头/前缀匹配的限制
-  (completion-styles '(orderless substring flex))
+  ;; Orderless 负责普通候选；basic 作为兼容性后备。
+  (completion-styles '(orderless basic))
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles orderless substring)))))
+  ;; 路径补全保留 Emacs 原生 partial-completion（例如 ~/p/s）。
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;; 记住 Minibuffer 输入历史，把最近常用的文件排在最前面
 (use-package savehist
@@ -42,9 +43,11 @@
 
   :custom
   ;; 1) 竖向最多显示的候选行数
-  (vertico-count 12)
+  (vertico-count 13)
   ;; 2) 循环滚动：光标移到最底下时，按 C-n 回到最顶部
   (vertico-cycle t)
+  ;; 3) 根据候选数量调整 Minibuffer 高度
+  (vertico-resize t)
 
   :general
   (:keymaps 'vertico-map

@@ -4,9 +4,7 @@
 ;; Ranger: 类似终端 Ranger 的文件管理器 (整合 Dired + 实时预览)
 ;; ============================================================================
 
-;; 1. 确保安装并加载 hydra
-(use-package hydra
-  :straight t)
+;; Hydra 由 init-window.el 统一安装和加载；Ranger 仅按命令延迟加载自身。
 
 (defun my/ranger-finish-isearch ()
   "Finish I-search before Ranger changes the current buffer.
@@ -121,7 +119,6 @@ This prevents an open Ranger session from changing native Dired buffers."
 
 (use-package ranger
   :straight (:host github :repo "punassuming/ranger.el")
- :after hydra
   :general
   ("C-c r" '("Ranger file manager" . ranger))
   

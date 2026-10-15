@@ -43,14 +43,18 @@
     ("n" . "Notes / Org")
     ("n s" . "Org subtree")
     ("o" . "Code outline")
+    ("o f" . "Manual folds")
     ("t" . "Code structure")
     ("x" . "Tools / System")
     ("x p" . "System packages")
+    ("k" . "Markdown")
+    ("l" . "LaTeX")
+    ("i" . "Texinfo")
     ("m" . "Mail"))
   "Single source of truth for semantic Which-Key labels below C-c.")
 
 (defconst my/c-c-required-prefixes
-  '("w" "p" "!" "f" "b" "s" "e" "a" "g" "j" "c" "d" "n" "o" "t" "x" "m")
+  '("w" "p" "!" "f" "b" "s" "e" "a" "g" "j" "c" "d" "n" "o" "t" "x" "k" "l" "i" "m")
   "C-c keys that must remain prefix maps after all modules load.")
 
 (defun my/register-c-c-which-key-labels ()
@@ -150,5 +154,6 @@
 ;; - `C-c C-w' 是高优先级的 Ace Window 选择键；`C-w' 保留 Emacs 原生 kill-region。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
 ;; - `C-c d d' 打开当前目录的原生 Dired；各功能模块继续向对应的 C-c 子菜单注册命令。
+;; - `C-c k/l/i' 分别进入 Markdown、LaTeX、Texinfo 文档操作菜单。
 ;; - `C-x C-b' 使用 electric buffer list；repeat-mode 允许可重复命令只重按末键。
 ;; - 新增多层快捷键时，应同时在这里为对应前缀添加 Which-Key 分类名称。

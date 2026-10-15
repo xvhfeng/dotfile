@@ -86,11 +86,12 @@
 
 (defun my/user-lisp--source-directories ()
   "Return directories below `user-lisp-directory' that contain Elisp files."
-  (delete-dups
-   (cons (file-name-as-directory user-lisp-directory)
-         (mapcar #'file-name-directory
-                 (directory-files-recursively
-                  user-lisp-directory "\\.el\\'" nil t)))))
+  (when (file-directory-p user-lisp-directory)
+    (delete-dups
+     (cons (file-name-as-directory user-lisp-directory)
+           (mapcar #'file-name-directory
+                   (directory-files-recursively
+                    user-lisp-directory "\\.el\\'" nil t))))))
 
 (defvar my/user-lisp-source-directories
   (my/user-lisp--source-directories)
@@ -224,9 +225,21 @@ source and is rebuilt."
   (put 'if-let 'byte-obsolete-info nil)
   (put 'when-let 'byte-obsolete-info nil)
   
-  ;; 顶层默认启用词法绑定；空闲时每 5 秒主动执行一次垃圾回收
+  ;; 顶层默认启用词法绑定；空闲较久时再回收，避免短暂停顿期间频繁 Full GC。
   (set-default-toplevel-value 'lexical-binding t)
-  (run-with-idle-timer 5 t #'garbage-collect)
+  (defvar my/gc-idle-timer nil
+    "空闲垃圾回收定时器；保存对象以避免重复加载配置时叠加定时器。")
+  (when (timerp my/gc-idle-timer)
+    (cancel-timer my/gc-idle-timer))
+  (setq my/gc-idle-timer (run-with-idle-timer 30 t #'garbage-collect))
+
+  ;; 启动结束后统一恢复日常编辑参数。64MB 可显著减少 Consult/Vertico
+  ;; 高频分配候选时的 GC 停顿，同时仍能控制长期会话的内存增长。
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (setq gc-cons-threshold (* 64 1024 1024)
+                    gc-cons-percentage 0.1))
+            100)
 
   ;; 关闭 JIT/延迟原生编译，避免使用配置时后台编译带来的 CPU 和磁盘抖动
   (setq native-comp-jit-compilation nil
@@ -301,7 +314,7 @@ source and is rebuilt."
   :custom
   ;; 不自动扫描 user-lisp；启动期把 GC 阈值提到极大，降低加载时暂停次数
   (user-lisp-auto-scrape nil)
-  (gc-cons-percentage (if noninteractive #x8000000 most-positive-fixnum))
+  (gc-cons-percentage 0.1)
   (gc-cons-threshold (if noninteractive #x8000000 most-positive-fixnum))
   ;; 源文件比字节码新时优先载入源文件，避免运行陈旧 .elc
   (load-prefer-newer t)

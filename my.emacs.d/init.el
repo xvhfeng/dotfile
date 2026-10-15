@@ -135,9 +135,8 @@
 ;; 使用安全 advice 机制替换 set-window-dedicated-p，避免窗口被某些插件锁定 ;; Window dedicated 解决策略
 (ora-advice-add 'set-window-dedicated-p :override #'ignore) ;; 忽略窗口锁定指令，保证窗口分屏的灵活操控
 
-;; 性能参数：GC 阈值与进程单次读取流 ;; 内存与进程性能参数注释
-(setq gc-cons-threshold (* 100 1024 1024) ;; 提高垃圾回收（GC）触发阈值到 100MB，减少日常编辑卡顿
-      read-process-output-max (* 1024 1024) ;; 提升单次读取子进程输出的最大缓冲区至 1MB（LSP/AutoComplete 必备）
+;; GC 由 early-init.el 统一管理；这里只配置子进程吞吐量。
+(setq read-process-output-max (* 1024 1024) ;; 提升单次读取子进程输出的最大缓冲区至 1MB（LSP/AutoComplete 必备）
       process-adaptive-read-buffering nil ;; 禁用子进程自适应读取缓冲，提高数据传输实时性
       ad-redefinition-action 'accept ;; 忽略 Advice 重新定义时的警告提示
       native-comp-async-report-warnings-errors nil) ;; 静默并屏蔽原生编译（Native Comp）的异步警告弹窗
@@ -303,9 +302,14 @@
     init-mason
     init-completion
     init-treesitter
+    init-fold
     init-lsp
     init-flymake
     init-lang
+    ;; 文档编辑与预览保持为两个互不依赖的模块。
+    init-markdown
+    init-latex
+    init-texinfo
     init-org
     init-mail
     init-debug
@@ -314,9 +318,16 @@
 
 (my/require-modules my/init-modules)
 
-;; 启用模块已经按“先加载源码、再编译”更新缓存；最后只编译
-;; 其余未启用的备用文件，避免为了编译而意外启用 Ivy、Dirvish 等配置。
-(my/byte-compile-stale-user-lisp-files)
+;; 启用模块已经按“先加载源码、再编译”更新缓存。未启用的备用文件仍会
+;; 自动更新字节码，但放到启动后的空闲阶段，避免同步遍历全部源码。
+(defvar my/stale-bytecode-idle-timer nil)
+(defun my/schedule-stale-user-lisp-bytecode-refresh ()
+  "Schedule compilation of inactive user-lisp modules during idle time."
+  (when (timerp my/stale-bytecode-idle-timer)
+    (cancel-timer my/stale-bytecode-idle-timer))
+  (setq my/stale-bytecode-idle-timer
+        (run-with-idle-timer 2 nil #'my/byte-compile-stale-user-lisp-files)))
+(add-hook 'emacs-startup-hook #'my/schedule-stale-user-lisp-bytecode-refresh 90)
 
 ;; 暂未启用的模块，需要时移动到 `my/init-modules' 列表中。
 ;; init-ivy
@@ -327,8 +338,6 @@
 (require 'server) ;; 提供 server-running-p 和 server-start
 (add-hook 'emacs-startup-hook ;; 将匿名函数挂载到 Emacs 启动完成的 Hook 中
           (lambda () ;; 定义匿名函数
-            ;; 启动完成后恢复 GC 阈值为 16MB，兼顾性能与内存占用 ;; GC 阈值恢复注释
-            (setq gc-cons-threshold (* 16 1024 1024)) ;; 将垃圾回收阈值回落恢复到 16MB 正常水平
             (message "Emacs 加载完成！总耗时: %.3f 秒，执行了 %d 次 GC。" ;; 底部 Minibuffer 打印启动时间与 GC 统计
                      (float-time (time-subtract after-init-time before-init-time)) ;; 计算绝对加载时间差（秒）
                      gcs-done))) ;; 输出从启动到目前为止总共触发 GC 的次数

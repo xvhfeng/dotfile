@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t -*-
 
+(declare-function global-undo-tree-mode "undo-tree" (&optional arg))
+
 
 ;; 设置系统的编码，避免各处的乱码
 ;; UTF-8 as the default coding system
@@ -19,7 +21,7 @@
 (electric-pair-mode t)                       ; 括号补全
 (add-hook 'prog-mode-hook #'show-paren-mode) ; 编程模式下，光标在括号上时高亮另一个括号
 
-(global-auto-revert-mode t)                  ; 自动加载外部修改过的文件
+;; `global-auto-revert-mode' 由 init.el 统一启用，避免重复初始化。
 (setq auto-save-default nil)                 ; 关闭自动保存文件，#为后缀的文件
 
 
@@ -55,7 +57,9 @@
 ;; ----------------------------------------------------------------------------
 ;; 2. 文件与 Buffer 自动重载 (Auto Revert)
 ;; ----------------------------------------------------------------------------
-(setq global-auto-revert-non-file-buffers t)
+(setq global-auto-revert-non-file-buffers t
+      ;; 支持文件通知时避免周期性 stat 轮询；不支持时 Emacs 会自动回退。
+      auto-revert-avoid-polling t)
 ;; 作用：将自动重载应用到非文件 Buffer（如 Dired 目录树列表）。
 ;; 影响：当在外部（如终端/访达）新建或删除了文件，Emacs 的 Dired 目录列表会自动同步更新。
 
@@ -150,7 +154,9 @@
 ;; ----------------------------------------------------------------------------
 (setq recentf-save-file (my/runtime-file "recentf")
       savehist-file (my/runtime-file "history")
-      save-place-file (my/runtime-file "save-place"))
+      save-place-file (my/runtime-file "save-place")
+      ;; 清理仍然保留，但挪到空闲阶段，避免启动时同步检查所有路径。
+      recentf-auto-cleanup 60)
 (save-place-mode 1)
 
 (recentf-mode 1)
@@ -161,9 +167,7 @@
 ;; 作用：将最近文件列表中保留的最大条目数提升至 100 项。
 ;; 影响：可以让你通过 `recentf-open-files` 快速回溯并打开更久之前访问过的历史文件。
 
-(savehist-mode 1)
-;; 作用：开启 Minibuffer 历史记录保存模式。
-;; 影响：在 Minibuffer 中输入的命令、搜索关键词、文件路径等在 Emacs 重启后依然会被保留。
+;; Savehist 由 init-minbuffer.el 统一启用。
 
 ;; ----------------------------------------------------------------------------
 ;; 9. 平滑滚屏 (Smooth Scrolling)
@@ -173,12 +177,7 @@
 ;; 影响：避免光标移动到屏幕最顶/最底端时页面发生剧烈的跳跃式滚屏，保持平滑过度。
 
 
-;; ----------------------------------------------------------------------------
-;; 10. 内存与垃圾回收 (GC Optimization)
-;; ----------------------------------------------------------------------------
-(setq gc-cons-threshold 20000000)
-;; 作用：将 Emacs 的垃圾回收（GC）触发阈值提高到 20MB（默认仅约为 800KB）。
-;; 影响：大幅减少高频触发 GC 导致的卡顿，显著提升在大文件编辑或加载包时的运行流畅度。
+;; GC 参数由 early-init.el 统一管理，避免多个 init 文件互相覆盖。
 
 
 ;; ----------------------------------------------------------------------------

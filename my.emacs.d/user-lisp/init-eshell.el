@@ -1,5 +1,6 @@
+;;; init-eshell.el --- Lazy vterm integration -*- lexical-binding: t; -*-
 
-;;; -*- lexical-binding: t; -*-
+(defvar load-path-filter-function)
 
 ;; ============================================================================
 ;; 内置 Term / Ansi-Term 现代化增强配置
@@ -38,24 +39,12 @@
     (when vterm-directory
       (add-to-list 'load-path vterm-directory))))
 
-;; This must happen before use-package can require vterm.
-(my/vterm-ensure-module-file)
-;; The cached load-path directory listing omits native modules.
-;; Bypass it only while loading this module.
-(let ((load-path-filter-function nil))
-  (require 'vterm-module nil t))
-
 (use-package vterm
   :straight t
-  :demand t
-  :general
-  (:keymaps 'vterm-mode-map
-   "C-y" '("paste" . vterm-yank)
-   "M-x" '("M-x" . execute-extended-command)
-   "C-x C-f" '("find file" . find-file)
-   "C-x b" '("switch buffer" . switch-to-buffer)
-   "C-x k" '("kill buffer" . kill-current-buffer)
-   "C-x o" '("other window" . other-window))
+  :commands vterm
+  :init
+  ;; 只准备模块路径，不在启动阶段加载 vterm 或原生动态库。
+  (my/vterm-ensure-module-file)
   :custom
   ;; 指定调用的 Shell 为 macOS 的 Bash
   (vterm-shell "/bin/bash")
@@ -63,6 +52,9 @@
   (vterm-max-scrollback 10000)
 
   :config
+  ;; 缓存的 load-path 目录列表不包含原生模块，打开终端时再加载。
+  (let ((load-path-filter-function nil))
+    (require 'vterm-module nil t))
   ;; 在终端里退出 (exit) 时，自动销毁并关闭当前 Buffer
   (setq vterm-kill-buffer-on-exit t)
 
@@ -73,6 +65,16 @@
                 (display-line-numbers-mode -1))
               (when (fboundp 'hl-line-mode)
                 (hl-line-mode -1)))))
+
+(with-eval-after-load 'vterm
+  (general-define-key
+   :keymaps 'vterm-mode-map
+   "C-y" '("paste" . vterm-yank)
+   "M-x" '("M-x" . execute-extended-command)
+   "C-x C-f" '("find file" . find-file)
+   "C-x b" '("switch buffer" . switch-to-buffer)
+   "C-x k" '("kill buffer" . kill-current-buffer)
+   "C-x o" '("other window" . other-window)))
 
 (with-eval-after-load 'general
   (my-leader-def

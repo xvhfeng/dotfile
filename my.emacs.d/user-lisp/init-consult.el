@@ -4,6 +4,8 @@
 ;; 这样既消除编译警告，也避免与 straight 安装的 project 包争抢 feature。
 (declare-function project-current "project" (&optional maybe-prompt dir))
 (declare-function project-root "project" (project))
+;; `consult-customize' 展开后会调用此函数；声明它可避免延迟加载时的字节编译误报。
+(declare-function consult--customize-put "consult" (commands property form))
 
 ;; 必须先让 straight 将集成包加入 `load-path'。否则本文件在冷启动时
 ;; 先加载 Consult 与 Embark，Embark 会误报 embark-consult 尚未安装。
@@ -32,6 +34,7 @@
 
 (use-package consult
   :straight t
+  :defer t
   :general
   ("C-c p s" '("search project" . consult-ripgrep))
   ("M-s r" '("ripgrep project" . consult-ripgrep))
@@ -39,8 +42,14 @@
   ("M-s f" '("find file" . consult-find))
   ("C-c ! l" '("list diagnostics" . consult-flymake))
 
+  :init
+  ;; 用 Consult 替换原生 Register 预览；只安装一次 advice。
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
+  (advice-add #'register-preview :override #'consult-register-window)
+
   :custom
-  ;; 开启光标移动即时预览
+  ;; 轻量候选仍即时预览；昂贵的文件/Buffer 预览在 :config 中单独防抖。
   (consult-preview-key 'any)
 
   :config
@@ -53,7 +62,18 @@
   (setq consult-project-function
         (lambda (&optional dir)
           (when-let ((proj (project-current nil dir)))
-            (project-root proj)))))
+            (project-root proj))))
+
+  ;; 快速移动候选时不再逐个打开文件。停留 0.4 秒仍会自动预览，
+  ;; 因此保留了原有实时预览能力，只减少无意义的磁盘读取和重绘。
+  (consult-customize
+   consult-ripgrep consult-git-grep consult-grep consult-man
+   consult-bookmark consult-recent-file consult-xref
+   consult-source-bookmark consult-source-file-register
+   consult-source-recent-file consult-source-project-recent-file
+   consult-source-buffer consult-source-project-buffer
+   consult-source-buffer-register
+   :preview-key '(:debounce 0.4  any)))
 
 
 
@@ -64,13 +84,9 @@
 
 
 ;; ============================================================================
-;; Embark + wgrep: 搜索结果导出与批量重构 (可选但强烈推荐)
+;; Wgrep: 搜索结果导出后的批量重构
+;; Embark 的初始化与按键统一由 init-completion.el 管理。
 ;; ============================================================================
-
-(use-package embark
-  :straight t
-  :general
-  ("C-c E" '("export results" . embark-export)))
 
 (use-package wgrep
   :straight t

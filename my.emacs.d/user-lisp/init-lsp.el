@@ -2,6 +2,10 @@
 
 (require 'seq)
 
+(defun my/corfu-orderless-setup ()
+  "Use Orderless matching only in Corfu completion buffers."
+  (setq-local completion-styles '(orderless basic)))
+
 ;; ============================================================================
 ;; 1. Corfu: 光标处的代码补全浮窗 (In-Buffer Completion UI)
 ;; ============================================================================
@@ -12,19 +16,12 @@
       :custom
       (corfu-cycle t) (corfu-auto t) (corfu-auto-prefix 2) (corfu-auto-delay 0.1)
       (corfu-quit-at-boundary 'separator) (corfu-echo-documentation nil)
+      :hook (corfu-mode . my/corfu-orderless-setup)
       :init
       (global-corfu-mode 1)
       (corfu-popupinfo-mode 1))
   (error (message "Corfu 未加载：%s" (error-message-string err))))
 
-
-;; 让 Corfu 也能在代码补全中使用 Orderless 的无序空格匹配能力
-(use-package orderless
-  :config
-  ;; 增强代码补全匹配体验
-  (add-hook 'corfu-mode-hook
-            (lambda ()
-              (setq-local completion-styles '(orderless basic)))))
 
 ;; 为 Corfu 补全浮窗加上漂亮的图标 (可选增强)
 ;; 中文说明：图标仅增强补全外观，不能影响核心语言服务的加载。
@@ -103,13 +100,11 @@
   ;; 避免 LSP 频繁在 minibuffer 输出冗长的提示信息
   (eglot-ignored-server-capabilities '(:inlayHintProvider))
   ;; 禁用 Eglot 自动修改事件日志，提升高频输入性能
-  (eglot-events-buffer-size 0)
+  (eglot-events-buffer-config '(:size 0 :format lisp))
 
   :config
   ;; 优化 performance：提高与 LSP 服务器通信吞吐量
   (setq read-process-output-max (* 1024 1024)) ; 1MB
-  ;; 关闭不必要的 Eglot 详细日志以提升性能
-  (setq eglot-events-buffer-size 0)
   ;; 显式声明常见服务器命令，保证 Mason 安装到 mason/bin/ 后能被 Eglot 正确调用。
   (dolist (entry '((java-mode . ("jdtls")) (java-ts-mode . ("jdtls"))
                    (python-mode . ("pyright-langserver" "--stdio"))
@@ -215,49 +210,6 @@
                            #'imenu-list-collect-entries)
     (advice-add #'imenu-list-collect-entries :around
                 #'my/imenu-list--collect-and-categorize-eglot-symbols)))
-
-;; 方案 C: 在当前 frame 右侧用 Speedbar 显示当前文件的 Imenu 大纲。
-(condition-case err
-    (use-package sr-speedbar
-      :straight (:host github :repo "emacsorphanage/sr-speedbar")
-      :commands (sr-speedbar-open sr-speedbar-close sr-speedbar-toggle)
-      :custom
-      (sr-speedbar-right-side t)
-      (sr-speedbar-default-width 36)
-      (sr-speedbar-max-width 50)
-      (sr-speedbar-auto-refresh t)
-      ;; 保留普通窗口布局，不让 Speedbar 打开时删除其他窗口。
-      (sr-speedbar-delete-windows nil)
-      (speedbar-use-imenu-flag t))
-  (error (message "sr-speedbar 未加载：%s" (error-message-string err))))
-
-(defun my/sr-speedbar--expand-buffer-outline (source-buffer)
-  "Show and expand SOURCE-BUFFER's Imenu outline in sr-speedbar."
-  (when (and (buffer-live-p source-buffer)
-             (buffer-file-name source-buffer)
-             (buffer-live-p speedbar-buffer))
-    (let ((source-name (buffer-name source-buffer)))
-      (with-current-buffer speedbar-buffer
-        (speedbar-change-initial-expansion-list "quick buffers")
-        (speedbar-refresh)
-        (goto-char (point-min))
-        (catch 'expanded
-          (while (not (eobp))
-            (when (equal (speedbar-line-text) source-name)
-              (speedbar-expand-line)
-              (throw 'expanded t))
-            (forward-line 1)))))))
-
-(defun my/sr-speedbar-outline-toggle ()
-  "Toggle sr-speedbar with the current file's outline expanded."
-  (interactive)
-  (require 'sr-speedbar)
-  (if (sr-speedbar-exist-p)
-      (sr-speedbar-close)
-    (let ((source-buffer (current-buffer)))
-      (sr-speedbar-open)
-      (my/sr-speedbar--expand-buffer-outline source-buffer))))
-
 
 (defun my/treemacs-find-stable-python ()
   "Return a directly executable Python 3 binary for Treemacs helpers.
@@ -435,7 +387,6 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
     ;; 代码大纲与导航 (Outline / Imenu)
     "oi"  '("jump to symbol (imenu)" . consult-imenu)
     "oI"  '("jump to symbol (all buffers)" . consult-imenu-multi)
-    "ob"  '("toggle Speedbar outline" . my/sr-speedbar-outline-toggle)
     "ot"  '("toggle outline sidebar" . imenu-list-smart-toggle)))
 
 (provide 'init-lsp)
@@ -446,7 +397,7 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; - Eglot 为 lang/ 中配置的语言提供补全、跳转、重命名、格式化和 Flymake 诊断。
 ;; - `C-c c a/r/f/q'：代码动作、重命名、格式化、停止 LSP；`C-c c g d/r/h'：定义/引用/文档。
 ;; - `C-c o i/I' 搜索当前/全部 Buffer 的符号；`C-c o t' 打开 Imenu List 大纲。
-;; - `C-c o b' 在 sr-speedbar 中开关当前 Buffer 大纲；`C-c o s' 打开 Imenu List 大纲。
+;; - Treemacs 只负责文件树，不再承载代码大纲。
 ;; - `C-c o u/d/h/l' 在 zoutline 中到父级/下一标题/折叠/展开；`C-c d t' 开关文件树。
 ;; - Treemacs 允许重叠目录进入独立 workspace，也允许删除最后一个项目；窗口宽度手工调整。
 ;; - Treemacs Buffer 中 `C-c w' 为 workspace/窗口菜单；`C-c C-w' 专用于 Ace Window。

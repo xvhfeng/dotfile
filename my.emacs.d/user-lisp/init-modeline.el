@@ -2,7 +2,7 @@
 
 (use-package nerd-icons
   :straight t
-  :demand t
+  :defer t
   :custom
   ;; Doom Modeline 默认使用 Symbols Nerd Font Mono，但本机安装的是
   ;; JetBrainsMono Nerd Font Mono。显式指定现有字体，避免图标显示成方框或乱码。
@@ -10,7 +10,8 @@
 
 (use-package doom-modeline
   :straight t
-  :demand t
+  ;; 纯界面增强先让编辑窗口出现，再在短暂空闲时加载。
+  :defer 0.2
   :custom
   ;; 基础外观。
   (doom-modeline-height 28)
