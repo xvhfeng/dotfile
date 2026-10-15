@@ -14,8 +14,8 @@
   '((display-buffer-in-side-window)
     (side . bottom)
     (slot . 0)
-    ;; 给四类工作区命令留出足够纵向空间，避免默认面板过于拥挤。
-    (window-height . 0.45))
+    ;; 六个功能分组横向排成一行；保留足够高度显示最长一列的所有子菜单。
+    (window-height . 0.38))
   "个人工作台专用的宽阔底部 Transient 面板显示规则。")
 
 ;; Transient 会在打开菜单时校验每个后缀命令。为延迟加载的第三方包预先注册
@@ -68,6 +68,68 @@
    (t
     (message "Eglot 尚未可用，无法执行代码动作。"))))
 
+;; 工作台中的编辑命令都经过此包装器调用。这样 Transient 在 Scratch 等没有
+;; 提前加载第三方包的 Buffer 中只会展示菜单；真正选择项目时才按需加载插件。
+(defun my/workbench-call-on-demand (feature command description)
+  "按需加载 FEATURE 后交互执行 COMMAND；不可用时说明 DESCRIPTION 的状态。"
+  (interactive)
+  (condition-case err
+      (cond
+       ((fboundp command)
+        (call-interactively command))
+       ((and (require feature nil t) (fboundp command))
+        (call-interactively command))
+       (t
+        (message "%s尚未安装或加载；其他编辑功能不受影响。" description)))
+    (error
+     (message "%s暂时不可用：%s" description (error-message-string err)))))
+
+;; 以下小命令是工作台的稳定入口；它们不改变各插件既有的全局短键。
+(defun my/workbench-edit-occurrences ()
+  "按需启动 Iedit，批量编辑当前符号的匹配项。"
+  (interactive)
+  (my/workbench-call-on-demand 'iedit 'iedit-mode "Iedit 批量编辑"))
+
+(defun my/workbench-expand-selection ()
+  "按语法结构扩展当前选区。"
+  (interactive)
+  (my/workbench-call-on-demand 'expand-region 'er/expand-region "语义选区扩展"))
+
+(defun my/workbench-contract-selection ()
+  "按语法结构缩小当前选区。"
+  (interactive)
+  (my/workbench-call-on-demand 'expand-region 'er/contract-region "语义选区收缩"))
+
+(defun my/workbench-visual-undo ()
+  "打开当前 Buffer 的可视化撤销树。"
+  (interactive)
+  (my/workbench-call-on-demand 'vundo 'vundo "可视化撤销树"))
+
+(defun my/workbench-quick-jump ()
+  "按需启动 Avy 字符跳转。"
+  (interactive)
+  (my/workbench-call-on-demand 'avy 'avy-goto-char-timer "Avy 快速跳转"))
+
+(defun my/workbench-clipboard-history ()
+  "打开 Consult 剪贴历史。"
+  (interactive)
+  (my/workbench-call-on-demand 'consult 'consult-yank-pop "剪贴历史"))
+
+(defun my/workbench-current-directory ()
+  "在 Dired 中打开当前文件所在目录。"
+  (interactive)
+  (my/workbench-call-on-demand 'dired-x 'dired-jump "当前目录"))
+
+(defun my/workbench-context-actions ()
+  "打开当前目标的 Embark 上下文动作菜单。"
+  (interactive)
+  (my/workbench-call-on-demand 'embark 'embark-act "上下文动作"))
+
+(defun my/workbench-project-diagnostics ()
+  "在补全界面中搜索当前 Buffer 的 Flymake 诊断。"
+  (interactive)
+  (my/workbench-call-on-demand 'consult 'consult-flymake "诊断搜索"))
+
 (defun my/workbench-toggle-popup ()
   "显示或隐藏最近的 Popper 临时窗口。
 若 Popper 尚未可用，只显示提示，不影响当前窗口布局或已有功能。"
@@ -89,36 +151,56 @@
 
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
-  [["文件与搜索"
+  ;; 固定每列的最小宽度，让各分组标题和子菜单左边缘一致，并在列间保留留白。
+  :column-widths '(22 22 22 22 22 22)
+  ;; 标题预留与“按键 + 空格”相同的宽度，使子菜单的中文描述从标题正下方开始。
+  [["   文件与搜索"
     ("f" "打开文件" find-file)
     ("r" "最近文件" consult-recent-file)
     ("b" "切换 Buffer" consult-buffer)
     ("s" "项目搜索" consult-ripgrep)
-    ("l" "当前文件搜索" consult-line)]
-   ["代码"
+    ("l" "当前文件搜索" consult-line)
+    ("D" "当前目录" my/workbench-current-directory)
+    ("y" "剪贴历史" my/workbench-clipboard-history)]
+   ["   代码"
     ("i" "符号列表" consult-imenu)
     ("o" "侧栏大纲" my/workbench-show-outline)
     ("d" "当前诊断" flymake-show-buffer-diagnostics)
+    ("!" "搜索诊断" my/workbench-project-diagnostics)
     ("a" "代码动作" my/workbench-code-actions)
-    ("c" "编译" compile)]]
-  [["项目与 Git"
+    ("c" "编译" compile)]
+   ["   编辑与跳转"
+    ("e" "批量编辑符号" my/workbench-edit-occurrences)
+    ("x" "扩展选区" my/workbench-expand-selection)
+    ("X" "收缩选区" my/workbench-contract-selection)
+    ("u" "可视撤销树" my/workbench-visual-undo)
+    ("j" "快速跳转" my/workbench-quick-jump)]
+   ["   项目与 Git"
     ("p" "切换项目" project-switch-project)
     ("g" "Git 状态" magit-status)
     ("G" "当前文件 Git 操作" magit-file-dispatch)
     ("t" "文件树" treemacs)]
-   ["窗口与笔记"
+   ["   窗口与笔记"
     ("w" "切换窗口" other-window)
     ("m" "最大化当前窗口" delete-other-windows)
     ("q" "临时窗口" my/workbench-toggle-popup)
     ("n" "新建笔记" org-capture)
-    ("A" "日程" org-agenda)]])
+    ("A" "日程" org-agenda)]
+   ["   帮助与发现"
+    ("?" "查询按键" describe-key)
+    ("." "上下文动作" my/workbench-context-actions)
+    ("H" "当前按键表" describe-bindings)
+    ("K" "当前模式帮助" describe-mode)]])
 
 (defun my/workbench ()
   "打开个人工作台菜单。"
   (interactive)
   ;; 仅影响本工作台，不改变 Magit 等其他 Transient 菜单的窗口布局。
   (let ((transient-display-buffer-action
-         my/workbench-transient-display-buffer-action))
+         my/workbench-transient-display-buffer-action)
+        ;; 中文全角字符与 Git 等半角文字混排时，按字符数计算列宽会错位；
+        ;; 仅在工作台启用像素级对齐，保证每列标题与描述的实际显示位置一致。
+        (transient-align-variable-pitch t))
     (my/workbench-menu)))
 
 ;; 只增加一个全局入口；Which-Key 会将其作为 C-c 菜单中的可见项目展示。
@@ -155,7 +237,9 @@
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - `C-c SPC' 打开工作台；无需记住菜单内按键，直接查看 Transient 提示即可。
-;; - 文件、搜索、代码、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
+;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
+;; - “编辑与跳转”提供 Iedit、语义选区、撤销树和 Avy；现有短键仍可直接使用。
+;; - “帮助与发现”可查询按键、查看当前按键表或模式帮助，适合遗忘快捷键时使用。
 ;; - 选择“临时窗口”后，Popper 显示或隐藏最近的帮助、编译或诊断类 Buffer。
 ;; - Popper 首次按需加载；无法安装时只给出提示，不阻断编辑、LSP 或 Flymake。
 ;;; init-workbench.el ends here

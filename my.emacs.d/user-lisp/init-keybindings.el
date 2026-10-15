@@ -30,6 +30,8 @@
     ("a" . "Context actions")
     ("g" . "Git")
     ("j" . "Jump")
+    ;; C-c h 是遗忘快捷键时的统一自助入口，避免必须记住插件各自的帮助键。
+    ("h" . "Help / discover")
     ("c" . "Code")
     ("c g" . "Code navigation")
     ("c d" . "Diagnostics")
@@ -54,7 +56,7 @@
   "Single source of truth for semantic Which-Key labels below C-c.")
 
 (defconst my/c-c-required-prefixes
-  '("w" "p" "!" "f" "b" "s" "e" "a" "g" "j" "c" "d" "n" "o" "t" "x" "k" "l" "i" "m")
+  '("w" "p" "!" "f" "b" "s" "e" "a" "g" "j" "h" "c" "d" "n" "o" "t" "x" "k" "l" "i" "m")
   "C-c keys that must remain prefix maps after all modules load.")
 
 (defun my/register-c-c-which-key-labels ()
@@ -133,7 +135,15 @@
     "b b" '("switch buffer" . switch-to-buffer)
     "b k" '("kill current buffer" . kill-current-buffer)
     "b l" '("electric buffer list" . electric-buffer-list)
-    "d d" '("Dired current directory" . dired-jump)))
+    "d d" '("Dired current directory" . dired-jump)
+
+    ;; 中文说明：这些是通用发现命令，所有 major mode 下均可使用；Which-Key 会在
+    ;; 按下 C-c h 后显示完整清单，用户不必记忆某个插件专属的帮助快捷键。
+    "h k" '("查询按键" . describe-key)
+    "h f" '("查询命令" . describe-function)
+    "h v" '("查询变量" . describe-variable)
+    "h m" '("当前模式帮助" . describe-mode)
+    "h b" '("当前有效按键表" . describe-bindings)))
 
 
 ;; 使用general参数代替bind的示例
@@ -154,6 +164,7 @@
 ;; - `C-c C-w' 是高优先级的 Ace Window 选择键；`C-w' 保留 Emacs 原生 kill-region。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
 ;; - `C-c d d' 打开当前目录的原生 Dired；各功能模块继续向对应的 C-c 子菜单注册命令。
+;; - `C-c h k/f/v/m/b' 分别查询按键、命令、变量、当前模式与当前有效按键表。
 ;; - `C-c k/l/i' 分别进入 Markdown、LaTeX、Texinfo 文档操作菜单。
 ;; - `C-x C-b' 使用 electric buffer list；repeat-mode 允许可重复命令只重按末键。
 ;; - 新增多层快捷键时，应同时在这里为对应前缀添加 Which-Key 分类名称。
