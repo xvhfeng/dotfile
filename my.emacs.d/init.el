@@ -312,6 +312,8 @@
     init-latex
     init-texinfo
     init-org
+    ;; 将常用命令聚合为可发现的 Transient 工作台，并按需管理临时窗口。
+    init-workbench
     init-mail
     init-debug
     init-modeline)
