@@ -250,9 +250,9 @@
 
 ;;============*  设置 my 序列改进设置 *========================
 ;; 上翻半页
-(keymap-global-set "C-9"  #'my-scroll-half-screen-up)
+(keymap-global-set "C-0"  #'my-scroll-half-screen-up)
 ;; 下翻半页
-(keymap-global-set "C-0"  #'my-scroll-half-screen-down)
+(keymap-global-set "C-9"  #'my-scroll-half-screen-down)
 (keymap-global-set "C-o"  #'my-open-line-below)
 (keymap-global-set "C-S-o"  #'my-open-line-above)
 
@@ -275,8 +275,8 @@
  ;; 把 c-k 设置为不管什么位姿都删除当前行
 ;; (global-set-key (kbd "C-k") 'kill-whole-line)
 (keymap-global-set "C-'" #'imenu)
-(keymap-global-set "C-7" #'scroll-up-command)
-(keymap-global-set "C-8" #'scroll-down-command)
+(keymap-global-set "C-8" #'scroll-up-command)
+(keymap-global-set "C-7" #'scroll-down-command)
 (keymap-global-set "C-l" #'recenter-top-bottom)
 (keymap-global-set "C-S-a" #'move-beginning-of-line)
 ;; 方案 A：直接用 comment-line 覆盖原生的 M-; (最顺手)
