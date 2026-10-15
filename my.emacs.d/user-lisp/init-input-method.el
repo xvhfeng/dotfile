@@ -9,19 +9,29 @@
 (defconst my/sis-english-source "com.apple.keylayout.ABC"
   "macOS input-source id used for English commands.")
 
-(defconst my/sis-other-source "com.tencent.inputmethod.wetype.pinyin"
-  "Canonical macOS input-source id used for Chinese text input.")
+(defconst my/sis-other-source "com.sogou.inputmethod.pinyin"
+  "当前机器默认用于中文输入的搜狗拼音 macOS input-source id。")
+
+(defun my/sis-unique-input-sources (sources)
+  "返回 SOURCES 中顺序不变、且已去重的有效输入法 ID 列表。"
+  (delete-dups (seq-filter #'stringp (copy-sequence sources))))
 
 (defcustom my/sis-chinese-sources
-  '("com.tencent.inputmethod.wetype.pinyin"
+  (my/sis-unique-input-sources
+   '("com.sogou.inputmethod.pinyin"
+    "com.tencent.inputmethod.wetype.pinyin"
     "im.rime.inputmethod.Squirrel.Hans"
-    "com.apple.inputmethod.SCIM.ITABC")
+    "com.apple.inputmethod.SCIM.ITABC"))
   "macOS input-source ids that SIS should recognize as Chinese.
 
-The list currently covers WeType Pinyin, Squirrel Simplified Chinese and the
-built-in macOS Pinyin input source enabled or recently used on this machine."
+列表包含当前机器正在使用的搜狗拼音，以及微信输入法、鼠须管简体和
+macOS 自带拼音；加载时会自动去重。"
   :type '(repeat string)
   :group 'convenience)
+
+;; Custom 文件可能保存过旧列表；再次规范化可确保用户手动添加相同 ID 时不重复。
+(setq my/sis-chinese-sources
+      (my/sis-unique-input-sources my/sis-chinese-sources))
 
 (defvar my/sis-last-chinese-source my/sis-other-source
   "Most recently observed Chinese input source.")
@@ -31,6 +41,9 @@ built-in macOS Pinyin input source enabled or recently used on this machine."
 
 (defvar my/sis--raw-do-set nil
   "Original SIS function used to set the macOS input source.")
+
+(defvar my/sis-macos-backend-available nil
+  "非 nil 表示已找到可安全调用的 macism 输入法切换后端。")
 
 (defcustom my/sis-command-modifiers '(control meta alt)
   "Modifiers that make the next Emacs command switch to English."
@@ -111,21 +124,29 @@ input method that was actually in use."
         '("C-c" "C-x" "C-h" "C-t" "M-g" "M-s"))
   :config
   (when (eq system-type 'darwin)
-    (sis-ism-lazyman-config
-     my/sis-english-source
-     my/sis-other-source
-     'macism)
-    ;; `sis-ism-lazyman-config' sets the manager name to "macism".  Replace it
-    ;; afterwards with an absolute path so GUI Emacs does not depend on PATH.
-    (setq sis-external-ism
-          (or (executable-find "macism") "/opt/homebrew/bin/macism"))
-    ;; Initialize the original macOS reader/setter first, then wrap them so all
-    ;; configured Chinese input sources are treated as SIS's `other' language.
-    (sis--init-ism)
-    (my/sis-enable-multiple-chinese-sources))
+    (let ((macism (executable-find "macism")))
+      (if macism
+          (progn
+            (sis-ism-lazyman-config
+             my/sis-english-source
+             my/sis-other-source
+             'macism)
+            ;; 使用已验证存在的绝对路径，避免 GUI Emacs 的 PATH 差异。
+            (setq sis-external-ism macism)
+            ;; 先初始化原始读写函数，再包装多中文输入法的识别逻辑。
+            (sis--init-ism)
+            (my/sis-enable-multiple-chinese-sources)
+            (setq my/sis-macos-backend-available t))
+        ;; 当前 Emacs 构建没有 mac-select-input-source；无 macism 时绝不能
+        ;; 回退到 emp，否则首次切换会调用未定义函数并产生运行时警告。
+        (setq my/sis-macos-backend-available nil
+              sis-do-get nil
+              sis-do-set nil))))
 
-  (add-hook 'pre-command-hook #'my/sis-english-before-modified-command)
-  (sis-global-respect-mode 1))
+  ;; 只有后端可用才接管按键和 Buffer 输入法状态，避免无后端时干扰编辑。
+  (when my/sis-macos-backend-available
+    (add-hook 'pre-command-hook #'my/sis-english-before-modified-command)
+    (sis-global-respect-mode 1)))
 
 ;; Keep input-source commands inside the existing Tools / System hierarchy.
 (with-eval-after-load 'which-key
@@ -148,8 +169,8 @@ input method that was actually in use."
 ;; - macOS 下按含 Ctrl、Alt 或 Meta 的命令键前，自动切换到 ABC 英文输入源。
 ;; - `C-c x i e/c/t/s'：切到英文/中文、切换输入源、显示当前输入源。
 ;; - 依赖外部 `macism' 命令；默认英文 ID 为 ABC。
-;; - 微信输入法拼音、鼠须管简体和 macOS 自带拼音都会被识别为中文；临时切换
-;;   到英文后，会恢复到最近实际使用的中文输入法。
+;; - 搜狗拼音、微信输入法拼音、鼠须管简体和 macOS 自带拼音都会被识别为中文；
+;;   临时切换到英文后，会恢复到最近实际使用的中文输入法。
 ;; - 若增加其他中文输入法，用 `macism' 查询 ID 后加入
 ;;   `my/sis-chinese-sources'，不需要替换现有项目。
 ;; - 普通文本输入不会被强制切换；只有执行配置的修饰键命令时才切到英文。

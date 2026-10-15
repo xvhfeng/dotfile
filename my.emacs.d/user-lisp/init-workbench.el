@@ -10,6 +10,14 @@
 (defvar my-leader-map mode-specific-map
   "以 C-c 开始的全局用户命令 keymap。")
 
+(defconst my/workbench-transient-display-buffer-action
+  '((display-buffer-in-side-window)
+    (side . bottom)
+    (slot . 0)
+    ;; 给四类工作区命令留出足够纵向空间，避免默认面板过于拥挤。
+    (window-height . 0.45))
+  "个人工作台专用的宽阔底部 Transient 面板显示规则。")
+
 ;; Transient 会在打开菜单时校验每个后缀命令。为延迟加载的第三方包预先注册
 ;; 自动加载，确保 Scratch 等尚未访问过代码/搜索功能的 Buffer 也能打开菜单。
 (dolist (command '(consult-recent-file consult-buffer consult-ripgrep consult-line
@@ -92,8 +100,8 @@
     ("o" "侧栏大纲" my/workbench-show-outline)
     ("d" "当前诊断" flymake-show-buffer-diagnostics)
     ("a" "代码动作" my/workbench-code-actions)
-    ("c" "编译" compile)]
-   ["项目与 Git"
+    ("c" "编译" compile)]]
+  [["项目与 Git"
     ("p" "切换项目" project-switch-project)
     ("g" "Git 状态" magit-status)
     ("G" "当前文件 Git 操作" magit-file-dispatch)
@@ -108,7 +116,10 @@
 (defun my/workbench ()
   "打开个人工作台菜单。"
   (interactive)
-  (my/workbench-menu))
+  ;; 仅影响本工作台，不改变 Magit 等其他 Transient 菜单的窗口布局。
+  (let ((transient-display-buffer-action
+         my/workbench-transient-display-buffer-action))
+    (my/workbench-menu)))
 
 ;; 只增加一个全局入口；Which-Key 会将其作为 C-c 菜单中的可见项目展示。
 (define-key my-leader-map (kbd "SPC") #'my/workbench)
