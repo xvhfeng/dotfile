@@ -205,7 +205,7 @@ start of every following column."
     "C-t" (cons "Windows" my-window-map)
     ;; Ibuffer 是可持续操作的真正 Buffer，适合由 Popper 隐藏、召回和轮换；
     ;; 原来的 Electric Buffer List 保留在 C-c b e，功能没有被删除。
-    "C-x C-b" '("Ibuffer popup" . ibuffer))
+    "C-x C-b" '("Ibuffer popup" . my/workbench-ibuffer))
 
   ;; C-c C-w 由 Ace Window 独占。General 的 override keymap 高于
   ;; major/minor mode keymap，防止 Dirvish、web-mode 等模式重新抢占。
@@ -226,7 +226,7 @@ start of every following column."
     "f r" '("recent files" . recentf-open-files)
     "b b" '("switch buffer" . switch-to-buffer)
     "b k" '("kill current buffer" . kill-current-buffer)
-    "b l" '("Ibuffer popup" . ibuffer)
+    "b l" '("Ibuffer popup" . my/workbench-ibuffer)
     "b e" '("electric buffer list" . electric-buffer-list)
     "d d" '("Dired current directory" . dired-jump)
 

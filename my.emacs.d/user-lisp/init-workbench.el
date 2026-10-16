@@ -73,10 +73,58 @@
 ;; Buffer List 固定在底部，不会顺带改变 Help、编译、Magit 等既有布局。
 (add-to-list 'display-buffer-alist my/workbench-buffer-list-display-rule)
 
+(defvar-local my/ibuffer-origin-window nil
+  "打开当前 Ibuffer 弹窗前选中的编辑窗口。")
+
+(defun my/workbench-ibuffer ()
+  "在底部打开 Ibuffer，并记住调用它的编辑窗口。"
+  (interactive)
+  (let ((origin-window
+         (if (and (derived-mode-p 'ibuffer-mode)
+                  (window-live-p my/ibuffer-origin-window))
+             my/ibuffer-origin-window
+           (selected-window))))
+    (call-interactively #'ibuffer)
+    (when (derived-mode-p 'ibuffer-mode)
+      (setq-local my/ibuffer-origin-window origin-window))))
+
+(defun my/ibuffer--visit-in-origin-window (target-buffer &optional single)
+  "在来源窗口访问 TARGET-BUFFER，并关闭当前 Ibuffer 弹窗。
+SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
+  (let ((origin-window my/ibuffer-origin-window)
+        (ibuffer-window (selected-window)))
+    (quit-window nil ibuffer-window)
+    (when (window-live-p origin-window)
+      (select-window origin-window))
+    (switch-to-buffer target-buffer)
+    (when single
+      (delete-other-windows))))
+
+(defun my/ibuffer-visit-buffer-in-origin-window (&optional single)
+  "从弹窗 Ibuffer 在原编辑窗口访问当前行的 Buffer。"
+  (interactive "P")
+  (if (window-live-p my/ibuffer-origin-window)
+      (my/ibuffer--visit-in-origin-window (ibuffer-current-buffer t) single)
+    ;; 从 M-x ibuffer 等普通入口打开时，没有来源记录，保持原生命令行为。
+    (ibuffer-visit-buffer single)))
+
+(defun my/ibuffer-mouse-visit-buffer-in-origin-window (event)
+  "用鼠标从弹窗 Ibuffer 在原编辑窗口访问所选 Buffer。"
+  (interactive "e")
+  (if (window-live-p my/ibuffer-origin-window)
+      (progn
+        (mouse-set-point event)
+        (my/ibuffer--visit-in-origin-window (ibuffer-current-buffer t)))
+    (ibuffer-mouse-visit-buffer event)))
+
 ;; Ibuffer 默认复用当前源码窗口，绕过 display-buffer-alist。让它使用另一窗口后，
 ;; 上面的规则才能把列表稳定放到底部，同时保留源码窗口。
 (with-eval-after-load 'ibuffer
-  (setq ibuffer-use-other-window t))
+  (setq ibuffer-use-other-window t)
+  (define-key ibuffer-mode-map [remap ibuffer-visit-buffer]
+              #'my/ibuffer-visit-buffer-in-origin-window)
+  (define-key ibuffer-mode-map [remap ibuffer-mouse-visit-buffer]
+              #'my/ibuffer-mouse-visit-buffer-in-origin-window))
 
 (defun my/workbench-popper-group ()
   "按项目分组 Popper；不在项目中时安全地回退到当前目录。"
@@ -286,6 +334,7 @@
 ;; - “帮助与发现”可查询按键、查看当前按键表或模式帮助，适合遗忘快捷键时使用。
 ;; - 选择“临时窗口”后，Popper 显示或隐藏最近的帮助、编译或诊断类 Buffer。
 ;; - `C-x C-b' 或 `C-c b l' 在底部打开 Ibuffer；`C-c b e' 保留 Electric List。
+;;   在 Ibuffer 中按 RET 或鼠标选择后，目标 Buffer 会回到原编辑窗口，弹窗关闭。
 ;; - `C-c b p t/n/k/m'：切换最近弹窗、轮换弹窗、关闭最近弹窗、切换当前
 ;;   Buffer 的弹窗身份。普通源码、Treemacs、Magit、Dired/Ranger 不会被接管。
 ;; - Popper 在启动完成后加载；无法安装时工作台会给出提示，不阻断其他功能。
