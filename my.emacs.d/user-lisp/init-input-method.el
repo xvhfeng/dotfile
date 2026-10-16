@@ -50,6 +50,51 @@ macOS 自带拼音；加载时会自动去重。"
   :type '(repeat symbol)
   :group 'convenience)
 
+(defcustom my/sis-keep-input-source-commands
+  '(next-line previous-line
+    forward-char backward-char right-char left-char
+    forward-word backward-word
+    move-beginning-of-line move-end-of-line beginning-of-line end-of-line
+    beginning-of-buffer end-of-buffer
+    forward-paragraph backward-paragraph
+    forward-sentence backward-sentence
+    forward-sexp backward-sexp up-list backward-up-list down-list
+    beginning-of-defun end-of-defun
+    scroll-up-command scroll-down-command scroll-up scroll-down
+    recenter-top-bottom
+    other-window windmove-left windmove-right windmove-up windmove-down
+    next-buffer previous-buffer
+    goto-char goto-line
+    next-error previous-error
+    flymake-goto-next-error flymake-goto-prev-error
+    xref-go-back xref-go-forward
+    outline-next-visible-heading outline-previous-visible-heading
+    outline-up-heading
+    dired-next-line dired-previous-line
+    vertico-next vertico-previous vertico-next-group vertico-previous-group
+    avy-goto-char avy-goto-char-timer avy-goto-line avy-goto-word-1
+    avy-goto-symbol-1
+    org-next-visible-heading org-previous-visible-heading
+    org-forward-heading-same-level org-backward-heading-same-level
+    org-up-heading-safe
+    my-scroll-half-screen-up my-scroll-half-screen-down
+    my/vimish-fold-next my/vimish-fold-previous)
+  "Commands that should keep the current input state.
+
+These commands only move the point, window, or selection.  They remain usable
+while a Chinese input method is active, without switching either the input
+source or the Chinese input method's internal Chinese/English state."
+  :type '(repeat function)
+  :group 'convenience)
+
+(defcustom my/sis-try-shift-before-system-english t
+  "Whether command input should try the Chinese input method's Shift toggle.
+
+When non-nil, a modified non-navigation command first sends one isolated Shift
+key.  If sending Shift fails, fall back to the system English input source."
+  :type 'boolean
+  :group 'convenience)
+
 (defconst my/sis-unmodified-command-events '(?\r return)
   "Unmodified key events that must not trigger an input-source switch.
 Character RET is encoded as 13, so `event-modifiers' reports it as C-m even
@@ -67,14 +112,89 @@ When KEYS is nil, inspect the key sequence of the current command."
                  (event-modifiers event))))
    (or keys (this-command-keys-vector))))
 
-(defun my/sis-english-before-modified-command ()
-  "Switch to English before a Ctrl/Alt/Meta command is executed."
-  (when (my/sis-modified-command-p)
-    (sis-set-english)))
-
 (defun my/sis-chinese-source-p (source)
   "Return non-nil when SOURCE is one of the configured Chinese sources."
   (and (stringp source) (member source my/sis-chinese-sources)))
+
+(defvar my/sis--shift-english-source nil
+  "Chinese input source whose internal English state was enabled by Shift.")
+
+(defun my/sis-current-raw-source ()
+  "Return the concrete current macOS input source, or nil if unavailable."
+  (when (functionp my/sis--raw-do-get)
+    (ignore-errors (funcall my/sis--raw-do-get))))
+
+(defun my/sis-reset-shift-state (&rest _)
+  "Forget the cached internal English state of a Chinese input method."
+  (setq my/sis--shift-english-source nil))
+
+(defun my/sis-keep-input-source-command-p (&optional command)
+  "Return non-nil when COMMAND should not change the current input state.
+
+In addition to `my/sis-keep-input-source-commands', a command may opt in by
+setting its `my/sis-keep-input-source' symbol property to non-nil."
+  (let ((command (or command this-command)))
+    (or (memq command my/sis-keep-input-source-commands)
+        (and (symbolp command)
+             (get command 'my/sis-keep-input-source)))))
+
+(defun my/sis-send-shift-toggle ()
+  "Send one isolated left Shift key through macOS System Events.
+Return non-nil only when the event was sent successfully."
+  (let ((osascript (executable-find "osascript")))
+    (and osascript
+         (condition-case nil
+             (zerop
+              (process-file
+               osascript nil nil nil
+               "-e" "tell application \"System Events\" to key code 56"))
+           (error nil)))))
+
+(defun my/sis-switch-command-input-to-english ()
+  "Make command input English, preferring the IME's Shift toggle.
+
+macOS exposes the selected input source but not the Chinese input method's
+internal Chinese/English state.  A successfully sent Shift is therefore
+cached for the current concrete Chinese source.  If Shift cannot be sent,
+switch to the system English source through SIS."
+  (let ((source (my/sis-current-raw-source)))
+    (cond
+     ((null source)
+      (my/sis-reset-shift-state)
+      (sis-set-english))
+     ((not (my/sis-chinese-source-p source))
+      (my/sis-reset-shift-state))
+     ((equal source my/sis--shift-english-source)
+      t)
+     ((and my/sis-try-shift-before-system-english
+           (my/sis-send-shift-toggle))
+      (setq my/sis--shift-english-source source))
+     (t
+      (my/sis-reset-shift-state)
+      (sis-set-english)))))
+
+(defun my/sis-english-before-modified-command ()
+  "Prepare English for modified commands except pure navigation commands."
+  (when (and (my/sis-modified-command-p)
+             (not (my/sis-keep-input-source-command-p)))
+    (my/sis-switch-command-input-to-english)))
+
+(defun my/sis-refresh-shift-state-after-source-change ()
+  "Clear cached Shift state after changing to another input source."
+  (unless (equal (my/sis-current-raw-source)
+                 my/sis--shift-english-source)
+    (my/sis-reset-shift-state)))
+
+(defun my/sis-track-self-insert-state ()
+  "Infer the Chinese input method's internal state after text insertion."
+  (let ((source (my/sis-current-raw-source)))
+    (when (and (characterp last-command-event)
+               (my/sis-chinese-source-p source))
+      (if (> last-command-event 127)
+          (my/sis-reset-shift-state)
+        ;; An ASCII insertion while the Chinese source remains selected means
+        ;; its internal English state is active (usually selected by Shift).
+        (setq my/sis--shift-english-source source)))))
 
 (defun my/sis--canonicalize-input-source (source)
   "Map any configured Chinese SOURCE to the canonical SIS other source.
@@ -118,11 +238,16 @@ input method that was actually in use."
   :straight (:host github :repo "laishulu/emacs-smart-input-source")
   :demand t
   :init
-  ;; SIS handles ordinary Emacs prefix maps.  The pre-command hook below also
-  ;; covers single-key commands such as C-n and M-x.
-  (setq sis-prefix-override-keys
-        '("C-c" "C-x" "C-h" "C-t" "M-g" "M-s"))
+  ;; Do not let SIS force prefix keys directly to the system English source.
+  ;; Our pre-command hook can distinguish navigation from commands that need
+  ;; English, and can therefore apply the Shift-first policy consistently.
+  (setq sis-prefix-override-keys nil)
   :config
+  ;; Reloading this file must also uninstall prefix translations left by the
+  ;; previous configuration before `sis-prefix-override-keys' became nil.
+  (when (bound-and-true-p sis-global-respect-mode)
+    (sis-global-respect-mode -1))
+
   (when (eq system-type 'darwin)
     (let ((macism (executable-find "macism")))
       (if macism
@@ -145,7 +270,11 @@ input method that was actually in use."
 
   ;; 只有后端可用才接管按键和 Buffer 输入法状态，避免无后端时干扰编辑。
   (when my/sis-macos-backend-available
+    (advice-add 'sis--set-english :before #'my/sis-reset-shift-state)
+    (advice-add 'sis--set-other :before #'my/sis-reset-shift-state)
     (add-hook 'pre-command-hook #'my/sis-english-before-modified-command)
+    (add-hook 'post-self-insert-hook #'my/sis-track-self-insert-state)
+    (add-hook 'sis-change-hook #'my/sis-refresh-shift-state-after-source-change)
     (sis-global-respect-mode 1)))
 
 ;; Keep input-source commands inside the existing Tools / System hierarchy.
@@ -166,13 +295,20 @@ input method that was actually in use."
 ;; ---------------------------------------------------------------------------
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
-;; - macOS 下按含 Ctrl、Alt 或 Meta 的命令键前，自动切换到 ABC 英文输入源。
+;; - `C-n'、`C-p'、`M-f' 等只负责定位/滚动/选择的命令保持当前中文状态，
+;;   不再触发输入法切换；完整列表见 `my/sis-keep-input-source-commands'。
+;; - 其他含 Ctrl、Alt 或 Meta 的命令会先向当前中文输入法发送一次 Shift，
+;;   使用输入法自身的中英文切换；发送失败时才回退到 ABC 系统英文输入源。
+;; - Shift 由 macOS System Events 发送；第一次使用时系统可能要求为 Emacs 开启
+;;   “系统设置 -> 隐私与安全性 -> 辅助功能”权限。无权限时会自动走 ABC 兜底。
+;; - macOS 无法报告搜狗/微信/鼠须管内部的中英文状态，因此配置会缓存成功的
+;;   Shift 切换，避免连续命令反复切换；输入中文或显式切换输入源时自动重置。
 ;; - `C-c x i e/c/t/s'：切到英文/中文、切换输入源、显示当前输入源。
 ;; - 依赖外部 `macism' 命令；默认英文 ID 为 ABC。
 ;; - 搜狗拼音、微信输入法拼音、鼠须管简体和 macOS 自带拼音都会被识别为中文；
 ;;   临时切换到英文后，会恢复到最近实际使用的中文输入法。
 ;; - 若增加其他中文输入法，用 `macism' 查询 ID 后加入
 ;;   `my/sis-chinese-sources'，不需要替换现有项目。
-;; - 普通文本输入不会被强制切换；只有执行配置的修饰键命令时才切到英文。
+;; - 普通文本输入不会被强制切换；只有非定位类的修饰键命令才准备英文状态。
 ;; - 单独按 Enter/RET 不切换输入源；M-RET、C-RET 等明确带修饰键的命令仍会切换。
 ;;; init-input-method.el ends here
