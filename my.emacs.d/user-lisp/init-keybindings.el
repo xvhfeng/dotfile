@@ -30,6 +30,10 @@
     ("e" . "Editing")
     ("a" . "Context actions")
     ("g" . "Git")
+    ;; Diffnav 是 Git 分组中的专用差异浏览器，快捷键由 init-diffnav 注册。
+    ("g b" . "Diffnav revision comparison")
+    ("g n" . "Diffnav menu")
+    ("g v" . "Diffnav working tree")
     ("j" . "Jump")
     ;; C-c h 是遗忘快捷键时的统一自助入口，避免必须记住插件各自的帮助键。
     ("h" . "Help / discover")

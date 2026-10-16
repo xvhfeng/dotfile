@@ -31,6 +31,14 @@
 (autoload 'flymake-show-buffer-diagnostics "flymake" nil t)
 (autoload 'org-capture "org-capture" nil t)
 (autoload 'org-agenda "org-agenda" nil t)
+;; 中文说明：终端保持延迟加载，工作台在 Scratch 等 Buffer 中打开时不会提前加载
+;; vterm 的原生模块；用户选择终端项后才创建 vterm。
+(autoload 'vterm "vterm" nil t)
+;; 中文说明：这三个命令分别来自后续加载的本地配置或本地插件；注册自动加载
+;; 后，Scratch 或单独重载工作台时 Transient 也能先安全展示完整菜单。
+(autoload 'my/smerge-menu "init-smerge" nil t)
+(autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
+(autoload 'hydra-window-resize/body "init-window" nil t)
 
 (defconst my/workbench-popper-reference-buffers
   '("\\*Help\\*\\'"
@@ -203,6 +211,13 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (interactive)
   (my/workbench-call-on-demand 'dired-x 'dired-jump "当前目录"))
 
+(defun my/workbench-open-terminal ()
+  "在当前目录打开 Emacs 配置的 vterm 终端。"
+  (interactive)
+  ;; 中文说明：复用 init-eshell.el 已配置的 vterm，而非新建 shell/term，确保
+  ;; 工作台终端拥有相同的 Bash、原生渲染、滚动历史和退出即关闭行为。
+  (my/workbench-call-on-demand 'vterm 'vterm "vterm 终端"))
+
 (defun my/workbench-context-actions ()
   "打开当前目标的 Embark 上下文动作菜单。"
   (interactive)
@@ -261,8 +276,11 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
    ["   项目与 Git"
     ("p" "切换项目" project-switch-project)
     ("g" "Git 状态" magit-status)
+    ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
+    ("v" "Diffnav 改动浏览" diffnav-emacs-menu)
     ("G" "当前文件 Git 操作" magit-file-dispatch)
-    ("t" "文件树" treemacs)]
+    ("t" "文件树" treemacs)
+    ("T" "打开终端" my/workbench-open-terminal)]
    ["   窗口与笔记"
     ("w" "切换窗口" other-window)
     ("m" "最大化当前窗口" delete-other-windows)

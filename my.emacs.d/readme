@@ -20,3 +20,6 @@
 
 - 输入法切换
   外部依赖 macism,目前只能在 mac 下使用，使用 brew install macism
+
+- 增加了diffnav（个人爱好）的插件，使用这个插件需要先安装
+  brew install diffnav
