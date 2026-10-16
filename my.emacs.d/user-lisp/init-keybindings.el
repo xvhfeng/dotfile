@@ -52,11 +52,12 @@
     ("k" . "Markdown")
     ("l" . "LaTeX")
     ("i" . "Texinfo")
+    ("v" . "CSV / tabular data")
     ("m" . "Mail"))
   "Single source of truth for semantic Which-Key labels below C-c.")
 
 (defconst my/c-c-required-prefixes
-  '("w" "p" "!" "f" "b" "s" "e" "a" "g" "j" "h" "c" "d" "n" "o" "t" "x" "k" "l" "i" "m")
+  '("w" "p" "!" "f" "b" "s" "e" "a" "g" "j" "h" "c" "d" "n" "o" "t" "x" "k" "l" "i" "v" "m")
   "C-c keys that must remain prefix maps after all modules load.")
 
 (defun my/register-c-c-which-key-labels ()
@@ -65,6 +66,66 @@
          my-leader-map
          (mapcan (lambda (entry) (list (car entry) (cdr entry)))
                  my/c-c-prefix-labels)))
+
+(defun my/which-key--max-display-width (bindings index &optional minimum)
+  "Return maximum display width of element INDEX in BINDINGS.
+Use MINIMUM as the lower bound.  Unlike `length', `string-width' counts a
+Chinese character as two terminal columns, which is required for alignment."
+  (cl-reduce (lambda (width binding)
+               (max width (string-width (nth index binding))))
+             bindings
+             :initial-value (or minimum 0)))
+
+(defun my/which-key-pad-column (bindings available-width)
+  "Pad one Which-Key column in BINDINGS within AVAILABLE-WIDTH.
+
+This is a CJK-aware replacement for `which-key--pad-column'.  Upstream uses
+display width while calculating the column, but character count while adding
+trailing spaces.  Mixed Chinese and English descriptions therefore shift the
+start of every following column."
+  (let* ((key-width (+ which-key-add-column-padding
+                       (my/which-key--max-display-width bindings 0)))
+         (separator-width (my/which-key--max-display-width bindings 1))
+         (description-space (- available-width key-width separator-width))
+         (description-width
+          (min description-space
+               (my/which-key--max-display-width
+                bindings 2 which-key-min-column-description-width)))
+         (column-width (+ key-width separator-width description-width))
+         (key-format (concat "%" (number-to-string key-width) "s%s%s")))
+    (cons column-width
+          (mapcar
+           (pcase-lambda (`(,key ,separator ,description ,_docstring))
+             (concat (format key-format key separator description)
+                     (make-string
+                      (max 0 (- description-width
+                                (string-width description)))
+                      ?\s)))
+           bindings))))
+
+(defun my/which-key-buffer-setup ()
+  "Give the Which-Key menu consistent spacing and a quiet presentation."
+  (setq-local line-spacing 0.12
+              truncate-lines t
+              cursor-type nil))
+
+(defun my/which-key-style-faces (&rest _)
+  "Apply theme-adaptive visual hierarchy to Which-Key faces."
+  (set-face-attribute 'which-key-key-face nil
+                      :inherit 'font-lock-constant-face
+                      :weight 'bold)
+  (set-face-attribute 'which-key-separator-face nil
+                      :inherit 'shadow
+                      :weight 'normal)
+  (set-face-attribute 'which-key-command-description-face nil
+                      :inherit 'default
+                      :weight 'normal)
+  (set-face-attribute 'which-key-local-map-description-face nil
+                      :inherit 'which-key-command-description-face
+                      :weight 'semi-bold)
+  (set-face-attribute 'which-key-group-description-face nil
+                      :inherit 'font-lock-keyword-face
+                      :weight 'bold))
 
 (defun my/validate-c-c-prefix-layout ()
   "Warn when a module replaces a semantic C-c prefix with a command."
@@ -81,10 +142,38 @@
   :straight t
   :demand t
   :init
-  (setq which-key-idle-delay 0.4          ; 停顿 0.4 秒后弹出提示
-        which-key-popup-type 'side-window ; 在底部侧边窗口显示
-        which-key-side-window-location 'bottom)
+  (setq which-key-idle-delay 0.4
+        which-key-idle-secondary-delay 0.05
+        which-key-popup-type 'side-window
+        which-key-side-window-location 'bottom
+        ;; 三列比默认的无限列更容易从上到下扫描，也能给中英文说明留足空间。
+        which-key-max-display-columns 3
+        which-key-min-display-lines 4
+        which-key-side-window-max-height 0.38
+        which-key-max-description-length 30
+        which-key-min-column-description-width 26
+        which-key-add-column-padding 2
+        which-key-unicode-correction 4
+        which-key-dont-use-unicode nil
+        which-key-separator "  → "
+        which-key-ellipsis "…"
+        which-key-prefix-prefix "▸ "
+        which-key-show-prefix 'top
+        which-key-show-remaining-keys t
+        which-key-sort-order #'which-key-key-order
+        which-key-sort-uppercase-first nil
+        which-key-preserve-window-configuration t
+        ;; 保留 SPC/TAB/RET 全名；特殊键模式会把它们截成单个字母，反而难认。
+        which-key-special-keys nil
+        which-key-init-buffer-hook '(my/which-key-buffer-setup))
   :config
+  ;; 修正当前 Which-Key 版本对中文显示宽度计算不一致导致的跨列错位。
+  (unless (advice-member-p #'my/which-key-pad-column
+                           'which-key--pad-column)
+    (advice-add 'which-key--pad-column :override #'my/which-key-pad-column))
+  (my/which-key-style-faces)
+  ;; 主题在 Which-Key 之后加载或切换时，重新应用层级而不写死具体颜色。
+  (add-hook 'enable-theme-functions #'my/which-key-style-faces)
   (which-key-mode 1)
   ;; 全局键只保留不属于 C-c keymap 的入口。
   (which-key-add-keymap-based-replacements
@@ -160,11 +249,14 @@
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 全局 Leader 直接使用 `C-c'；停顿约 0.4 秒后 Which-Key 显示按功能分组的一级入口。
+;; - Which-Key 固定最多三列，按 26 字符说明宽度对齐；中文按实际双宽字符计算，
+;;   不会再把同一行后续菜单推歪。当前前缀显示在菜单顶部。
+;; - 粗体 `▸' 项是可继续进入的功能分组；普通字重项是立即执行的命令。
 ;; - 窗口前缀为 `C-t'，兼容入口为 `C-c w'；两者指向同一个窗口 keymap。
 ;; - `C-c C-w' 是高优先级的 Ace Window 选择键；`C-w' 保留 Emacs 原生 kill-region。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
 ;; - `C-c d d' 打开当前目录的原生 Dired；各功能模块继续向对应的 C-c 子菜单注册命令。
 ;; - `C-c h k/f/v/m/b' 分别查询按键、命令、变量、当前模式与当前有效按键表。
-;; - `C-c k/l/i' 分别进入 Markdown、LaTeX、Texinfo 文档操作菜单。
+;; - `C-c k/l/i/v' 分别进入 Markdown、LaTeX、Texinfo、CSV/表格数据操作菜单。
 ;; - `C-x C-b' 使用 electric buffer list；repeat-mode 允许可重复命令只重按末键。
 ;; - 新增多层快捷键时，应同时在这里为对应前缀添加 Which-Key 分类名称。

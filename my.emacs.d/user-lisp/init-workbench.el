@@ -5,6 +5,8 @@
 
 (require 'transient)
 
+(declare-function hydra-window-resize/body "init-window" ())
+
 ;; 独立启动本文件时也保留 C-c 用户前缀；正常启动时该变量已由
 ;; init-keybindings.el 指向同一个 Emacs 原生 keymap。
 (defvar my-leader-map mode-specific-map
@@ -183,6 +185,8 @@
    ["   窗口与笔记"
     ("w" "切换窗口" other-window)
     ("m" "最大化当前窗口" delete-other-windows)
+    ("R" "调整窗口大小" hydra-window-resize/body)
+    ("k" "关闭当前 Buffer" kill-current-buffer)
     ("q" "临时窗口" my/workbench-toggle-popup)
     ("n" "新建笔记" org-capture)
     ("A" "日程" org-agenda)]
@@ -239,6 +243,8 @@
 ;; - `C-c SPC' 打开工作台；无需记住菜单内按键，直接查看 Transient 提示即可。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
 ;; - “编辑与跳转”提供 Iedit、语义选区、撤销树和 Avy；现有短键仍可直接使用。
+;; - “窗口与笔记”中按 `R' 进入窗口大小调整：`h/l' 缩小/放大宽度，`k/j'
+;;   缩小/放大高度，`q' 或 Enter 退出；按 `k' 关闭当前 Buffer。
 ;; - “帮助与发现”可查询按键、查看当前按键表或模式帮助，适合遗忘快捷键时使用。
 ;; - 选择“临时窗口”后，Popper 显示或隐藏最近的帮助、编译或诊断类 Buffer。
 ;; - Popper 首次按需加载；无法安装时只给出提示，不阻断编辑、LSP 或 Flymake。
