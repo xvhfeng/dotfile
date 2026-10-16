@@ -249,6 +249,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("d" "当前诊断" flymake-show-buffer-diagnostics)
     ("!" "搜索诊断" my/workbench-project-diagnostics)
     ("a" "代码动作" my/workbench-code-actions)
+    ;; 合并冲突在独立 Transient 中操作，工作台只提供统一入口。
+    ("M" "合并冲突" my/smerge-menu)
     ("c" "编译" compile)]
    ["   编辑与跳转"
     ("e" "批量编辑符号" my/workbench-edit-occurrences)

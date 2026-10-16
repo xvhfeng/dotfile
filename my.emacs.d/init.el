@@ -281,9 +281,10 @@
 ;; 所有配置模块统一在这里维护。新增模块时，只需在列表末尾加入其 feature。
 (defconst my/init-modules
   '(init-base
+    ;; 主题在基础设置后立即加载，后续界面和插件继承统一颜色。
+    init-theme
     init-keybindings
     init-input-method
-    init-themes
     init-minbuffer
     init-eshell
     init-dired
@@ -295,6 +296,8 @@
     ;; 新建代码文件时按扩展名自动插入本地 template/ 示例模板。
     init-template
     init-magit
+    ;; Git 合并冲突由内置 Smerge 处理，并提供工作台和 Transient 入口。
+    init-smerge
     init-vundo
     init-mykey
     init-avy

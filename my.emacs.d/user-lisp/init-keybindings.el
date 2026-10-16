@@ -34,6 +34,8 @@
     ;; C-c h 是遗忘快捷键时的统一自助入口，避免必须记住插件各自的帮助键。
     ("h" . "Help / discover")
     ("c" . "Code")
+    ;; 合并冲突菜单位于代码分类，避免与项目级 Git 状态入口混淆。
+    ("c m" . "Conflict merge")
     ("c g" . "Code navigation")
     ("c d" . "Diagnostics")
     ("c D" . "Debug")
