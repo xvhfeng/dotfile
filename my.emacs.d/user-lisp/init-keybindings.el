@@ -25,6 +25,7 @@
     ("!" . "Diagnostics")
     ("f" . "Files")
     ("b" . "Buffers")
+    ("b p" . "Temporary buffers")
     ("s" . "Search")
     ("e" . "Editing")
     ("a" . "Context actions")
@@ -202,7 +203,9 @@ start of every following column."
   (general-define-key
     "C-c w" (cons "Windows" my-window-map)
     "C-t" (cons "Windows" my-window-map)
-    "C-x C-b" '("electric buffer list" . electric-buffer-list))
+    ;; Ibuffer 是可持续操作的真正 Buffer，适合由 Popper 隐藏、召回和轮换；
+    ;; 原来的 Electric Buffer List 保留在 C-c b e，功能没有被删除。
+    "C-x C-b" '("Ibuffer popup" . ibuffer))
 
   ;; C-c C-w 由 Ace Window 独占。General 的 override keymap 高于
   ;; major/minor mode keymap，防止 Dirvish、web-mode 等模式重新抢占。
@@ -223,7 +226,8 @@ start of every following column."
     "f r" '("recent files" . recentf-open-files)
     "b b" '("switch buffer" . switch-to-buffer)
     "b k" '("kill current buffer" . kill-current-buffer)
-    "b l" '("electric buffer list" . electric-buffer-list)
+    "b l" '("Ibuffer popup" . ibuffer)
+    "b e" '("electric buffer list" . electric-buffer-list)
     "d d" '("Dired current directory" . dired-jump)
 
     ;; 中文说明：这些是通用发现命令，所有 major mode 下均可使用；Which-Key 会在
@@ -255,8 +259,10 @@ start of every following column."
 ;; - 窗口前缀为 `C-t'，兼容入口为 `C-c w'；两者指向同一个窗口 keymap。
 ;; - `C-c C-w' 是高优先级的 Ace Window 选择键；`C-w' 保留 Emacs 原生 kill-region。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
+;;   `C-x C-b' 与 `C-c b l' 打开可由 Popper 召回的 Ibuffer；`C-c b e' 保留原有
+;;   Electric Buffer List，适合只进行一次快速选择。
 ;; - `C-c d d' 打开当前目录的原生 Dired；各功能模块继续向对应的 C-c 子菜单注册命令。
 ;; - `C-c h k/f/v/m/b' 分别查询按键、命令、变量、当前模式与当前有效按键表。
 ;; - `C-c k/l/i/v' 分别进入 Markdown、LaTeX、Texinfo、CSV/表格数据操作菜单。
-;; - `C-x C-b' 使用 electric buffer list；repeat-mode 允许可重复命令只重按末键。
+;; - `C-x C-b' 使用 Ibuffer 弹窗；repeat-mode 允许可重复命令只重按末键。
 ;; - 新增多层快捷键时，应同时在这里为对应前缀添加 Which-Key 分类名称。

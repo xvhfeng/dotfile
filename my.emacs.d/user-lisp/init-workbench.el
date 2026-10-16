@@ -33,17 +33,50 @@
 (autoload 'org-agenda "org-agenda" nil t)
 
 (defconst my/workbench-popper-reference-buffers
-  '("\\*Help\\*"
-    "\\*Warnings\\*"
-    "\\*Compile-Log\\*"
-    "\\*compilation\\*"
-    "\\*Flymake diagnostics.*\\*"
-    "\\*Messages\\*"
-    "\\*grep\\*"
+  '("\\*Help\\*\\'"
+    "\\*Warnings\\*\\'"
+    "\\*Compile-Log\\*\\'"
+    "\\*compilation\\*\\'"
+    "\\*Flymake diagnostics.*\\*\\'"
+    "\\*Messages\\*\\'"
+    "\\*grep\\*\\'"
+    "\\*Backtrace\\*\\'"
+    "\\*Async Shell Command\\*\\'"
+    "\\*Shell Command Output\\*\\'"
+    "\\*Ibuffer\\*\\'"
     occur-mode
     compilation-mode
-    help-mode)
+    help-mode
+    helpful-mode
+    apropos-mode
+    Man-mode
+    woman-mode
+    xref--xref-buffer-mode
+    flymake-diagnostics-buffer-mode
+    debugger-mode
+    backtrace-mode
+    ibuffer-mode
+    buffer-menu-mode)
   "由工作台交给 Popper 管理的短生命周期 Buffer 规则。")
+
+(defconst my/workbench-buffer-list-display-rule
+  '("\\*\\(?:Ibuffer\\|Buffer List\\)\\*\\'"
+    (display-buffer-reuse-window display-buffer-in-side-window)
+    (side . bottom)
+    (slot . 0)
+    (window-height . 0.33)
+    (body-function . select-window)
+    (preserve-size . (nil . t)))
+  "Ibuffer 与普通 Buffer List 使用的稳定底部侧窗规则。")
+
+;; Popper 负责识别、隐藏和召回；窗口位置仍由 Emacs 原生规则决定。这样只让
+;; Buffer List 固定在底部，不会顺带改变 Help、编译、Magit 等既有布局。
+(add-to-list 'display-buffer-alist my/workbench-buffer-list-display-rule)
+
+;; Ibuffer 默认复用当前源码窗口，绕过 display-buffer-alist。让它使用另一窗口后，
+;; 上面的规则才能把列表稳定放到底部，同时保留源码窗口。
+(with-eval-after-load 'ibuffer
+  (setq ibuffer-use-other-window t))
 
 (defun my/workbench-popper-group ()
   "按项目分组 Popper；不在项目中时安全地回退到当前目录。"
@@ -136,14 +169,12 @@
   "显示或隐藏最近的 Popper 临时窗口。
 若 Popper 尚未可用，只显示提示，不影响当前窗口布局或已有功能。"
   (interactive)
-  ;; use-package 的 :commands 会先安装自动加载定义；优先调用它，确保
-  ;; straight.el 已构建但尚未加入 load-path 的场景也能正确按需加载 Popper。
   (condition-case err
       (cond
-       ((fboundp 'popper-toggle-latest)
-        (call-interactively #'popper-toggle-latest))
+       ((fboundp 'popper-toggle)
+        (call-interactively #'popper-toggle))
        ((require 'popper nil t)
-        (call-interactively #'popper-toggle-latest))
+        (call-interactively #'popper-toggle))
        (t
         (message "Popper 尚未安装或加载；其他工作台功能不受影响。")))
     ;; 没有任何可显示的弹窗时，Popper 的不同版本可能发出 user-error 或
@@ -207,45 +238,55 @@
         (transient-align-variable-pitch t))
     (my/workbench-menu)))
 
-;; 只增加一个全局入口；Which-Key 会将其作为 C-c 菜单中的可见项目展示。
+;; 保留语义化的 C-c 工作台入口，同时提供更短的 C-z 全局直达键。
 (define-key my-leader-map (kbd "SPC") #'my/workbench)
 (with-eval-after-load 'which-key
-  ;; 将命令名替换为中文菜单说明，用户在 C-c 提示中即可发现工作台。
+  ;; 将命令名替换为中文菜单说明，用户在 C-c 提示和按键查询中均可发现工作台。
   (which-key-add-keymap-based-replacements
-   my-leader-map "SPC" "个人工作台"))
+   my-leader-map "SPC" "个人工作台")
+  (which-key-add-keymap-based-replacements
+   global-map "C-z" "个人工作台"))
 
-;; Popper 仅处理短生命周期的帮助、诊断和编译类 Buffer；不把源码、Treemacs、
-;; Magit Status 等主工作 Buffer 归为弹窗，从而避免改变既有布局。
-(setq popper-reference-buffers my/workbench-popper-reference-buffers
-      ;; 沿用已有 display-buffer/window 配置，避免 Popper 擅自覆盖布局。
-      popper-display-control nil
-      ;; 按项目隔离临时窗口；普通帮助 Buffer 则按目录分组，避免报错。
-      popper-group-function #'my/workbench-popper-group)
+;; Popper 仅处理短生命周期的帮助、诊断、搜索、日志和 Buffer List；不把源码、
+;; Treemacs、Magit Status、Dired/Ranger 或 Org Agenda 归为弹窗。
+(use-package popper
+  :straight t
+  :commands (popper-toggle popper-cycle popper-toggle-type
+                           popper-kill-latest-popup)
+  :init
+  (setq popper-reference-buffers my/workbench-popper-reference-buffers
+        ;; 沿用已有 display-buffer/window 配置，避免 Popper 擅自覆盖布局。
+        popper-display-control nil
+        ;; 按项目隔离临时窗口；普通帮助 Buffer 则按目录分组，避免报错。
+        popper-group-function #'my/workbench-popper-group)
+  ;; 启动完成后再加载这个轻量窗口管理器；这样既能跟踪后续弹窗，也不阻塞
+  ;; 关键启动路径。刻意不启用 popper-echo-mode，避免占用 tab-line/echo area。
+  :hook (after-init . popper-mode))
 
-;; Popper 已安装在 straight 的本地构建目录；这里只注册自动加载，不在启动时
-;; 触发网络访问或克隆。若用户将来删除该包，工作台命令会安全提示而非报错。
-(let ((popper-build-directory
-       (expand-file-name "straight/build/popper/" user-emacs-directory)))
-  (when (file-directory-p popper-build-directory)
-    (add-to-list 'load-path popper-build-directory)
-    (autoload 'popper-toggle-latest "popper" nil t)))
-
-(with-eval-after-load 'popper
-  ;; 仅在 Popper 真正加载后开启，避免启动阶段创建额外窗口。
-  ;; 不启用 popper-echo-mode，避免它关闭用户可能已使用的 tab-line 模式。
-  (popper-mode 1))
+(with-eval-after-load 'general
+  ;; C-z 原本是 suspend-frame；图形 Emacs 中几乎不用，改为工作台直达键。
+  (general-define-key
+    "C-z" '("个人工作台" . my/workbench))
+  (my-leader-def
+    "b p t" '("toggle latest popup" . my/workbench-toggle-popup)
+    "b p n" '("next popup" . popper-cycle)
+    "b p k" '("kill latest popup" . popper-kill-latest-popup)
+    "b p m" '("toggle popup status" . popper-toggle-type)))
 
 (provide 'init-workbench)
 
 ;; ---------------------------------------------------------------------------
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
-;; - `C-c SPC' 打开工作台；无需记住菜单内按键，直接查看 Transient 提示即可。
+;; - `C-z' 直接打开个人工作台；`C-c SPC' 是保留的语义化菜单入口。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
 ;; - “编辑与跳转”提供 Iedit、语义选区、撤销树和 Avy；现有短键仍可直接使用。
 ;; - “窗口与笔记”中按 `R' 进入窗口大小调整：`h/l' 缩小/放大宽度，`k/j'
 ;;   缩小/放大高度，`q' 或 Enter 退出；按 `k' 关闭当前 Buffer。
 ;; - “帮助与发现”可查询按键、查看当前按键表或模式帮助，适合遗忘快捷键时使用。
 ;; - 选择“临时窗口”后，Popper 显示或隐藏最近的帮助、编译或诊断类 Buffer。
-;; - Popper 首次按需加载；无法安装时只给出提示，不阻断编辑、LSP 或 Flymake。
+;; - `C-x C-b' 或 `C-c b l' 在底部打开 Ibuffer；`C-c b e' 保留 Electric List。
+;; - `C-c b p t/n/k/m'：切换最近弹窗、轮换弹窗、关闭最近弹窗、切换当前
+;;   Buffer 的弹窗身份。普通源码、Treemacs、Magit、Dired/Ranger 不会被接管。
+;; - Popper 在启动完成后加载；无法安装时工作台会给出提示，不阻断其他功能。
 ;;; init-workbench.el ends here
