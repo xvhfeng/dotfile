@@ -8,12 +8,24 @@
   (file-name-as-directory (expand-file-name "template/" user-emacs-directory))
   "存放新建文件模板的目录。")
 
+;; 中文说明：模板身份独立于 Git 提交身份；以后可通过 M-x customize-variable
+;; 修改这两个变量，而无需逐个编辑 C、Go、Java 等模板文件。
+(defcustom my/template-author "bigmouth"
+  "新建文件模板中 __AUTHOR__ 的替换内容。"
+  :type 'string
+  :group 'convenience)
+
+(defcustom my/template-email "xvhfeng@gmail.com"
+  "新建文件模板中 __EMAIL__ 的替换内容。"
+  :type 'string
+  :group 'convenience)
+
 ;; 中文说明：首次启动时自动创建模板目录，使用户可直接在其中添加或修改模板。
 (unless (file-directory-p my/template-directory)
   (make-directory my/template-directory t))
 
 (defun my/template-expand-placeholders ()
-  "展开当前模板中的文件名、基础名、日期和光标位置占位符。"
+  "展开当前模板中的文件名、作者、邮箱、日期和光标位置占位符。"
   (let* ((file-name (or (and buffer-file-name
                              (file-name-nondirectory buffer-file-name))
                         "untitled"))
@@ -24,6 +36,8 @@
       (goto-char (point-min))
       (dolist (replacement `(("__FILE_NAME__" . ,file-name)
                              ("__BASE_NAME__" . ,base-name)
+                             ("__AUTHOR__" . ,my/template-author)
+                             ("__EMAIL__" . ,my/template-email)
                              ("__DATE__" . ,date)))
         (while (search-forward (car replacement) nil t)
           (replace-match (cdr replacement) t t)))
@@ -35,9 +49,14 @@
     (goto-char (or cursor-position (point-max)))))
 
 ;; 中文说明：文件扩展名与模板文件一一对应。后续新增语言时，只需在 template/
-;; 新增文件，并向此列表添加一条规则即可；模板本身可使用上面的四种占位符。
+;; 新增文件，并向此列表添加一条规则即可；模板本身可使用上面的六种占位符。
 (dolist (rule '(("\\.c\\'" "C 源文件" "c.c")
+                ("\\.h\\'" "C 头文件" "c.h")
+
                 ("\\.\\(?:cc\\|cp\\|cpp\\|cxx\\|C\\)\\'" "C++ 源文件" "cpp.cpp")
+                ;; C++ 专用头扩展名使用独立模板；普通 .h 保持 C 头模板，避免
+                ;; 既有 C 项目被自动插入 C++ 标准库头文件。
+                ("\\.\\(?:hh\\|hpp\\|hxx\\|h\\+\\+\\)\\'" "C++ 头文件" "cpp.h")
                 ("\\.go\\'" "Go 源文件" "go.go")
                 ("\\.java\\'" "Java 源文件" "java.java")
                 ("\\.ts\\'" "TypeScript 源文件" "typescript.ts")))
@@ -56,5 +75,8 @@
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 新建 .c/.cpp/.go/.java/.ts 文件后，模板会自动插入。
-;; - `__FILE_NAME__`、`__BASE_NAME__`、`__DATE__`、`__CURSOR__` 会自动展开。
+;; - `__FILE_NAME__`、`__BASE_NAME__`、`__AUTHOR__`、`__EMAIL__`、`__DATE__`、
+;;   `__CURSOR__` 会自动展开。
+;; - 通过 `M-x customize-variable RET my/template-author' 或
+;;   `my/template-email' 可修改新建文件的作者和邮箱。
 ;; - 修改 template/ 下对应文件后，下一次新建文件立即使用新内容。
