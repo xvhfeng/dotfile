@@ -1,5 +1,73 @@
 ;;; init-treesitter.el --- Automatic Tree-sitter configuration -*- lexical-binding: t; -*-
 
+(defun my/indent-block--content-line-p ()
+  "Return non-nil when the current line contains non-whitespace text."
+  (looking-at-p "^[ \t]*[^ \t\n]"))
+
+(defun my/indent-block--anchor-line ()
+  "Return the beginning of a content line representing the current position."
+  (save-excursion
+    (beginning-of-line)
+    ;; 空行没有自身层级，优先使用上方最近的内容行，必要时再向下找。
+    (unless (my/indent-block--content-line-p)
+      (or (re-search-backward "^[ \t]*[^ \t\n]" nil t)
+          (re-search-forward "^[ \t]*[^ \t\n]" nil t))
+      (beginning-of-line))
+    (unless (my/indent-block--content-line-p)
+      (user-error "当前 Buffer 没有可选择的缩进块"))
+    (point)))
+
+(defun my/indent-block--parent-line (anchor)
+  "Return nearest less-indented content line above ANCHOR, or nil."
+  (save-excursion
+    (goto-char anchor)
+    (let ((indent (current-indentation)))
+      (catch 'parent
+        (while (not (bobp))
+          (forward-line -1)
+          (when (and (my/indent-block--content-line-p)
+                     (< (current-indentation) indent))
+            (throw 'parent (point))))))))
+
+(defun my/indent-block--inner-bounds (header)
+  "Return the content bounds immediately inside indentation HEADER."
+  (save-excursion
+    (goto-char header)
+    (let ((indent (current-indentation)))
+      (forward-line 1)
+      (let ((beginning (point)))
+        ;; 同级缩进通常是结束标签、下一个 sibling 或父块的后续内容；不包含它。
+        (while (and (not (eobp))
+                    (or (not (my/indent-block--content-line-p))
+                        (> (current-indentation) indent)))
+          (forward-line 1))
+        (cons beginning (point))))))
+
+(defun my/indent-block--select-bounds (bounds)
+  "Activate the region represented by BOUNDS."
+  (goto-char (car bounds))
+  (push-mark (cdr bounds) nil t)
+  (activate-mark))
+
+(defun my/mark-indent-block ()
+  "选择包含当前行的外层缩进块内部。
+例如光标在 HTML table 行时，选择包围它的 div 内容，而不含 div 的首尾标签。"
+  (interactive)
+  (save-restriction
+    (widen)
+    (let* ((anchor (my/indent-block--anchor-line))
+           (container (or (my/indent-block--parent-line anchor) anchor)))
+      (my/indent-block--select-bounds
+       (my/indent-block--inner-bounds container)))))
+
+(defun my/mark-indent-block-inner ()
+  "选择当前缩进块的内部内容。
+例如光标在 HTML table 行时，仅选择 table 的内部区域，不含 table 首尾标签。"
+  (interactive)
+  (save-restriction
+    (widen)
+    (my/indent-block--select-bounds
+     (my/indent-block--inner-bounds (my/indent-block--anchor-line)))))
 
 ;; ============================================================================
 ;; 1. 自定义语法包存放路径 (Custom Grammar Storage Directory)
@@ -98,6 +166,8 @@
     "t f" '("切换代码折叠" . treesit-fold-toggle)
     "t F" '("展开全部折叠" . treesit-fold-open-all)
     "t i" '("检查光标处 AST" . treesit-inspect-mode)
+    "t m" '("选择当前缩进块" . my/mark-indent-block)
+    "t M" '("选择当前缩进块内部" . my/mark-indent-block-inner)
     "t a" '("批量安装全部语法" . treesit-auto-install-all)))
 
 (provide 'init-treesitter)

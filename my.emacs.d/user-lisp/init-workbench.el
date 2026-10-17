@@ -40,6 +40,8 @@
 ;; 后，Scratch 或单独重载工作台时 Transient 也能先安全展示完整菜单。
 (autoload 'my/smerge-menu "init-smerge" nil t)
 (autoload 'my/avy-menu "init-avy" nil t)
+(autoload 'my/mark-indent-block "init-treesitter" nil t)
+(autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
 (autoload 'hydra-window-resize/body "init-window" nil t)
 
@@ -285,6 +287,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("e" "批量编辑符号" my/workbench-edit-occurrences)
     ("x" "扩展选区" my/workbench-expand-selection)
     ("X" "收缩选区" my/workbench-contract-selection)
+    ("S" "选择当前缩进块" my/mark-indent-block)
+    ("I" "选择当前缩进块内部" my/mark-indent-block-inner)
     ("u" "可视撤销树" my/workbench-visual-undo)
     ("j" "Avy 跳转菜单" my/avy-menu)]
    ["   项目与 Git"
