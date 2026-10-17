@@ -285,7 +285,8 @@
     init-minbuffer
     init-eshell
     init-dired
-    init-ranger
+    ;; init-ranger 保留在磁盘中，当前由 Dirvish 取代，不参与启动加载。
+    init-dirvish
     init-consult
     init-rainbow
     init-edit

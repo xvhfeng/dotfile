@@ -23,3 +23,14 @@
 
 - 增加了diffnav（个人爱好）的插件，使用这个插件需要先安装
   brew install diffnav
+
+- dirvish依赖的插件
+brew install poppler ffmpegthumbnailer mediainfo vips p7zip imagemagick
+- poppler：PDF 缩略预览
+- ffmpegthumbnailer：视频缩略图
+- mediainfo：音频信息预览
+- vips：图片缩略图
+- p7zip：压缩包内容预览
+- imagemagick：字体预览
+已有依赖：coreutils（gls，目录排序）和 fd（大目录异步扫描）。EPUB 预览未启用，因为 Homebrew 没有 epub-thumbnailer 配方，避免出现缺少外部程序的错误。
+

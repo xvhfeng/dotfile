@@ -43,7 +43,7 @@
 (autoload 'my/mark-indent-block "init-treesitter" nil t)
 (autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
-(autoload 'my/ranger-open "init-ranger" nil t)
+(autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
 (autoload 'hydra-window-resize/body "init-window" nil t)
 
@@ -300,7 +300,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
     ("v" "Diffnav 改动浏览" diffnav-emacs-menu)
     ("G" "当前文件 Git 操作" magit-file-dispatch)
-    ("R" "Ranger 文件管理器" my/ranger-open)
+    ("R" "Dirvish 文件管理器" my/dirvish-open)
     ("t" "文件树" treemacs)
     ("T" "打开终端" my/workbench-open-terminal)]
    ["   笔记与临时项"
