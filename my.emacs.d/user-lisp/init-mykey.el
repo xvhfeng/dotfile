@@ -1,5 +1,99 @@
 ;;; -*- lexical-binding: t -*-
 
+(defconst my/match-pair--tag-regexp
+  "<\\(/?\\)\\([[:alnum:]_:.-]+\\)\\(?:[ \t\n][^>]*\\)?\\(/?\\)>"
+  "Regexp used to recognize ordinary HTML/XML start and end tags.")
+
+(defun my/match-pair--tag-at-point ()
+  "Return metadata for the HTML/XML tag containing point, or nil."
+  (save-excursion
+    (let ((origin (point)))
+      (when (or (eq (char-after) ?<)
+                (search-backward "<" (line-beginning-position) t))
+        (when (and (looking-at my/match-pair--tag-regexp)
+                   (<= (match-beginning 0) origin)
+                   (<= origin (match-end 0)))
+          (list :start (match-beginning 0)
+                :end (match-end 0)
+                :name (downcase (match-string-no-properties 2))
+                :closing (equal (match-string-no-properties 1) "/")
+                :self-closing (equal (match-string-no-properties 3) "/")))))))
+
+(defun my/match-pair--find-tag-match (tag)
+  "Return the matching tag position for TAG metadata, or nil.
+Nested tags with the same name are counted, so an outer HTML element matches
+its own closing tag rather than an inner sibling's closing tag."
+  (let* ((name (plist-get tag :name))
+         (closing (plist-get tag :closing))
+         (self-closing (plist-get tag :self-closing))
+         (regexp (concat "<\\(/?\\)" (regexp-quote name)
+                         "\\(?:[ \t\n][^>]*\\)?\\(/?\\)>"))
+         (case-fold-search t))
+    (unless self-closing
+      (save-excursion
+        (goto-char (if closing (plist-get tag :start) (plist-get tag :end)))
+        (let ((depth 1)
+              target)
+          (while (and (not target)
+                      (if closing
+                          (re-search-backward regexp nil t)
+                        (re-search-forward regexp nil t)))
+            (unless (equal (match-string-no-properties 3) "/")
+              (let ((found-closing (equal (match-string-no-properties 1) "/")))
+                (setq depth
+                      (if (eq closing found-closing)
+                          (1+ depth)
+                        (1- depth)))
+                (when (zerop depth)
+                  (setq target (match-beginning 0))))))
+          target)))))
+
+(defun my/match-pair--delimiter-p (character)
+  "Return non-nil if CHARACTER is a standard structural delimiter."
+  (memq character '(?\( ?\) ?\[ ?\] ?\{ ?\} ?\" ?\')))
+
+(defun my/match-pair--sexp-target ()
+  "Return matching delimiter position at or after point on the current line."
+  (save-excursion
+    (let ((limit (line-end-position))
+          character target)
+      (while (and (not target) (< (point) limit))
+        (setq character (char-after))
+        (if (my/match-pair--delimiter-p character)
+            (condition-case nil
+                (cond
+                 ((memq character '(?\( ?\[ ?\{))
+                  (forward-sexp 1)
+                  (setq target (1- (point))))
+                 ((memq character '(?\) ?\] ?\}))
+                  (forward-sexp -1)
+                  (setq target (point)))
+                 ((eq (char-syntax character) ?\")
+                  (if (nth 3 (syntax-ppss (1+ (point))))
+                      (progn (forward-sexp 1) (setq target (1- (point))))
+                    (forward-sexp -1)
+                    (setq target (point))))
+                 (t (forward-char 1)))
+              (scan-error (forward-char 1)))
+          (forward-char 1)))
+      target)))
+
+(defun my/match-pair ()
+  "跳转到当前或当前行后方的配对符号，行为类似 Vim 的 `%`。
+支持 Emacs 语法表定义的 `()'、`[]'、`{}'、引号等成对符号，并按嵌套层级
+匹配 HTML/XML 的开闭标签。"
+  (interactive)
+  (let* ((tag (or (my/match-pair--tag-at-point)
+                  (save-excursion
+                    (when (search-forward "<" (line-end-position) t)
+                      (backward-char 1)
+                      (my/match-pair--tag-at-point)))))
+         (target (or (and tag (my/match-pair--find-tag-match tag))
+                     (my/match-pair--sexp-target))))
+    (if target
+        (goto-char target)
+      (user-error "未找到可匹配的成对符号或标签"))))
+
 ;;; 根据自我习惯增加/修改/重置的emacs的keybinding方式
 
 
@@ -284,6 +378,10 @@
 (keymap-global-set "C-S-a" #'move-beginning-of-line)
 ;; 方案 A：直接用 comment-line 覆盖原生的 M-; (最顺手)
 (global-set-key (kbd "M-;") #'comment-line)
+
+(with-eval-after-load 'general
+  (my-leader-def
+    "t %" '("匹配成对符号或标签" . my/match-pair)))
 
 
 ;;(keymap-global-set "C-!" #'my-replace)

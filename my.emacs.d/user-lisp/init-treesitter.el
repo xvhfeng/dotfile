@@ -43,6 +43,75 @@
           (forward-line 1))
         (cons beginning (point))))))
 
+(defun my/indent-block--nearby-opening-brace ()
+  "Return a relevant opening brace position near point, or nil.
+This covers C-like styles where a control header and its `{` occupy separate
+lines, while still recognizing a brace enclosing point."
+  (or (and (eq (char-after) ?{) (point))
+      (save-excursion
+        (when (search-forward "{" (line-end-position) t)
+          (1- (point))))
+      (save-excursion
+        (end-of-line)
+        (forward-line 1)
+        (while (and (not (eobp)) (looking-at-p "^[ \t]*$"))
+          (forward-line 1))
+        (when (looking-at "[ \t]*{")
+          (1- (match-end 0))))
+      (let ((opening (nth 1 (syntax-ppss))))
+        (and opening (eq (char-after opening) ?{) opening))))
+
+(defun my/indent-block--brace-inner-bounds ()
+  "Return bounds inside a nearby balanced `{...}` block, or nil."
+  (when-let ((opening (my/indent-block--nearby-opening-brace)))
+    (save-excursion
+      (goto-char opening)
+      (condition-case nil
+          (progn
+            (forward-sexp 1)
+            (cons (1+ opening) (1- (point))))
+        (scan-error nil)))))
+
+(defun my/indent-block--opening-sexp-at-or-after-point ()
+  "Return an opening syntactic delimiter at or after point on this line."
+  (or (and (eq (char-syntax (char-after)) ?\() (point))
+      (let ((opening (nth 1 (syntax-ppss))))
+        (and opening (eq (char-syntax (char-after opening)) ?\() opening))
+      (save-excursion
+        (let ((limit (line-end-position))
+              opening)
+          (while (and (not opening) (< (point) limit))
+            (if (eq (char-syntax (char-after)) ?\()
+                (setq opening (point))
+              (forward-char 1)))
+          opening))))
+
+(defun my/indent-block--sexp-inner-bounds ()
+  "Return bounds inside a nearby syntactically paired expression, or nil."
+  (when-let ((opening (my/indent-block--opening-sexp-at-or-after-point)))
+    (save-excursion
+      (goto-char opening)
+      (condition-case nil
+          (progn
+            (forward-sexp 1)
+            (cons (1+ opening) (1- (point))))
+        (scan-error nil)))))
+
+(defun my/indent-block--tag-inner-bounds ()
+  "Return bounds inside the current HTML/XML tag, or nil.
+This delegates nested same-name tag matching to the `%` implementation in
+`init-mykey`, which is loaded before this module during normal startup."
+  (when (and (fboundp 'my/match-pair--tag-at-point)
+             (fboundp 'my/match-pair--find-tag-match))
+    (when-let* ((tag (my/match-pair--tag-at-point))
+                (match (my/match-pair--find-tag-match tag)))
+      (if (plist-get tag :closing)
+          (save-excursion
+            (goto-char match)
+            (when-let ((opening (my/match-pair--tag-at-point)))
+              (cons (plist-get opening :end) (plist-get tag :start))))
+        (cons (plist-get tag :end) match)))))
+
 (defun my/indent-block--select-bounds (bounds)
   "Activate the region represented by BOUNDS."
   (goto-char (car bounds))
@@ -67,7 +136,10 @@
   (save-restriction
     (widen)
     (my/indent-block--select-bounds
-     (my/indent-block--inner-bounds (my/indent-block--anchor-line)))))
+     (or (my/indent-block--brace-inner-bounds)
+         (my/indent-block--tag-inner-bounds)
+         (my/indent-block--sexp-inner-bounds)
+         (my/indent-block--inner-bounds (my/indent-block--anchor-line))))))
 
 ;; ============================================================================
 ;; 1. 自定义语法包存放路径 (Custom Grammar Storage Directory)
