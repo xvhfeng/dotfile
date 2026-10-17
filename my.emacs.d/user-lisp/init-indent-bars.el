@@ -1,15 +1,18 @@
 ;;; init-indent-bars.el --- 点状缩进层级引导线 -*- lexical-binding: t; -*-
 
-;; `indent-bars' 使用字体渲染的缩进引导线；pattern 中的非空字符为实心部分，
-;; 单个点形成简洁的虚线效果。它不改写文本，也不绑定任何按键。
+;; 强制使用普通字符 `|'，避免图形 stipple 在深色背景中显示为厚重方块。
+;; 它不改写文本，也不绑定任何按键。
 (use-package indent-bars
   :straight (:host github :repo "jdtsmith/indent-bars")
   :hook ((prog-mode html-mode html-ts-mode mhtml-mode mhtml-ts-mode
                     web-mode yaml-mode yaml-ts-mode) . indent-bars-mode)
   :custom
-  (indent-bars-pattern ".")
-  (indent-bars-width-frac 0.12)
-  (indent-bars-pad-frac 0.12)
+  (indent-bars-prefer-character t)
+  (indent-bars-no-stipple-char ?|)
+  (indent-bars-no-stipple-char-font-weight 'normal)
+  ;; 与 Tokyo Night Moon 背景协调的低对比蓝灰，不抢占代码文本注意力。
+  (indent-bars-color '("#646a82" :blend 1))
+  (indent-bars-color-by-depth nil)
   (indent-bars-treesit-support t)
   (indent-bars-no-descend-lists 'skip))
 
