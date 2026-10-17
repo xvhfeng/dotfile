@@ -64,16 +64,24 @@
           (when-let ((proj (project-current nil dir)))
             (project-root proj))))
 
-  ;; 快速移动候选时不再逐个打开文件。停留 1 秒后才自动预览，
-  ;; 从而进一步减少大项目中无意义的磁盘读取和窗口重绘。
+  ;; 搜索、书签和 Buffer 候选可能很多，快速移动时延迟预览，避免大项目中
+  ;; 无意义的磁盘读取和窗口重绘。
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep consult-man
-   consult-bookmark consult-recent-file consult-xref
+   consult-bookmark consult-xref
    consult-source-bookmark consult-source-file-register
-   consult-source-recent-file consult-source-project-recent-file
    consult-source-buffer consult-source-project-buffer
    consult-source-buffer-register
-   :preview-key '(:debounce 1 any)))
+   :preview-key '(:debounce 1 any))
+  (consult-customize
+   consult-find
+   :preview-key nil)
+  ;; `consult-recent-file' 的预览会打开候选文件。候选移动的优先级高于
+  ;; 预览，因此完全关闭该命令的自动预览，避免 C-n/C-p 触发磁盘读取。
+  (consult-customize
+   consult-recent-file
+   consult-source-recent-file consult-source-project-recent-file
+   :preview-key nil))
 
 
 

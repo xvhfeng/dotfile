@@ -321,8 +321,8 @@ start of every following column."
 
   (my-leader-def
     ;; 子模块负责注册命令；前缀名称在上面按 keymap 集中维护。
-    "f f" '("打开文件" . find-file)
-    "f r" '("最近文件" . recentf-open-files)
+    "f f" '("打开文件（可预览）" . consult-find)
+    "f r" '("最近文件（可预览）" . consult-recent-file)
     "b b" '("切换缓冲区" . switch-to-buffer)
     "b k" '("关闭当前缓冲区" . kill-current-buffer)
     "b l" '("Ibuffer 弹窗" . my/workbench-ibuffer)

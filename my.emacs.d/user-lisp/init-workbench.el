@@ -24,7 +24,7 @@
 
 ;; Transient 会在打开菜单时校验每个后缀命令。为延迟加载的第三方包预先注册
 ;; 自动加载，确保 Scratch 等尚未访问过代码/搜索功能的 Buffer 也能打开菜单。
-(dolist (command '(consult-recent-file consult-buffer consult-ripgrep consult-line
+(dolist (command '(consult-find consult-recent-file consult-buffer consult-ripgrep consult-line
                   consult-imenu))
   (autoload command "consult" nil t))
 (dolist (command '(magit-status magit-file-dispatch))
@@ -263,7 +263,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   :column-widths '(22 22 22 22 22 22)
   ;; 标题预留与“按键 + 空格”相同的宽度，使子菜单的中文描述从标题正下方开始。
   [["   文件与搜索"
-    ("f" "打开文件" find-file)
+    ("f" "打开文件（可预览）" consult-find)
     ("r" "最近文件" consult-recent-file)
     ("b" "切换 Buffer" consult-buffer)
     ("s" "项目搜索" consult-ripgrep)
