@@ -233,12 +233,12 @@ source and is rebuilt."
     (cancel-timer my/gc-idle-timer))
   (setq my/gc-idle-timer (run-with-idle-timer 30 t #'garbage-collect))
 
-  ;; 启动结束后统一恢复日常编辑参数。64MB 可显著减少 Consult/Vertico
-  ;; 高频分配候选时的 GC 停顿，同时仍能控制长期会话的内存增长。
+  ;; 启动结束后统一恢复日常编辑参数。128MB 配合较高的增长比例可减少
+  ;; Consult、Vertico 与 LSP 高频分配时的 GC 停顿；空闲定时器仍会回收内存。
   (add-hook 'emacs-startup-hook
             (lambda ()
-              (setq gc-cons-threshold (* 64 1024 1024)
-                    gc-cons-percentage 0.1))
+              (setq gc-cons-threshold (* 128 1024 1024)
+                    gc-cons-percentage 0.2))
             100)
 
   ;; 关闭 JIT/延迟原生编译，避免使用配置时后台编译带来的 CPU 和磁盘抖动
@@ -313,8 +313,9 @@ source and is rebuilt."
   (user-lisp-auto-scrape nil)
   (gc-cons-percentage 0.1)
   (gc-cons-threshold (if noninteractive #x8000000 most-positive-fixnum))
-  ;; 源文件比字节码新时优先载入源文件，避免运行陈旧 .elc
-  (load-prefer-newer t)
+  ;; user-lisp 由受管加载器在源码更新时重编译；第三方包由 straight 构建。
+  ;; 优先使用字节码，避免每次 require 额外比较源码时间戳。
+  (load-prefer-newer nil)
   (idle-update-delay 1.0)
   ;; 只向外部系统导出真正激活的选区；滚动时采用快速但略低精度的重绘
   (select-active-regions 'only)

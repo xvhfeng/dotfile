@@ -7,12 +7,6 @@
 ;; `consult-customize' 展开后会调用此函数；声明它可避免延迟加载时的字节编译误报。
 (declare-function consult--customize-put "consult" (commands property form))
 
-;; 必须先让 straight 将集成包加入 `load-path'。否则本文件在冷启动时
-;; 先加载 Consult 与 Embark，Embark 会误报 embark-consult 尚未安装。
-(use-package embark-consult
-  :straight t
-  :defer t)
-
 ;; ============================================================================
 ;; 1. 定义以 `.projx` 为标志的项目根目录查找逻辑
 ;; ============================================================================

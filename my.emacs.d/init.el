@@ -117,7 +117,7 @@
 (setq enable-recursive-minibuffers t ;; 允许在 Minibuffer 输入过程中递归嵌套调出新的 Minibuffer
       minibuffer-message-timeout 1 ;; Minibuffer 底部临时消息停留时间设为 1 秒
       read-quoted-char-radix 16 ;; 输入转义字符（C-q）时默认使用 16 进制解析
-      load-prefer-newer t ;; 载入 Elisp 库时优先加载最新的未编译源文件而非旧字节码
+      load-prefer-newer nil ;; 受管字节码缓存已负责失效检测，避免 require 的时间戳检查
       ring-bell-function 'ignore ;; 彻底忽略并屏蔽系统声音/视觉响铃警告
       highlight-nonselected-windows nil ;; 禁用非当前选中窗口的高亮显示以提升性能
       kill-buffer-query-functions nil ;; 删除 Buffer 时不再弹出烦人的二次确认询问
@@ -134,7 +134,7 @@
 
 ;; GC 由 early-init.el 统一管理；这里只配置子进程吞吐量。
 (setq read-process-output-max (* 1024 1024) ;; 提升单次读取子进程输出的最大缓冲区至 1MB（LSP/AutoComplete 必备）
-      process-adaptive-read-buffering nil ;; 禁用子进程自适应读取缓冲，提高数据传输实时性
+      process-adaptive-read-buffering t ;; 合并短小子进程输出，降低 LSP/rg 的读取与重绘开销
       ad-redefinition-action 'accept ;; 忽略 Advice 重新定义时的警告提示
       native-comp-async-report-warnings-errors nil) ;; 静默并屏蔽原生编译（Native Comp）的异步警告弹窗
 
@@ -324,20 +324,10 @@
 
 (my/require-modules my/init-modules)
 
-;; 启用模块已经按“先加载源码、再编译”更新缓存。未启用的备用文件仍会
-;; 自动更新字节码，但放到启动后的空闲阶段，避免同步遍历全部源码。
-(defvar my/stale-bytecode-idle-timer nil)
-(defun my/schedule-stale-user-lisp-bytecode-refresh ()
-  "Schedule compilation of inactive user-lisp modules during idle time."
-  (when (timerp my/stale-bytecode-idle-timer)
-    (cancel-timer my/stale-bytecode-idle-timer))
-  (setq my/stale-bytecode-idle-timer
-        (run-with-idle-timer 2 nil #'my/byte-compile-stale-user-lisp-files)))
-(add-hook 'emacs-startup-hook #'my/schedule-stale-user-lisp-bytecode-refresh 90)
+;; 已启用模块若源码较新，会由 `my/require-user-lisp-feature' 在加载时编译。
+;; 未启用模块无需在每次启动后扫描和编译；需要预编译全部模块时，手动运行
+;; `M-x my/byte-compile-stale-user-lisp-files' 即可，避免占用刚启动后的空闲时间。
 
-;; 暂未启用的模块，需要时移动到 `my/init-modules' 列表中。
-;; init-ivy
-;; init-dirvish
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 9. 启动时间统计与 GC 恢复Hook ;; 启动统计与收尾模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
