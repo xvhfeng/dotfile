@@ -266,8 +266,8 @@
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 (defun my/require-modules (features)
   "按顺序安全加载 FEATURES 中的每一个 user-lisp feature。
-优先使用 runtimes/user-lisp 中的最新字节码；源文件更新时先加载源文件并
-重新编译。单个模块失败时记录错误并继续加载后续模块。"
+优先使用 runtimes/user-lisp 中的最新字节码；源文件更新时先重新编译并
+加载新的字节码。单个模块失败时记录错误并继续加载后续模块。"
   (dolist (feature features)
     (condition-case err
         (my/require-user-lisp-feature feature)

@@ -174,20 +174,28 @@ Ivy or Dirvish remain disabled until explicitly added to `my/init-modules'."
                 (file-newer-than-file-p source compiled))
         (my/byte-compile-user-lisp-file source)))))
 
-(defun my/user-lisp--load-source-and-compile (feature source)
-  "Load FEATURE from SOURCE, then refresh its bytecode cache."
-  (load source nil 'nomessage t)
-  (unless (featurep feature)
-    (error "%s 未提供 feature %s" source feature))
-  (cl-incf my/user-lisp-source-load-count)
-  (my/byte-compile-user-lisp-file source)
-  feature)
+(defun my/user-lisp--compile-and-load (feature source)
+  "Compile newer SOURCE first, then load FEATURE from its fresh bytecode.
+If compilation fails, load SOURCE as a safe fallback so a configuration error
+does not prevent the rest of Emacs from starting."
+  (if-let ((compiled (my/byte-compile-user-lisp-file source)))
+      (progn
+        (load compiled nil 'nomessage t)
+        (unless (featurep feature)
+          (error "%s 未提供 feature %s" compiled feature))
+        (cl-incf my/user-lisp-bytecode-load-count)
+        feature)
+    (load source nil 'nomessage t)
+    (unless (featurep feature)
+      (error "%s 未提供 feature %s" source feature))
+    (cl-incf my/user-lisp-source-load-count)
+    feature))
 
 (defun my/require-user-lisp-feature (feature)
   "Load FEATURE from current source or its mirrored runtime bytecode.
-When source is newer or bytecode is missing, load the .el file first and
-compile it for the next startup.  Broken bytecode automatically falls back to
-source and is rebuilt."
+When source is newer or bytecode is missing, compile it first and immediately
+load the fresh .elc.  Broken bytecode or failed compilation falls back to
+source without interrupting startup."
   (let* ((source (my/user-lisp-source-file feature))
          (compiled (and source (my/user-lisp-compiled-file source))))
     (unless source
@@ -208,8 +216,8 @@ source and is rebuilt."
             (format "%s 加载失败，回退到源文件：%s"
                     compiled (error-message-string err))
             :warning)
-           (my/user-lisp--load-source-and-compile feature source)))
-      (my/user-lisp--load-source-and-compile feature source))))
+           (my/user-lisp--compile-and-load feature source)))
+      (my/user-lisp--compile-and-load feature source))))
 
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=81506

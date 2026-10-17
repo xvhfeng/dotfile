@@ -365,10 +365,12 @@ its own closing tag rather than an inner sibling's closing tag."
 (keymap-global-set "C-!" #'my-replace-dwim)
 
 ;;============= *  更改 EMACS 自身的某些设置 *=====================
-;; 把ESC设置为取消退出
-;; 将单独按下的 ESC 映射为 C-g (keyboard-quit)
-(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
-;;(keymap-global-set "<escape>" #'keyboard-escape-quit)
+;; 普通编辑 Buffer 中 ESC 用于取消；不能放在 `key-translation-map'，
+;; 否则 Vterm 会在其局部按键映射之前收到 C-g，导致 ESC/Meta 终端输入失效。
+(define-key key-translation-map (kbd "ESC") nil)
+;; `ESC' 本身必须保留为 Meta 前缀，否则所有 M- 组合键都会失效。
+(define-key global-map (kbd "ESC") esc-map)
+(keymap-global-set "<escape>" #'keyboard-quit)
  ;; 把 c-k 设置为不管什么位姿都删除当前行
 ;; (global-set-key (kbd "C-k") 'kill-whole-line)
 (keymap-global-set "C-'" #'imenu)

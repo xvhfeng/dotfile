@@ -6,6 +6,42 @@
 
 ;; Hydra 由 init-window.el 统一安装和加载；Ranger 仅按命令延迟加载自身。
 
+(defun my/ranger-add-straight-package-paths ()
+  "Register Ranger and icon package build directories before requiring them."
+  (dolist (package '(ranger all-the-icons all-the-icons-dired))
+    (let ((directory
+           (expand-file-name (format "straight/build/%s" package)
+                             user-emacs-directory)))
+      (when (file-directory-p directory)
+        (add-to-list 'load-path directory)))))
+
+(my/ranger-add-straight-package-paths)
+
+(defun my/ranger-require ()
+  "Load the locally built Ranger package through its registered build path."
+  (my/ranger-add-straight-package-paths)
+  (require 'ranger))
+
+(defun my/ranger-restore-command-line-keymap ()
+  "Restore Ranger's native command-line keymap and navigation prefixes."
+  (setq ranger-map-style 'ranger)
+  (when (and (keymapp ranger-mode-map)
+             (keymapp ranger-normal-mode-map))
+    (set-keymap-parent ranger-mode-map ranger-normal-mode-map))
+  ;; This binding was previously overwritten by Ranger's optional Hydra.
+  (when (keymapp ranger-mode-map)
+    (define-key ranger-mode-map "g" #'ranger-go)))
+
+(defun my/ranger-disable-hydra ()
+  "Disable Ranger's incompatible optional Hydra integration.
+Recent Ranger releases may define the optional Hydra menu when Hydra is
+available even if the menu was previously enabled only temporarily.  Restore
+the normal `g' navigation command so it can never evaluate `ranger-hydra-go'
+as a variable."
+  (setq ranger-use-hydra nil)
+  (when (boundp 'ranger-mode-map)
+    (my/ranger-restore-command-line-keymap)))
+
 (defun my/ranger-finish-isearch ()
   "Finish I-search before Ranger changes the current buffer.
 Ranger's upstream hook only clears `isearch--current-buffer', which can leave
@@ -80,6 +116,9 @@ Search wraps once and never enters Emacs I-search."
 
 (defun my/ranger-enable-original-icons ()
   "Use Ranger's original all-the-icons renderer and remove Dired's Nerd Icons."
+  (when (display-graphic-p)
+    (require 'all-the-icons nil t)
+    (require 'all-the-icons-dired nil t))
   (when (bound-and-true-p my/dired-ui-mode)
     (my/dired-ui-mode -1))
   (when (bound-and-true-p nerd-icons-dired-mode)
@@ -91,6 +130,21 @@ Search wraps once and never enters Emacs I-search."
 (defun my/ranger-enable-icons-in-created-dired-buffer ()
   "Enable Ranger icons in Dired buffers created inside a Ranger operation."
   (unless my/native-dired-ui-allowed
+    (my/ranger-enable-original-icons)))
+
+(defun my/ranger-open (&optional path)
+  "Open the full three-pane Ranger UI, never the single-pane Deer variant."
+  (interactive)
+  (my/ranger-require)
+  (my/ranger-restore-command-line-keymap)
+  ;; `ranger-minimal' is kept as a frame parameter by Ranger.  Clear a stale
+  ;; Deer-mode setting before opening so parent and preview panes are restored.
+  (modify-frame-parameters nil '((ranger-minimal . nil)))
+  (setq ranger-parent-depth 1
+        ranger-preview-file t)
+  (let ((my/native-dired-ui-allowed nil))
+    (ranger path))
+  (when (derived-mode-p 'ranger-mode)
     (my/ranger-enable-original-icons)))
 
 (defun my/ranger-localize-dired-state (&rest _)
@@ -107,35 +161,18 @@ This prevents an open Ranger session from changing native Dired buffers."
              ls-lisp-format-time-list))
     (make-local-variable variable)))
 
-(use-package all-the-icons
-  :straight t
-  :if (display-graphic-p))
-
-(use-package all-the-icons-dired
-  :straight t
-  :if (display-graphic-p)
-  :commands all-the-icons-dired-mode)
-
-
-(use-package ranger
-  :straight (:host github :repo "punassuming/ranger.el")
-  :general
-  ("C-c r" '("Ranger file manager" . ranger))
-  
-  :custom
-  ;; 1. 是否在启动 dired 时自动替换为 ranger 界面（建议先设为 nil，用 C-c r 手动调出）
-  (ranger-override-dired nil)
-
-  ;; 2. 界面与外观优化
-  (ranger-show-hidden t)             ; 显示隐藏文件
-  (ranger-cleanup-on-disable t)      ; 关闭时清理后台临时 Buffer
-  (ranger-max-preview-size 10)       ; 限制文件预览大小为 10MB
-  (ranger-dont-show-binary t)        ; 不预览二进制文件
-  (ranger-parent-depth 1)            ; 左侧父目录深度
-  (ranger-preview-file t)            ; 开启右侧文件预览
-  (ranger-show-literal t)            ; 开启排版美化
-
-  :config
+(with-eval-after-load 'ranger
+  ;; 不替换普通 Dired；只通过 Ranger 专用入口打开三栏界面。
+  (setq ranger-override-dired nil
+        ;; 上游可选 Hydra 菜单在当前 Hydra 版本下会触发变量错误。
+        ranger-use-hydra nil
+        ranger-show-hidden t
+        ranger-cleanup-on-disable t
+        ranger-max-preview-size 10
+        ranger-dont-show-binary t
+        ranger-parent-depth 1
+        ranger-preview-file t
+        ranger-show-literal t)
   ;; Ranger 会在内部创建若干 Dired 派生缓冲区。动态关闭原生 Dired UI，
   ;; 并在主窗口、父目录和预览目录中只启用 Ranger 原来的图标方案。
   (dolist (function '(ranger-find-file ranger-dir-buffer))
@@ -155,11 +192,14 @@ This prevents an open Ranger session from changing native Dired buffers."
   ;; Run after Ranger's own mode hooks so no hook can leave I-search half-open.
   (add-hook 'ranger-mode-hook #'my/ranger-finish-isearch t)
   ;; 设置标题栏样式
-  (setq ranger-header-func 'ranger-header-line))
+  (setq ranger-header-func 'ranger-header-line)
+  (my/ranger-disable-hydra))
 
 (with-eval-after-load 'general
+  (general-define-key
+   "C-c r" '("Ranger 文件管理器" . my/ranger-open))
   (my-leader-def
-    "d r" '("Ranger 文件管理器" . ranger)))
+    "d r" '("Ranger 文件管理器" . my/ranger-open)))
 
 (provide 'init-ranger)
 

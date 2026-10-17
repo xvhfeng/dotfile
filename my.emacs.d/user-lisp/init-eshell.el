@@ -39,6 +39,19 @@
     (when vterm-directory
       (add-to-list 'load-path vterm-directory))))
 
+(defun my/vterm-restore-terminal-delete-keys ()
+  "Prevent Which-Key's global delete bindings from intercepting Vterm input."
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "DEL") #'vterm-send-backspace)
+    (define-key map [backspace] #'vterm-send-backspace)
+    (define-key map [delete] #'vterm-send-delete)
+    ;; A buffer-local overriding map has higher priority than the global
+    ;; Which-Key backspace minor mode, but leaves it unchanged elsewhere.
+    (setq-local minor-mode-overriding-map-alist
+                (cons (cons 'my/which-key-backspace-mode map)
+                      (assq-delete-all 'my/which-key-backspace-mode
+                                       minor-mode-overriding-map-alist)))))
+
 (use-package vterm
   :straight t
   :commands vterm
@@ -64,7 +77,8 @@
               (when (fboundp 'display-line-numbers-mode)
                 (display-line-numbers-mode -1))
               (when (fboundp 'hl-line-mode)
-                (hl-line-mode -1)))))
+                (hl-line-mode -1))
+              (my/vterm-restore-terminal-delete-keys))))
 
 (with-eval-after-load 'vterm
   (general-define-key
