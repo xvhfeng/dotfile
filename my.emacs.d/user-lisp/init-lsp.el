@@ -59,7 +59,13 @@
     (typescript-ts-mode . "typescript-language-server") (tsx-ts-mode . "typescript-language-server")
     (js-json-mode . "vscode-json-language-server") (json-ts-mode . "vscode-json-language-server")
     (yaml-mode . "yaml-language-server") (yaml-ts-mode . "yaml-language-server")
-    (sh-mode . "bash-language-server"))
+    (sh-mode . "bash-language-server")
+    ;; HTML 的传统、Tree-sitter 和模板模式都复用 Microsoft HTML LSP。
+    (html-mode . "vscode-html-language-server")
+    (html-ts-mode . "vscode-html-language-server")
+    (mhtml-mode . "vscode-html-language-server")
+    (mhtml-ts-mode . "vscode-html-language-server")
+    (web-mode . "vscode-html-language-server"))
   "主模式与对应 LSP 可执行文件的映射；用于避免缺少服务器时影响编辑。")
 
 ;; 仅当对应服务器存在时启动 Eglot，缺失依赖只给出提示而不让打开文件报错。
@@ -69,9 +75,17 @@
     (when (and server (executable-find server))
       (eglot-ensure))))
 
+(defconst my/html-lsp-server-contact
+  '("vscode-html-language-server" "--stdio"
+    :initializationOptions (:provideFormatter t))
+  "Eglot connection description for the Microsoft HTML language server.
+The server deliberately disables its formatter unless `provideFormatter' is
+explicitly true during initialization.")
+
 (use-package eglot
-  ;; Eglot 在 Emacs 29+ 为内置，若使用旧版可解开下面这行的注释
-  ;; :straight t
+  ;; Emacs 29+ 已内置 Eglot。必须显式关闭 Straight，避免它把旧版
+  ;; project/xref/jsonrpc 一并加入 load-path，与当前 Emacs 的内置库冲突。
+  :straight nil
   :defer t
   :hook
   ;; 统一由安全 Hook 启动，避免未安装语言服务器时干扰现有 major mode。
@@ -94,7 +108,12 @@
     json-ts-mode
     yaml-mode
     yaml-ts-mode
-    sh-mode) . my/lsp-maybe-ensure)
+    sh-mode
+    html-mode
+    html-ts-mode
+    mhtml-mode
+    mhtml-ts-mode
+    web-mode) . my/lsp-maybe-ensure)
 
     :custom
   ;; 避免 LSP 频繁在 minibuffer 输出冗长的提示信息
@@ -119,6 +138,16 @@
                    (yaml-ts-mode . ("yaml-language-server" "--stdio"))
                    (sh-mode . ("bash-language-server" "start"))))
     (add-to-list 'eglot-server-programs entry))
+  ;; HTML server 只接受 "html" 这个 LSP languageId；不能让 `web-mode'
+  ;; 默认转换成 "web"，否则服务器虽启动却不会提供格式化能力。
+  (add-to-list
+   'eglot-server-programs
+   `(((html-mode :language-id "html")
+      (html-ts-mode :language-id "html")
+      (mhtml-mode :language-id "html")
+      (mhtml-ts-mode :language-id "html")
+      (web-mode :language-id "html"))
+     . ,my/html-lsp-server-contact))
   ;; 中文说明：Cape 可用时组合文件补全；否则使用 Eglot 原生补全，避免可选包影响 LSP。
   (add-hook 'eglot-managed-mode-hook
             (lambda ()
@@ -131,6 +160,15 @@
   ;; 保存文件时自动格式化 (可选)
   ;; (add-hook 'before-save-hook #'eglot-format-buffer)
   )
+
+(defun my/eglot-format (&optional _beg _end)
+  "使用当前主模式的原生规则缩进整个 Buffer。
+此命令保留原有的 `C-c c f' 入口，但不再请求 LSP 或外部格式化器；其
+行为等价于 Vim 的 `gg=G'，不受选区、文件大小或 Eglot 状态影响。"
+  (interactive)
+  (save-restriction
+    (widen)
+    (indent-region (point-min) (point-max))))
 
 ;; ============================================================================
 ;; 4. Outline / 代码结构大纲体系
@@ -319,7 +357,7 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
     ;; LSP 相关功能 (Code / LSP)
     "ca"  '("代码操作或快速修复" . eglot-code-actions)
     "cr"  '("重命名符号" . eglot-rename)
-    "cf"  '("格式化缓冲区或区域" . eglot-format)
+    "cf"  '("格式化缓冲区或区域" . my/eglot-format)
     "cq"  '("停止 LSP 服务器" . eglot-shutdown)
 
     ;; 代码跳转集中到 Code navigation 子菜单，给 Diagnostics 留出独立命名空间。

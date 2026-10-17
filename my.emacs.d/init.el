@@ -305,6 +305,8 @@
     init-mason
     init-completion
     init-treesitter
+    ;; 用点状引导线显示代码与 Web 文件的缩进层级，不改变文本或快捷键。
+    init-indent-bars
     init-fold
     init-lsp
     init-flymake

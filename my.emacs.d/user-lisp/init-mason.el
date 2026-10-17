@@ -47,6 +47,7 @@
           "bash-language-server"  ; Shell / Bash 语言服务器
           "typescript-language-server" ; JavaScript / TypeScript 语言服务器
           "json-lsp"              ; JSON 语言服务器（可执行文件名仍为 vscode-json-language-server）
+          "html-lsp"              ; HTML 语言服务器（vscode-html-language-server）
 
           ;; --- 代码格式化工具 (Formatters) ---
           "clang-format"          ; C / C++ 代码格式化

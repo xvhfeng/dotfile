@@ -10,7 +10,9 @@
   :init
   ;; 建立自定义运行目录变量
   (defvar my/treesit-grammar-dir
-    (expand-file-name "runtimes/tree-sitter" user-emacs-directory)
+    ;; `treesit-install-language-grammar' 固定写入这个内置目录；与它对齐，
+    ;; 才能让手动安装和 `treesit-auto' 安装的 grammar 都被自动发现。
+    (expand-file-name "tree-sitter" user-emacs-directory)
     "Directory to store and load compiled tree-sitter grammars.")
 
   ;; 自动创建该目录 (如果尚不存在)
@@ -104,7 +106,7 @@
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 已安装 grammar 时自动使用对应 `*-ts-mode'，缺失时回退传统 major mode，不阻断打开文件。
-;; - `C-c t a' 批量下载并编译全部 grammar；产物保存在 `runtimes/tree-sitter/'。
+;; - `C-c t a' 批量下载并编译全部 grammar；产物保存在 `tree-sitter/'。
 ;; - `C-c t f' 折叠/展开当前代码块，`C-c t F' 展开当前 Buffer 的全部折叠。
 ;; - `C-c t i' 打开语法树检查模式，适合确认光标处 AST 节点及排查高亮问题。
 ;; - 编译 grammar 需要 Git、C 编译器和可用网络；本配置启动时不会强制下载。
