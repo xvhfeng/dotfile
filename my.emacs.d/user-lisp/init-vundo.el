@@ -35,7 +35,7 @@
 ;; Leader 键入口。
 (with-eval-after-load 'general
   (my-leader-def
-    "u" '("undo tree (vundo)" . vundo)))
+    "u" '("可视撤销树" . vundo)))
 
 (provide 'init-vundo)
 

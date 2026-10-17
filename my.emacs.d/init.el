@@ -71,15 +71,13 @@
       scroll-conservatively 10000 ;; 光标超出屏幕视口时保持平滑滚屏（防止自动跳转到屏幕正中间）
       scroll-margin 5 ;; 触发视口滚屏的边缘行数保留值（设为 0 表示到达顶部或底部第一行才滚动） 不管怎么样滚屏，都保留最上或者最下有 5 行空间
       scroll-preserve-screen-position t ;; 使用 C-v / M-v 翻页时，尽量保持光标在屏幕上的相对行位置不变
-      next-screen-context-lines 5 ;; 使用 PgUp / PgDn 翻页时，新屏幕保留旧屏幕顶部/底部的 2 行重叠内容作为阅读参照
-      fast-read-minibuffer-input t) ;; 优化 Minibuffer 快速输入的渲染响应速度
+      next-screen-context-lines 5) ;; 使用 PgUp / PgDn 翻页时，新屏幕保留旧屏幕顶部/底部的 2 行重叠内容作为阅读参照
 
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 4. 基于 csetq 与 setq 的编辑器行为与微调 ;; 编辑器行为模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 使用 csetq 设置那些修改后需要触发内置回调/生效函数的变量 ;; csetq 变量配置段
-(csetq cursor-type 'box ;; 设置文本编辑光标形状为实心方框
-       visible-bell nil ;; 彻底关闭屏幕视觉闪烁警告提示
+(csetq visible-bell nil ;; 彻底关闭屏幕视觉闪烁警告提示
        adaptive-fill-regexp "[ \t]+|[ \t]*([0-9]+.|*+)[ \t]*" ;; 自动填充段落时识别缩进、数字序号与项目符号
        adaptive-fill-first-line-regexp "^* *$" ;; 自动填充时对首行的正则匹配规则
        sentence-end-double-space nil ;; 句号后只需单个空格即视为句子结尾
@@ -125,7 +123,6 @@
       kill-buffer-query-functions nil ;; 删除 Buffer 时不再弹出烦人的二次确认询问
       x-selection-timeout 100) ;; 设置与系统剪贴板通信的超时时长为 100 毫秒
 
-(defalias 'yes-or-no-p 'y-or-n-p) ;; 将繁琐的 yes/no 对话框提示简化为单字母 y/n 快速响应
 (minibuffer-depth-indicate-mode 1) ;; 在 Minibuffer 左侧显示当前嵌套的深度数字提示
 (blink-cursor-mode -1) ;; 彻底关闭文本光标的闪烁效果，降低系统资源开销
 (global-auto-revert-mode 1) ;; 开启全局文件自动刷新，磁盘文件变更时自动同步到 Buffer

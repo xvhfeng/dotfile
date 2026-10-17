@@ -86,36 +86,36 @@
     ("<return>" nil :exit t)))
 
 ;; ============================================================================
-;; 2. 将所有窗口操作集中到 C-c w（C-t 是同一 keymap 的别名）
+;; 2. 将所有窗口操作集中到 C-w（C-c w 是兼容入口）
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-window-def
     ;; 窗口方向移动
-    "h" '("move left" . windmove-left)
-    "j" '("move down" . windmove-down)
-    "k" '("move up" . windmove-up)
-    "l" '("move right" . windmove-right)
+    "h" '("向左切换窗口" . windmove-left)
+    "j" '("向下切换窗口" . windmove-down)
+    "k" '("向上切换窗口" . windmove-up)
+    "l" '("向右切换窗口" . windmove-right)
 
     ;; 窗口交换；Ace Window 选择独立使用 C-c C-w。
-    "M" '("swap window with target" . ace-swap-window)
+    "M" '("与目标窗口交换" . ace-swap-window)
 
     ;; 窗口切分
-    "v" '("split vertically (|)" . split-window-right)
-    "s" '("split horizontally (-)" . split-window-below)
+    "v" '("左右分割窗口" . split-window-right)
+    "s" '("上下分割窗口" . split-window-below)
     ;; init-mykey.el 的方向分屏命令在创建后立即进入新窗口。
-    "f" '("split right and focus" . my-split-right-and-switch)
-    "b" '("split left and focus" . my-split-left-and-switch)
-    "n" '("split below and focus" . my-split-below-and-switch)
-    "p" '("split above and focus" . my-split-above-and-switch)
+    "f" '("右侧分割并切换" . my-split-right-and-switch)
+    "b" '("左侧分割并切换" . my-split-left-and-switch)
+    "n" '("下方分割并切换" . my-split-below-and-switch)
+    "p" '("上方分割并切换" . my-split-above-and-switch)
 
     ;; 窗口关闭与全屏
-    "d" '("delete current window" . delete-window)
-    "x" '("delete target window" . ace-delete-window)
-    "m" '("maximize current window" . delete-other-windows)
-    "o" '("delete other windows" . delete-other-windows)
+    "d" '("关闭当前窗口" . delete-window)
+    "x" '("关闭目标窗口" . ace-delete-window)
+    "m" '("最大化当前窗口" . delete-other-windows)
+    "o" '("关闭其他窗口" . delete-other-windows)
 
     ;; 窗口尺寸
-    "r" '("resize window mode" . hydra-window-resize/body)))
+    "r" '("调整窗口大小" . hydra-window-resize/body)))
 
 (use-package dimmer
   :straight t
@@ -142,7 +142,7 @@
 ;; ---------------------------------------------------------------------------
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
-;; - 普通 Buffer 的窗口命令可用 `C-t ...' 或 `C-c w ...'，两者等价。
+;; - 普通 Buffer 的窗口命令可用 `C-w ...' 或 `C-c w ...'，两者等价。
 ;; - `C-c C-w' 使用 Ace Window 选择窗口，并以高优先级 keymap 防止其他模式覆盖。
 ;; - `h/j/k/l' 移动窗口焦点；`M' 与目标窗口交换。
 ;; - `v/s' 左右/上下分屏但不移动；`f/b/n/p' 向右/左/下/上分屏并进入新窗口。

@@ -89,14 +89,14 @@ window, so this implementation records and selects the source explicitly."
   ;; 明确交给 General 管理间接编辑 Buffer 内的提交、保存和放弃操作。
   (general-define-key
     :keymaps 'edit-indirect-mode-map
-    "C-c C-c" '("commit separate edit" . separedit-commit)
-    "C-x C-s" '("save separate edit" . separedit-save)
-    "C-c C-k" '("abort separate edit" . separedit-abort)))
+    "C-c C-c" '("提交独立编辑" . separedit-commit)
+    "C-x C-s" '("保存独立编辑" . separedit-save)
+    "C-c C-k" '("放弃独立编辑" . separedit-abort)))
 
 ;; Separedit 属于文本编辑操作，放在统一的 C-c e 编辑层级下。
 (with-eval-after-load 'general
   (my-leader-def
-    "e d" '("edit comment/string separately" . separedit)))
+    "e d" '("独立编辑注释或字符串" . separedit)))
 
 (provide 'init-separedit)
 

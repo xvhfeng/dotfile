@@ -93,10 +93,10 @@
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "t f" '("toggle code fold" . treesit-fold-toggle)
-    "t F" '("open all folds in buffer" . treesit-fold-open-all)
-    "t i" '("inspect AST at point" . treesit-inspect-mode)
-    "t a" '("batch install all grammars" . treesit-auto-install-all)))
+    "t f" '("切换代码折叠" . treesit-fold-toggle)
+    "t F" '("展开全部折叠" . treesit-fold-open-all)
+    "t i" '("检查光标处 AST" . treesit-inspect-mode)
+    "t a" '("批量安装全部语法" . treesit-auto-install-all)))
 
 (provide 'init-treesitter)
 

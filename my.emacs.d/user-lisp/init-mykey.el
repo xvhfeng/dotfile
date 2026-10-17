@@ -257,6 +257,9 @@
 (keymap-global-set "C-S-o"  #'my-open-line-above)
 
 (keymap-global-set "M-w" #'my-copy-dwim)
+;;(keymap-global-set "C-w" #'my-copy-dwim)
+(global-set-key (kbd "C-t") #'kill-region)
+
 (keymap-global-set "C-k" #'my-cut-dwim)
 (keymap-global-set "M-k" #'my-move-line-up)
 (keymap-global-set "M-j" #'my-move-line-down)

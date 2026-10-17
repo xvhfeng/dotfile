@@ -72,13 +72,13 @@
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "jj"  '("char timer (2-3 chars)" . avy-goto-char-timer)
-    "jc"  '("single char" . avy-goto-char)
-    "jl"  '("line" . avy-goto-line)
-    "jw"  '("word start" . avy-goto-word-1)
-    "js"  '("symbol" . avy-goto-symbol-1)
-    "jy"  '("remote copy region" . my/avy-copy-region)
-    "jL"  '("select line" . my/avy-select-line)))
+    "jj"  '("输入字符跳转" . avy-goto-char-timer)
+    "jc"  '("跳转到单个字符" . avy-goto-char)
+    "jl"  '("跳转到行" . avy-goto-line)
+    "jw"  '("跳转到单词开头" . avy-goto-word-1)
+    "js"  '("跳转到符号" . avy-goto-symbol-1)
+    "jy"  '("远程复制区域" . my/avy-copy-region)
+    "jL"  '("选择行" . my/avy-select-line)))
 
 (provide 'init-avy)
 

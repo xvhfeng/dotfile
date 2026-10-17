@@ -82,15 +82,15 @@
 
 (with-eval-after-load 'general
   (my-leader-def
-    "l c" '("compile document" . my/latex-compile-document)
-    "l v" '("view PDF" . my/latex-view-document)
-    "l p" '("preview document inline" . my/latex-preview-document)
-    "l a" '("preview fragment at point" . my/latex-preview-at-point)
-    "l x" '("clear inline previews" . my/latex-clear-previews)
-    "l r" '("reference/table of contents" . reftex-toc)
-    "l e" '("insert environment" . LaTeX-environment)
-    "l m" '("insert macro" . TeX-insert-macro)
-    "l k" '("clean generated files" . TeX-clean)))
+    "l c" '("编译文档" . my/latex-compile-document)
+    "l v" '("查看 PDF" . my/latex-view-document)
+    "l p" '("内联预览文档" . my/latex-preview-document)
+    "l a" '("预览光标处片段" . my/latex-preview-at-point)
+    "l x" '("清除内联预览" . my/latex-clear-previews)
+    "l r" '("引用或目录" . reftex-toc)
+    "l e" '("插入环境" . LaTeX-environment)
+    "l m" '("插入宏" . TeX-insert-macro)
+    "l k" '("清理生成文件" . TeX-clean)))
 
 (provide 'init-latex)
 

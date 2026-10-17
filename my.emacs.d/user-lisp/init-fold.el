@@ -546,14 +546,14 @@ that fact in the echo area."
 ;; 手工折叠属于代码大纲操作，统一放在 C-c o f 子菜单。
 (with-eval-after-load 'general
   (my-leader-def
-    "o f i" '("insert fold at point/region" . my/vimish-fold-insert-markers)
-    "o f d" '("delete fold at point" . my/vimish-fold-delete-markers)
-    "o f t" '("toggle fold at point" . my/vimish-fold-toggle-at-point)
-    "o f a" '("toggle all manual folds" . vimish-fold-toggle-all)
-    "o f u" '("unfold all manual folds" . vimish-fold-unfold-all)
-    "o f r" '("refold all manual folds" . vimish-fold-refold-all)
-    "o f n" '("next manual fold" . vimish-fold-next-fold)
-    "o f p" '("previous manual fold" . vimish-fold-previous-fold)))
+    "o f i" '("在光标或区域插入折叠" . my/vimish-fold-insert-markers)
+    "o f d" '("删除光标处折叠" . my/vimish-fold-delete-markers)
+    "o f t" '("切换光标处折叠" . my/vimish-fold-toggle-at-point)
+    "o f a" '("切换全部手工折叠" . vimish-fold-toggle-all)
+    "o f u" '("展开全部手工折叠" . vimish-fold-unfold-all)
+    "o f r" '("重新折叠全部手工折叠" . vimish-fold-refold-all)
+    "o f n" '("下一个手工折叠" . vimish-fold-next-fold)
+    "o f p" '("上一个手工折叠" . vimish-fold-previous-fold)))
 
 (provide 'init-fold)
 

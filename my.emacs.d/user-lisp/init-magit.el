@@ -22,15 +22,15 @@
 (with-eval-after-load 'project
   (general-define-key
     :keymaps 'project-prefix-map
-    "m" '("Magit project status" . magit-project-status))
+    "m" '("Magit 项目状态" . magit-project-status))
   (add-to-list 'project-switch-commands '(magit-project-status "Magit" ?m)))
 
 (with-eval-after-load 'general
   (my-leader-def
-    "g s" '("status" . magit-status)
-    "g d" '("dispatch" . magit-dispatch)
-    "g f" '("file actions" . magit-file-dispatch)
-    "g p" '("project status" . magit-project-status)))
+    "g s" '("仓库状态" . magit-status)
+    "g d" '("Git 操作菜单" . magit-dispatch)
+    "g f" '("当前文件操作" . magit-file-dispatch)
+    "g p" '("项目状态" . magit-project-status)))
 
 (provide 'init-magit)
 

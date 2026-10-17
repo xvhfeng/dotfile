@@ -80,18 +80,18 @@ Ranger dynamically binds this to nil while it creates its own buffers.")
 (with-eval-after-load 'general
   (general-define-key
    :keymaps 'my/dired-ui-mode-map
-   "h" '("parent directory" . dired-up-directory)
-   "l" '("open here" . dired-find-alternate-file)
-   "j" '("next entry" . dired-next-line)
-   "k" '("previous entry" . dired-previous-line)
-   "f" '("find entry" . dired-goto-file)
-   "." '("toggle hidden files" . dired-omit-mode)
-   "z" '("toggle details" . dired-hide-details-mode)
-   "P" '("toggle file preview" . dired-preview-mode)
-   "g" '("refresh directory" . revert-buffer))
+   "h" '("上级目录" . dired-up-directory)
+   "l" '("在此打开" . dired-find-alternate-file)
+   "j" '("下一项" . dired-next-line)
+   "k" '("上一项" . dired-previous-line)
+   "f" '("定位文件" . dired-goto-file)
+   "." '("切换隐藏文件" . dired-omit-mode)
+   "z" '("切换详情" . dired-hide-details-mode)
+   "P" '("切换文件预览" . dired-preview-mode)
+   "g" '("刷新目录" . revert-buffer))
   (my-leader-def
-    "d d" '("Dired current directory" . dired-jump)
-    "d p" '("Dired project root" . project-dired)))
+    "d d" '("Dired 当前目录" . dired-jump)
+    "d p" '("Dired 项目根目录" . project-dired)))
 
 (provide 'init-dired)
 

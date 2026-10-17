@@ -103,8 +103,6 @@
   (eglot-events-buffer-config '(:size 0 :format lisp))
 
   :config
-  ;; 优化 performance：提高与 LSP 服务器通信吞吐量
-  (setq read-process-output-max (* 1024 1024)) ; 1MB
   ;; 显式声明常见服务器命令，保证 Mason 安装到 mason/bin/ 后能被 Eglot 正确调用。
   (dolist (entry '((java-mode . ("jdtls")) (java-ts-mode . ("jdtls"))
                    (python-mode . ("pyright-langserver" "--stdio"))
@@ -152,64 +150,9 @@
       (imenu-list-focus-after-activation t))
   (error (message "imenu-list 未加载：%s" (error-message-string err))))
 
-;; 中文说明：Eglot 会把 LSP DocumentSymbol 的种类保存为名称上的
-;; `breadcrumb-kind` 文本属性。Imenu List 原样展示该索引；以下映射只为
-;; 有此属性的 LSP 符号增加中文分类，不猜测普通 Imenu 条目的类型。
-(defconst my/imenu-list-eglot-kind-categories
-  '(("函数与方法" . ("Function" "Method" "Constructor" "Operator"))
-    ("变量与成员" . ("Variable" "Field" "Property" "Constant"
-                     "EnumMember" "Key" "Array" "Object" "Boolean"
-                     "Number" "String" "Null" "Event"))
-    ("类型与模块" . ("Class" "Interface" "Struct" "Enum"
-                     "TypeParameter" "Module" "Namespace" "Package" "File")))
-  "Eglot LSP SymbolKind 到 Imenu List 中文分组标题的映射。")
-
-(defun my/imenu-list--eglot-entry-category (entry)
-  "返回 Eglot Imenu ENTRY 对应的中文分类；非 Eglot 条目返回 nil。"
-  (when-let* ((name (car-safe entry))
-              ((stringp name))
-              (kind (get-text-property 0 'breadcrumb-kind name)))
-    (or (seq-find (lambda (category)
-                    (member kind (cdr category)))
-                  my/imenu-list-eglot-kind-categories)
-        (cons "其他符号" nil))))
-
-(defun my/imenu-list--categorize-eglot-symbols (imenu-index)
-  "按 Eglot SymbolKind 为 IMENU-INDEX 增加分组，未标注的索引原样返回。"
-  (let ((groups nil)
-        (untyped-entries nil)
-        (has-eglot-symbol nil))
-    (dolist (entry imenu-index)
-      (if-let ((category (my/imenu-list--eglot-entry-category entry)))
-          (progn
-            (setq has-eglot-symbol t)
-            (let ((bucket (assoc (car category) groups)))
-              (if bucket
-                  (setcdr bucket (append (cdr bucket) (list entry)))
-                (setq groups (append groups (list (list (car category) entry)))))))
-        ;; 未标注条目先暂存；若同一索引含 Eglot 符号，稍后统一归入“其他符号”。
-        (setq untyped-entries (append untyped-entries (list entry)))))
-    (when (and has-eglot-symbol untyped-entries)
-      ;; 同一份 Eglot 索引中无法识别的条目也保留，绝不丢失可跳转符号。
-      (setq groups (append groups (list (cons "其他符号" untyped-entries)))))
-    (if has-eglot-symbol groups imenu-index)))
-
-;; 中文说明：只修改 Imenu List 自己保存的显示索引，不改写 Emacs 的全局 Imenu，
-;; 因而 `consult-imenu`、xref 与其他插件仍可使用原始 LSP 符号数据。
-(defun my/imenu-list--collect-and-categorize-eglot-symbols (original)
-  "执行 ORIGINAL 后，为当前 Eglot Buffer 的 Imenu List 索引添加分类。"
-  (funcall original)
-  (when (and (bound-and-true-p eglot-managed-mode)
-             imenu-list--imenu-entries)
-    (setq imenu-list--imenu-entries
-          (my/imenu-list--categorize-eglot-symbols imenu-list--imenu-entries))))
-
-(with-eval-after-load 'imenu-list
-  ;; 中文说明：通过 Imenu List 的采集入口分类，刷新大纲时也会自动更新分组。
-  (unless (advice-member-p #'my/imenu-list--collect-and-categorize-eglot-symbols
-                           #'imenu-list-collect-entries)
-    (advice-add #'imenu-list-collect-entries :around
-                #'my/imenu-list--collect-and-categorize-eglot-symbols)))
+;; 中文说明：Eglot 把 LSP `DocumentSymbol` 转为嵌套的 Imenu 索引，其中包含
+;; “类型 → 方法/字段 → 内嵌类型”等父子关系。Imenu List 直接显示这棵原始树，
+;; 不按 SymbolKind 重排为额外分类节点，避免破坏语言服务器给出的顺序和层级。
 
 (defun my/treemacs-find-stable-python ()
   "Return a directly executable Python 3 binary for Treemacs helpers.
@@ -235,7 +178,7 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
   ;; ~/.asdf/shims/python3：GUI Emacs 可能能找到 shim，却找不到 shim 依赖的 asdf。
   (treemacs-python-executable (my/treemacs-find-stable-python))
   (treemacs-width 35)
-  ;; 允许 C-t r 中的窗口尺寸命令直接调整 Treemacs。
+  ;; 允许 C-w r 中的窗口尺寸命令直接调整 Treemacs。
   (treemacs-width-is-initially-locked nil)
   ;; 避免 C-x o (other-window) 切换光标时误入侧边栏
  ;; (treemacs-is-never-other-window t)
@@ -350,8 +293,8 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; C-c o s 改用稳定的 Imenu List 代码大纲，兼容 LSP、Tree-sitter 与普通 major mode。
 (with-eval-after-load 'general
   (my-leader-def
-    "d t" '("toggle treemacs file tree" . treemacs)
-    "o s" '("show current file outline in treemacs" . my/treemacs-show-current-file-outline)))
+    "d t" '("切换 Treemacs 文件树" . treemacs)
+    "o s" '("显示当前文件大纲" . my/treemacs-show-current-file-outline)))
 
 (use-package zoutline
   :straight (:host github :repo "abo-abo/zoutline")
@@ -363,10 +306,10 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; 大纲显示相关操作统一放到 C-c o。
 (with-eval-after-load 'general
   (my-leader-def
-    "o u" '("outline parent" . zo-up)
-    "o d" '("outline next heading" . zo-down)
-    "o h" '("outline fold / parent" . zo-left)
-    "o l" '("outline unfold / child" . zo-right)))
+    "o u" '("大纲上级" . zo-up)
+    "o d" '("下一个大纲标题" . zo-down)
+    "o h" '("折叠或上级" . zo-left)
+    "o l" '("展开或子级" . zo-right)))
 
 ;; ============================================================================
 ;; 5. 配合 General.el 集中绑定 Leader 键
@@ -374,20 +317,22 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 (with-eval-after-load 'general
   (my-leader-def
     ;; LSP 相关功能 (Code / LSP)
-    "ca"  '("code action / quick fix" . eglot-code-actions)
-    "cr"  '("rename symbol" . eglot-rename)
-    "cf"  '("format buffer/region" . eglot-format)
-    "cq"  '("stop lsp server" . eglot-shutdown)
+    "ca"  '("代码操作或快速修复" . eglot-code-actions)
+    "cr"  '("重命名符号" . eglot-rename)
+    "cf"  '("格式化缓冲区或区域" . eglot-format)
+    "cq"  '("停止 LSP 服务器" . eglot-shutdown)
 
     ;; 代码跳转集中到 Code navigation 子菜单，给 Diagnostics 留出独立命名空间。
-    "c g d" '("definition" . xref-find-definitions)
-    "c g r" '("references" . xref-find-references)
-    "c g h" '("hover documentation" . eldoc)
+    "c g d" '("跳转到定义" . xref-find-definitions)
+    "c g r" '("查找引用" . xref-find-references)
+    "c g b" '("返回跳转位置" . xref-go-back)
+    "c g f" '("前进跳转位置" . xref-go-forward)
+    "c g h" '("显示光标处文档" . eldoc)
 
     ;; 代码大纲与导航 (Outline / Imenu)
-    "oi"  '("jump to symbol (imenu)" . consult-imenu)
-    "oI"  '("jump to symbol (all buffers)" . consult-imenu-multi)
-    "ot"  '("toggle outline sidebar" . imenu-list-smart-toggle)))
+    "oi"  '("跳转到当前文件符号" . consult-imenu)
+    "oI"  '("跳转到全部缓冲区符号" . consult-imenu-multi)
+    "ot"  '("切换大纲侧栏" . imenu-list-smart-toggle)))
 
 (provide 'init-lsp)
 
@@ -395,14 +340,15 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - Eglot 为 lang/ 中配置的语言提供补全、跳转、重命名、格式化和 Flymake 诊断。
-;; - `C-c c a/r/f/q'：代码动作、重命名、格式化、停止 LSP；`C-c c g d/r/h'：定义/引用/文档。
+;; - `C-c c a/r/f/q'：代码动作、重命名、格式化、停止 LSP；`C-c c g d/r/b/f/h'：
+;;   定义/引用/后退/前进/文档。
 ;; - `C-c o i/I' 搜索当前/全部 Buffer 的符号；`C-c o t' 打开 Imenu List 大纲。
 ;; - Treemacs 只负责文件树，不再承载代码大纲。
 ;; - `C-c o u/d/h/l' 在 zoutline 中到父级/下一标题/折叠/展开；`C-c d t' 开关文件树。
 ;; - Treemacs 允许重叠目录进入独立 workspace，也允许删除最后一个项目；窗口宽度手工调整。
 ;; - Treemacs Buffer 中 `C-c w' 为 workspace/窗口菜单；`C-c C-w' 专用于 Ace Window。
 ;; - Treemacs 中 `C-c w r' 调整窗口大小，`C-c w R' 重命名 Workspace。
-;; - 其他 workspace 键 a/d/e/f/n/s 优先；需要同名窗口命令时使用 `C-t'。
+;; - 其他 workspace 键 a/d/e/f/n/s 优先；需要同名窗口命令时使用 `C-w'。
 ;; - Treemacs 的异步脚本固定使用真实 Python 3，避免 GUI PATH 下的 asdf shim 执行失败。
 ;; - LSP 启动失败先确认 `C-c x m' 中对应服务器已安装，再查看 *eglot events*。
 ;;; init-lsp.el ends here

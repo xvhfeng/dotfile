@@ -159,7 +159,7 @@ This prevents an open Ranger session from changing native Dired buffers."
 
 (with-eval-after-load 'general
   (my-leader-def
-    "d r" '("Ranger file manager" . ranger)))
+    "d r" '("Ranger 文件管理器" . ranger)))
 
 (provide 'init-ranger)
 

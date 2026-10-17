@@ -151,30 +151,30 @@
 (with-eval-after-load 'general
   (my-leader-def
     ;; 会话生命周期。
-    "c D s s" '("start / choose debugger" . dape)
-    "c D s r" '("restart session" . dape-restart)
-    "c D s q" '("quit and clean up" . dape-quit)
+    "c D s s" '("启动或选择调试器" . dape)
+    "c D s r" '("重启会话" . dape-restart)
+    "c D s q" '("退出并清理" . dape-quit)
     ;; 断点管理。
-    "c D b b" '("toggle breakpoint" . dape-breakpoint-toggle)
-    "c D b l" '("log breakpoint" . dape-breakpoint-log)
-    "c D b c" '("conditional breakpoint" . dape-breakpoint-expression)
-    "c D b h" '("breakpoint hit count" . dape-breakpoint-hits)
-    "c D b a" '("remove all breakpoints" . dape-breakpoint-remove-all)
+    "c D b b" '("切换断点" . dape-breakpoint-toggle)
+    "c D b l" '("日志断点" . dape-breakpoint-log)
+    "c D b c" '("条件断点" . dape-breakpoint-expression)
+    "c D b h" '("断点命中次数" . dape-breakpoint-hits)
+    "c D b a" '("移除全部断点" . dape-breakpoint-remove-all)
     ;; 运行和单步。
-    "c D x c" '("continue" . dape-continue)
-    "c D x p" '("pause" . dape-pause)
-    "c D x n" '("step over" . dape-next)
-    "c D x i" '("step in" . dape-step-in)
-    "c D x o" '("step out" . dape-step-out)
+    "c D x c" '("继续运行" . dape-continue)
+    "c D x p" '("暂停" . dape-pause)
+    "c D x n" '("单步跳过" . dape-next)
+    "c D x i" '("单步进入" . dape-step-in)
+    "c D x o" '("单步跳出" . dape-step-out)
     ;; 变量和表达式检查。
-    "c D i e" '("evaluate expression" . dape-evaluate-expression)
-    "c D i v" '("debug information" . dape-info)
-    "c D i r" '("debug REPL" . dape-repl)
-    "c D i w" '("watch expression" . dape-watch-dwim)
-    "c D m" '("install debug adapters" . my/debug-install-adapters)
+    "c D i e" '("求值表达式" . dape-evaluate-expression)
+    "c D i v" '("调试信息" . dape-info)
+    "c D i r" '("调试 REPL" . dape-repl)
+    "c D i w" '("监视表达式" . dape-watch-dwim)
+    "c D m" '("安装调试适配器" . my/debug-install-adapters)
     ;; Emacs Lisp 不使用 DAP；用 Emacs 原生 Edebug 在同一菜单下调试。
-    "c D E d" '("instrument defun" . edebug-defun)
-    "c D E e" '("toggle debug on error" . toggle-debug-on-error)))
+    "c D E d" '("插桩当前函数" . edebug-defun)
+    "c D E e" '("切换遇错调试" . toggle-debug-on-error)))
 
 ;; s s：启动/选择调试器
 ;; s r：重新启动

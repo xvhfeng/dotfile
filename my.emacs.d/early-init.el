@@ -247,9 +247,6 @@ source and is rebuilt."
         ;; 重定义内置函数（例如将 yes-or-no-p 映射为 y-or-n-p）会触发
         ;; trampoline 原生编译；本机 GUI Emacs 的编译器不可用，故关闭它。
         comp-enable-subr-trampolines nil
-        ;; 每次最多读取 64 KiB 子进程输出，并关闭自适应缓冲（提升 LSP/子进程吞吐）
-        read-process-output-max (* 64 1024)
-        process-adaptive-read-buffering nil
         ;; 输入繁忙时可暂缓语法着色；缓存 load-path 目录扫描结果
         redisplay-skip-fontification-on-input t
         load-path-filter-function #'load-path-filter-cache-directory-files
@@ -385,8 +382,6 @@ source and is rebuilt."
 ;;
 ;;(add-to-list 'default-frame-alist `(font . ,(rc/get-default-font)))
 
-
-(setq gc-cons-threshold (* 50 1000 1000))
 
 ;; 在 early-init 中提前禁用 package.el 自动启动
 (setq package-enable-at-startup nil)

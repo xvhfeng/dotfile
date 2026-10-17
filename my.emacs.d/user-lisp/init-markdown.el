@@ -61,15 +61,15 @@
 
 (with-eval-after-load 'general
   (my-leader-def
-    "k p" '("toggle live preview" . my/markdown-toggle-live-preview)
-    "k v" '("export and preview" . my/markdown-export-and-preview)
-    "k e" '("export HTML" . markdown-export)
-    "k l" '("insert/edit link" . markdown-insert-link)
-    "k i" '("insert/edit image" . markdown-insert-image)
-    "k c" '("edit code block" . markdown-edit-code-block)
-    "k t" '("generate table of contents" . markdown-toc-generate-toc)
-    "k r" '("refresh table of contents" . markdown-toc-refresh-toc)
-    "k d" '("delete table of contents" . markdown-toc-delete-toc)))
+    "k p" '("切换实时预览" . my/markdown-toggle-live-preview)
+    "k v" '("导出并预览" . my/markdown-export-and-preview)
+    "k e" '("导出 HTML" . markdown-export)
+    "k l" '("插入或编辑链接" . markdown-insert-link)
+    "k i" '("插入或编辑图片" . markdown-insert-image)
+    "k c" '("编辑代码块" . markdown-edit-code-block)
+    "k t" '("生成目录" . markdown-toc-generate-toc)
+    "k r" '("刷新目录" . markdown-toc-refresh-toc)
+    "k d" '("删除目录" . markdown-toc-delete-toc)))
 
 (provide 'init-markdown)
 

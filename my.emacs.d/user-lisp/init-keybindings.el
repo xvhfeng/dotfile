@@ -17,50 +17,50 @@
   "以 C-c 开始的全局用户命令 keymap。")
 
 (defvar-keymap my-window-map
-  :doc "以 C-c w（或 C-t）开始的窗口操作。")
+  :doc "以 C-w 开始、C-c w 兼容的窗口操作。")
 
 (defconst my/c-c-prefix-labels
-  '(("w" . "Windows")
-    ("p" . "Project")
-    ("!" . "Diagnostics")
-    ("f" . "Files")
-    ("b" . "Buffers")
-    ("b p" . "Temporary buffers")
-    ("s" . "Search")
-    ("e" . "Editing")
-    ("a" . "Context actions")
-    ("g" . "Git")
+  '(("w" . "窗口")
+    ("p" . "项目")
+    ("!" . "诊断")
+    ("f" . "文件")
+    ("b" . "缓冲区")
+    ("b p" . "临时缓冲区")
+    ("s" . "搜索")
+    ("e" . "编辑")
+    ("a" . "上下文操作")
+    ("g" . "Git 操作")
     ;; Diffnav 是 Git 分组中的专用差异浏览器，快捷键由 init-diffnav 注册。
-    ("g b" . "Diffnav revision comparison")
-    ("g n" . "Diffnav menu")
-    ("g v" . "Diffnav working tree")
-    ("j" . "Jump")
+    ("g b" . "Diffnav 提交版本比较")
+    ("g n" . "Diffnav 操作菜单")
+    ("g v" . "Diffnav 工作区改动")
+    ("j" . "跳转")
     ;; C-c h 是遗忘快捷键时的统一自助入口，避免必须记住插件各自的帮助键。
-    ("h" . "Help / discover")
-    ("c" . "Code")
+    ("h" . "帮助与发现")
+    ("c" . "代码")
     ;; 合并冲突菜单位于代码分类，避免与项目级 Git 状态入口混淆。
-    ("c m" . "Conflict merge")
-    ("c g" . "Code navigation")
-    ("c d" . "Diagnostics")
-    ("c D" . "Debug")
-    ("c D s" . "Debug session")
-    ("c D b" . "Debug breakpoints")
-    ("c D x" . "Debug execution")
-    ("c D i" . "Debug inspect")
-    ("c D E" . "Emacs Lisp debug")
-    ("d" . "Directories")
-    ("n" . "Notes / Org")
-    ("n s" . "Org subtree")
-    ("o" . "Code outline")
-    ("o f" . "Manual folds")
-    ("t" . "Code structure")
-    ("x" . "Tools / System")
-    ("x p" . "System packages")
+    ("c m" . "冲突合并")
+    ("c g" . "代码跳转")
+    ("c d" . "诊断")
+    ("c D" . "调试")
+    ("c D s" . "调试会话")
+    ("c D b" . "调试断点")
+    ("c D x" . "调试执行")
+    ("c D i" . "调试检查")
+    ("c D E" . "Emacs Lisp 调试")
+    ("d" . "目录")
+    ("n" . "笔记 / Org")
+    ("n s" . "Org 子树")
+    ("o" . "代码大纲")
+    ("o f" . "手工折叠")
+    ("t" . "代码结构")
+    ("x" . "工具 / 系统")
+    ("x p" . "系统包")
     ("k" . "Markdown")
     ("l" . "LaTeX")
     ("i" . "Texinfo")
-    ("v" . "CSV / tabular data")
-    ("m" . "Mail"))
+    ("v" . "CSV / 表格数据")
+    ("m" . "邮件"))
   "Single source of truth for semantic Which-Key labels below C-c.")
 
 (defconst my/c-c-required-prefixes
@@ -115,6 +115,83 @@ start of every following column."
   (setq-local line-spacing 0.12
               truncate-lines t
               cursor-type nil))
+
+(defun my/which-key--backspace-binding ()
+  "返回当前 Which-Key 前缀中显式绑定的 Backspace 命令。
+只检查正在输入的前缀下的绑定，不把全局删除字符命令误认为菜单绑定。"
+  (when-let ((prefix (which-key--current-key-list)))
+    (catch 'command
+      (dolist (map (current-active-maps t))
+        (dolist (event '([delete] [backspace]))
+          (when-let ((binding (lookup-key map (vconcat prefix event))))
+            (when (and (commandp binding)
+                       (not (eq binding #'my/which-key-backspace)))
+              (throw 'command binding))))))))
+
+(defun my/which-key-backspace ()
+  "在 Which-Key 中用 Backspace 回退一级；根层级时关闭菜单。
+若当前前缀明确为 Backspace 绑定了命令，优先执行该命令。"
+  (interactive)
+  (cond
+   ((not (and (bound-and-true-p which-key-mode)
+              (which-key--popup-showing-p)))
+    (call-interactively #'backward-delete-char-untabify))
+   ((my/which-key--backspace-binding)
+    (call-interactively (my/which-key--backspace-binding)))
+   ((which-key--current-key-list)
+    (which-key-undo-key))
+   (t
+    (let ((which-key-inhibit t))
+      (which-key--hide-popup-ignore-command)))))
+
+(defun my/which-key-install-backspace-for-current-prefix (&rest _)
+  "为当前展示的 Which-Key 前缀补充未定义的 Backspace 回退键。
+已有 DEL、Backspace 或 Delete 绑定的 keymap 不会被修改。"
+  (when-let ((prefix (which-key--current-key-list)))
+    (dolist (map (current-active-maps t))
+      (when-let ((prefix-map (lookup-key map (vconcat prefix))))
+        (when (keymapp prefix-map)
+          (dolist (key '("DEL" "<backspace>" "<delete>"))
+            ;; 忽略从全局 map 继承的普通删除字符命令；它不是当前
+            ;; Which-Key 菜单专门定义的 Backspace 操作。
+            (unless (let ((binding (lookup-key prefix-map (kbd key))))
+                      (and binding
+                           (not (memq binding
+                                      '(backward-delete-char-untabify
+                                        delete-backward-char)))) )
+              (define-key prefix-map (kbd key) #'my/which-key-backspace))))))))
+
+(define-minor-mode my/which-key-backspace-mode
+  "让 Which-Key 菜单支持 Backspace 层级回退。"
+  :global t
+  :lighter nil
+  :keymap (let ((map (make-sparse-keymap)))
+            (define-key map (kbd "DEL") #'my/which-key-backspace)
+            (define-key map (kbd "<backspace>") #'my/which-key-backspace)
+            (define-key map (kbd "<delete>") #'my/which-key-backspace)
+            map))
+
+(defun my/which-key-install-backspace-in-prefix-maps (keymap &optional seen)
+  "递归为 KEYMAP 的自定义前缀 map 安装 Which-Key Backspace 回退。"
+  (unless (memq keymap seen)
+    (let ((seen (cons keymap seen)))
+      (map-keymap
+       (lambda (_event binding)
+         (when (keymapp binding)
+           (dolist (key '("DEL" "<backspace>" "<delete>"))
+             (define-key binding (kbd key) #'my/which-key-backspace))
+           (my/which-key-install-backspace-in-prefix-maps binding seen)))
+       keymap))))
+
+(defun my/which-key-install-leader-backspace-bindings ()
+  "为 C-c 的每个一级功能菜单安装 Backspace 回退键。"
+  (dolist (entry my/c-c-prefix-labels)
+    (let ((prefix (car entry)))
+      (unless (string-match-p " " prefix)
+        (dolist (key '("DEL" "<backspace>" "<delete>"))
+          (define-key my-leader-map
+                      (kbd (concat prefix " " key))
+                      #'my/which-key-backspace))))))
 
 (defun my/which-key-style-faces (&rest _)
   "Apply theme-adaptive visual hierarchy to Which-Key faces."
@@ -181,12 +258,23 @@ start of every following column."
   (my/which-key-style-faces)
   ;; 主题在 Which-Key 之后加载或切换时，重新应用层级而不写死具体颜色。
   (add-hook 'enable-theme-functions #'my/which-key-style-faces)
+  ;; Which-Key 的 pre-command hook 会先关闭非内部导航命令的菜单；把
+  ;; Backspace 回退注册为内部命令，才能在关闭前读取当前前缀并退回上一层。
+  (add-to-list 'which-key--paging-functions #'my/which-key-backspace)
+  ;; Prefix keymaps 不会继承 minor-mode 的单键 DEL 绑定。每次 Which-Key
+  ;; 展示当前层级时，为那个真实 prefix map 补上尚未定义的回退键。
+  (advice-add #'which-key--create-buffer-and-show :after
+              #'my/which-key-install-backspace-for-current-prefix)
   (which-key-mode 1)
+  (my/which-key-backspace-mode 1)
+  (my/which-key-install-backspace-in-prefix-maps my-leader-map)
+  (my/which-key-install-backspace-in-prefix-maps my-window-map)
+  (my/which-key-install-leader-backspace-bindings)
   ;; 全局键只保留不属于 C-c keymap 的入口。
   (which-key-add-keymap-based-replacements
     global-map
-    "C-t" "Windows"
-    "C-S-c" "Multiple cursors")
+    "C-w" "窗口操作"
+    "C-S-c" "多光标")
   ;; C-c 下所有层级只从 `my/c-c-prefix-labels' 注册，避免两份说明漂移。
   (my/register-c-c-which-key-labels))
 
@@ -197,6 +285,11 @@ start of every following column."
 
 ;; init-mykey.el 在本文件之后加载；启动末尾重新附加局部说明。
 (add-hook 'after-init-hook #'my/refresh-which-key-prefix-labels)
+(add-hook 'after-init-hook
+          (lambda ()
+            (my/which-key-install-backspace-in-prefix-maps my-leader-map)
+            (my/which-key-install-backspace-in-prefix-maps my-window-map)
+            (my/which-key-install-leader-backspace-bindings)))
 
 ;; ============================================================================
 ;; 2. General.el: 统筹全局，绑定 Leader 键并联动 Hydra 和 Which-Key
@@ -207,8 +300,8 @@ start of every following column."
   :config
   ;; 所有全局前缀与兼容快捷键都由 General 安装。
   (general-define-key
-    "C-c w" (cons "Windows" my-window-map)
-    "C-t" (cons "Windows" my-window-map)
+    "C-w" (cons "窗口操作" my-window-map)
+    "C-c w" (cons "窗口操作" my-window-map)
     ;; Ibuffer 是可持续操作的真正 Buffer，适合由 Popper 隐藏、召回和轮换；
     ;; 原来的 Electric Buffer List 保留在 C-c b e，功能没有被删除。
     "C-x C-b" '("Ibuffer popup" . my/workbench-ibuffer))
@@ -217,7 +310,7 @@ start of every following column."
   ;; major/minor mode keymap，防止 Dirvish、web-mode 等模式重新抢占。
   (general-define-key
     :keymaps 'override
-    "C-c C-w" '("Ace Window: select" . ace-window))
+    "C-c C-w" '("Ace Window：选择窗口" . ace-window))
 
   ;; Leader 直接写入 Emacs 原生 C-c 用户 keymap；窗口命令使用独立子 keymap。
   (general-create-definer my-leader-def
@@ -228,18 +321,18 @@ start of every following column."
 
   (my-leader-def
     ;; 子模块负责注册命令；前缀名称在上面按 keymap 集中维护。
-    "f f" '("find file" . find-file)
-    "f r" '("recent files" . recentf-open-files)
-    "b b" '("switch buffer" . switch-to-buffer)
-    "b k" '("kill current buffer" . kill-current-buffer)
-    "b l" '("Ibuffer popup" . my/workbench-ibuffer)
-    "b e" '("electric buffer list" . electric-buffer-list)
-    "d d" '("Dired current directory" . dired-jump)
+    "f f" '("打开文件" . find-file)
+    "f r" '("最近文件" . recentf-open-files)
+    "b b" '("切换缓冲区" . switch-to-buffer)
+    "b k" '("关闭当前缓冲区" . kill-current-buffer)
+    "b l" '("Ibuffer 弹窗" . my/workbench-ibuffer)
+    "b e" '("缓冲区列表" . electric-buffer-list)
+    "d d" '("打开当前目录" . dired-jump)
 
     ;; 中文说明：这些是通用发现命令，所有 major mode 下均可使用；Which-Key 会在
     ;; 按下 C-c h 后显示完整清单，用户不必记忆某个插件专属的帮助快捷键。
     "h k" '("查询按键" . describe-key)
-    "h f" '("查询命令" . describe-function)
+    "h f" '("查询函数" . describe-function)
     "h v" '("查询变量" . describe-variable)
     "h m" '("当前模式帮助" . describe-mode)
     "h b" '("当前有效按键表" . describe-bindings)))
@@ -262,8 +355,8 @@ start of every following column."
 ;; - Which-Key 固定最多三列，按 26 字符说明宽度对齐；中文按实际双宽字符计算，
 ;;   不会再把同一行后续菜单推歪。当前前缀显示在菜单顶部。
 ;; - 粗体 `▸' 项是可继续进入的功能分组；普通字重项是立即执行的命令。
-;; - 窗口前缀为 `C-t'，兼容入口为 `C-c w'；两者指向同一个窗口 keymap。
-;; - `C-c C-w' 是高优先级的 Ace Window 选择键；`C-w' 保留 Emacs 原生 kill-region。
+;; - 窗口前缀为 `C-w'，兼容入口为 `C-c w'；两者指向同一个窗口 keymap。
+;; - `C-t' 保留为 `kill-region'；`C-c C-w' 是高优先级的 Ace Window 选择键。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
 ;;   `C-x C-b' 与 `C-c b l' 打开可由 Popper 召回的 Ibuffer；`C-c b e' 保留原有
 ;;   Electric Buffer List，适合只进行一次快速选择。

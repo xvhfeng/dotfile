@@ -58,17 +58,17 @@
   (with-eval-after-load 'flymake
     (general-define-key
       :keymaps 'flymake-mode-map
-      "C-c ! l" '("list diagnostics" . consult-flymake))))
+      "C-c ! l" '("诊断列表" . consult-flymake))))
 
 ;; ============================================================================
 ;; 4. 挂载到 General.el Leader 键体系 (C-c c ...)
 ;; ============================================================================
 (with-eval-after-load 'general
   (my-leader-def
-    "c d b" '("buffer diagnostics" . flymake-show-buffer-diagnostics)
-    "c d a" '("all project diagnostics" . flymake-show-project-diagnostics)
-    "c d n" '("next diagnostic" . flymake-goto-next-error)
-    "c d p" '("previous diagnostic" . flymake-goto-prev-error)))
+    "c d b" '("当前缓冲区诊断" . flymake-show-buffer-diagnostics)
+    "c d a" '("整个项目诊断" . flymake-show-project-diagnostics)
+    "c d n" '("下一条诊断" . flymake-goto-next-error)
+    "c d p" '("上一条诊断" . flymake-goto-prev-error)))
 
 ;; 中文说明：不加载 flymake-popon。它只是第三方错误浮窗，当前 Codeberg 网络不可用
 ;; 时会在每次启动触发克隆失败；Flymake 原生的边栏、诊断列表和 Eglot 诊断不依赖它。

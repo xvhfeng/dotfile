@@ -4,6 +4,8 @@
 ;; 记忆大量按键的使用方式。所有菜单项仍然调用现有模块提供的原始命令。
 
 (require 'transient)
+(require 'eldoc)
+(require 'xref)
 
 (declare-function hydra-window-resize/body "init-window" ())
 
@@ -245,6 +247,16 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     (error
      (message "%s" (error-message-string err)))))
 
+(transient-define-prefix my/workbench-navigation-menu ()
+  "打开基于 Eglot/Xref 的代码跳转与文档菜单。"
+  [["   Xref 跳转"
+    ("d" "跳转到定义" xref-find-definitions)
+    ("r" "查找引用" xref-find-references)]
+   ["   历史与文档"
+    ("b" "返回跳转位置" xref-go-back)
+    ("f" "前进跳转位置" xref-go-forward)
+    ("h" "光标处文档" eldoc)]])
+
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
   ;; 固定每列的最小宽度，让各分组标题和子菜单左边缘一致，并在列间保留留白。
@@ -264,6 +276,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("d" "当前诊断" flymake-show-buffer-diagnostics)
     ("!" "搜索诊断" my/workbench-project-diagnostics)
     ("a" "代码动作" my/workbench-code-actions)
+    ("h" "跳转与文档" my/workbench-navigation-menu)
     ;; 合并冲突在独立 Transient 中操作，工作台只提供统一入口。
     ("M" "合并冲突" my/smerge-menu)
     ("c" "编译" compile)]
@@ -281,10 +294,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("G" "当前文件 Git 操作" magit-file-dispatch)
     ("t" "文件树" treemacs)
     ("T" "打开终端" my/workbench-open-terminal)]
-   ["   窗口与笔记"
-    ("w" "切换窗口" other-window)
-    ("m" "最大化当前窗口" delete-other-windows)
-    ("R" "调整窗口大小" hydra-window-resize/body)
+   ["   笔记与临时项"
     ("k" "关闭当前 Buffer" kill-current-buffer)
     ("q" "临时窗口" my/workbench-toggle-popup)
     ("n" "新建笔记" org-capture)
@@ -336,10 +346,10 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (general-define-key
     "C-z" '("个人工作台" . my/workbench))
   (my-leader-def
-    "b p t" '("toggle latest popup" . my/workbench-toggle-popup)
-    "b p n" '("next popup" . popper-cycle)
-    "b p k" '("kill latest popup" . popper-kill-latest-popup)
-    "b p m" '("toggle popup status" . popper-toggle-type)))
+    "b p t" '("切换最近弹窗" . my/workbench-toggle-popup)
+    "b p n" '("下一个弹窗" . popper-cycle)
+    "b p k" '("关闭最近弹窗" . popper-kill-latest-popup)
+    "b p m" '("切换弹窗状态" . popper-toggle-type)))
 
 (provide 'init-workbench)
 

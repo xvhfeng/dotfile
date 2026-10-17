@@ -182,25 +182,25 @@
 (with-eval-after-load 'which-key
   (which-key-add-keymap-based-replacements
     my-leader-map
-    "n" "Notes / Org"
-    "n k" "Org clock"
-    "n s" "Org subtree"))
+    "n" "笔记 / Org"
+    "n k" "Org 时钟"
+    "n s" "Org 子树"))
 
 (with-eval-after-load 'general
   (my-leader-def
-    "n a" '("agenda" . org-agenda)
-    "n b" '("switch Org buffer" . org-switchb)
-    "n c" '("capture" . org-capture)
-    "n e" '("export" . org-export-dispatch)
-    "n f" '("open inbox" . my/org-open-inbox)
-    "n l" '("store link" . org-store-link)
-    "n t" '("TODO list" . org-todo-list)
-    "n k i" '("clock in" . org-clock-in)
-    "n k o" '("clock out" . org-clock-out)
-    "n k g" '("go to active clock" . org-clock-goto)
-    "n k c" '("cancel clock" . org-clock-cancel)
-    "n s k" '("cut subtree" . org-cut-subtree)
-    "n s a" '("archive subtree" . org-archive-subtree-default)))
+    "n a" '("日程" . org-agenda)
+    "n b" '("切换 Org 缓冲区" . org-switchb)
+    "n c" '("快速捕获" . org-capture)
+    "n e" '("导出" . org-export-dispatch)
+    "n f" '("打开收件箱" . my/org-open-inbox)
+    "n l" '("保存链接" . org-store-link)
+    "n t" '("TODO 列表" . org-todo-list)
+    "n k i" '("开始计时" . org-clock-in)
+    "n k o" '("结束计时" . org-clock-out)
+    "n k g" '("跳转到当前计时" . org-clock-goto)
+    "n k c" '("取消计时" . org-clock-cancel)
+    "n s k" '("剪切子树" . org-cut-subtree)
+    "n s a" '("归档子树" . org-archive-subtree-default)))
 
 (provide 'init-org)
 

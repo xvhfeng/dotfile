@@ -69,16 +69,16 @@
 (with-eval-after-load 'vterm
   (general-define-key
    :keymaps 'vterm-mode-map
-   "C-y" '("paste" . vterm-yank)
+   "C-y" '("粘贴" . vterm-yank)
    "M-x" '("M-x" . execute-extended-command)
-   "C-x C-f" '("find file" . find-file)
-   "C-x b" '("switch buffer" . switch-to-buffer)
-   "C-x k" '("kill buffer" . kill-current-buffer)
-   "C-x o" '("other window" . other-window)))
+   "C-x C-f" '("打开文件" . find-file)
+   "C-x b" '("切换缓冲区" . switch-to-buffer)
+   "C-x k" '("关闭缓冲区" . kill-current-buffer)
+   "C-x o" '("其他窗口" . other-window)))
 
 (with-eval-after-load 'general
   (my-leader-def
-    "x t" '("terminal" . vterm)))
+    "x t" '("终端" . vterm)))
 
 (provide 'init-eshell)
 

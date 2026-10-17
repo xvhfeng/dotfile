@@ -281,14 +281,14 @@ input method that was actually in use."
 (with-eval-after-load 'which-key
   (which-key-add-keymap-based-replacements
     my-leader-map
-    "x i" "Input source"))
+    "x i" "输入源"))
 
 (with-eval-after-load 'general
   (my-leader-def
-    "x i e" '("switch to English" . sis-set-english)
-    "x i c" '("switch to Chinese" . sis-set-other)
-    "x i t" '("toggle input source" . sis-switch)
-    "x i s" '("show input source" . sis-get)))
+    "x i e" '("切换到英文" . sis-set-english)
+    "x i c" '("切换到中文" . sis-set-other)
+    "x i t" '("切换输入源" . sis-switch)
+    "x i s" '("显示输入源" . sis-get)))
 
 (provide 'init-input-method)
 

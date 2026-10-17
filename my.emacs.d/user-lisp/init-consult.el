@@ -80,7 +80,7 @@
 ;; 挂载到 General.el 体系下的诊断菜单 (C-c c d ...)
 (with-eval-after-load 'general
   (my-leader-def
-    "c d l" '("search diagnostics" . consult-flymake)))
+    "c d l" '("搜索诊断" . consult-flymake)))
 
 
 ;; ============================================================================

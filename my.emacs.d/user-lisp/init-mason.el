@@ -73,7 +73,7 @@
 ;; 中文说明：Mason 属于工具操作，统一放在 C-c x m。
 (with-eval-after-load 'general
   (my-leader-def
-    "x m" '("Mason tool manager" . mason-manager)))
+    "x m" '("Mason 工具管理器" . mason-manager)))
 
 (provide 'init-mason)
 

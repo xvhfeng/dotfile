@@ -35,31 +35,31 @@
 (with-eval-after-load 'general
   (my-leader-def
     ;; 搜索与定位 (Search)
-    "ss"  '("search current buffer" . consult-line)
-    "sS"  '("search open buffers" . consult-line-multi)
-    "sp"  '("search project (rg)" . consult-ripgrep)
-    "sf"  '("find file with fd/find" . consult-find)
-    "sg"  '("search git repo" . consult-git-grep)
-    "si"  '("imenu code symbols" . consult-imenu)
-    "sb"  '("bookmarks" . consult-bookmark)
+    "ss"  '("搜索当前缓冲区" . consult-line)
+    "sS"  '("搜索已打开缓冲区" . consult-line-multi)
+    "sp"  '("搜索项目（rg）" . consult-ripgrep)
+    "sf"  '("使用 fd/find 查找文件" . consult-find)
+    "sg"  '("搜索 Git 仓库" . consult-git-grep)
+    "si"  '("代码符号列表" . consult-imenu)
+    "sb"  '("书签" . consult-bookmark)
 
     ;; Buffer 与文件增强
-    "b b" '("switch buffer/recentf" . consult-buffer)
-    "b B" '("switch buffer other window" . consult-buffer-other-window)
-    "f r" '("recent files" . consult-recent-file)
+    "b b" '("切换缓冲区或最近文件" . consult-buffer)
+    "b B" '("在其他窗口切换缓冲区" . consult-buffer-other-window)
+    "f r" '("最近文件" . consult-recent-file)
 
     ;; 跳转
-    "j m" '("jump to mark" . consult-mark)
-    "j e" '("jump to compile error" . consult-compile-error)
+    "j m" '("跳转到标记" . consult-mark)
+    "j e" '("跳转到编译错误" . consult-compile-error)
 
     ;; 剪贴历史是独立命令，不混入跳转菜单。
-    "y" '("browse kill-ring" . consult-yank-pop)
+    "y" '("查看剪贴历史" . consult-yank-pop)
 
     ;; 上下文动作
-    "a a" '("context actions" . embark-act)
-    "a d" '("default context action" . embark-dwim)
-    "a b" '("show action bindings" . embark-bindings)
-    "a e" '("export results" . embark-export)))
+    "a a" '("上下文操作" . embark-act)
+    "a d" '("默认上下文操作" . embark-dwim)
+    "a b" '("显示操作按键" . embark-bindings)
+    "a e" '("导出结果" . embark-export)))
 
 (provide 'init-completion)
 
