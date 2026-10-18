@@ -281,8 +281,6 @@
 ;; 所有配置模块统一在这里维护。新增模块时，只需在列表末尾加入其 feature。
 (defconst my/init-modules
   '(init-base
-    ;; 平滑像素滚动；不修改既有按键与滚动距离配置。
-    init-good-scroll
     ;; 主题在基础设置后立即加载，后续界面和插件继承统一颜色。
     init-theme
     init-keybindings
@@ -305,6 +303,8 @@
     init-smerge
     init-vundo
     init-mykey
+    ;; 使用 Emacs 内置像素插值平滑指定的键盘翻页按键。
+    init-smooth-scroll
     init-avy
     init-window
     ;; 编程能力模块：外部工具、补全、语法树、LSP、诊断和语言配置。
