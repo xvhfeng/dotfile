@@ -44,6 +44,11 @@
   (expand-file-name name my/runtime-directory))
 
 (make-directory my/runtime-directory t)
+;; Transient 的历史和参数属于运行时状态；先设置路径，包加载时会保留它们。
+(let ((transient-directory (my/runtime-file "transient/")))
+  (make-directory transient-directory t)
+  (setq transient-values-file (expand-file-name "values.el" transient-directory)
+        transient-history-file (expand-file-name "history.el" transient-directory)))
 ;; `native-comp-eln-load-path' only exists in Emacs builds with native
 ;; compilation support.  Some official/portable builds omit native-comp even
 ;; on recent Emacs versions, so checking `emacs-version' is not sufficient.

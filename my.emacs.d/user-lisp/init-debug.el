@@ -27,7 +27,7 @@
 
 (defun my/debug-mason-file (&rest parts)
   "返回 Mason 目录下由 PARTS 组成的绝对路径。"
-  (let ((path (expand-file-name "mason/" user-emacs-directory)))
+  (let ((path (my/runtime-file "mason/")))
     (dolist (part parts path)
       (setq path (expand-file-name part (file-name-as-directory path))))))
 

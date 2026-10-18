@@ -215,6 +215,9 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
   ;; Treemacs 的 Git 状态和目录折叠脚本会异步启动 Python。不要使用
   ;; ~/.asdf/shims/python3：GUI Emacs 可能能找到 shim，却找不到 shim 依赖的 asdf。
   (treemacs-python-executable (my/treemacs-find-stable-python))
+  (treemacs-persist-file (my/runtime-file "treemacs/persist"))
+  (treemacs-last-error-persist-file
+   (my/runtime-file "treemacs/persist-at-last-error"))
   (treemacs-width 35)
   ;; 允许 C-w r 中的窗口尺寸命令直接调整 Treemacs。
   (treemacs-width-is-initially-locked nil)

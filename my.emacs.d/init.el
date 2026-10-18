@@ -207,9 +207,12 @@
      (setq package-enable-at-startup nil)
      (setq straight-vc-git-default-clone-depth 1)
      (setq straight-check-for-modifications nil)
+     ;; 第三方插件源码与构建产物属于运行时数据，统一置于 runtimes/。
+     ;; 必须在加载 straight bootstrap 前设置。
+     (setq straight-base-dir my/runtime-directory)
 
      (defvar bootstrap-version)
-     (let* ((straight-dir (expand-file-name "straight/repos/straight.el" user-emacs-directory))
+     (let* ((straight-dir (my/runtime-file "straight/repos/straight.el"))
             (bootstrap-file (expand-file-name "bootstrap.el" straight-dir))
             (bootstrap-version 6))
        

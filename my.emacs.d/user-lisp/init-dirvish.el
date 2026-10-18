@@ -85,6 +85,7 @@ thumbnail process starts while the cursor moves."
   (dirvish-large-directory-threshold 20000)
   (dirvish-preview-large-file-threshold (* 5 1024 1024))
   (dirvish-preview-buffers-max-count 5)
+  (dirvish-cache-dir (my/runtime-file "dirvish/"))
   ;; Homebrew 没有 epub-thumbnailer；不注册该分发器，避免选择 EPUB 时出现
   ;; 缺少外部程序的错误。其余已注册预览器的依赖均已安装。
   (dirvish-preview-dispatchers '(video image gif audio archive font pdf))
