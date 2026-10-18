@@ -29,6 +29,19 @@
 (add-to-list 'exec-path my/local-bin-directory)
 (setenv "PATH" (concat my/local-bin-directory path-separator (getenv "PATH")))
 
+(defun my/mason-install-missing-packages ()
+  "启动后自动安装 `mason-ensure-packages' 中尚未安装的工具。"
+  (interactive)
+  (require 'mason)
+  (mason-ensure
+   (lambda ()
+     (dolist (package mason-ensure-packages)
+       (unless (mason-installed-p package)
+         (condition-case err
+             (mason-install package)
+           (error (message "Mason 安装 %s 失败：%s"
+                           package (error-message-string err)))))))))
+
 (use-package mason
   ;; 中文说明：Mason 的当前上游仓库归属 mason-org，避免使用已失效的旧仓库地址。
   :straight (:host github :repo "mason-org/mason.el")
@@ -36,6 +49,17 @@
   ;; 必须在加载 Mason 前设置，否则它会使用 user-emacs-directory/mason。
   (setq mason-dir my/mason-runtime-directory)
   :config
+  ;; Mason 的后台 Emacs 用 -Q 启动，不能依赖 GUI 会话的 Shell 初始化。
+  ;; 明确指定本机已验证的 Homebrew 工具，避免 Python/Node/Lua 查找失败。
+  (setq mason-command-overrides
+        '(("python" . "/opt/homebrew/bin/python3")
+          ("python3" . "/opt/homebrew/bin/python3")
+          ("node" . "/opt/homebrew/bin/node")
+          ("npm" . "/opt/homebrew/bin/npm")
+          ("lua" . "/opt/homebrew/bin/lua")
+          ("luarocks" . "/opt/homebrew/bin/luarocks")))
+  ;; 在当前 Emacs 中同步目标平台，避免后台目标探测尚未完成时出现 target=nil。
+  (setq mason--target (mason--get-target))
   ;; --------------------------------------------------------------------------
   ;; 在此集中声明你需要 Emacs 自动下载管理的第三方程序列表
   ;; --------------------------------------------------------------------------
@@ -63,16 +87,11 @@
           "luacheck"              ; Lua 静态检查
           ))
 
-  ;; `mason-ensure' 完成异步注册表初始化后再检查安装状态。使用函数而不是
-  ;; 宏，避免本地配置在包尚未加载时字节编译而失去 `mason-setup' 的宏展开。
-  (mason-ensure
-   (lambda ()
-     (dolist (package mason-ensure-packages)
-       (unless (mason-installed-p package)
-         (condition-case err
-             (mason-install package)
-           (error (message "Mason 安装 %s 失败：%s"
-                           package (error-message-string err)))))))))
+  )
+
+;; Mason 注册表准备就绪后自动补齐工具；失败仅记录该包，不会阻断启动。
+(with-eval-after-load 'mason
+  (my/mason-install-missing-packages))
 
 ;; ============================================================================
 ;; 3. Mason 管理界面与常用快捷操作 (交互入口)
@@ -89,7 +108,7 @@
 ;; ---------------------------------------------------------------------------
 ;; - Mason 把语言服务器、格式化器和检查器安装到 `runtimes/mason/'，不修改系统目录。
 ;; - `C-c x m' 打开 Mason 管理器，查看、安装、更新或删除外部工具。
-;; - 当前自动管理 clangd、pyright、jdtls、Lua/YAML/XML/Bash/TS/JSON LSP 等工具。
+;; - 启动时自动安装缺失工具；也可手动运行 `M-x my/mason-install-missing-packages'。
 ;; - GUI Emacs 会同步 Shell PATH，并把 `runtimes/mason/bin/' 放到 Eglot 可搜索的最前面。
 ;; - 下载失败时先在 Mason 管理器重试，并检查网络、GitHub 访问和 *Messages* 的具体错误。
 ;; - 增减工具只需编辑 `mason-ensure-packages'；调试适配器由 init-debug.el 单独管理。

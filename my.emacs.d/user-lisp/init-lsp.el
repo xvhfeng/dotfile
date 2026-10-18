@@ -249,6 +249,9 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
   ;; 小写 r 保留统一的“调整窗口大小”语义；Treemacs 重命名改用 R。
   (define-key treemacs-workspace-map (kbd "R") #'treemacs-rename-workspace)
   (define-key treemacs-workspace-map (kbd "r") nil)
+  ;; Vim 风格移动，与 Treemacs 的 n/p 同样使用按钮感知的上下移动逻辑。
+  (define-key treemacs-mode-map (kbd "j") #'treemacs-next-line)
+  (define-key treemacs-mode-map (kbd "k") #'treemacs-previous-line)
   (define-key treemacs-mode-map (kbd "C-c w") treemacs-workspace-map)
   (define-key treemacs-mode-map (kbd "C-c C-w") nil)
   (with-eval-after-load 'which-key

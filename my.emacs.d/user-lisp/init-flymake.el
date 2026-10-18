@@ -42,13 +42,30 @@
 ;; ============================================================================
 ;; 2. 与 Eglot 的深度无缝联动
 ;; ============================================================================
+(defun my/flymake-disable-cc-backend ()
+  "Disable the built-in C compiler backend before Flymake starts it.
+clangd/Eglot is the sole C/C++ diagnostic provider in this configuration."
+  (remove-hook 'flymake-diagnostic-functions #'flymake-cc t)
+  (when (and (boundp 'flymake-cc--proc)
+             (process-live-p flymake-cc--proc))
+    (kill-process flymake-cc--proc)))
+
+;; cc-mode itself adds flymake-cc before its mode hooks run.  This hook runs
+;; before the inherited prog-mode hook enables Flymake.
+(add-hook 'c-mode-common-hook #'my/flymake-disable-cc-backend)
+
 ;; Eglot 默认会自动将自身挂载为 Flymake 的 Backend。
 ;; 此处配置确保每次 Eglot 启动时，自动激活并刷新 Flymake。
 (with-eval-after-load 'eglot
   (add-hook 'eglot-managed-mode-hook
             (lambda ()
-              ;; 当 Eglot 启动时，强制开启 flymake-mode 并立即同步诊断结果
-              (flymake-mode 1))))
+              ;; C/C++ 的内置 flymake-cc 会额外启动编译进程。Eglot/clangd
+              ;; 已提供同类诊断；两者并发时，旧进程退出后的 sentinel 可能
+              ;; 引发“Can't find state for flymake-cc”。只保留 Eglot backend。
+              (remove-hook 'flymake-diagnostic-functions #'flymake-cc t)
+              ;; 当 Eglot 启动时，确保 Flymake 已开启并刷新其唯一诊断来源。
+              (flymake-mode 1)
+              (flymake-start t))))
 
 ;; ============================================================================
 ;; 3. 搭配 Consult (可选)：交互式搜索全 Buffer 诊断信息

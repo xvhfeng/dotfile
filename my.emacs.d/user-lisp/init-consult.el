@@ -29,13 +29,6 @@
 (use-package consult
   :straight t
   :defer t
-  :general
-  ("C-c p s" '("search project" . consult-ripgrep))
-  ("M-s r" '("ripgrep project" . consult-ripgrep))
-  ("M-s l" '("search current buffer" . consult-line))
-  ("M-s f" '("find file" . consult-find))
-  ("C-c ! l" '("list diagnostics" . consult-flymake))
-
   :init
   ;; 用 Consult 替换原生 Register 预览；只安装一次 advice。
   (setq register-preview-delay 0.5
@@ -76,6 +69,16 @@
    consult-recent-file
    consult-source-recent-file consult-source-project-recent-file
    :preview-key nil))
+
+;; 不使用 use-package 的 :general 关键字：首次字节编译时 General 可能尚未
+;; 安装，导致 Consult 命令被错误当作变量求值。等 General 可用后再绑定。
+(with-eval-after-load 'general
+  (general-define-key
+   "C-c p s" '("项目搜索" . consult-ripgrep)
+   "M-s r" '("项目 Ripgrep 搜索" . consult-ripgrep)
+   "M-s l" '("当前文件搜索" . consult-line)
+   "M-s f" '("查找文件" . consult-find)
+   "C-c ! l" '("诊断列表" . consult-flymake)))
 
 
 

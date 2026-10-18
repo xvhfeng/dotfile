@@ -4,6 +4,10 @@
 ;; 记忆大量按键的使用方式。所有菜单项仍然调用现有模块提供的原始命令。
 
 (require 'transient)
+(eval-when-compile
+  ;; 让 `transient-define-prefix' 在受管字节编译期作为宏展开，避免菜单
+  ;; 后缀命令被错误地当作变量求值。
+  (require 'transient))
 (require 'eldoc)
 (require 'xref)
 
@@ -26,7 +30,11 @@
 ;; 自动加载，确保 Scratch 等尚未访问过代码/搜索功能的 Buffer 也能打开菜单。
 (dolist (command '(consult-find consult-recent-file consult-buffer consult-ripgrep consult-line
                   consult-imenu))
-  (autoload command "consult" nil t))
+  (autoload command "consult" nil t)
+  ;; 兼容早期受管字节码中的 Transient 后缀：它们可能将裸命令符号编译为
+  ;; 变量引用。函数和值命名空间独立，赋同名符号值不会影响命令调用。
+  (unless (boundp command)
+    (set command command)))
 (dolist (command '(magit-status magit-file-dispatch))
   (autoload command "magit" nil t))
 (autoload 'treemacs "treemacs" nil t)

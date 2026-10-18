@@ -16,14 +16,15 @@
   "安装 `my/debug-mason-packages' 中尚未安装的调试适配器。"
   (interactive)
   (require 'mason)
-  (mason-setup
-    (dolist (package my/debug-mason-packages)
-      (unless (mason-installed-p package)
-        (condition-case err
-            (mason-install package)
-          (error
-           (message "Mason 安装调试器 %s 失败：%s"
-                    package (error-message-string err))))))))
+  (mason-ensure
+   (lambda ()
+     (dolist (package my/debug-mason-packages)
+       (unless (mason-installed-p package)
+         (condition-case err
+             (mason-install package)
+           (error
+            (message "Mason 安装调试器 %s 失败：%s"
+                     package (error-message-string err)))))))))
 
 (defun my/debug-mason-file (&rest parts)
   "返回 Mason 目录下由 PARTS 组成的绝对路径。"
@@ -140,8 +141,7 @@
   (add-hook 'after-init-hook #'dape-breakpoint-load)
   (dape-breakpoint-global-mode 1))
 
-;; 调试适配器按需安装。若注册表暂时不可用，Mason 会输出具体错误，
-;; 不会阻止其他配置模块继续启动。
+;; Mason 注册表就绪后自动安装调试适配器。
 (with-eval-after-load 'mason
   (my/debug-install-adapters))
 

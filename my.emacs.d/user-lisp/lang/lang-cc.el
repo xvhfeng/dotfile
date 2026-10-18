@@ -2,6 +2,14 @@
 
 ;;; 中文导读：C/C++ 语言配置。使用 Emacs 内置 cc-mode 作为无 Tree-sitter 时的
 ;;; 稳定回退，Tree-sitter 可用时由全局 treesit-auto 自动切换，并接入 Eglot/Flymake。
+(defconst my/clangd-executable
+  (or (and (eq system-type 'darwin)
+           (file-executable-p "/opt/homebrew/opt/llvm/bin/clangd")
+           "/opt/homebrew/opt/llvm/bin/clangd")
+      (executable-find "clangd")
+      "clangd")
+  "稳定的 clangd 可执行文件，macOS 优先使用 Homebrew LLVM 版本。")
+
 (defvar my-clangd--query-driver
   (mapconcat #'identity (delq nil (list (executable-find "gcc")
                                         (executable-find "g++"))) ",")
@@ -10,13 +18,12 @@
 ;; 返回启动 clangd 使用的命令行参数列表，供 Eglot 创建 C/C++ 语言服务器进程。
 (defun my-clangd-args (_interactive)
   (let ((proj (project-current)))
-    `("clangd"
+    `(,my/clangd-executable
       "--clang-tidy"
       "--limit-results=15"
       "--header-insertion=never"
       "--background-index"
       "--pch-storage=memory"
-      "--experimental-modules-support"
       ,@(when (not (string-empty-p my-clangd--query-driver))
           (list (concat "--query-driver=" my-clangd--query-driver)))
       ,(concat "--compile-commands-dir="
