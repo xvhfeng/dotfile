@@ -281,6 +281,8 @@
 ;; 所有配置模块统一在这里维护。新增模块时，只需在列表末尾加入其 feature。
 (defconst my/init-modules
   '(init-base
+    ;; 平滑像素滚动；不修改既有按键与滚动距离配置。
+    init-ultra-scroll
     ;; 主题在基础设置后立即加载，后续界面和插件继承统一颜色。
     init-theme
     init-keybindings

@@ -16,6 +16,8 @@
 (declare-function vimish-fold-from-marks "vimish-fold" ())
 (declare-function vimish-fold-mode "vimish-fold" (&optional arg))
 (declare-function vimish-fold-toggle "vimish-fold" ())
+(declare-function vimish-fold--folds-in "vimish-fold" (beg end))
+(declare-function vimish-fold--vimish-overlay-folded-p "vimish-fold" (overlay))
 (declare-function treesit-node-at "treesit" (pos &optional parser-or-lang named))
 (declare-function treesit-node-child-by-field-name "treesit" (node field-name))
 (declare-function treesit-node-end "treesit" (node))
@@ -248,6 +250,29 @@ BEG points at the opening delimiter and END points after the closing one."
             (unless (string-empty-p comment-end)
               (concat " " comment-end)))))
 
+(defun my/vimish-fold--standalone-marker-line-p (position marker)
+  "Return non-nil when MARKER at POSITION occupies a comment-only line.
+An optional label inside a block comment is allowed."
+  (save-excursion
+    (goto-char position)
+    (let* ((line (string-trim
+                  (buffer-substring-no-properties
+                   (line-beginning-position) (line-end-position))))
+           (comment-beg (car (my/vimish-fold--comment-parts)))
+           (comment-end (cdr (my/vimish-fold--comment-parts))))
+      (cond
+       ((string-empty-p comment-beg)
+        (string-match-p (concat "\\`" (regexp-quote marker) "[ \\t]*\\'") line))
+       ((string-empty-p comment-end)
+        ;; 行注释后的其余文本仍属于注释，允许作为折叠标签。
+        (string-match-p (concat "\\`" (regexp-quote comment-beg)
+                                "[ \\t]*" (regexp-quote marker)) line))
+       (t
+        (string-match-p (concat "\\`" (regexp-quote comment-beg)
+                                "[ \\t]*" (regexp-quote marker)
+                                ".*" (regexp-quote comment-end) "[ \\t]*\\'")
+                        line))))))
+
 (defun my/vimish-fold-insert-markers (beg end label)
   "Wrap the context range from BEG to END in fold markers named LABEL.
 
@@ -318,10 +343,29 @@ them does not change the meaning of source code."
             (forward-line -1))
           (line-end-position))))
 
+(defun my/vimish-fold--marker-comment-fragment-bounds (position marker)
+  "Return bounds of the comment fragment containing MARKER at POSITION.
+Fall back to the marker token itself when it is not inside a block comment."
+  (save-excursion
+    (goto-char position)
+    (let* ((line-beg (line-beginning-position))
+           (line-end (line-end-position))
+           (comment-beg (car (my/vimish-fold--comment-parts)))
+           (comment-end (cdr (my/vimish-fold--comment-parts)))
+           (beg (and (not (string-empty-p comment-beg))
+                     (search-backward comment-beg line-beg t)))
+           (end (and beg (not (string-empty-p comment-end))
+                     (search-forward comment-end line-end t))))
+      (if (and beg end (<= beg position) (<= position end))
+          (cons beg end)
+        (cons position (+ position (length marker)))))))
+
 (defun my/vimish-fold--marker-ranges ()
-  "Return all properly nested marker ranges in the current buffer."
+  "Return all properly nested marker ranges in the current buffer.
+Standalone marker comments fold whole marker lines; inline markers fold only
+the character range between the two marker tokens."
   (let ((open-mark (car vimish-fold-marks))
-        (close-mark (cdr vimish-fold-marks))
+            (close-mark (cdr vimish-fold-marks))
         (regexp (regexp-opt (list (car vimish-fold-marks)
                                   (cdr vimish-fold-marks))))
         stack ranges)
@@ -330,39 +374,58 @@ them does not change the meaning of source code."
       (while (re-search-forward regexp nil t)
         (if (string= (match-string-no-properties 0) open-mark)
             (push (list :open (match-beginning 0)
+                        :open-end (match-end 0)
                         :open-line (line-beginning-position))
                   stack)
           (when stack
             (let* ((opening (pop stack))
                    (open-line (plist-get opening :open-line))
                    (close-pos (match-beginning 0))
+                   (close-end (match-end 0))
                    (close-line (line-beginning-position))
                    (close-line-end (line-end-position))
-                   (content-beg
+                   (open-standalone
+                    (my/vimish-fold--standalone-marker-line-p
+                     (plist-get opening :open) open-mark))
+                   (close-standalone
+                    (my/vimish-fold--standalone-marker-line-p
+                     close-pos close-mark))
+                   (open-fragment
+                    (my/vimish-fold--marker-comment-fragment-bounds
+                     (plist-get opening :open) open-mark))
+                   (close-fragment
+                    (my/vimish-fold--marker-comment-fragment-bounds
+                     close-pos close-mark))
+                   (fold-beg
                     (save-excursion
-                      (goto-char open-line)
-                      (forward-line 1)
-                      (point)))
-                   (content-end
+                      (if open-standalone
+                          (progn (goto-char open-line) (forward-line 1) (point))
+                        (cdr open-fragment))))
+                   (fold-end
                     (save-excursion
-                      (goto-char close-line)
-                      (forward-line -1)
-                      (line-end-position))))
+                      (if close-standalone
+                          close-line
+                        (car close-fragment)))))
               (push (append opening
                             (list :close close-pos
+                                  :close-end close-end
                                   :close-line close-line
                                   :close-line-end close-line-end
-                                  :content-beg content-beg
-                                  :content-end content-end
-                                  :fold-beg open-line
-                                  :fold-end close-line-end))
+                                  :open-standalone open-standalone
+                                  :close-standalone close-standalone
+                                  :open-fragment open-fragment
+                                  :close-fragment close-fragment
+                                  :content-beg fold-beg
+                                  :content-end fold-end
+                                  :fold-beg fold-beg
+                                  :fold-end fold-end))
                     ranges))))))
     (nreverse ranges)))
 
 (defun my/vimish-fold--marker-range-at-point (&optional position)
   "Return marker positions surrounding POSITION or point.
 
-The result is a plist containing marker and whole-line boundaries."
+The result is a plist containing marker and exact fold boundaries."
   (let ((origin (or position (point))))
     (car
      (sort
@@ -437,6 +500,13 @@ The result is a plist containing marker and whole-line boundaries."
                 (line-beginning-position 2))))
     (delete-region beg end)))
 
+(defun my/vimish-fold--delete-marker-fragment (position marker)
+  "Delete the comment fragment containing MARKER at POSITION.
+For a non-comment marker, delete only MARKER itself."
+  (pcase-let ((`(,beg . ,end)
+               (my/vimish-fold--marker-comment-fragment-bounds position marker)))
+    (delete-region beg end)))
+
 (defun my/vimish-fold-delete-markers ()
   "Delete the nearest manual fold containing point.
 
@@ -469,20 +539,19 @@ that fact in the echo area."
             (close-line-end (plist-get range :close-line-end))
             (open-mark (car vimish-fold-marks))
             (close-mark (cdr vimish-fold-marks)))
-        ;; 只删除本配置生成的独立注释行，避免误删包含相似文本的代码。
-        (unless (and (my/vimish-fold--generated-marker-line-p
-                      open-pos open-mark)
-                     (my/vimish-fold--generated-marker-line-p
-                      close-pos close-mark))
-          (user-error "折叠标记不是独立的注释行，请手工确认后删除"))
-        ;; 先移除覆盖层及其只读属性，再从后向前删除两行标记。
+        ;; 先移除覆盖层及其只读属性，再从后向前删除标记。独立标记行保留
+        ;; 旧行为；行内标记只删除包围 {{{ / }}} 的注释片段。
         (save-excursion
           (dolist (item (overlays-in open-pos close-line-end))
             (when (my/vimish-fold--overlay-p item)
               (goto-char (overlay-start item))
               (vimish-fold-delete)))
-          (my/vimish-fold--delete-whole-line close-pos)
-          (my/vimish-fold--delete-whole-line open-pos))))
+          (if (plist-get range :close-standalone)
+              (my/vimish-fold--delete-whole-line close-pos)
+            (my/vimish-fold--delete-marker-fragment close-pos close-mark))
+          (if (plist-get range :open-standalone)
+              (my/vimish-fold--delete-whole-line open-pos)
+            (my/vimish-fold--delete-marker-fragment open-pos open-mark)))))
      (overlay
       ;; 内层没有标记但有临时折叠时，先删除这个最近的实际折叠。
       (save-excursion
@@ -543,13 +612,43 @@ that fact in the echo area."
       (unless (my/vimish-fold--overlay-at-point)
         (goto-char origin)))))
 
+(defun my/vimish-fold--ensure-marker-folds ()
+  "Create Vimish Fold overlays for marker ranges that do not have one yet.
+Vimish Fold cannot nest or overlap overlays, so an existing intersecting
+manual fold takes precedence over creating another overlay for that range."
+  (require 'vimish-fold)
+  (when-let ((ranges (my/vimish-fold--marker-ranges)))
+    (vimish-fold-mode 1)
+    (dolist (range ranges)
+      (let ((beg (plist-get range :fold-beg))
+            (end (plist-get range :fold-end)))
+        (when (and (< beg end)
+                   (not (cl-some #'my/vimish-fold--overlay-p
+                                 (overlays-in beg end))))
+          (vimish-fold beg end))))))
+
+(defun my/vimish-fold-toggle-buffer ()
+  "统一切换当前 Buffer 的全部手工折叠状态。
+只要存在任一展开项就全部折叠；仅当所有折叠均已折叠时才全部展开。"
+  (interactive)
+  (require 'vimish-fold)
+  ;; 文件中已有 {{{ / }}} 标记时，首次执行也应能直接折叠它们；不能要求
+  ;; 用户先逐个执行“切换光标处折叠”来创建 Vimish Fold 覆盖层。
+  (my/vimish-fold--ensure-marker-folds)
+  (let ((folds (vimish-fold--folds-in (point-min) (point-max))))
+    (unless folds
+      (user-error "当前 Buffer 没有手工折叠"))
+    (if (cl-every #'vimish-fold--vimish-overlay-folded-p folds)
+        (vimish-fold-unfold-all)
+      (vimish-fold-refold-all))))
+
 ;; 手工折叠属于代码大纲操作，统一放在 C-c o f 子菜单。
 (with-eval-after-load 'general
   (my-leader-def
     "o f i" '("在光标或区域插入折叠" . my/vimish-fold-insert-markers)
     "o f d" '("删除光标处折叠" . my/vimish-fold-delete-markers)
     "o f t" '("切换光标处折叠" . my/vimish-fold-toggle-at-point)
-    "o f a" '("切换全部手工折叠" . vimish-fold-toggle-all)
+    "o f a" '("整篇切换手工折叠" . my/vimish-fold-toggle-buffer)
     "o f u" '("展开全部手工折叠" . vimish-fold-unfold-all)
     "o f r" '("重新折叠全部手工折叠" . vimish-fold-refold-all)
     "o f n" '("下一个手工折叠" . vimish-fold-next-fold)

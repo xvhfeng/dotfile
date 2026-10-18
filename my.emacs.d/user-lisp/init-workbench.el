@@ -46,6 +46,16 @@
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
 (autoload 'hydra-window-resize/body "init-window" nil t)
+(dolist (command '(treesit-fold-toggle treesit-fold-close-all treesit-fold-open-all))
+  (autoload command "treesit-fold" nil t))
+(dolist (command '(vimish-fold-toggle-all vimish-fold-unfold-all
+                  vimish-fold-refold-all vimish-fold-next-fold
+                  vimish-fold-previous-fold))
+  (autoload command "vimish-fold" nil t))
+(autoload 'my/vimish-fold-toggle-at-point "init-fold" nil t)
+(autoload 'my/vimish-fold-insert-markers "init-fold" nil t)
+(autoload 'my/vimish-fold-delete-markers "init-fold" nil t)
+(autoload 'my/vimish-fold-toggle-buffer "init-fold" nil t)
 
 (defconst my/workbench-popper-reference-buffers
   '("\\*Help\\*\\'"
@@ -262,6 +272,22 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("f" "前进跳转位置" xref-go-forward)
     ("h" "光标处文档" eldoc)]])
 
+(transient-define-prefix my/workbench-fold-menu ()
+  "打开代码结构折叠与手工折叠操作菜单。"
+  [["   Tree-sitter 结构折叠"
+    ("t" "切换当前结构折叠" treesit-fold-toggle)
+    ("c" "折叠全部结构" treesit-fold-close-all)
+    ("o" "展开全部结构" treesit-fold-open-all)]
+   ["   手工折叠"
+    ("i" "插入手工折叠标记" my/vimish-fold-insert-markers)
+    ("d" "删除当前手工折叠标记" my/vimish-fold-delete-markers)
+    ("f" "切换光标处手工折叠" my/vimish-fold-toggle-at-point)
+    ("a" "整篇切换手工折叠" my/vimish-fold-toggle-buffer)
+    ("u" "展开全部手工折叠" vimish-fold-unfold-all)
+    ("r" "重新折叠全部手工折叠" vimish-fold-refold-all)
+    ("n" "下一个手工折叠" vimish-fold-next-fold)
+    ("p" "上一个手工折叠" vimish-fold-previous-fold)]])
+
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
   ;; 固定每列的最小宽度，让各分组标题和子菜单左边缘一致，并在列间保留留白。
@@ -282,6 +308,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("!" "搜索诊断" my/workbench-project-diagnostics)
     ("a" "代码动作" my/workbench-code-actions)
     ("h" "跳转与文档" my/workbench-navigation-menu)
+    ("F" "代码折叠" my/workbench-fold-menu)
     ;; 合并冲突在独立 Transient 中操作，工作台只提供统一入口。
     ("M" "合并冲突" my/smerge-menu)
     ("c" "编译" compile)]
