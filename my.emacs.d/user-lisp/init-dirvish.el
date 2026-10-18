@@ -5,6 +5,42 @@
 
 (require 'dired)
 
+
+(defvar-local my/dirvish-preview-enabled nil
+  "Non-nil when the current Dirvish directory updates previews automatically.")
+
+(defun my/dirvish--put-property (property value)
+  "Set PROPERTY to VALUE in the current Dirvish buffer's local properties."
+  (let ((entry (assq property dirvish--props)))
+    (if entry
+        (setcdr entry value)
+      (push (cons property value) dirvish--props)))
+  value)
+
+(defun my/dirvish-disable-auto-preview (&rest _)
+  "Disable preview dispatchers for a newly entered Dirvish directory.
+The preview pane remains part of the layout but no file-reading or external
+thumbnail process starts while the cursor moves."
+  (setq-local my/dirvish-preview-enabled nil)
+  (my/dirvish--put-property :preview-dps nil)
+  nil)
+
+(defun my/dirvish-toggle-preview ()
+  "Toggle file preview for the current Dirvish directory with `P'."
+  (interactive)
+  (let ((session (or (dirvish-curr) (user-error "当前不在 Dirvish 中"))))
+    (if my/dirvish-preview-enabled
+        (progn
+          (setq-local my/dirvish-preview-enabled nil)
+          (my/dirvish--put-property :preview-dps nil)
+          (message "Dirvish 文件预览已关闭"))
+      (setq-local my/dirvish-preview-enabled t)
+      (my/dirvish--put-property :preview-dps
+                                (dirvish--preview-dps-validate))
+      (when-let ((file (dired-get-filename nil t)))
+        (dirvish--preview-update session file))
+      (message "Dirvish 文件预览已开启"))))
+
 (defun my/dirvish-open (&optional path)
   "使用 Dirvish 打开 PATH；省略 PATH 时打开当前目录。"
   (interactive)
@@ -58,9 +94,44 @@
   ;; `dirvish' 只会落入原生 Dired，因而没有父目录栏、预览或 Git 属性。
   (dirvish-override-dired-mode 1)
   (add-hook 'dirvish-find-entry-hook #'my/dirvish-isolate-from-native-dired)
+  (add-hook 'dirvish-find-entry-hook #'my/dirvish-disable-auto-preview)
   ;; 当前项始终可见，并与现有深色主题保持足够、但不刺眼的区分度。
   (set-face-attribute 'dirvish-hl-line nil :background "#343a5d" :extend t)
   (set-face-attribute 'dirvish-hl-line-inactive nil :background "#2c3150" :extend t)
+  (require 'dirvish-extras)
+  (require 'transient)
+  ;; 该宏在启动期字节编译用户配置时尚不可见；延迟求值可确保它在
+  ;; `transient' 已加载后展开，避免把菜单名当作普通变量求值。
+  (eval
+   '(transient-define-prefix my/dirvish-menu ()
+      "Dirvish 的完整中文帮助与高频操作菜单。"
+      [["导航"
+      ("j" "下一项" dired-next-line :transient t)
+      ("k" "上一项" dired-previous-line :transient t)
+      ("h" "上级目录" dired-up-directory)
+      ("l" "打开当前项" dired-find-file)
+      ("g" "刷新目录" revert-buffer)]
+     ["文件与标记"
+      ("m" "标记/取消标记" dired-mark)
+      ("u" "取消标记" dired-unmark)
+      ("C" "复制标记项" dired-do-copy)
+      ("R" "重命名/移动标记项" dired-do-rename)
+      ("D" "删除标记项" dired-do-delete)
+      ("+" "新建目录" dired-create-directory)]
+     ["显示、预览与排序"
+      ("P" "开关文件预览" my/dirvish-toggle-preview)
+      ("z" "显示/隐藏详情" dired-hide-details-mode)
+      ("L" "切换栏布局" dirvish-layout-switch)
+      ("s" "排序菜单" dirvish-quicksort)
+      ("i" "文件详情" dirvish-file-info-menu)
+      ("U" "界面设置" dirvish-setup-menu)]
+     ["Git、搜索与更多"
+      ("v" "Git 操作" dirvish-vc-menu)
+      ("/" "当前目录 fd 搜索" dirvish-fd)
+      ("a" "快捷目录" dirvish-quick-access)
+      ("M" "标记管理" dirvish-mark-menu)
+      ("?" "官方全部命令" dirvish-dispatch)
+      ("q" "退出 Dirvish" dirvish-quit)]]))
   (with-eval-after-load 'general
     (general-define-key
      :keymaps 'dirvish-mode-map
@@ -68,8 +139,9 @@
      "l" '("打开当前项" . dired-find-file)
      "j" '("下一项" . dired-next-line)
      "k" '("上一项" . dired-previous-line)
-     "g" '("刷新目录" . dirvish-revert)
-     "?" '("Dirvish 命令帮助" . dirvish-dispatch)
+     "g" '("刷新目录" . revert-buffer)
+     "P" '("开关文件预览" . my/dirvish-toggle-preview)
+     "?" '("Dirvish 完整帮助" . my/dirvish-menu)
      "a" '("快捷目录" . dirvish-quick-access)
      "s" '("排序菜单" . dirvish-quicksort)
      "i" '("文件详情" . dirvish-file-info-menu)

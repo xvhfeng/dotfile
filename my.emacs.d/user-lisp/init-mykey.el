@@ -386,7 +386,8 @@ KEYS 仅供测试或特殊调用使用；交互调用时读取本次实际按键
 
 (defvar my/escape-quit-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "ESC") #'my/escape-quit-dwim)
+    ;; 原始 ESC 必须继续作为 Meta 前缀：M-w 等按键在终端协议中就是
+    ;; ESC 加后续字符。GUI 的独立 Escape 事件走下面的 [escape] 映射。
     (define-key map [escape] #'my/escape-quit-dwim)
     map)
   "让常规 Buffer 中 ESC 与 C-g 等价的全局按键表。")
