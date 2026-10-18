@@ -45,12 +45,20 @@
     (define-key map (kbd "DEL") #'vterm-send-backspace)
     (define-key map [backspace] #'vterm-send-backspace)
     (define-key map [delete] #'vterm-send-delete)
+    ;; ESC 是唯一需要从全局取消语义中豁免的常规场景：终端程序必须
+    ;; 收到真实 Escape 字节（Vim、fzf、shell 补全等都依赖它）。
+    (define-key map (kbd "ESC") #'vterm-send-escape)
+    (define-key map [escape] #'vterm-send-escape)
     ;; A buffer-local overriding map has higher priority than the global
     ;; Which-Key backspace minor mode, but leaves it unchanged elsewhere.
     (setq-local minor-mode-overriding-map-alist
-                (cons (cons 'my/which-key-backspace-mode map)
-                      (assq-delete-all 'my/which-key-backspace-mode
-                                       minor-mode-overriding-map-alist)))))
+                (cons (cons 'my/escape-quit-mode map)
+                      (cons (cons 'my/which-key-backspace-mode map)
+                            (assq-delete-all
+                             'my/escape-quit-mode
+                             (assq-delete-all
+                              'my/which-key-backspace-mode
+                              minor-mode-overriding-map-alist)))))))
 
 (use-package vterm
   :straight t
@@ -81,10 +89,13 @@
               (my/vterm-restore-terminal-delete-keys))))
 
 (with-eval-after-load 'vterm
+  ;; 直接覆盖 Vterm 主模式 map；即使 Which-Key 的全局 minor mode 未启用，
+  ;; ESC 也始终发送给终端而非触发 `keyboard-quit'。
+  (define-key vterm-mode-map (kbd "ESC") #'vterm-send-escape)
+  (define-key vterm-mode-map [escape] #'vterm-send-escape)
   (general-define-key
    :keymaps 'vterm-mode-map
    "C-y" '("粘贴" . vterm-yank)
-   "M-x" '("M-x" . execute-extended-command)
    "C-x C-f" '("打开文件" . find-file)
    "C-x b" '("切换缓冲区" . switch-to-buffer)
    "C-x k" '("关闭缓冲区" . kill-current-buffer)
