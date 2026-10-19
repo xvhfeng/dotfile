@@ -4,8 +4,11 @@
 ;; 这样既消除编译警告，也避免与 straight 安装的 project 包争抢 feature。
 (declare-function project-current "project" (&optional maybe-prompt dir))
 (declare-function project-root "project" (project))
-;; `consult-customize' 展开后会调用此函数；声明它可避免延迟加载时的字节编译误报。
-(declare-function consult--customize-put "consult" (commands property form))
+;; `consult-customize' 是宏。Consult 在运行时保持延迟加载，但字节编译必须
+;; 先看到宏定义；否则编译器会把命令名当作普通函数参数，在 Consult 首次
+;; 自动加载时求值成变量，最终触发 `void-variable consult-git-grep'。
+(eval-when-compile
+  (require 'consult))
 
 ;; ============================================================================
 ;; 1. 定义以 `.projx` 为标志的项目根目录查找逻辑
@@ -70,8 +73,7 @@
    consult-source-recent-file consult-source-project-recent-file
    :preview-key nil))
 
-;; 不使用 use-package 的 :general 关键字：首次字节编译时 General 可能尚未
-;; 安装，导致 Consult 命令被错误当作变量求值。等 General 可用后再绑定。
+;; 不使用 use-package 的 :general 关键字；等 General 可用后再绑定。
 (with-eval-after-load 'general
   (general-define-key
    "C-c p s" '("项目搜索" . consult-ripgrep)

@@ -166,27 +166,96 @@ This delegates nested same-name tag matching to the `%` implementation in
   ;; 之后安装/启用语法支持时仍可直接复用下面的来源清单。
   (defvar treesit-language-source-alist nil)
 
-  ;; 集中登记 lang/ 中涉及语言的官方语法仓库；只登记来源，不在启动时强制编译。
-  ;; 可通过 M-x treesit-install-language-grammar 或 treesit-auto 的提示按需安装。
-  (dolist (source
-           '((c . ("https://github.com/tree-sitter/tree-sitter-c"))
-             (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-             (java . ("https://github.com/tree-sitter/tree-sitter-java"))
-             (python . ("https://github.com/tree-sitter/tree-sitter-python"))
-             (lua . ("https://github.com/tree-sitter-grammars/tree-sitter-lua"))
-             (bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
-             (elisp . ("https://github.com/Wilfred/tree-sitter-elisp"))
-             (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-             (css . ("https://github.com/tree-sitter/tree-sitter-css"))
-             (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript"))
-             (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-             (yaml . ("https://github.com/tree-sitter-grammars/tree-sitter-yaml"))
-             (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown"))
-             (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" nil "typescript/src"))
-             (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" nil "tsx/src"))))
-    (add-to-list 'treesit-language-source-alist source)))
+  (defconst my/treesit-grammar-registry
+    '((c . ("https://github.com/tree-sitter/tree-sitter-c"))
+      (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+      (java . ("https://github.com/tree-sitter/tree-sitter-java"))
+      (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+      (lua . ("https://github.com/tree-sitter-grammars/tree-sitter-lua"))
+      (bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+      (elisp . ("https://github.com/Wilfred/tree-sitter-elisp"))
+      (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+      (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+      (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+      (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+      (yaml . ("https://github.com/tree-sitter-grammars/tree-sitter-yaml"))
+      ;; 该仓库根目录没有 parser.c，必须指向实际 grammar 的源码子目录。
+      (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown"
+                   nil "tree-sitter-markdown/src"))
+      (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript"
+                     "master" "typescript/src"))
+      (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript"
+              "master" "tsx/src")))
+    "启动时自动下载并编译的 15 个 Tree-sitter grammar 注册表。")
 
-  ;; ============================================================================
+  (defconst my/treesit-registered-languages
+    (mapcar #'car my/treesit-grammar-registry)
+    "从 `my/treesit-grammar-registry' 生成的语言列表。")
+
+  ;; 中央注册表优先于其他模块的重复声明，确保自动安装使用同一份来源信息。
+  (setq treesit-language-source-alist
+        (append my/treesit-grammar-registry
+                (seq-remove
+                 (lambda (source)
+                   (memq (car source) my/treesit-registered-languages))
+                 treesit-language-source-alist))))
+
+(defvar my/treesit-bootstrap-started nil
+  "非 nil 表示本次 Emacs 会话已启动过 grammar 自动安装。")
+
+(defvar my/treesit-last-install-result nil
+  "最近一次 grammar 安装结果，格式为 (:status STATUS :total N :failed LIST)。")
+
+(defun my/treesit-install-registered-grammars ()
+  "把注册表中缺失的 grammar 编译安装到 `my/treesit-grammar-dir'。"
+  (interactive)
+  (unless (treesit-available-p)
+    (user-error "当前 Emacs 构建不支持 Tree-sitter"))
+  (let ((missing (seq-filter
+                  (lambda (language)
+                    (not (treesit-language-available-p language)))
+                  my/treesit-registered-languages))
+        failed)
+    (if (null missing)
+        (progn
+          (setq my/treesit-last-install-result
+                (list :status 'complete
+                      :total (length my/treesit-registered-languages)
+                      :failed nil))
+          (message "Tree-sitter：注册的 %d 个 grammar 均已安装"
+                   (length my/treesit-registered-languages)))
+      (setq my/treesit-last-install-result
+            (list :status 'installing :total (length missing) :failed nil))
+      (message "Tree-sitter：开始自动安装 %d 个缺失 grammar：%s"
+               (length missing) (mapconcat #'symbol-name missing ", "))
+      (dolist (language missing)
+        (condition-case err
+            (progn
+              ;; OUT-DIR 必须显式传入；treesit-auto 没有 install-dir 配置变量。
+              (treesit-install-language-grammar language my/treesit-grammar-dir)
+              (unless (treesit-language-available-p language)
+                (push language failed)))
+          (error
+           (push language failed)
+           (message "Tree-sitter 安装 %s 失败：%s"
+                    language (error-message-string err)))))
+      (setq failed (nreverse (delete-dups failed)))
+      (setq my/treesit-last-install-result
+            (list :status (if failed 'failed 'complete)
+                  :total (length missing) :failed failed))
+      (if failed
+          (message "Tree-sitter：自动安装结束，失败 %d 项：%s"
+                   (length failed) (mapconcat #'symbol-name failed ", "))
+        (message "Tree-sitter：%d 个缺失 grammar 自动安装完成"
+                 (length missing))))))
+
+(defun my/treesit-auto-install-registered-grammars ()
+  "首次交互式初始化时自动安装全部注册 grammar，同一会话只启动一次。"
+  (unless (or noninteractive my/treesit-bootstrap-started)
+    (setq my/treesit-bootstrap-started t)
+    (my/treesit-install-registered-grammars)))
+
+;; ============================================================================
 ;; 2. Treesit-auto: 自动下载并编译到指定目录
 ;; ============================================================================
 (condition-case err
@@ -194,19 +263,21 @@ This delegates nested same-name tag matching to the `%` implementation in
       :straight t
       :demand t
       :custom
-      ;; 打开文件时不强制下载 grammar；已安装时自动切换到
-      ;; *-ts-mode，缺失时稳定回退到传统 major mode。需要时可用
-      ;; M-x treesit-auto-install-all 一次性安装。
+      ;; 禁用 treesit-auto 自带的按文件补装，因为它不能指定输出目录，会写回
+      ;; ~/.emacs.d/tree-sitter/。统一由下面的安装器写入 runtimes/tree-sitter/。
       (treesit-auto-install nil)
 
       :config
-      ;; 关键：强行指定 treesit-auto 将源码编译安装到我们自定义的路径
-      (setq treesit-auto-install-dir my/treesit-grammar-dir)
+      ;; 只管理中央注册表中的 15 种语言，不下载 treesit-auto 的全部 recipe。
+      (setq treesit-auto-langs (copy-sequence my/treesit-registered-languages))
 
       ;; 设置 Treesit 高亮精细度等级 (1: 极简 -> 4: 最精细/最漂亮)
       (setq treesit-font-lock-level 4)
 
-      ;; 自动将系统默认的 Major-mode 映射替换为对应的 -ts-mode
+      ;; treesit-auto 插件安装并加载完毕后，立即根据注册表下载和编译缺失项。
+      (my/treesit-auto-install-registered-grammars)
+
+      ;; grammar 就绪后，自动将传统 Major mode 映射为对应的 -ts-mode。
       (global-treesit-auto-mode))
   (error (message "treesit-auto 未加载：%s" (error-message-string err))))
 
@@ -240,7 +311,7 @@ This delegates nested same-name tag matching to the `%` implementation in
     "t i" '("检查光标处 AST" . treesit-inspect-mode)
     "t m" '("选择当前缩进块" . my/mark-indent-block)
     "t M" '("选择当前缩进块内部" . my/mark-indent-block-inner)
-    "t a" '("批量安装全部语法" . treesit-auto-install-all)))
+    "t a" '("补齐注册的语法" . my/treesit-install-registered-grammars)))
 
 (provide 'init-treesitter)
 
@@ -248,8 +319,9 @@ This delegates nested same-name tag matching to the `%` implementation in
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 已安装 grammar 时自动使用对应 `*-ts-mode'，缺失时回退传统 major mode，不阻断打开文件。
-;; - `C-c t a' 批量下载并编译全部 grammar；产物保存在 `runtimes/tree-sitter/'。
+;; - 首次初始化自动安装注册的 15 个 grammar，以后启动只检查并补齐缺失项。
+;; - `C-c t a' 可手动重试；产物固定保存在 `runtimes/tree-sitter/'。
 ;; - `C-c t f' 折叠/展开当前代码块，`C-c t F' 展开当前 Buffer 的全部折叠。
 ;; - `C-c t i' 打开语法树检查模式，适合确认光标处 AST 节点及排查高亮问题。
-;; - 编译 grammar 需要 Git、C 编译器和可用网络；本配置启动时不会强制下载。
+;; - 编译 grammar 需要 Git、C 编译器和可用网络；批处理和字节编译不会触发下载。
 ;;; init-treesitter.el ends here

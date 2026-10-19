@@ -179,28 +179,30 @@ Ivy or Dirvish remain disabled until explicitly added to `my/init-modules'."
                 (file-newer-than-file-p source compiled))
         (my/byte-compile-user-lisp-file source)))))
 
-(defun my/user-lisp--compile-and-load (feature source)
-  "Compile newer SOURCE first, then load FEATURE from its fresh bytecode.
-If compilation fails, load SOURCE as a safe fallback so a configuration error
-does not prevent the rest of Emacs from starting."
-  (if-let ((compiled (my/byte-compile-user-lisp-file source)))
-      (progn
-        (load compiled nil 'nomessage t)
-        (unless (featurep feature)
-          (error "%s 未提供 feature %s" compiled feature))
-        (cl-incf my/user-lisp-bytecode-load-count)
-        feature)
-    (load source nil 'nomessage t)
-    (unless (featurep feature)
-      (error "%s 未提供 feature %s" source feature))
-    (cl-incf my/user-lisp-source-load-count)
-    feature))
+(defun my/user-lisp--load-source-and-compile (feature source)
+  "Load FEATURE from newer SOURCE, then compile it for the next startup.
+
+Loading first is required for portable first-run behavior.  A source module's
+`use-package' declarations let straight install and activate third-party
+dependencies at runtime.  Compiling that module before evaluating it makes the
+compiler expand package macros while those dependencies are still absent from
+`load-path', so a new machine or a newly added package fails once before it can
+install itself."
+  (load source nil 'nomessage t)
+  (unless (featurep feature)
+    (error "%s 未提供 feature %s" source feature))
+  (cl-incf my/user-lisp-source-load-count)
+  ;; Compilation is a cache warm-up.  A failure is already reported by
+  ;; `my/byte-compile-user-lisp-file' and must not undo the successfully loaded
+  ;; source configuration for this session.
+  (my/byte-compile-user-lisp-file source)
+  feature)
 
 (defun my/require-user-lisp-feature (feature)
   "Load FEATURE from current source or its mirrored runtime bytecode.
-When source is newer or bytecode is missing, compile it first and immediately
-load the fresh .elc.  Broken bytecode or failed compilation falls back to
-source without interrupting startup."
+When source is newer or bytecode is missing, load source first so package
+dependencies can be installed and activated, then compile it for the next
+startup.  Broken bytecode also falls back to this source-first path."
   (let* ((source (my/user-lisp-source-file feature))
          (compiled (and source (my/user-lisp-compiled-file source))))
     (unless source
@@ -221,8 +223,8 @@ source without interrupting startup."
             (format "%s 加载失败，回退到源文件：%s"
                     compiled (error-message-string err))
             :warning)
-           (my/user-lisp--compile-and-load feature source)))
-      (my/user-lisp--compile-and-load feature source))))
+           (my/user-lisp--load-source-and-compile feature source)))
+      (my/user-lisp--load-source-and-compile feature source))))
 
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=81506

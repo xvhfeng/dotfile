@@ -4,27 +4,13 @@
 ;; 调试器由 Mason 安装在本配置目录内，不污染系统工具链。
 
 (defconst my/debug-mason-packages
-  '("codelldb"                  ; C / C++
-    "debugpy"                  ; Python
-    "js-debug-adapter"         ; JavaScript / TypeScript
-    "java-debug-adapter"       ; Java（配合 jdtls）
-    "local-lua-debugger-vscode" ; Lua
-    "bash-debug-adapter")      ; Bash / Shell
-  "由 Mason 管理的 Debug Adapter 列表。")
+  (my/mason-packages-in-category 'debug-adapter)
+  "从 Mason 中央注册表读取的 Debug Adapter 列表。")
 
 (defun my/debug-install-adapters ()
   "安装 `my/debug-mason-packages' 中尚未安装的调试适配器。"
   (interactive)
-  (require 'mason)
-  (mason-ensure
-   (lambda ()
-     (dolist (package my/debug-mason-packages)
-       (unless (mason-installed-p package)
-         (condition-case err
-             (mason-install package)
-           (error
-            (message "Mason 安装调试器 %s 失败：%s"
-                     package (error-message-string err)))))))))
+  (my/mason-install-packages my/debug-mason-packages))
 
 (defun my/debug-mason-file (&rest parts)
   "返回 Mason 目录下由 PARTS 组成的绝对路径。"
@@ -140,10 +126,6 @@
   (add-hook 'kill-emacs-hook #'dape-breakpoint-save)
   (add-hook 'after-init-hook #'dape-breakpoint-load)
   (dape-breakpoint-global-mode 1))
-
-;; Mason 注册表就绪后自动安装调试适配器。
-(with-eval-after-load 'mason
-  (my/debug-install-adapters))
 
 (with-eval-after-load 'eglot
   (my/debug-configure-java-adapter))

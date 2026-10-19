@@ -269,8 +269,8 @@
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 (defun my/require-modules (features)
   "按顺序安全加载 FEATURES 中的每一个 user-lisp feature。
-优先使用 runtimes/user-lisp 中的最新字节码；源文件更新时先重新编译并
-加载新的字节码。单个模块失败时记录错误并继续加载后续模块。"
+优先使用 runtimes/user-lisp 中的最新字节码；源文件更新时先加载源码以
+安装并激活依赖，再为下次启动生成字节码。单个模块失败时记录错误并继续。"
   (dolist (feature features)
     (condition-case err
         (my/require-user-lisp-feature feature)
@@ -332,7 +332,7 @@
 
 (my/require-modules my/init-modules)
 
-;; 已启用模块若源码较新，会由 `my/require-user-lisp-feature' 在加载时编译。
+;; 已启用模块若源码较新，会由 `my/require-user-lisp-feature' 先加载再编译。
 ;; 未启用模块无需在每次启动后扫描和编译；需要预编译全部模块时，手动运行
 ;; `M-x my/byte-compile-stale-user-lisp-files' 即可，避免占用刚启动后的空闲时间。
 

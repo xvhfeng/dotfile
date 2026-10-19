@@ -85,13 +85,6 @@ As seen on: https://www.reddit.com/r/emacs/comments/1kfblch/need_help_with_addin
   (tsx-ts-mode . my-add-jsdoc-in-typescript-ts-mode)
   (typescript-ts-mode . my/lsp-maybe-ensure)
   (typescript-ts-mode . my-add-jsdoc-in-typescript-ts-mode)
-  :init
-  (add-to-list 'treesit-language-source-alist
-               '(typescript . ("https://github.com/tree-sitter/tree-sitter-typescript"
-                               nil "typescript/src")))
-  (add-to-list 'treesit-language-source-alist
-               '(tsx . ("https://github.com/tree-sitter/tree-sitter-typescript"
-                        nil "tsx/src")))
   :custom (typescript-indent-level nn-indent-offset))
 
 (provide 'lang-javascript)
