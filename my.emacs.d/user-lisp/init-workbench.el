@@ -48,6 +48,7 @@
 ;; 后，Scratch 或单独重载工作台时 Transient 也能先安全展示完整菜单。
 (autoload 'my/smerge-menu "init-smerge" nil t)
 (autoload 'my/avy-menu "init-avy" nil t)
+(autoload 'my/pinky-activate "init-pinky" nil t)
 (autoload 'my/mark-indent-block "init-treesitter" nil t)
 (autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
@@ -328,7 +329,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("I" "选择当前缩进块内部" my/mark-indent-block-inner)
     ("%" "匹配成对符号或标签" my/match-pair)
     ("u" "可视撤销树" my/workbench-visual-undo)
-    ("j" "Avy 跳转菜单" my/avy-menu)]
+    ("j" "Avy 跳转菜单" my/avy-menu)
+    ("P" "Pinky 单键导航" my/pinky-activate)]
    ["   项目与 Git"
     ("p" "切换项目" project-switch-project)
     ("g" "Git 状态" magit-status)
