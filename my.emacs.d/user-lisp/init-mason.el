@@ -78,6 +78,17 @@
 (add-to-list 'exec-path my/local-bin-directory)
 (setenv "PATH" (concat my/local-bin-directory path-separator (getenv "PATH")))
 
+(defun my/mason-ensure-python-command ()
+  "Provide Mason's PyPI installers with a python command when only python3 exists."
+  (let* ((shim (expand-file-name "python" my/local-bin-directory))
+         (python3 (or (executable-find "python3")
+                      (and (file-executable-p "/opt/homebrew/bin/python3")
+                           "/opt/homebrew/bin/python3"))))
+    (when (and python3 (not (file-executable-p shim)))
+      (make-symbolic-link python3 shim t))))
+
+(my/mason-ensure-python-command)
+
 (defun my/mason--record-install-result (package success)
   "记录 PACKAGE 的安装结果 SUCCESS，并在整批完成时输出汇总。"
   (unless success

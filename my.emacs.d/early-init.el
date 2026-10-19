@@ -135,6 +135,20 @@
 
 (my/user-lisp-refresh-bytecode-load-path)
 
+(defun my/straight-build-load-paths ()
+  "Return load paths for every package already built by Straight.
+
+This is deliberately used by the managed byte compiler rather than globally:
+configuration that references a third-party macro in a deferred `use-package'
+form must still be macro-expanded while compiling, but normal runtime loading
+should continue to be controlled by Straight and `use-package'."
+  (let ((build-directory (my/runtime-file "straight/build/")))
+    (when (file-directory-p build-directory)
+      (mapcar #'file-name-as-directory
+              (seq-filter #'file-directory-p
+                          (directory-files build-directory t
+                                           directory-files-no-dot-files-regexp))))))
+
 (defun my/byte-compile-user-lisp-file (source)
   "Atomically compile user-lisp SOURCE into its mirrored runtime directory."
   (require 'bytecomp)
@@ -150,7 +164,12 @@
                      (expand-file-name ".byte-compile-" destination-directory)
                      nil ".elc"))
               (let ((byte-compile-dest-file-function
-                     (lambda (_source) temporary)))
+                     (lambda (_source) temporary))
+                    ;; Packages may be deferred at runtime, while their macros
+                    ;; still need to be present at compile time.  Register all
+                    ;; installed build directories so this stays true for new
+                    ;; plugins without per-module path patches.
+                    (load-path (append (my/straight-build-load-paths) load-path)))
                 (unless (eq (byte-compile-file source) t)
                   (error "字节编译未生成可用产物")))
               (rename-file temporary destination t)
