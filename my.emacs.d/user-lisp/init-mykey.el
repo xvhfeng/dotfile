@@ -365,45 +365,8 @@ its own closing tag rather than an inner sibling's closing tag."
 (keymap-global-set "C-!" #'my-replace-dwim)
 
 ;;============= *  更改 EMACS 自身的某些设置 *=====================
-;; 普通 Buffer 的物理 ESC 与 C-g 一样取消当前操作。不能放在
-;; `key-translation-map'，否则 Vterm 会在其局部按键映射之前收到 C-g。
-(define-key key-translation-map (kbd "ESC") nil)
-(define-key global-map (kbd "ESC") esc-map)
-(keymap-global-set "<escape>" #'keyboard-quit)
-
-;; 用全局 minor mode 覆盖运行时 ESC，而不是修改 `global-map' 中的 ESC
-;; 前缀。后者会让随后定义的 M-x、M-; 等 Meta 快捷键报“非前缀键”错误。
-(defun my/escape-quit-dwim (&optional keys)
-  "执行当前模式明确绑定的 ESC 命令，其他情况等价于 `keyboard-quit'.
-KEYS 仅供测试或特殊调用使用；交互调用时读取本次实际按键。"
-  (interactive)
-  (let* ((keys (or keys (this-single-command-keys)))
-         (binding (local-key-binding keys)))
-    (if (and (commandp binding) (not (keymapp binding))
-             (not (eq binding #'my/escape-quit-dwim)))
-        (call-interactively binding)
-      (keyboard-quit))))
-
-(defvar my/escape-quit-mode-map
-  (let ((map (make-sparse-keymap)))
-    ;; 原始 ESC 必须继续作为 Meta 前缀：M-w 等按键在终端协议中就是
-    ;; ESC 加后续字符。GUI 的独立 Escape 事件走下面的 [escape] 映射。
-    (define-key map [escape] #'my/escape-quit-dwim)
-    map)
-  "让常规 Buffer 中 ESC 与 C-g 等价的全局按键表。")
-
-(define-minor-mode my/escape-quit-mode
-  "让 ESC 取消当前操作；Vterm 通过局部 override 保留真实 Escape。"
-  :global t
-  :init-value t
-  :lighter nil)
-
-;; Transient 自身把原始 ESC 作为 `ESC ESC' 前缀；显式覆盖为与 C-g
-;; 相同的单层退出，避免菜单仍需连按两次 ESC。
-(with-eval-after-load 'transient
-  (define-key transient-base-map (kbd "ESC") #'transient-quit-one)
-  (define-key transient-base-map [escape] #'transient-quit-one))
- ;; 把 c-k 设置为不管什么位姿都删除当前行
+;; 保留 Emacs 原生 ESC/Meta 前缀语义；取消当前操作统一使用 C-g。
+;; 把 c-k 设置为不管什么位姿都删除当前行
 ;; (global-set-key (kbd "C-k") 'kill-whole-line)
 (keymap-global-set "C-'" #'imenu)
 (keymap-global-set "C-8" #'scroll-up-command)
