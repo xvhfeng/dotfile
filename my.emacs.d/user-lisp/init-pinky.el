@@ -5,7 +5,6 @@
 ;; 因而菜单显示时每个按键仍由 pinky-mode 直接处理。
 
 (require 'transient)
-(require 'thingatpt)
 
 (defconst my/pinky-transient-display-buffer-name " *Pinky 键位表*"
   "Pinky 被动 Transient 菜单使用的内部 buffer 名称。")
@@ -14,7 +13,7 @@
   '((display-buffer-in-side-window)
     (side . bottom)
     (slot . -2)
-    (window-height . 0.30)
+    (window-height . 0.52)
     (preserve-size . (nil . t)))
   "Pinky 被动键位表的底部展示规则。")
 
@@ -25,48 +24,90 @@
   "显示 Pinky 的全部原生单键命令。
 
 该菜单由 `my/pinky-transient-show' 以被动方式渲染，不接管后续按键。"
-  [["   光标与位置"
-    ("n" "下一行" next-line)
-    ("p" "上一行" previous-line)
-    ("f" "向前一个字符" forward-char)
-    ("b" "向后一个字符" backward-char)
-    ("a" "行首" move-beginning-of-line)
-    ("e" "行尾" move-end-of-line)
-    ("," "文件开头" beginning-of-buffer)
-    ("." "文件结尾" end-of-buffer)
-    ("g" "跳转到行" goto-line)]
-   ["   单词移动"
-    ("h" "向前一个单词" backward-word)
-    ("l" "向后一个单词" forward-word)
-    ("t" "当前单词首" my/pinky-beginning-of-word)
-    ("z" "当前单词尾后" my/pinky-end-of-word)
-    ("q" "删除完整当前单词" my/pinky-kill-word-at-point)]
-   ["   编辑与搜索"
-    ("SPC" "设置标记" set-mark-command)
-    ("d" "删除字符" delete-char)
-    ("k" "剪切到行尾" kill-line)
-    ("w" "复制选区" kill-ring-save)
-    ("y" "粘贴" yank)
-    ("o" "插入空行" open-line)
-    ("u" "撤销" undo)
-    ("x" "交换光标与标记" exchange-point-and-mark)
-    ("c" "切换 Buffer" switch-to-buffer)
-    ("s" "向前搜索" isearch-forward)
-    ("r" "向后搜索" isearch-backward)]
-   ["   滚动、窗口与退出"
-    ("v" "向前翻页" scroll-up-command)
-    ("m" "向后翻页" scroll-down-command)
-    ("1" "选择窗口 1" pinky-window-1)
-    ("2" "选择窗口 2" pinky-window-2)
-    ("3" "选择窗口 3" pinky-window-3)
-    ("4" "选择窗口 4" pinky-window-4)
-    ("5" "选择窗口 5" pinky-window-5)
-    ("6" "选择窗口 6" pinky-window-6)
-    ("7" "选择窗口 7" pinky-window-7)
-    ("8" "选择窗口 8" pinky-window-8)
-    ("9" "选择窗口 9" pinky-window-9)
-    ("0" "选择窗口 10" my/pinky-window-0)
-    ("i / ESC" "退出 Pinky 模式" my/pinky-deactivate)]])
+  ;; 中文是双宽字符，启用像素级对齐并为五列保留一致的最小宽度，避免
+  ;; Transient 按字符数量计算时让相邻列粘连。
+  :variable-pitch t
+  :column-widths '(22 22 22 22 22)
+  [["  基础移动"
+    :pad-keys t
+    ("h" "左移" backward-char)
+    ("j" "下移" next-line)
+    ("k" "上移" previous-line)
+    ("l" "右移" forward-char)
+    ("w" "下一单词" forward-word)
+    ("W" "下一 WORD" pinky-forward-WORD)
+    ("b" "上一单词" backward-word)
+    ("B" "上一 WORD" pinky-backward-WORD)
+    ("e" "当前／下一词尾" pinky-forward-word-end)
+    ("E" "当前／下一 WORD 尾" pinky-forward-WORD-end)
+    ("0" "行首" move-beginning-of-line)
+    ("^" "首个非空字符" back-to-indentation)
+    ("$" "行尾" move-end-of-line)
+    ("i" "退出模式（ESC 同效）" my/pinky-deactivate)]
+   ["  精确定位与搜索"
+    :pad-keys t
+    ("f" "右找字符" pinky-find-char-forward)
+    ("F" "左找字符" pinky-find-char-backward)
+    ("t" "停在右侧字符前" pinky-till-char-forward)
+    ("T" "停在左侧字符后" pinky-till-char-backward)
+    (";" "重复字符定位" pinky-repeat-find)
+    ("," "反向字符定位" pinky-repeat-find-reverse)
+    ("/" "向前搜索" pinky-search-forward)
+    ("?" "向后搜索" pinky-search-backward)
+    ("n" "沿原方向重复" pinky-search-next)
+    ("N" "沿反方向重复" pinky-search-previous)]
+   ["   跨行与视区定位"
+    :pad-keys t
+    ("gg" "文件开头" beginning-of-buffer)
+    ("G" "文件结尾" end-of-buffer)
+    ("ge" "上一词尾" pinky-backward-word-end)
+    ("gE" "上一 WORD 尾" pinky-backward-WORD-end)
+    ("g_" "本行最后非空字符" pinky-last-nonblank)
+    ("(" "上一句" backward-sentence)
+    (")" "下一句" forward-sentence)
+    ("{" "上一段落" backward-paragraph)
+    ("}" "下一段落" forward-paragraph)
+    ("H" "可视区域顶部" pinky-window-top)
+    ("M" "可视区域中部" pinky-window-middle)
+    ("L" "可视区域底部" pinky-window-bottom)]
+   ["    滚动、居中与折叠"
+    :pad-keys t
+    ("C-f" "向下翻页" scroll-up-command)
+    ("C-b" "向上翻页" scroll-down-command)
+    ("C-d" "向下半页" pinky-scroll-half-page-down)
+    ("C-u" "向上半页" pinky-scroll-half-page-up)
+    ("C-e" "视口下移一行" scroll-up-line)
+    ("C-y" "视口上移一行" scroll-down-line)
+    ("zz" "当前行居中" pinky-recenter-middle)
+    ("zt" "当前行置顶" pinky-recenter-top)
+    ("zb" "当前行置底" pinky-recenter-bottom)
+    ("za" "切换当前折叠" pinky-fold-toggle)
+    ("zo" "展开当前折叠" pinky-fold-open)
+    ("zc" "关闭当前折叠" pinky-fold-close)
+    ("zR" "展开全部折叠" pinky-fold-open-all)
+    ("zM" "关闭全部折叠" pinky-fold-close-all)
+    ("zd" "清除当前折叠" pinky-fold-delete)]
+   ["    编辑与重复"
+    :pad-keys t
+    ("dd" "删除当前行" pinky-delete-line)
+    ("dw" "删除到下一词" pinky-delete-word)
+    ("diw" "删除完整单词" pinky-delete-inner-word)
+    ("daw" "删除单词及空白" pinky-delete-a-word)
+    ("d$" "删除到行尾" pinky-delete-line-end)
+    ("dG" "删除到文件尾" pinky-delete-buffer-end)
+    ("cc" "修改当前行" pinky-change-line)
+    ("cw" "修改当前词" pinky-change-word)
+    ("ciw" "修改完整单词" pinky-change-inner-word)
+    ("caw" "修改单词及空白" pinky-change-a-word)
+    ("c$" "修改到行尾" pinky-change-line-end)
+    ("cG" "修改到文件尾" pinky-change-buffer-end)
+    ("s" "替换字符并输入" pinky-substitute-char)
+    ("x" "删除字符" pinky-delete-char)
+    ("r" "替换单个字符" pinky-replace-char)
+    ("R" "连续替换模式" pinky-replace-mode-start)
+    ("u" "撤销" undo-only)
+    ("C-r" "重做" undo-redo)
+    ("." "重复上次编辑" pinky-repeat-last-edit)]])
 
 (defun my/pinky-transient-hide ()
   "关闭 Pinky 被动键位表，不改变当前输入状态。"
@@ -80,7 +121,7 @@
 (defun my/pinky-transient-show ()
   "以被动 Transient 面板显示 Pinky 键位，保留 Pinky 的原始单键输入。"
   (my/pinky-transient-hide)
-  ;; 不调用 `transient--setup-transient'；它会接管按键，导致 n/p 等不再
+  ;; 不调用 `transient--setup-transient'；它会接管按键，导致 h/j/k/l 等不再
   ;; 传递给 pinky-mode。这里仅使用 Transient 的布局与渲染实现。
   (let ((transient--buffer-name my/pinky-transient-display-buffer-name)
         (transient--buffer nil)
@@ -110,33 +151,6 @@
     (pinky-mode-deactivate))
   (my/pinky-transient-hide))
 
-(defun my/pinky-window-0 ()
-  "选择第 10 个窗口，补齐 Pinky 文档中 0–9 的窗口编号约定。"
-  (interactive)
-  (require 'window-number)
-  (window-number-select 10))
-
-(defun my/pinky-beginning-of-word ()
-  "移动到光标所在单词的开头；不在单词内时向前移动一个单词。"
-  (interactive)
-  (if-let ((bounds (bounds-of-thing-at-point 'word)))
-      (goto-char (car bounds))
-    (backward-word 1)))
-
-(defun my/pinky-end-of-word ()
-  "移动到光标所在单词最后一个字符之后；不在单词内时向后移动一个单词。"
-  (interactive)
-  (if-let ((bounds (bounds-of-thing-at-point 'word)))
-      (goto-char (cdr bounds))
-    (forward-word 1)))
-
-(defun my/pinky-kill-word-at-point ()
-  "删除光标所在的完整单词；没有单词时沿用 `kill-word' 的前向行为。"
-  (interactive)
-  (if-let ((bounds (bounds-of-thing-at-point 'word)))
-      (kill-region (car bounds) (cdr bounds))
-    (kill-word 1)))
-
 (defun my/pinky--after-activate (&rest _)
   "处理 Pinky 从 minibuffer 返回时的菜单恢复。"
   (when (bound-and-true-p pinky-mode)
@@ -154,18 +168,17 @@
   (key-chord-define-global "kj" #'my/pinky-activate))
 
 (defun my/pinky-setup-keymap ()
-  "配置 Pinky 的退出、窗口和小写单词操作键。"
-  ;; 热重载时也清除上一版的大写/方括号绑定，避免旧字节码残留行为。
-  (dolist (key '("B" "W" "D" "[" "]"))
+  "配置本地 Pinky 的退出键并清理旧数字窗口绑定。"
+  ;; 插件通过原地重建 keymap 支持热重载；先恢复完整 Vim 键位，避免旧会话
+  ;; 中残留的 defvar map 让 gg、W/B/E、z 系列等新键看似没有生效。
+  (pinky-mode-setup-keymap)
+  ;; 本地源码已经删除数字窗口绑定；这里也清理热重载前可能残留的旧绑定。
+  (dolist (key (append (mapcar #'number-to-string (number-sequence 1 9))
+                       (mapcar (lambda (number) (format "C-%d" number))
+                               (number-sequence 0 9))))
     (define-key pinky-mode-map (kbd key) nil))
   (define-key pinky-mode-map (kbd "i") #'my/pinky-deactivate)
-  (define-key pinky-mode-map (kbd "<escape>") #'my/pinky-deactivate)
-  (define-key pinky-mode-map (kbd "0") #'my/pinky-window-0)
-  (define-key pinky-mode-map (kbd "h") #'backward-word)
-  (define-key pinky-mode-map (kbd "l") #'forward-word)
-  (define-key pinky-mode-map (kbd "t") #'my/pinky-beginning-of-word)
-  (define-key pinky-mode-map (kbd "z") #'my/pinky-end-of-word)
-  (define-key pinky-mode-map (kbd "q") #'my/pinky-kill-word-at-point))
+  (define-key pinky-mode-map (kbd "<escape>") #'my/pinky-deactivate))
 
 (use-package key-chord
   :straight t
@@ -173,18 +186,12 @@
   :config
   (my/pinky-setup-key-chord))
 
-;; pinky-mode 的原始实现依赖这个旧的窗口编号包；显式声明使新机器可自动
-;; 安装依赖，而非在首次按 k+j 时才报找不到 `window-number'。
-(use-package window-number
-  :straight t
-  :defer t)
-
 (use-package pinky-mode
-  :straight (:host github :repo "jayconrod/pinky-mode")
+  ;; 使用仓库内已移除 window-number 依赖的源码，不再由 straight 下载上游包。
+  :load-path "plugins/my-pinky-mode"
+  :straight nil
   :commands (pinky-mode-activate pinky-mode-deactivate)
   :config
-  ;; 原生 i 和用户指定的 ESC 都必须走包装退出函数，保证只有退出 Pinky
-  ;; 后才关闭底部键位表。
   (my/pinky-setup-keymap)
   (advice-remove 'pinky-mode-activate #'my/pinky--after-activate)
   (advice-remove 'pinky-mode-deactivate #'my/pinky--after-deactivate)
