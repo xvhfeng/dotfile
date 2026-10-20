@@ -90,6 +90,40 @@
   (dolist (number (number-sequence 0 9))
     (should-not (lookup-key pinky-mode-map (kbd (format "C-%d" number))))))
 
+(ert-deftest pinky-mode-does-not-change-cursor-color ()
+  "Toggling Pinky must leave the theme-owned cursor color untouched."
+  (unwind-protect
+      (cl-letf (((symbol-function 'set-cursor-color)
+                 (lambda (&rest _)
+                   (ert-fail "Pinky changed the cursor color"))))
+        (pinky-mode-activate)
+        (pinky-mode-deactivate))
+    (pinky-mode -1)))
+
+(ert-deftest pinky-mode-temporarily-replaces-and-restores-mode-name ()
+  "PinkyMode replaces the visible mode name and restores the exact old value."
+  (with-temp-buffer
+    (emacs-lisp-mode)
+    (let ((original mode-name))
+      (unwind-protect
+          (progn
+            (pinky-mode-activate)
+            (should (equal mode-name "PinkyMode"))
+            (pinky-mode-deactivate)
+            (should (equal mode-name original))
+            (should-not (local-variable-p 'pinky--saved-mode-name)))
+        (pinky-mode -1)))))
+
+(ert-deftest pinky-mode-updates-buffers-that-change-major-mode ()
+  "Buffers changing major mode while Pinky is active stay labelled."
+  (unwind-protect
+      (progn
+        (pinky-mode-activate)
+        (with-temp-buffer
+          (text-mode)
+          (should (equal mode-name "PinkyMode"))))
+    (pinky-mode -1)))
+
 (ert-deftest pinky-mode-repeats-character-find-in-both-directions ()
   (with-temp-buffer
     (insert "a d x d\n")

@@ -90,19 +90,32 @@
 (defgroup pinky nil "Pinky mode group"
   :group 'editing)
 
-(defcustom pinky-active-color "red"
-  "The color of the point when pinky mode is active."
-  :type 'color
-  :group 'pinky)
-
-;; TODO: it would be good to set the default to the normal cursor face
-;; background color. I can't figure out the symbol of this though.
-(defcustom pinky-inactive-color "black"
-  "The color of the point when pinky mode is inactive."
-  :type 'color
-  :group 'pinky)
-
 (defvar pinky-mode-in-minibuffer nil)
+
+(defvar-local pinky--saved-mode-name nil
+  "Original `mode-name' saved while Pinky mode is active in this buffer.")
+
+(defun pinky--show-mode-name ()
+  "Show PinkyMode in the current buffer without losing its major-mode name."
+  (unless (local-variable-p 'pinky--saved-mode-name)
+    (setq-local pinky--saved-mode-name mode-name))
+  (setq-local mode-name "PinkyMode"))
+
+(defun pinky--restore-mode-name ()
+  "Restore the current buffer's major-mode name saved by Pinky mode."
+  (when (local-variable-p 'pinky--saved-mode-name)
+    (setq-local mode-name pinky--saved-mode-name)
+    (kill-local-variable 'pinky--saved-mode-name)))
+
+(defun pinky--update-all-mode-names (active)
+  "Show PinkyMode in every live buffer when ACTIVE, otherwise restore names."
+  (dolist (buffer (buffer-list))
+    (when (buffer-live-p buffer)
+      (with-current-buffer buffer
+        (if active
+            (pinky--show-mode-name)
+          (pinky--restore-mode-name)))))
+  (force-mode-line-update t))
 
 (defvar pinky-last-find nil
   "Last Vim-style character find as (CHAR DIRECTION TILL).")
@@ -118,8 +131,7 @@
 
 (defun pinky-mode-activate ()
   (interactive)
-  (pinky-mode t)
-  (set-cursor-color pinky-active-color))
+  (pinky-mode t))
 
 (defun pinky-mode-deactivate ()
   (interactive)
@@ -127,8 +139,7 @@
     (pinky-insert-state-mode -1))
   (when (bound-and-true-p pinky-replace-mode)
     (pinky-replace-mode -1))
-  (pinky-mode -1)
-  (set-cursor-color pinky-inactive-color))
+  (pinky-mode -1))
 
 (defun pinky--remember-edit (command &rest arguments)
   "Remember COMMAND and ARGUMENTS for Vim-style dot repetition."
@@ -839,7 +850,15 @@ plugin updates an already running `pinky-mode' session."
 
 (define-minor-mode pinky-mode
   "Navigate without holding meta keys"
-  :lighter " Pinky" :global t :keymap pinky-mode-map)
+  :lighter nil
+  :global t
+  :keymap pinky-mode-map
+  (if pinky-mode
+      (progn
+        (add-hook 'after-change-major-mode-hook #'pinky--show-mode-name)
+        (pinky--update-all-mode-names t))
+    (remove-hook 'after-change-major-mode-hook #'pinky--show-mode-name)
+    (pinky--update-all-mode-names nil)))
 
 
 (add-hook 'minibuffer-setup-hook (lambda nil
