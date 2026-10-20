@@ -48,7 +48,6 @@
 ;; 后，Scratch 或单独重载工作台时 Transient 也能先安全展示完整菜单。
 (autoload 'my/smerge-menu "init-smerge" nil t)
 (autoload 'my/avy-menu "init-avy" nil t)
-(autoload 'my/pinky-activate "init-pinky" nil t)
 (autoload 'my/mark-indent-block "init-treesitter" nil t)
 (autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
@@ -237,6 +236,19 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (interactive)
   (my/workbench-call-on-demand 'dired-x 'dired-jump "当前目录"))
 
+(defun my/workbench-compile-current-buffer ()
+  "保存并从当前文件所在目录执行既有 `compile-command'。
+
+这不会改写项目的编译命令；只将编译的工作目录确定为当前 Buffer 对应文件的
+目录，便于单文件或在子目录中的源码直接调用既有构建规则。"
+  (interactive)
+  (unless buffer-file-name
+    (user-error "当前 Buffer 未访问文件，无法编译"))
+  (when (buffer-modified-p)
+    (save-buffer))
+  (let ((default-directory (file-name-directory buffer-file-name)))
+    (compile compile-command)))
+
 (defun my/workbench-open-terminal ()
   "在当前目录打开 Emacs 配置的 vterm 终端。"
   (interactive)
@@ -324,6 +336,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("cf" "代码折叠" my/workbench-fold-menu)
     ;; 合并冲突在独立 Transient 中操作，工作台只提供统一入口。
     ("cm" "合并冲突" my/smerge-menu)
+    ("cb" "编译当前 Buffer" my/workbench-compile-current-buffer)
     ("cc" "编译" compile)]
    ["   编辑与跳转"
     ("ee" "批量编辑符号" my/workbench-edit-occurrences)
@@ -333,8 +346,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("ei" "选择缩进块内部" my/mark-indent-block-inner)
     ("em" "匹配成对符号或标签" my/match-pair)
     ("eu" "可视撤销树" my/workbench-visual-undo)
-    ("ej" "Avy 跳转菜单" my/avy-menu)
-    ("ep" "Pinky 单键导航" my/pinky-activate)]
+    ("ej" "Avy 跳转菜单" my/avy-menu)]
    ["   项目与 Git"
     ("pp" "切换项目" project-switch-project)
     ("pg" "Git 状态" magit-status)
@@ -371,8 +383,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; 这里使用 <escape> 事件而不是终端 ESC 字符，因此不会破坏 M-x 等 Meta 前缀。
 (define-key my-leader-map (kbd "SPC") #'my/workbench)
 (keymap-global-set "<escape>" #'my/workbench)
-;; 显式恢复 C-z 的 Emacs 默认行为，热重载配置时也不会遗留旧工作台绑定。
-(keymap-global-set "C-z" #'suspend-frame)
+;; C-z 由 Pinky 使用；工作台不覆盖该全局绑定。
 (with-eval-after-load 'which-key
   ;; 将命令名替换为中文菜单说明，用户在 C-c 提示和按键查询中均可发现工作台。
   (which-key-add-keymap-based-replacements
@@ -410,10 +421,9 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; ---------------------------------------------------------------------------
 ;; - 物理 `ESC' 用于切换个人工作台：关闭时打开、打开时关闭；`C-c SPC' 是
 ;;   保留的语义化菜单入口。
-;;   `C-z' 已恢复为 Emacs 默认的 `suspend-frame'。
+;;   `C-z' 由 Pinky 单键导航使用。
 ;; - 菜单采用两段式小写助记键：首字母选择分组，第二个字母选择具体动作。
 ;;   `f/c/e/p/b/h' 分别表示文件、代码、编辑、项目、Buffer/笔记和帮助。
-;; - 工作台“编辑与跳转”分组按 `ep' 可进入 Pinky 单键导航模式。
 ;; - “文件与搜索”中按 `fv' 从磁盘重新加载当前 Buffer；未保存的修改仍会要求确认。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
 ;; - “编辑与跳转”提供 Iedit、语义选区、撤销树和 Avy；现有短键仍可直接使用。

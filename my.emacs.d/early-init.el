@@ -198,30 +198,45 @@ Ivy or Dirvish remain disabled until explicitly added to `my/init-modules'."
                 (file-newer-than-file-p source compiled))
         (my/byte-compile-user-lisp-file source)))))
 
-(defun my/user-lisp--load-source-and-compile (feature source)
-  "Load FEATURE from newer SOURCE, then compile it for the next startup.
+(defun my/user-lisp--load-source-fallback (feature source)
+  "Load FEATURE from SOURCE only when no usable compiled artifact exists.
 
-Loading first is required for portable first-run behavior.  A source module's
-`use-package' declarations let straight install and activate third-party
-dependencies at runtime.  Compiling that module before evaluating it makes the
-compiler expand package macros while those dependencies are still absent from
-`load-path', so a new machine or a newly added package fails once before it can
-install itself."
+正常路径始终加载镜像 `.elc'。此回退仅用于首次安装第三方依赖导致编译
+失败、或新生成的字节码损坏的恢复场景；源码加载后下一次启动会再次尝试编译。"
   (load source nil 'nomessage t)
   (unless (featurep feature)
     (error "%s 未提供 feature %s" source feature))
   (cl-incf my/user-lisp-source-load-count)
-  ;; Compilation is a cache warm-up.  A failure is already reported by
-  ;; `my/byte-compile-user-lisp-file' and must not undo the successfully loaded
-  ;; source configuration for this session.
-  (my/byte-compile-user-lisp-file source)
   feature)
+
+(defun my/user-lisp--compile-and-load (feature source)
+  "Compile SOURCE first, then load its newest mirrored `.elc' for FEATURE.
+
+该函数覆盖 `user-lisp/' 与其 `lang/' 等所有递归子目录。首次安装依赖时
+编译可能暂时失败，此时才加载源码，使其安装依赖后留待下次启动重新编译。"
+  (let ((compiled (my/byte-compile-user-lisp-file source)))
+    (if (not compiled)
+        (my/user-lisp--load-source-fallback feature source)
+      (condition-case err
+          (progn
+            (load compiled nil 'nomessage t)
+            (unless (featurep feature)
+              (error "%s 未提供 feature %s" compiled feature))
+            (cl-incf my/user-lisp-bytecode-load-count)
+            feature)
+        (error
+         (display-warning
+          'user-lisp-bytecode
+          (format "%s 加载失败，回退到源文件：%s"
+                  compiled (error-message-string err))
+          :warning)
+         (my/user-lisp--load-source-fallback feature source))))))
 
 (defun my/require-user-lisp-feature (feature)
   "Load FEATURE from current source or its mirrored runtime bytecode.
-When source is newer or bytecode is missing, load source first so package
-dependencies can be installed and activated, then compile it for the next
-startup.  Broken bytecode also falls back to this source-first path."
+When source is newer or bytecode is missing, compile source first and load the
+new `.elc'.  Source loading is reserved for recovery when compilation cannot
+complete (normally the first startup of a new third-party dependency)."
   (let* ((source (my/user-lisp-source-file feature))
          (compiled (and source (my/user-lisp-compiled-file source))))
     (unless source
@@ -242,8 +257,8 @@ startup.  Broken bytecode also falls back to this source-first path."
             (format "%s 加载失败，回退到源文件：%s"
                     compiled (error-message-string err))
             :warning)
-           (my/user-lisp--load-source-and-compile feature source)))
-      (my/user-lisp--load-source-and-compile feature source))))
+           (my/user-lisp--compile-and-load feature source)))
+      (my/user-lisp--compile-and-load feature source))))
 
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=81506

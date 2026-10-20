@@ -303,7 +303,7 @@
     init-smerge
     init-vundo
     init-mykey
-    ;; Pinky 单键导航由同时按下 k+j 进入，并显示被动键位表。
+    ;; Pinky 单键导航由 C-z 进入，并显示被动键位表。
     init-pinky
     ;; 使用 Emacs 内置像素插值平滑指定的键盘翻页按键。
     init-smooth-scroll

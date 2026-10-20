@@ -1,6 +1,6 @@
 ;;; init-pinky.el --- Pinky 单键导航与被动 Transient 菜单 -*- lexical-binding: t; -*-
 
-;; Pinky 把常用导航改为单键。此模块用 key-chord 的同时按键 `k+j' 进入，
+;; Pinky 把常用导航改为单键。此模块通过全局 `C-z' 进入，
 ;; 并复用 Transient 的排版能力显示完整键位表，但刻意不安装 Transient keymap，
 ;; 因而菜单显示时每个按键仍由 pinky-mode 直接处理。
 
@@ -186,6 +186,29 @@
   (pinky-mode-activate)
   (my/pinky-transient-show))
 
+;; 用户明确指定 C-j 作为 Pinky 的唯一全局入口；这会替换原先的
+;; `suspend-frame'，不再启用 key-chord 的 k+j 入口。
+(keymap-global-set "C-j" #'my/pinky-activate)
+
+;; `lisp-interaction-mode'（例如 *scratch*）会在其 major-mode map 中把
+;; C-j 绑定为 `eval-print-last-sexp'，优先级高于 global-map。使用 emulation
+;; map 仅提升 Pinky 的激活键，避免用户在不同编辑 Buffer 中得到不同结果。
+(defvar-local my/pinky-activation-override-active t
+  "非 nil 时让 Pinky 的 C-j 激活键优先于 major-mode keymap。")
+
+(defvar my/pinky-activation-override-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-j") #'my/pinky-activate)
+    map)
+  "为 Pinky 激活键提供高优先级的 emulation keymap。")
+
+(defvar my/pinky-activation-emulation-alist
+  `((my/pinky-activation-override-active
+     . ,my/pinky-activation-override-map))
+  "只提升 Pinky 激活键的 emulation keymap alist。")
+
+(add-to-list 'emulation-mode-map-alists 'my/pinky-activation-emulation-alist)
+
 (defun my/pinky-deactivate ()
   "退出 Pinky 单键导航；仅在退出后关闭被动键位表。"
   (interactive)
@@ -203,12 +226,6 @@
   (unless (bound-and-true-p pinky-mode)
     (my/pinky-transient-hide)))
 
-(defun my/pinky-setup-key-chord ()
-  "启用 Pinky 的 k+j 同时按键入口。"
-  ;; key-chord 是真正的同时按键，而非顺序键位；按下 k+j 不会影响普通输入。
-  (key-chord-mode 1)
-  (key-chord-define-global "kj" #'my/pinky-activate))
-
 (defun my/pinky-setup-keymap ()
   "配置本地 Pinky 的退出键并清理旧数字窗口绑定。"
   ;; 插件通过原地重建 keymap 支持热重载；先恢复完整 Vim 键位，避免旧会话
@@ -221,12 +238,6 @@
     (define-key pinky-mode-map (kbd key) nil))
   (define-key pinky-mode-map (kbd "i") #'my/pinky-deactivate)
   (define-key pinky-mode-map (kbd "<escape>") #'my/pinky-deactivate))
-
-(use-package key-chord
-  :straight t
-  :demand t
-  :config
-  (my/pinky-setup-key-chord))
 
 (use-package pinky-mode
   ;; 使用仓库内已移除 window-number 依赖的源码，不再由 straight 下载上游包。
