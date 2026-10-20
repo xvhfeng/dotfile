@@ -15,8 +15,24 @@
 (setq eshell-directory-name (my/runtime-file "eshell/"))
 (make-directory eshell-directory-name t)
 
-(defun my/vterm-ensure-module-file ()
-  "Make CMake's macOS module artifact discoverable by Emacs."
+(defun my/vterm--ensure-module-in-directory (vterm-directory)
+  "Make the native module in VTERM-DIRECTORY discoverable by Emacs."
+  (let ((expected-module
+         (expand-file-name
+          (concat "vterm-module" module-file-suffix)
+          vterm-directory))
+        (cmake-module
+         (expand-file-name "vterm-module.so" vterm-directory)))
+    (when (and module-file-suffix
+               (not (equal module-file-suffix ".so"))
+               (file-exists-p cmake-module)
+               (not (file-exists-p expected-module)))
+      (make-symbolic-link "vterm-module.so" expected-module t))
+    (add-to-list 'load-path vterm-directory)))
+
+(defun my/vterm-ensure-module-file (&rest _)
+  "Make CMake's native Vterm artifact discoverable by Emacs.
+This accepts and ignores arguments so it can run as advice before `vterm'."
   (let* ((build-directory
           (expand-file-name "straight/build/vterm/" user-emacs-directory))
          (vterm-library (locate-library "vterm.el" t))
@@ -25,19 +41,9 @@
          (vterm-directory (if (file-directory-p build-directory)
                               build-directory
                             (and vterm-library
-                                 (file-name-directory vterm-library))))
-         (expected-module (and vterm-directory
-                               (expand-file-name
-                                (concat "vterm-module" module-file-suffix)
-                                vterm-directory)))
-         (cmake-module (and vterm-directory
-                            (expand-file-name "vterm-module.so" vterm-directory))))
-    (when (and expected-module
-               (not (file-exists-p expected-module))
-               (file-exists-p cmake-module))
-      (make-symbolic-link "vterm-module.so" expected-module t))
+                                 (file-name-directory vterm-library)))))
     (when vterm-directory
-      (add-to-list 'load-path vterm-directory))))
+      (my/vterm--ensure-module-in-directory vterm-directory))))
 
 (defun my/vterm-restore-terminal-delete-keys ()
   "Prevent Which-Key's global delete bindings from intercepting Vterm input."
@@ -88,6 +94,10 @@
                 (hl-line-mode -1))
               (my/vterm-restore-terminal-delete-keys))))
 
+;; Straight/CMake 重建插件时会重新生成 vterm-module.so，并移除 macOS 所需的
+;; .dylib 别名。每次真正打开终端前重新检查，避免只能靠重启或手工修复。
+(advice-add 'vterm :before #'my/vterm-ensure-module-file)
+
 (with-eval-after-load 'vterm
   ;; 直接覆盖 Vterm 主模式 map；即使 Which-Key 的全局 minor mode 未启用，
   ;; ESC 也始终发送给终端而非触发 `keyboard-quit'。
@@ -115,4 +125,5 @@
 ;; - vterm 中 `C-y' 粘贴；`M-x'、`C-x C-f/b/k/o' 仍可调用 Emacs 命令。
 ;; - 默认 Shell 为 `/bin/bash'，历史上限 10000 行；终端 Buffer 隐藏行号和当前行高亮。
 ;; - 首次编译需系统安装 CMake 与 libvterm；模块加载失败时先检查这两个依赖。
+;; - 可运行 `tools/repair-vterm-module.sh' 手工重建、修复后缀并验证原生模块。
 ;; - Eshell 自身的数据目录仍被迁移到 `.local/eshell/'。

@@ -47,6 +47,23 @@
 
 
 ;; 另一个多光标的编辑软件，非常轻量
+(defun my/iedit-style-faces (&rest _)
+  "让 Iedit 的可编辑与只读匹配项保持清晰、易辨认。"
+  (when (facep 'iedit-occurrence)
+    (set-face-attribute 'iedit-occurrence nil
+                        :inherit nil
+                        :foreground "#1e2030"
+                        :background "#ffc777"
+                        :weight 'bold
+                        :extend nil))
+  (when (facep 'iedit-read-only-occurrence)
+    (set-face-attribute 'iedit-read-only-occurrence nil
+                        :inherit nil
+                        :foreground "#1e2030"
+                        :background "#82aaff"
+                        :weight 'bold
+                        :extend nil)))
+
 (use-package iedit
   :straight t
   :defer t
@@ -65,6 +82,9 @@
   (call-interactively #'comment-line))
 
 (with-eval-after-load 'iedit
+  (my/iedit-style-faces)
+  ;; 切换主题可能重置包的 face；主题启用后重新应用 Iedit 高对比配色。
+  (add-hook 'enable-theme-functions #'my/iedit-style-faces)
   ;; 中文说明：M-' 保留 Iedit 原本的“排除当前匹配项”能力，避免与 M-; 注释冲突。
   (define-key iedit-mode-keymap (kbd "M-;") #'my/iedit-comment-line)
   (define-key iedit-mode-keymap (kbd "M-'") #'iedit-toggle-selection))
