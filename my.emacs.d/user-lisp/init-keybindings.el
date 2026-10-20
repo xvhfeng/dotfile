@@ -275,6 +275,9 @@ start of every following column."
     global-map
     "C-w" "窗口操作"
     "C-S-c" "多光标")
+  (which-key-add-keymap-based-replacements
+    my-window-map
+    "C-w" "Ace Window：选择窗口")
   ;; C-c 下所有层级只从 `my/c-c-prefix-labels' 注册，避免两份说明漂移。
   (my/register-c-c-which-key-labels))
 
@@ -305,12 +308,6 @@ start of every following column."
     ;; Ibuffer 是可持续操作的真正 Buffer，适合由 Popper 隐藏、召回和轮换；
     ;; 原来的 Electric Buffer List 保留在 C-c b e，功能没有被删除。
     "C-x C-b" '("Ibuffer popup" . my/workbench-ibuffer))
-
-  ;; C-c C-w 由 Ace Window 独占。General 的 override keymap 高于
-  ;; major/minor mode keymap，防止 Dirvish、web-mode 等模式重新抢占。
-  (general-define-key
-    :keymaps 'override
-    "C-c C-w" '("Ace Window：选择窗口" . ace-window))
 
   ;; Leader 直接写入 Emacs 原生 C-c 用户 keymap；窗口命令使用独立子 keymap。
   (general-create-definer my-leader-def
@@ -356,7 +353,7 @@ start of every following column."
 ;;   不会再把同一行后续菜单推歪。当前前缀显示在菜单顶部。
 ;; - 粗体 `▸' 项是可继续进入的功能分组；普通字重项是立即执行的命令。
 ;; - 窗口前缀为 `C-w'，兼容入口为 `C-c w'；两者指向同一个窗口 keymap。
-;; - `C-t' 保留为 `kill-region'；`C-c C-w' 是高优先级的 Ace Window 选择键。
+;; - `C-t' 保留为 `kill-region'；`C-w C-w' 用 Ace Window 选择窗口。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
 ;;   `C-x C-b' 与 `C-c b l' 打开可由 Popper 召回的 Ibuffer；`C-c b e' 保留原有
 ;;   Electric Buffer List，适合只进行一次快速选择。

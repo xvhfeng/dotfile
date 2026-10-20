@@ -4,11 +4,32 @@
 ;; 这样既消除编译警告，也避免与 straight 安装的 project 包争抢 feature。
 (declare-function project-current "project" (&optional maybe-prompt dir))
 (declare-function project-root "project" (project))
-;; `consult-customize' 是宏。Consult 在运行时保持延迟加载，但字节编译必须
-;; 先看到宏定义；否则编译器会把命令名当作普通函数参数，在 Consult 首次
-;; 自动加载时求值成变量，最终触发 `void-variable consult-git-grep'。
-(eval-when-compile
-  (require 'consult))
+;; `consult-customize' 是第三方宏，不能在文件顶层通过 `eval-when-compile'
+;; 提前 require Consult。Emacs 加载源码时也会执行 eager macro expansion；
+;; 新机器或 Straight 重建后，顶层 require 会赶在下面的 :straight 安装声明
+;; 之前运行，形成“必须先安装才能执行安装声明”的冷启动依赖环。
+(defun my/consult-apply-customizations ()
+  "Apply Consult preview settings after Consult has actually loaded.
+
+Keep the macro calls quoted so loading or compiling this module never requires
+Consult to exist beforehand.  `eval' expands them only from Consult's :config
+phase, where `consult-customize' is guaranteed to be defined."
+  (eval
+   '(progn
+      (consult-customize
+       consult-ripgrep consult-git-grep consult-grep consult-man
+       consult-bookmark consult-xref
+       consult-source-bookmark consult-source-file-register
+       consult-source-buffer consult-source-project-buffer
+       consult-source-buffer-register
+       :preview-key '(:debounce 1 any))
+      (consult-customize
+       consult-find
+       :preview-key nil)
+      (consult-customize
+       consult-recent-file
+       consult-source-recent-file consult-source-project-recent-file
+       :preview-key nil))))
 
 ;; ============================================================================
 ;; 1. 定义以 `.projx` 为标志的项目根目录查找逻辑
@@ -56,22 +77,9 @@
 
   ;; 搜索、书签和 Buffer 候选可能很多，快速移动时延迟预览，避免大项目中
   ;; 无意义的磁盘读取和窗口重绘。
-  (consult-customize
-   consult-ripgrep consult-git-grep consult-grep consult-man
-   consult-bookmark consult-xref
-   consult-source-bookmark consult-source-file-register
-   consult-source-buffer consult-source-project-buffer
-   consult-source-buffer-register
-   :preview-key '(:debounce 1 any))
-  (consult-customize
-   consult-find
-   :preview-key nil)
   ;; `consult-recent-file' 的预览会打开候选文件。候选移动的优先级高于
   ;; 预览，因此完全关闭该命令的自动预览，避免 C-n/C-p 触发磁盘读取。
-  (consult-customize
-   consult-recent-file
-   consult-source-recent-file consult-source-project-recent-file
-   :preview-key nil))
+  (my/consult-apply-customizations))
 
 ;; 不使用 use-package 的 :general 关键字；等 General 可用后再绑定。
 (with-eval-after-load 'general
