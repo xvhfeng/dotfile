@@ -284,7 +284,7 @@
     ;; 主题在基础设置后立即加载，后续界面和插件继承统一颜色。
     init-theme
     init-keybindings
-    init-input-method
+    ;; init-input-method
     init-minbuffer
     init-eshell
     init-dired

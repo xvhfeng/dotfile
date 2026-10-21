@@ -318,6 +318,113 @@ its own closing tag rather than an inner sibling's closing tag."
     (beginning-of-line)
     (open-line 1)))
 
+
+
+
+
+;; 类似于vim的f和F，向前/先后定位到当前行的某个char
+(defun my-go-to-char (char)
+  "Move forward to CHAR.
+  Typing CHAR again will move forwad to the next occurence of CHAR."
+  (interactive "cGo to char: ")
+  (let ((case-fold-search nil))
+    (search-forward (string char) nil nil 1)
+    (backward-char)
+    (while (equal (read -key) char)
+      (forward-char)
+      (search-forward (string char) nil nil 1)
+      (backward-char))
+    )
+  (setq unread-command-events (list last-input-event)))
+
+(defun my-backward-go-to-char (char)
+  "Move backward to CHAR.
+   Typing CHAR again will move backward to the next occurence of CHAR."
+  (interactive "cGo to char: ")
+  (let ((case-fold-search nil))
+    ;; backward
+    (search-backward (string char) nil nil )
+    (while (equal (read-key) char)
+      (search-backward (string char) nil nil )))
+  (setq unread-command-events (list last-input-event)))
+
+;;(global-set-key (kbd "C-z f") 'my-go-to-char)
+;;(global-set-key (kbd "C-z F") 'my-backward-go-to-char)
+
+
+;; 类似vim中的寄存器功能，能跳转
+(defun my-point-to-register()
+  "Store cursor position to a register.
+Use my-jump-to-register to jump back to the stored
+position."
+  (interactive)
+  (setq zmacs-region-stays t)
+  (point-to-register 8))
+
+(defun my-jump-to-register()
+  "Switches between current cursor position and position
+that was stored with my-point-to-register."
+  (interactive)
+  (setq zmacs-region-stays t)
+  (let ((tmp (point-marker)))
+        (jump-to-register 8)
+        (set-register 8 tmp)))
+
+;;(global-set-key "\C-z." 'my-point-to-register)
+;;(global-set-key "\C-z," 'my-jump-to-register)
+
+
+
+(defun cursor-to-top-of-window()
+"Move cursor to top of window."
+(interactive)
+(move-to-window-line 0))
+(defun cursor-to-bottom-of-window()
+"Move cursor to bottom of window."
+(interactive)
+(move-to-window-line -1))
+(defun cursor-to-middle-of-window()
+"Move cursor to middle of window."
+(interactive)
+(move-to-window-line nil))
+
+;;C-zh, C-zm, C-zl 类似于vim的H,M,L
+;;(global-set-key (kbd "C-z h") 'cursor-to-top-of-window)
+;; (global-set-key (kbd "C-z m") 'cursor-to-middle-of-window)
+;; (global-set-key (kbd "C-z l") 'cursor-to-bottom-of-window)
+
+
+; replace C-u 0 C-l
+(defun line-to-top-of-window ()
+  "Move the line point is on to top of window."
+  (interactive)
+  (recenter 0))
+; replace C-u - C-l
+(defun line-to-bottom-of-window ()
+  "Move the line point is on to botton of window."
+  (interactive)
+  (recenter -1))
+(defun line-to-center-of-window ()
+  "Move the line point is on to center of window."
+  (interactive)
+  (recenter ))
+;; C-zt, C-zb C-zz 类似于vim 的zt, zb ,zz
+;; (global-set-key (kbd "C-z t") 'line-to-top-of-window)
+;; (global-set-key (kbd "C-z b") 'line-to-bottom-of-window)
+;; (global-set-key (kbd "C-z z") 'line-to-center-of-window)
+
+
+;; vim中的%匹配命令
+(defun match-paren (arg)
+"Go to the matching parenthesis if on parenthesis otherwise insert %."
+(interactive "p")
+(cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+ ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+ (t (self-insert-command (or arg 1)))))
+
+;; (global-set-key "%" 'match-paren)
+
+
 ;;; --- 自定义 Toggle Mark 函数 ---
 
 (defun my/toggle-mark-command ()
