@@ -54,6 +54,11 @@
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
 (autoload 'hydra-window-resize/body "init-window" nil t)
+;; 中文说明：单独加载工作台时也能显示书签菜单，选中后再加载 bm。
+(dolist (command '(bm-toggle bm-next bm-previous bm-show bm-show-all
+                   bm-remove-all-current-buffer))
+  (autoload command "bm" nil t))
+(autoload 'my/bm-clear-all "init-bm" nil t)
 (dolist (command '(treesit-fold-toggle treesit-fold-close-all treesit-fold-open-all))
   (autoload command "treesit-fold" nil t))
 (dolist (command '(vimish-fold-toggle-all vimish-fold-unfold-all
@@ -309,6 +314,18 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("n" "下一个手工折叠" vimish-fold-next-fold)
     ("p" "上一个手工折叠" vimish-fold-previous-fold)]])
 
+(transient-define-prefix my/workbench-bm-menu ()
+  "打开 bm.el 可视书签菜单。"
+  [["   可视书签"
+    ("t" "切换当前行书签" bm-toggle)
+    ("n" "下一个书签" bm-next)
+    ("p" "上一个书签" bm-previous)]
+   ["   查看与整理"
+    ("l" "当前文件书签" bm-show)
+    ("a" "全部可视书签" bm-show-all)
+    ("d" "清空当前文件书签" bm-remove-all-current-buffer)
+    ("D" "清空所有可视书签" my/bm-clear-all)]])
+
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
   ;; 所有入口使用“分组首字母 + 动作助记字母”的两段式小写键：
@@ -346,6 +363,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("ei" "选择缩进块内部" my/mark-indent-block-inner)
     ("em" "匹配成对符号或标签" my/match-pair)
     ("eu" "可视撤销树" my/workbench-visual-undo)
+    ("eb" "可视书签" my/workbench-bm-menu)
     ("ej" "Avy 跳转菜单" my/avy-menu)]
    ["   项目与 Git"
     ("pp" "切换项目" project-switch-project)
@@ -426,7 +444,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;;   `f/c/e/p/b/h' 分别表示文件、代码、编辑、项目、Buffer/笔记和帮助。
 ;; - “文件与搜索”中按 `fv' 从磁盘重新加载当前 Buffer；未保存的修改仍会要求确认。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
-;; - “编辑与跳转”提供 Iedit、语义选区、撤销树和 Avy；现有短键仍可直接使用。
+;; - “编辑与跳转”提供 Iedit、语义选区、撤销树、可视书签和 Avy。
 ;; - “Buffer、笔记与临时项”中按 `bk' 关闭当前 Buffer，按 `bp' 切换临时窗口。
 ;; - “帮助与发现”可查询按键、查看当前按键表或模式帮助，适合遗忘快捷键时使用。
 ;; - 选择“临时窗口”后，Popper 显示或隐藏最近的帮助、编译或诊断类 Buffer。

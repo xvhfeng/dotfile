@@ -285,6 +285,8 @@
     init-theme
     init-keybindings
     ;; init-input-method
+    ;; bm 可视书签在工作台加载前注册，列表与跳转命令可直接使用。
+    init-bm
     init-minbuffer
     init-eshell
     init-dired
