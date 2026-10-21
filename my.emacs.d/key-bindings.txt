@@ -1,0 +1,279 @@
+Emacs 按键参考（生成于 2026-10-21）
+====================================
+
+范围说明
+--------
+1. Pinky 列表以当前 Pinky 的 Transient 菜单分组为准；进入 Pinky 后，这些键
+   优先于普通编辑输入。
+2. C- 与 M- 列表取自完整启动后的 global-map，只列出单字母和单数字绑定。
+   某些 major mode、minibuffer、vterm 等局部 keymap 可覆盖全局绑定。
+3. “前缀 keymap”表示该键后还要继续输入后续键，不会立即执行单一命令。
+
+一、Pinky Mode 按键
+--------------------
+
+进入：C-j -> my/pinky-activate -> 启用 Pinky 单键导航并显示底部键位表。
+退出：i / ESC -> my/pinky-deactivate -> 退出 Pinky 并关闭键位表。
+
+【基础移动】
+键          函数                          操作        
+h           backward-char                 左移一个字符                        删除  
+j           next-line                     下移一行                           删除
+k           previous-line                 上移一行                           删除
+l           forward-char                  右移一个字符                       删除
+w           forward-word                  到下一个单词                       删除
+W           pinky-forward-WORD            到下一个空白分隔的 WORD            删除
+b           backward-word                 到上一个单词                        删除
+B           pinky-backward-WORD           到上一个空白分隔的 WORD             删除
+
+【词尾与行内】
+键          函数                          操作
+e           pinky-forward-word-end        到当前或下一个单词词尾              保留
+E           pinky-forward-WORD-end        到当前或下一个 WORD 词尾            保留
+ge          pinky-backward-word-end       到上一个单词词尾                    保留
+gE          pinky-backward-WORD-end       到上一个 WORD 词尾                  保留
+0           move-beginning-of-line        到行首                              保留
+^           back-to-indentation           到本行首个非空白字符                删除
+$           move-end-of-line              到行尾                             删除
+i / ESC     my/pinky-deactivate           退出 Pinky                         保留
+
+【字符与句子】
+键          函数                          操作
+f           pinky-find-char-forward       输入字符后向右定位该字符              保留
+F           pinky-find-char-backward      输入字符后向左定位该字符              保留
+t           pinky-till-char-forward       输入字符后停在其左侧                  保留
+T           pinky-till-char-backward      输入字符后停在其右侧                  保留
+;           pinky-repeat-find             按原方向重复上次字符定位              保留
+,           pinky-repeat-find-reverse     反方向重复上次字符定位                保留
+(           backward-sentence             上一句                                保留
+)           forward-sentence              下一句                                保留
+
+【搜索与跳转】
+键          函数                          操作
+/           pinky-search-forward          向前搜索                            保留
+?           pinky-search-backward         向后搜索                            保留
+n           pinky-search-next             沿原搜索方向继续                    保留
+N           pinky-search-previous         沿相反搜索方向继续                  保留
+gg          beginning-of-buffer           到文件开头                          删除
+G           end-of-buffer                 到文件结尾                          删除
+{           backward-paragraph            到上一段落                          保留
+}           forward-paragraph             到下一段落                          保留
+
+【视区与居中】
+键          函数                          操作
+g_          pinky-last-nonblank           到本行最后一个非空字符          删除
+H           pinky-window-top              到可视区域顶部                  保留
+M           pinky-window-middle           到可视区域中部                  保留
+L           pinky-window-bottom           到可视区域底部                  保留
+zz / z.     pinky-recenter-middle         当前行居中                      保留
+zt / z RET  pinky-recenter-top            当前行置顶                      保留
+zb / z-     pinky-recenter-bottom         当前行置底                      保留
+
+【滚动与定位】
+键          函数                          操作
+C-f         scroll-up-command             向下翻页                  删除
+C-b         scroll-down-command           向上翻页                  删除
+C-d         pinky-scroll-half-page-down   向下半页                  删除
+C-u         pinky-scroll-half-page-up     向上半页                  删除
+C-e         scroll-up-line                视口下移一行              删除
+C-y         scroll-down-line              视口上移一行              删除
+
+【代码折叠】
+键          函数                          操作
+za          pinky-fold-toggle             切换光标处折叠            
+zo          pinky-fold-open               展开当前折叠
+zc          pinky-fold-close              关闭当前折叠
+zR          pinky-fold-open-all           展开全部折叠
+zM          pinky-fold-close-all          关闭全部折叠
+zd          pinky-fold-delete             删除当前手工折叠
+
+【删除操作】
+键          函数                          操作
+dd          pinky-delete-line             删除当前整行
+dw          pinky-delete-word             删除到下一单词
+diw         pinky-delete-inner-word       删除完整当前单词
+daw         pinky-delete-a-word           删除单词及相邻空白
+d$          pinky-delete-line-end         删除到行尾
+dG          pinky-delete-buffer-end       删除到文件结尾
+
+【修改操作】
+键          函数                          操作
+cc          pinky-change-line             清空当前行并进入插入状态
+cw          pinky-change-word             修改到下一单词并进入插入状态
+ciw         pinky-change-inner-word       修改完整当前单词并进入插入状态
+caw         pinky-change-a-word           修改单词及空白并进入插入状态
+c$          pinky-change-line-end         修改到行尾并进入插入状态
+cG          pinky-change-buffer-end       修改到文件结尾并进入插入状态
+
+【单字符与重复】
+键          函数                          操作
+s           pinky-substitute-char         删除字符并进入插入状态
+x           pinky-delete-char             删除光标处字符
+r           pinky-replace-char            替换一个字符
+R           pinky-replace-mode-start      进入连续替换状态
+u           undo-only                     撤销
+C-r         undo-redo                     重做
+.           pinky-repeat-last-edit        重复最近一次 Pinky 编辑
+
+二、全局 C-单字母／数字按键
+---------------------------
+
+键          函数 / keymap                         操作
+C-a         move-beginning-of-line                行首
+C-b         backward-char                         后退一个字符
+C-c         mode-specific-command-prefix          用户命令前缀
+C-d         delete-char                           删除光标处字符
+C-e         move-end-of-line                      行尾
+C-f         forward-char                          前进一个字符
+C-g         keyboard-quit                         取消当前操作
+C-h         help-command                          帮助前缀
+C-i         indent-for-tab-command                缩进或补全（TAB）
+C-j         my/pinky-activate                     启用 Pinky Mode
+C-k         my-cut-dwim                           智能剪切
+C-l         recenter-top-bottom                   重置当前行在窗口的位置
+C-m         newline                               换行（RET）
+C-n         next-line                             下移一行
+C-o         my-open-line-below                    在下方插入空行
+C-p         previous-line                         上移一行
+C-q         quoted-insert                         原样插入下一个字符
+C-r         isearch-backward                      向后增量搜索
+C-s         isearch-forward                       向前增量搜索
+C-t         kill-region                           剪切选区
+C-u         universal-argument                    通用前缀参数
+C-v         scroll-up-command                     向前翻页
+C-w         窗口操作前缀                           后续 r/o/m/x/d/p/n/b/f/s/v/M/l/k/j/h 等操作窗口
+C-x         Control-X-prefix                      Emacs 原生命令前缀
+C-y         yank                                  粘贴
+C-z         suspend-frame                         挂起 Emacs Frame
+C-0         my/pixel-scroll-half-screen-forward   平滑向前半页
+C-1         digit-argument                        数字前缀参数 1
+C-2         my/toggle-mark-command                切换选区／设置标记
+C-3         digit-argument                        数字前缀参数 3
+C-4         digit-argument                        数字前缀参数 4
+C-5         digit-argument                        数字前缀参数 5
+C-6         digit-argument                        数字前缀参数 6
+C-7         my/pixel-scroll-page-backward-with-context
+                                                平滑向后翻页，保留上下文
+C-8         my/pixel-scroll-page-forward-with-context
+                                                平滑向前翻页，保留上下文
+C-9         my/pixel-scroll-half-screen-backward  平滑向后半页
+
+三、全局 M-单字母／数字按键
+---------------------------
+
+键          函数 / keymap                         操作
+M-a         backward-sentence                     上一句
+M-b         backward-word                         上一个单词
+M-c         my-capitalize-dwim                    智能首字母大写
+M-d         kill-word                             删除下一个单词
+M-e         forward-sentence                      下一句
+M-f         forward-word                          下一个单词
+M-g         导航前缀                               后续可跳转行、字符、错误、符号等
+M-h         mark-paragraph                        选择当前段落
+M-i         change-inner                          修改成对结构内部
+M-j         my-move-line-down                     当前行下移
+M-k         my-move-line-up                       当前行上移
+M-l         my-lower-dwim                         智能小写转换
+M-m         back-to-indentation                   到首个非空字符
+M-n         未绑定                                无全局单字符绑定
+M-o         change-outer                          修改成对结构外部
+M-p         未绑定                                无全局单字符绑定
+M-q         fill-paragraph                        段落重新排版
+M-r         move-to-window-line-top-bottom        在窗口的顶／中／底行间切换
+M-s         搜索前缀                               后续查找文件、当前文件搜索、Ripgrep 等
+M-t         transpose-words                       交换相邻两个单词
+M-u         my-upper-dwim                         智能大写转换
+M-v         scroll-down-command                   向后翻页
+M-w         my-copy-dwim                          智能复制
+M-x         execute-extended-command              执行 M-x 命令
+M-y         yank-pop                              循环选择粘贴历史
+M-z         zap-to-char                           删除至指定字符
+M-0         digit-argument                        数字前缀参数 0
+M-1         digit-argument                        数字前缀参数 1
+M-2         digit-argument                        数字前缀参数 2
+M-3         digit-argument                        数字前缀参数 3
+M-4         digit-argument                        数字前缀参数 4
+M-5         digit-argument                        数字前缀参数 5
+M-6         digit-argument                        数字前缀参数 6
+M-7         digit-argument                        数字前缀参数 7
+M-8         digit-argument                        数字前缀参数 8
+M-9         digit-argument                        数字前缀参数 9
+
+四、全局 C-S-单字母／数字按键
+-----------------------------
+
+键          函数 / keymap                         操作
+C-S-a       move-beginning-of-line                行首
+C-S-c       多光标前缀 keymap                      再按 C-S-c 调用 mc/edit-lines，在多行编辑
+C-S-c C-S-c mc/edit-lines                         为选中行创建多个光标
+C-S-o       my-open-line-above                    在当前行上方插入空行
+
+其它 C-S-单字母及 C-S-数字在当前 global-map 中未绑定。
+说明：部分终端或系统会把 C-S-字母与 C-字母视为同一个键；图形界面是否能区分
+取决于键盘布局和 Emacs 的事件解析。
+
+五、全局 M-S-单字母／数字按键
+-----------------------------
+
+键          函数                                操作
+M-S-x       execute-extended-command-for-buffer  只显示与当前 Buffer／模式相关的 M-x 命令
+
+其它 M-S-单字母及 M-S-数字在当前 global-map 中未绑定。
+
+六、全局 C-单个符号按键
+-------------------------
+
+键          函数 / keymap                         操作
+C-SPC       set-mark-command                      设置标记／开始选区
+C-!         my-replace-dwim                       智能替换
+C-'         imenu                                 打开当前 Buffer 的符号索引
+C--         er/contract-region                    收缩语义选区
+C-.         embark-act                            对当前候选或目标执行 Embark 动作
+C-/         undo                                  撤销
+C-:         avy-goto-char-timer                   输入字符后进行 Avy 跳转
+C-;         iedit-mode                            批量编辑当前符号匹配项
+C-<         mc/mark-previous-like-this            多光标选择上一个相同项
+C-=         er/expand-region                      扩展语义选区
+C->         mc/mark-next-like-this                多光标选择下一个相同项
+C-?         undo-redo                             重做
+C-@         set-mark-command                      设置标记／开始选区（C-SPC 等价）
+C-[         ESC-prefix                            ESC 前缀
+C-\         toggle-input-method                  切换输入法
+C-]         abort-recursive-edit                  中止递归编辑／Minibuffer 嵌套
+C-_         undo                                  撤销（C-/ 等价）
+
+其它 C-单个符号在当前 global-map 中未绑定。
+
+七、全局 M-单个符号按键
+-------------------------
+
+键          函数                                操作
+M-SPC       cycle-spacing                        循环整理光标附近空白
+M-!         shell-command                        执行 Shell 命令
+M-$         ispell-word                          拼写检查光标处单词
+M-%         query-replace                        交互式查找替换
+M-&         async-shell-command                  异步执行 Shell 命令
+M-'         abbrev-prefix-mark                   标记缩写展开前缀
+M-(         insert-parentheses                    插入括号
+M-)         move-past-close-and-reindent          越过右括号并重新缩进
+M-,         xref-go-back                          返回上一个跳转位置
+M--         negative-argument                     负数前缀参数
+M-.         embark-dwim                           对当前目标执行默认 Embark 动作
+M-/         dabbrev-expand                        动态缩写补全
+M-:         eval-expression                       求值 Emacs Lisp 表达式
+M-;         comment-line                          注释／取消注释当前行
+M-<         beginning-of-buffer                   文件开头
+M-=         count-words-region                    统计选区字数
+M->         end-of-buffer                         文件结尾
+M-?         xref-find-references                  查找光标处符号引用
+M-@         mark-word                             选择下一个单词
+M-\         delete-horizontal-space               删除相邻水平空白
+M-^         delete-indentation                     合并当前行与上一行
+M-`         tmm-menubar                           文本菜单栏
+M-{         backward-paragraph                    上一段落
+M-|         shell-command-on-region               对选区执行 Shell 命令
+M-}         forward-paragraph                     下一段落
+M-~         not-modified                          标记当前 Buffer 为未修改
+
+其它 M-单个符号在当前 global-map 中未绑定。
+
