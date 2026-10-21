@@ -317,14 +317,14 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 (transient-define-prefix my/workbench-bm-menu ()
   "打开 bm.el 可视书签菜单。"
   [["   可视书签"
-    ("t" "切换当前行书签" bm-toggle)
+    ("t" "设置/取消行书签" bm-toggle)
     ("n" "下一个书签" bm-next)
     ("p" "上一个书签" bm-previous)]
    ["   查看与整理"
     ("l" "当前文件书签" bm-show)
     ("a" "全部可视书签" bm-show-all)
     ("d" "清空当前文件书签" bm-remove-all-current-buffer)
-    ("D" "清空所有可视书签" my/bm-clear-all)]])
+    ("c" "清空所有可视书签" my/bm-clear-all)]])
 
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
