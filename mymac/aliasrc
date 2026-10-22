@@ -254,6 +254,7 @@ alias git-push-to="git push origin "
 alias github="chrome \`git remote -v | grep github.com | grep fetch | head -1 | field 2 | sed 's/git:/http:/g'\`"
 #Show log of commits not dcommitted to svn
 alias notsvn="git log --branches --not --remotes --simplify-by-decoration --decorate --oneline"
+alias git-lg= "git log --all --graph --oneline --decorate"
 deploy(){
 
     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
