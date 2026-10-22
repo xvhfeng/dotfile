@@ -12,10 +12,11 @@
   :straight t
   :defer t
   :init
-  ;; 设置 C-. 为超级右键菜单（在任何位置/补全列表中触发）
+  ;; 中文说明：M-. 用于打开 Embark 动作菜单；C-. 显式解绑，避免它在帮助
+  ;; 的按键读取或日常编辑中成为难以发现的全局拦截键。
   :general
-  ("C-." '("context actions" . embark-act))
-  ("M-." '("default context action" . embark-dwim))
+  ("M-." '("context actions" . embark-act))
+  ("C-." nil)
   ("C-c E" '("export results" . embark-export))
   ("C-h B" '("Embark bindings" . embark-bindings))
   :config
@@ -70,6 +71,6 @@
 ;; - `C-c s s/S/p/f/g/i/b'：当前 Buffer/多 Buffer/项目/文件/Git/符号/书签搜索。
 ;; - `C-c b b/B' 切换 Buffer（当前/其他窗口）；`C-c f r' 打开最近文件。
 ;; - `C-c j m/e' 跳 Mark/编译错误；`C-c y' 浏览剪贴历史。
-;; - `C-.' 或 `C-c a a' 打开上下文动作，`M-.' 或 `C-c a d' 执行默认动作。
+;; - `M-.' 或 `C-c a a' 打开上下文动作；`C-c a d' 执行默认动作。
 ;; - `C-c a b/e' 查看动作绑定/导出结果；候选默认在短延迟后实时预览。
 ;;; init-completion.el ends here
