@@ -124,10 +124,13 @@
   "Direction of the last Pinky search: 1 forward or -1 backward.")
 
 (defvar pinky-last-edit nil
-  "Most recent Pinky editing command and its arguments.")
+  "Most recent repeatable Pinky command and its arguments.")
 
 (defvar pinky--repeating-edit nil
   "Non-nil while `pinky-repeat-last-edit' is replaying an edit.")
+
+(defvar pinky--recording-composite-command nil
+  "Non-nil while a composite Pinky command runs internal helper commands.")
 
 (defun pinky-mode-activate ()
   (interactive)
@@ -147,7 +150,7 @@
     (setq pinky-last-edit (cons command arguments))))
 
 (defun pinky-repeat-last-edit ()
-  "Repeat the latest Pinky edit, like Vim `.'."
+  "Repeat the latest repeatable Pinky command, like Vim `.'."
   (interactive)
   (if pinky-last-edit
       (let ((pinky--repeating-edit t))
@@ -420,7 +423,11 @@ controls whether the command returns to normal Emacs insertion afterward."
 (defun pinky-forward-word-end ()
   "Move to the last character of the current or next word, like Vim `e'."
   (interactive)
-  (let ((origin (point)))
+  ;; This composite motion invokes other repeatable commands internally.
+  ;; Record itself first so `.' always repeats e rather than its final helper.
+  (pinky--remember-edit #'pinky-forward-word-end)
+  (let ((pinky--recording-composite-command t)
+        (origin (point)))
     (forward-word 1)
     (unless (bobp)
       (backward-char 1))
@@ -479,12 +486,16 @@ controls whether the command returns to normal Emacs insertion afterward."
 (defun pinky-backward-WORD-end ()
   "Move to the end of the previous whitespace-delimited WORD, like Vim `gE'."
   (interactive)
-  (if (looking-at-p "[[:space:]]")
-      (skip-chars-backward " \t\n\r")
-    (skip-chars-backward "^ \t\n\r")
-    (skip-chars-backward " \t\n\r"))
-  (unless (bobp)
-    (backward-char 1)))
+  ;; See `pinky-forward-word-end': keep the user-facing composite command as
+  ;; the repeat target even when its internal movement helpers are advised.
+  (pinky--remember-edit #'pinky-backward-WORD-end)
+  (let ((pinky--recording-composite-command t))
+    (if (looking-at-p "[[:space:]]")
+        (skip-chars-backward " \t\n\r")
+      (skip-chars-backward "^ \t\n\r")
+      (skip-chars-backward " \t\n\r"))
+    (unless (bobp)
+      (backward-char 1))))
 
 (defun pinky-last-nonblank ()
   "Move to the last non-blank character on the line, like Vim `g_'."
@@ -688,6 +699,52 @@ REPEAT skips the occurrence used by the previous till-motion."
 (defvar pinky-mode-map (make-keymap)
   "Keymap used by `pinky-mode'.")
 
+(defvar pinky--repeatable-command-advices nil
+  "Alist of Pinky repeatable commands and their installed advice functions.")
+
+(defun pinky--keymap-commands (keymap)
+  "Return every command reachable from KEYMAP, including prefix submaps."
+  (let (commands)
+    (map-keymap
+     (lambda (_event binding)
+       (cond
+        ((keymapp binding)
+         (setq commands
+               (nconc commands (pinky--keymap-commands binding))))
+        ((and (symbolp binding) (commandp binding))
+         (push binding commands))))
+     keymap)
+    (delete-dups commands)))
+
+(defun pinky--make-repeatable-command-advice (command)
+  "Create advice that records successful invocation of COMMAND in Pinky mode."
+  (lambda (original &rest arguments)
+    (let ((result (apply original arguments)))
+      ;; Do not let `.' replace the recorded command while it is replaying it.
+      ;; The mode check keeps advice on shared Emacs commands harmless outside
+      ;; Pinky mode.
+      (when (and (bound-and-true-p pinky-mode)
+                 (not pinky--repeating-edit)
+                 (not pinky--recording-composite-command))
+        (setq pinky-last-edit (cons command arguments)))
+      result)))
+
+(defun pinky--install-repeatable-command-advice ()
+  "Record all repeatable Pinky map commands for the `.' command.
+
+Advice is rebuilt after each keymap rebuild, so hot reloading this local plugin
+does not accumulate duplicate advice."
+  (dolist (entry pinky--repeatable-command-advices)
+    (advice-remove (car entry) (cdr entry)))
+  (setq pinky--repeatable-command-advices nil)
+  (dolist (command (pinky--keymap-commands pinky-mode-map))
+    ;; Repeating `.' itself would recurse; exiting a mode is not a useful
+    ;; repeat target.  Every other successful Pinky motion, fold or edit is.
+    (unless (memq command '(pinky-repeat-last-edit pinky-mode-deactivate))
+      (let ((advice (pinky--make-repeatable-command-advice command)))
+        (advice-add command :around advice)
+        (push (cons command advice) pinky--repeatable-command-advices)))))
+
 (defun pinky-mode-setup-keymap ()
   "Rebuild `pinky-mode-map' with the complete Vim-style motion set.
 
@@ -831,7 +888,8 @@ plugin updates an already running `pinky-mode' session."
     (define-key map "r" #'pinky-replace-char)
     (define-key map "R" #'pinky-replace-mode-start)
     (define-key map "u" #'undo-only)
-    (define-key map (kbd "C-r") #'undo-redo)))
+    (define-key map (kbd "C-r") #'undo-redo)
+    (pinky--install-repeatable-command-advice)))
 
 (pinky-mode-setup-keymap)
 

@@ -12,7 +12,7 @@ Emacs 按键参考（生成于 2026-10-21）
 一、Pinky Mode 按键
 --------------------
 
-进入：C-j -> my/pinky-activate -> 启用 Pinky 单键导航并显示底部键位表。
+进入：M-j -> my/pinky-toggle -> 切换并启用 Pinky 单键导航。
 退出：i / ESC -> my/pinky-deactivate -> 退出 Pinky 并关闭键位表。
 
 【基础移动】
@@ -128,7 +128,7 @@ C-f         forward-char                          前进一个字符
 C-g         keyboard-quit                         取消当前操作
 C-h         help-command                          帮助前缀
 C-i         indent-for-tab-command                缩进或补全（TAB）
-C-j         my/pinky-activate                     启用 Pinky Mode
+C-j         my/cut-to-line-beginning-or-region     剪切选区或本行行首到光标位置
 C-k         my-cut-dwim                           智能剪切
 C-l         recenter-top-bottom                   重置当前行在窗口的位置
 C-m         newline                               换行（RET）
@@ -171,20 +171,20 @@ M-f         forward-word                          下一个单词
 M-g         导航前缀                               后续可跳转行、字符、错误、符号等
 M-h         mark-paragraph                        选择当前段落
 M-i         change-inner                          修改成对结构内部
-M-j         my-move-line-down                     当前行下移
+M-j         my/pinky-toggle                        切换 Pinky Mode
 M-k         my-move-line-up                       当前行上移
 M-l         my-lower-dwim                         智能小写转换
-M-m         back-to-indentation                   到首个非空字符
-M-n         未绑定                                无全局单字符绑定
+M-m         my-copy-region-or-line-end            复制选区或光标至行尾
+M-n         my-copy-region-or-line-begin          复制选区或行首至光标
 M-o         change-outer                          修改成对结构外部
-M-p         未绑定                                无全局单字符绑定
+M-p         my/toggle-mark-command                切换标记／选区状态
 M-q         fill-paragraph                        段落重新排版
 M-r         move-to-window-line-top-bottom        在窗口的顶／中／底行间切换
 M-s         搜索前缀                               后续查找文件、当前文件搜索、Ripgrep 等
 M-t         transpose-words                       交换相邻两个单词
 M-u         my-upper-dwim                         智能大写转换
 M-v         scroll-down-command                   向后翻页
-M-w         my-copy-dwim                          智能复制
+M-w         my-copy-dwim                          复制选区或整行（含行分隔符）
 M-x         execute-extended-command              执行 M-x 命令
 M-y         yank-pop                              循环选择粘贴历史
 M-z         zap-to-char                           删除至指定字符

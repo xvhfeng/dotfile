@@ -65,6 +65,11 @@
 (autoload 'my/mark-indent-block "init-treesitter" nil t)
 (autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
+(autoload 'my/cut-to-line-beginning-or-region "init-mykey" nil t)
+(autoload 'my-copy-region-or-line-begin "init-mykey" nil t)
+(autoload 'my-copy-region-or-line-end "init-mykey" nil t)
+(autoload 'my-copy-dwim "init-mykey" nil t)
+(autoload 'my/toggle-mark-command "init-mykey" nil t)
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
@@ -385,6 +390,11 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("em" "匹配成对符号或标签" my/match-pair)
     ("ep" "切换 Pinky 模式" my/pinky-toggle)
     ("eu" "可视撤销树" my/workbench-visual-undo)
+    ("ek" "剪切选区或至行首" my/cut-to-line-beginning-or-region)
+    ("en" "复制选区或至行首" my-copy-region-or-line-begin)
+    ("el" "复制选区或至行尾" my-copy-region-or-line-end)
+    ("ew" "复制选区或整行" my-copy-dwim)
+    ("eg" "切换标记" my/toggle-mark-command)
     ("eb" "可视书签" my/workbench-bm-menu)
     ("ej" "Avy 跳转菜单" my/avy-menu)]
    ["   项目与 Git"
@@ -484,7 +494,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - `C-d' 切换个人工作台，`C-c SPC' 是语义化入口；`ESC' 取消或退出。
-;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`C-j' 切换 Pinky。
+;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`M-j' 切换 Pinky。
 ;; - 菜单采用两段式小写助记键：首字母选择分组，第二个字母选择具体动作。
 ;;   `f/c/e/p/b/h' 分别表示文件、代码、编辑、项目、Buffer/笔记和帮助。
 ;; - “文件与搜索”中按 `fv' 从磁盘重新加载当前 Buffer；未保存的修改仍会要求确认。

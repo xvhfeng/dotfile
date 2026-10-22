@@ -103,24 +103,120 @@ its own closing tag rather than an inner sibling's closing tag."
 ;;; 切换窗口；M-S-h/l 加宽/缩窄，M-S-k/j 增高/降低；M-F11 全屏。
 ;;; 编辑：ESC 取消，C-! 替换，C-c e r/R/w 替换包围符/成对替换/包围单词；M-w
 ;;; 复制、C-w 剪切、C-v 粘贴、C-z/C-S-z 撤销/重做；C-x C-d 删除整行但不进
-;;; kill-ring，C-, 复制当前行并下移，M-k/M-j 上下移动行，M-l/M-r 转小/大写。
+;;; kill-ring，C-, 复制当前行并下移，M-[/M-] 上下移动行，M-l/M-r 转小/大写。
 ;;; 导航：C-c C-r 到项目根，C-c C-j 打开项目 Dired，C-~ 打开主目录，C-' 打开
 ;;; Imenu；C-TAB/C-S-TAB 切换下/上一个缓冲区；C-a 到缩进首字符，C-M-a 到行首。
 ;;; 缓冲区：C-x k 执行带保护的关闭，C-x C-k 直接关闭；S-TAB 左移缩进。
 
-;; 若有活动选区则剪切选区，否则剪切当前整行，并把内容放入 kill-ring。
+;; 若有活动q选区则剪切选区，否则剪切当前整行，并把内容放入 kill-ring。
 (defun my-cut-dwim ()
   (interactive)
   (if (use-region-p)
       (kill-region (region-beginning) (region-end))
     (kill-whole-line)))
 
-;; 若有活动选区则复制选区，否则复制当前整行；复制后内容可由 yank 粘贴。
-(defun my-copy-dwim()
+;; 若有活动选区则剪切选区；否则剪切从当前行行首到光标位置的文本。
+;; 统一使用 `kill-region'，确保结果总是写入 kill-ring，可直接用 yank 粘贴。
+(defun my/cut-to-line-beginning-or-region ()
+  "剪切活动选区，或剪切本行行首到光标位置的文本。"
   (interactive)
   (if (use-region-p)
-      (copy-region-as-kill (region-beginning) (region-end))
-    (progn (kill-ring-save (line-beginning-position) (line-beginning-position 2)))))
+      (kill-region (region-beginning) (region-end))
+    (kill-region (line-beginning-position) (point))))
+
+;; 若有活动选区则复制选区，否则复制当前整行；复制后内容可由 yank 粘贴。
+;; (defun my-copy-dwim()
+  ;; (interactive)
+  ;; (if (use-region-p)
+  ;;     (copy-region-as-kill (region-beginning) (region-end))
+  ;;   (progn (kill-ring-save (line-beginning-position) (line-beginning-position 2)))))
+
+
+(defun my-copy-dwim ()
+  "DWIM 复制函数：
+1. 有选中区域（Region）时，复制选区内容；
+2. 无选中区域时，复制当前整行（包含换行符）。"
+  (interactive)
+  (let (beg end type)
+    (if (use-region-p)
+        ;; 1. 有选区：复制选区
+        (setq beg (region-beginning)
+              end (region-end)
+              type "region")
+      ;; 2. 无选区：复制整行（行首到下一行开头）
+      (setq beg (line-beginning-position)
+            end (line-beginning-position 2)
+            type "line"))
+
+    ;; 执行复制到 kill-ring
+    (copy-region-as-kill beg end)
+
+    ;; 视觉高亮反馈与 Echo Area 提示
+    (when (fboundp 'pulse-momentary-highlight-region)
+      (pulse-momentary-highlight-region beg end))
+    (message "Copied %s" type)))
+
+(defun my-copy-region-or-line-begin ()
+  "DWIM 复制函数：
+1. 有选中区域（Region）时，复制选区内容；
+2. 无选中区域时，复制当前光标位置（point）到行首（line beginning）的内容。"
+  (interactive)
+  (let (beg end type)
+    (if (use-region-p)
+        ;; 1. 有选区：复制选区
+        (setq beg (region-beginning)
+              end (region-end)
+              type "region")
+      ;; 2. 无选区：复制从行首到当前光标
+      (setq beg (line-beginning-position)
+            end (point)
+            type "to line beginning"))
+
+    ;; 如果光标就在行首，beg 和 end 会相等，避免复制空字符串提示
+    (if (= beg end)
+        (message "Already at line beginning, nothing to copy.")
+      (progn
+        ;; 执行复制到 kill-ring
+        (copy-region-as-kill beg end)
+
+        ;; 视觉高亮反馈与 Echo Area 提示
+        (when (fboundp 'pulse-momentary-highlight-region)
+          (pulse-momentary-highlight-region beg end))
+        (message "Copied %s" type)))))
+
+
+(defun my-copy-region-or-line-end ()
+  "DWIM 复制函数：
+1. 有选中区域（Region）时，复制选区内容；
+2. 无选中区域时，复制当前光标位置（point）到行尾（line end）的内容。"
+  (interactive)
+  (let (beg end type)
+    (if (use-region-p)
+        ;; 1. 有选区：复制选区
+        (setq beg (region-beginning)
+              end (region-end)
+              type "region")
+      ;; 2. 无选区：复制从当前光标到行尾
+      (setq beg (point)
+            end (line-end-position)
+            type "to line end"))
+
+    ;; 如果光标就在行尾，beg 和 end 会相等，避免复制空字符串
+    (if (= beg end)
+        (message "Already at line end, nothing to copy.")
+      (progn
+        ;; 执行复制到 kill-ring
+        (copy-region-as-kill beg end)
+
+        ;; 视觉高亮反馈与 Echo Area 提示
+        (when (fboundp 'pulse-momentary-highlight-region)
+          (pulse-momentary-highlight-region beg end))
+        (message "Copied %s" type)))))
+
+
+
+
+
 
 ;; 将当前行与上一行交换，并保持光标随当前行向上移动。
 (defun my-move-line-up ()
@@ -438,7 +534,7 @@ that was stored with my-point-to-register."
 ;; 通过 General 统一注册，Which-Key 显示中文命令说明。
 (with-eval-after-load 'general
   (general-def
-    "M-m" '("切换标记" . my/toggle-mark-command)))
+    "M-p" '("切换标记" . my/toggle-mark-command)))
 
 ;;  关闭其它的windows，只留下自己
 (keymap-global-set "C-1" #'delete-other-windows)
@@ -458,10 +554,35 @@ that was stored with my-point-to-register."
 (keymap-global-set "C-S-o"  #'my-open-line-above)
 
 (keymap-global-set "M-w" #'my-copy-dwim)
+(keymap-global-set "M-n" #'my-copy-region-or-line-begin)
+(keymap-global-set "M-m" #'my-copy-region-or-line-end)
+(keymap-global-set "M-p" #'my/toggle-mark-command)
+
+;; Flymake 和部分 major mode 会在局部 map 中占用 M-n/M-m/M-w/M-p。将复制和
+;; 标记键放入专用 emulation map，确保它们在普通编辑 Buffer 中不被局部 map 覆盖。
+(defvar-local my/copy-command-override-active t
+  "非 nil 时让 M-n/M-m/M-w 复制与 M-p 标记优先于局部 keymap。")
+
+(defvar my/copy-command-override-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "M-n") #'my-copy-region-or-line-begin)
+    (define-key map (kbd "M-m") #'my-copy-region-or-line-end)
+    (define-key map (kbd "M-w") #'my-copy-dwim)
+    (define-key map (kbd "M-p") #'my/toggle-mark-command)
+    map)
+  "为上下文复制与标记命令提供高优先级的 emulation keymap。")
+
+(defvar my/copy-command-emulation-alist
+  `((my/copy-command-override-active . ,my/copy-command-override-map))
+  "控制上下文复制键优先级的 emulation keymap alist。")
+
+(add-to-list 'emulation-mode-map-alists 'my/copy-command-emulation-alist)
 ;;(keymap-global-set "C-w" #'my-copy-dwim)
 (global-set-key (kbd "C-t") #'kill-region)
 
+(keymap-global-set "C-j" #'my/cut-to-line-beginning-or-region)
 (keymap-global-set "M-k" #'my-cut-dwim)
+
 (keymap-global-set "M-[" #'my-move-line-up)
 (keymap-global-set "M-]" #'my-move-line-down)
 (keymap-global-set "C-x d" #'my-delete-whole-line-no-killring)
@@ -484,6 +605,12 @@ that was stored with my-point-to-register."
 (global-set-key (kbd "M-;") #'comment-line)
 
 (with-eval-after-load 'general
+  (general-define-key
+   "C-j" '("剪切选区或至行首" . my/cut-to-line-beginning-or-region)
+   "M-n" '("复制选区或至行首" . my-copy-region-or-line-begin)
+   "M-m" '("复制选区或至行尾" . my-copy-region-or-line-end)
+   "M-w" '("复制选区或整行" . my-copy-dwim)
+   "M-p" '("切换标记" . my/toggle-mark-command))
   (my-leader-def
     "t %" '("匹配成对符号或标签" . my/match-pair)))
 

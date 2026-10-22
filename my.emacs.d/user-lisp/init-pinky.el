@@ -10,6 +10,7 @@
 ;; 本地插件延迟加载；声明接口以便受管编译检查。
 (defvar pinky-mode-map)
 (declare-function pinky-mode-setup-keymap "pinky-mode" ())
+(declare-function my/cut-to-line-beginning-or-region "init-mykey" ())
 
 (defconst my/pinky-transient-display-buffer-name " *Pinky 键位表*"
   "Pinky 被动 Transient 菜单使用的内部 buffer 名称。")
@@ -69,14 +70,15 @@
      ("zR" "展开全部折叠" pinky-fold-open-all)
      ("zM" "关闭全部折叠" pinky-fold-close-all)
      ("zd" "清除当前折叠" pinky-fold-delete)]
-    ["  删除操作"
+    ["  删除与重复"
      :pad-keys t
      ("dd" "删除当前行" pinky-delete-line)
      ("dw" "删除到下一词" pinky-delete-word)
      ("diw" "删除完整单词" pinky-delete-inner-word)
      ("daw" "删除单词及空白" pinky-delete-a-word)
      ("d$" "删除到行尾" pinky-delete-line-end)
-     ("dG" "删除到文件尾" pinky-delete-buffer-end)])
+     ("dG" "删除到文件尾" pinky-delete-buffer-end)
+     ("." "重复上次编辑" pinky-repeat-last-edit)])
   "Pinky 菜单只展示选定的六个语义分组；底层导航与编辑键仍可使用。")
 
 (defun my/pinky-transient-wide-p ()
@@ -146,15 +148,14 @@
   (my/pinky-transient-show))
 
 (defun my/pinky-toggle ()
-  "用 C-j 切换 Pinky；关闭时一并退出插入或替换状态。"
+  "用 M-j 切换 Pinky；关闭时一并退出插入或替换状态。"
   (interactive)
   (if (bound-and-true-p pinky-mode)
       (my/pinky-deactivate)
     (my/pinky-activate)))
 
-;; `lisp-interaction-mode'（例如 *scratch*）会在其 major-mode map 中把
-;; C-j 绑定为 `eval-print-last-sexp'，优先级高于 global-map。使用 emulation
-;; map 仅提升 Pinky 的激活键，避免用户在不同编辑 Buffer 中得到不同结果。
+;; 使用 emulation map 让 M-j 的 Pinky 切换和 C-j 的剪切命令优先于 major-mode
+;; keymap，避免不同编辑 Buffer 获得不一致的行为。
 (defvar-local my/pinky-activation-override-active t
   "非 nil 时让 Pinky 的 C-j 激活键优先于 major-mode keymap。")
 
@@ -162,15 +163,21 @@
   (make-sparse-keymap)
   "为 Pinky 激活键提供高优先级的 emulation keymap。")
 
-;; C-j 是全局切换入口；原生 electric-newline-and-maybe-indent 由此让位。
+;; M-j 是全局 Pinky 切换入口；C-j 交给 init-mykey 的上下文剪切命令。
+(keymap-global-set "M-j" #'my/pinky-toggle)
+(define-key my/pinky-activation-override-map (kbd "M-j") #'my/pinky-toggle)
+(define-key my/pinky-activation-override-map (kbd "C-j")
+            #'my/cut-to-line-beginning-or-region)
 (with-eval-after-load 'general
-  (general-define-key "C-j" '("切换 Pinky 模式" . my/pinky-toggle))
+  (general-define-key "M-j" '("切换 Pinky 模式" . my/pinky-toggle))
   (general-define-key :keymaps 'my/pinky-activation-override-map
-                      "C-j" '("切换 Pinky 模式" . my/pinky-toggle)))
+                      "M-j" '("切换 Pinky 模式" . my/pinky-toggle)
+                      "C-j" '("剪切选区或至行首" . my/cut-to-line-beginning-or-region)))
 (with-eval-after-load 'which-key
-  (which-key-add-keymap-based-replacements global-map "C-j" "切换 Pinky 模式")
+  (which-key-add-keymap-based-replacements global-map "M-j" "切换 Pinky 模式")
   (which-key-add-keymap-based-replacements
-   my/pinky-activation-override-map "C-j" "切换 Pinky 模式"))
+   my/pinky-activation-override-map "M-j" "切换 Pinky 模式"
+   "C-j" "剪切选区或至行首"))
 
 (defvar my/pinky-activation-emulation-alist
   `((my/pinky-activation-override-active
