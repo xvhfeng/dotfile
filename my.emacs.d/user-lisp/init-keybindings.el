@@ -1,5 +1,10 @@
 ;; -*- lexical-binding: t -*-
 
+;; Which-Key 在下方 use-package 中延迟加载；提前声明其动态变量供编译器识别。
+(defvar which-key-add-column-padding)
+(defvar which-key-min-column-description-width)
+(defvar which-key-inhibit)
+
 
 ;; 开启 Emacs 28+ 内置的快捷键重复模式
 (repeat-mode 1)
@@ -18,6 +23,18 @@
 
 (defvar-keymap my-window-map
   :doc "以 C-w 开始、C-c w 兼容的窗口操作。")
+
+(defun my/escape-quit ()
+  "ESC 取消当前操作；位于临时窗口或侧栏时退出该窗口。"
+  (interactive)
+  (cond
+   ((minibufferp)
+    (abort-recursive-edit))
+   ((or (window-parameter (selected-window) 'window-side)
+        (derived-mode-p 'special-mode))
+    (quit-window))
+   (t
+    (keyboard-quit))))
 
 (defconst my/c-c-prefix-labels
   '(("w" . "窗口")
@@ -117,10 +134,10 @@ start of every following column."
               truncate-lines t
               cursor-type nil))
 
-(defun my/which-key--backspace-binding ()
+(defun my/which-key--backspace-binding (&optional prefix)
   "返回当前 Which-Key 前缀中显式绑定的 Backspace 命令。
 只检查正在输入的前缀下的绑定，不把全局删除字符命令误认为菜单绑定。"
-  (when-let ((prefix (which-key--current-key-list)))
+  (when-let ((prefix (or prefix (which-key--current-key-list))))
     (catch 'command
       (dolist (map (current-active-maps t))
         (dolist (event '([delete] [backspace]))
@@ -133,25 +150,35 @@ start of every following column."
   "在 Which-Key 中用 Backspace 回退一级；根层级时关闭菜单。
 若当前前缀明确为 Backspace 绑定了命令，优先执行该命令。"
   (interactive)
-  (cond
-   ((not (and (bound-and-true-p which-key-mode)
-              (which-key--popup-showing-p)))
-    (call-interactively #'backward-delete-char-untabify))
-   ((my/which-key--backspace-binding)
-    (call-interactively (my/which-key--backspace-binding)))
-   ((which-key--current-key-list)
-    (which-key-undo-key))
-   (t
-    (let ((which-key-inhibit t))
-      (which-key--hide-popup-ignore-command)))))
+  ;; 执行前缀内的 DEL 时，Which-Key 的当前前缀可能已经被 Emacs 清空；
+  ;; 从刚输入的完整键序列恢复，确保菜单未弹出前也能退回上一层。
+  (let* ((prefix (and (bound-and-true-p which-key-mode)
+                      (butlast (listify-key-sequence
+                                (this-single-command-keys)))))
+         (explicit (my/which-key--backspace-binding prefix)))
+    (cond
+     ((not prefix)
+      (call-interactively #'backward-delete-char-untabify))
+     (explicit
+      (call-interactively explicit))
+     ((cdr prefix)
+      (let ((parent (butlast prefix)))
+        (which-key-reload-key-sequence parent)
+        (which-key--create-buffer-and-show (vconcat parent))))
+     (t
+      (let ((which-key-inhibit t))
+        (which-key--hide-popup-ignore-command))))))
 
 (defun my/which-key-install-backspace-for-current-prefix (&rest _)
-  "为当前展示的 Which-Key 前缀补充未定义的 Backspace 回退键。
+  "为当前展示的 Which-Key 前缀补充 ESC 取消和 Backspace 回退键。
 已有 DEL、Backspace 或 Delete 绑定的 keymap 不会被修改。"
   (when-let ((prefix (which-key--current-key-list)))
     (dolist (map (current-active-maps t))
       (when-let ((prefix-map (lookup-key map (vconcat prefix))))
         (when (keymapp prefix-map)
+          ;; 物理 ESC 在每一层前缀里都能取消；已有插件专用退出键优先。
+          (unless (lookup-key prefix-map [escape])
+            (define-key prefix-map [escape] #'keyboard-quit))
           (dolist (key '("DEL" "<backspace>" "<delete>"))
             ;; 忽略从全局 map 继承的普通删除字符命令；它不是当前
             ;; Which-Key 菜单专门定义的 Backspace 操作。
@@ -166,6 +193,7 @@ start of every following column."
   "让 Which-Key 菜单支持 Backspace 层级回退。"
   :global t
   :lighter nil
+  :group 'convenience
   :keymap (let ((map (make-sparse-keymap)))
             (define-key map (kbd "DEL") #'my/which-key-backspace)
             (define-key map (kbd "<backspace>") #'my/which-key-backspace)
@@ -173,15 +201,25 @@ start of every following column."
             map))
 
 (defun my/which-key-install-backspace-in-prefix-maps (keymap &optional seen)
-  "递归为 KEYMAP 的自定义前缀 map 安装 Which-Key Backspace 回退。"
+  "递归为 KEYMAP 的自定义前缀安装 ESC 取消与 BS 回退。"
   (unless (memq keymap seen)
     (let ((seen (cons keymap seen)))
+      (unless (lookup-key keymap [escape])
+        (define-key keymap [escape] #'keyboard-quit))
       (map-keymap
        (lambda (_event binding)
-         (when (keymapp binding)
-           (dolist (key '("DEL" "<backspace>" "<delete>"))
-             (define-key binding (kbd key) #'my/which-key-backspace))
-           (my/which-key-install-backspace-in-prefix-maps binding seen)))
+         ;; General 用 ("中文说明" . keymap) 包装前缀；先解包真实 map。
+         (let ((prefix-map (if (and (consp binding)
+                                    (stringp (car binding))
+                                    (keymapp (cdr binding)))
+                               (cdr binding)
+                             binding)))
+           (when (keymapp prefix-map)
+             (unless (lookup-key prefix-map [escape])
+               (define-key prefix-map [escape] #'keyboard-quit))
+             (dolist (key '("DEL" "<backspace>" "<delete>"))
+               (define-key prefix-map (kbd key) #'my/which-key-backspace))
+             (my/which-key-install-backspace-in-prefix-maps prefix-map seen))))
        keymap))))
 
 (defun my/which-key-install-leader-backspace-bindings ()
@@ -275,6 +313,7 @@ start of every following column."
   (which-key-add-keymap-based-replacements
     global-map
     "C-w" "窗口操作"
+    "<escape>" "取消或退出"
     "C-S-c" "多光标")
   (which-key-add-keymap-based-replacements
     my-window-map
@@ -306,6 +345,7 @@ start of every following column."
   (general-define-key
     "C-w" (cons "窗口操作" my-window-map)
     "C-c w" (cons "窗口操作" my-window-map)
+    "<escape>" '("取消或退出" . my/escape-quit)
     ;; Ibuffer 是可持续操作的真正 Buffer，适合由 Popper 隐藏、召回和轮换；
     ;; 原来的 Electric Buffer List 保留在 C-c b e，功能没有被删除。
     "C-x C-b" '("Ibuffer popup" . my/workbench-ibuffer))
@@ -353,7 +393,7 @@ start of every following column."
 ;; - Which-Key 固定最多三列，按 26 字符说明宽度对齐；中文按实际双宽字符计算，
 ;;   不会再把同一行后续菜单推歪。当前前缀显示在菜单顶部。
 ;; - 粗体 `▸' 项是可继续进入的功能分组；普通字重项是立即执行的命令。
-;; - 窗口前缀为 `C-w'，兼容入口为 `C-c w'；两者指向同一个窗口 keymap。
+;; - 窗口前缀为 `C-w'，兼容入口为 `C-c w'；`s h/l/k/j' 在四个方向分屏。
 ;; - `C-t' 保留为 `kill-region'；`C-w C-w' 用 Ace Window 选择窗口。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
 ;;   `C-x C-b' 与 `C-c b l' 打开可由 Popper 召回的 Ibuffer；`C-c b e' 保留原有

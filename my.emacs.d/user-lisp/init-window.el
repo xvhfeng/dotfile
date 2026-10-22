@@ -95,6 +95,26 @@
   (interactive)
   (my/window-select-wrap 'right))
 
+(defun my/window-split-left ()
+  "在当前窗口左侧分割，光标留在原窗口。"
+  (interactive)
+  (split-window (selected-window) nil 'left))
+
+(defun my/window-split-right ()
+  "在当前窗口右侧分割，光标留在原窗口。"
+  (interactive)
+  (split-window (selected-window) nil 'right))
+
+(defun my/window-split-up ()
+  "在当前窗口上方分割，光标留在原窗口。"
+  (interactive)
+  (split-window (selected-window) nil 'above))
+
+(defun my/window-split-down ()
+  "在当前窗口下方分割，光标留在原窗口。"
+  (interactive)
+  (split-window (selected-window) nil 'below))
+
 (use-package hydra
   :straight t
   ;; 全局开启了 `use-package-always-defer'；这里必须立即加载，
@@ -138,17 +158,19 @@
     "C-w" '("Ace Window：选择窗口" . ace-window)
     "M" '("与目标窗口交换" . ace-swap-window)
 
-    ;; 窗口切分
-    "v" '("左右分割窗口" . split-window-right)
-    "s" '("上下分割窗口" . split-window-below)
-    ;; init-mykey.el 的方向分屏命令在创建后立即进入新窗口。
+    ;; 不切换焦点的方向分割直接放在窗口菜单；d 原本用于关闭窗口，现改为右分割。
+    "a" '("左侧分割，留在原窗口" . my/window-split-left)
+    "d" '("右侧分割，留在原窗口" . my/window-split-right)
+    "w" '("上方分割，留在原窗口" . my/window-split-up)
+    "s" '("下方分割，留在原窗口" . my/window-split-down)
+    ;; 原有的分割并切换快捷键继续保留。
     "f" '("右侧分割并切换" . my-split-right-and-switch)
     "b" '("左侧分割并切换" . my-split-left-and-switch)
     "n" '("下方分割并切换" . my-split-below-and-switch)
     "p" '("上方分割并切换" . my-split-above-and-switch)
 
     ;; 窗口关闭与全屏
-    "d" '("关闭当前窗口" . delete-window)
+    "q" '("关闭当前窗口" . delete-window)
     "x" '("关闭目标窗口" . ace-delete-window)
     "m" '("最大化当前窗口" . delete-other-windows)
     "o" '("关闭其他窗口" . delete-other-windows)
@@ -185,8 +207,9 @@
 ;; - 普通 Buffer 的窗口命令可用 `C-w ...' 或 `C-c w ...'，两者等价。
 ;; - `C-w C-w' 使用 Ace Window 选择窗口。
 ;; - `h/j/k/l' 循环移动窗口焦点，到边缘后从另一端继续；`M' 与目标窗口交换。
-;; - `v/s' 左右/上下分屏但不移动；`f/b/n/p' 向右/左/下/上分屏并进入新窗口。
-;; - `d' 关闭当前窗口，`x' 选择后关闭目标窗口。
+;; - `a/d/w/s' 向左/右/上/下分割，光标保持在原窗口。
+;; - `f/b/n/p' 向右/左/下/上分割并切换。
+;; - `q' 关闭当前窗口，`x' 选择后关闭目标窗口。
 ;; - `m' 或 `o' 最大化当前窗口；`=' 均分主编辑区窗口，不改变 Treemacs 侧栏宽度。
 ;; - `r' 进入尺寸调整，随后用 h/j/k/l 或方向键调整，q 退出；选中 Treemacs 时使用专用宽度接口。
 ;; - Ace Window 会把 Treemacs 也列为候选；Dimmer 自动变暗非活动窗口以突出当前窗口。

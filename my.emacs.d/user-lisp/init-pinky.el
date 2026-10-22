@@ -1,11 +1,15 @@
 ;;; init-pinky.el --- Pinky 单键导航与被动 Transient 菜单 -*- lexical-binding: t; -*-
 
-;; Pinky 把常用导航改为单键。此模块通过全局 `C-z' 进入，
-;; 并复用 Transient 的排版能力显示完整键位表，但刻意不安装 Transient keymap，
+;; Pinky 把常用导航改为单键。此模块通过全局 `C-j' 切换，
+;; 并复用 Transient 的排版能力显示精简键位表，但刻意不安装 Transient keymap，
 ;; 因而菜单显示时每个按键仍由 pinky-mode 直接处理。
 
 (require 'transient)
 (require 'seq)
+
+;; 本地插件延迟加载；声明接口以便受管编译检查。
+(defvar pinky-mode-map)
+(declare-function pinky-mode-setup-keymap "pinky-mode" ())
 
 (defconst my/pinky-transient-display-buffer-name " *Pinky 键位表*"
   "Pinky 被动 Transient 菜单使用的内部 buffer 名称。")
@@ -20,29 +24,17 @@
 (defvar my/pinky-transient-display-buffer nil)
 (defvar my/pinky-transient-display-window nil)
 
-(defconst my/pinky-transient-wide-min-columns 240
+(defconst my/pinky-transient-wide-min-columns 150
   "Pinky 菜单保持单行分组布局所需的最小 Frame 字符列数。")
 
 (defconst my/pinky-transient-groups
-  '(["  基础移动"
-     :pad-keys t
-     ("h" "左移" backward-char)
-     ("j" "下移" next-line)
-     ("k" "上移" previous-line)
-     ("l" "右移" forward-char)
-     ("w" "下一单词" forward-word)
-     ("W" "下一 WORD" pinky-forward-WORD)
-     ("b" "上一单词" backward-word)
-     ("B" "上一 WORD" pinky-backward-WORD)]
-    ["  词尾与行内"
+  '(["  词尾与行内"
      :pad-keys t
      ("e" "当前／下一词尾" pinky-forward-word-end)
      ("E" "当前／下一 WORD 尾" pinky-forward-WORD-end)
      ("ge" "上一词尾" pinky-backward-word-end)
      ("gE" "上一 WORD 尾" pinky-backward-WORD-end)
      ("0" "行首" move-beginning-of-line)
-     ("^" "首个非空字符" back-to-indentation)
-     ("$" "行尾" move-end-of-line)
      ("i" "退出模式（ESC 同效）" my/pinky-deactivate)]
     ["  字符与句子"
      :pad-keys t
@@ -56,17 +48,12 @@
      (")" "下一句" forward-sentence)]
     ["  搜索与跳转"
      :pad-keys t
-     ("/" "向前搜索" pinky-search-forward)
-     ("?" "向后搜索" pinky-search-backward)
-     ("n" "沿原方向重复" pinky-search-next)
-     ("N" "沿反方向重复" pinky-search-previous)
      ("gg" "文件开头" beginning-of-buffer)
      ("G" "文件结尾" end-of-buffer)
      ("{" "上一段落" backward-paragraph)
      ("}" "下一段落" forward-paragraph)]
     ["  视区与居中"
      :pad-keys t
-     ("g_" "本行最后非空字符" pinky-last-nonblank)
      ("H" "可视区域顶部" pinky-window-top)
      ("M" "可视区域中部" pinky-window-middle)
      ("L" "可视区域底部" pinky-window-bottom)
@@ -74,16 +61,6 @@
      ("zt" "当前行置顶" pinky-recenter-top)
      ("zb" "当前行置底" pinky-recenter-bottom)
      ("z." "当前行居中" pinky-recenter-middle)]
-    ["  滚动与定位"
-     :pad-keys t
-     ("C-f" "向下翻页" scroll-up-command)
-     ("C-b" "向上翻页" scroll-down-command)
-     ("C-d" "向下半页" pinky-scroll-half-page-down)
-     ("C-u" "向上半页" pinky-scroll-half-page-up)
-     ("C-e" "视口下移一行" scroll-up-line)
-     ("C-y" "视口上移一行" scroll-down-line)
-     ("z RET" "当前行置顶" pinky-recenter-top)
-     ("z-" "当前行置底" pinky-recenter-bottom)]
     ["  代码折叠"
      :pad-keys t
      ("za" "切换当前折叠" pinky-fold-toggle)
@@ -99,25 +76,8 @@
      ("diw" "删除完整单词" pinky-delete-inner-word)
      ("daw" "删除单词及空白" pinky-delete-a-word)
      ("d$" "删除到行尾" pinky-delete-line-end)
-     ("dG" "删除到文件尾" pinky-delete-buffer-end)]
-    ["  修改操作"
-     :pad-keys t
-     ("cc" "修改当前行" pinky-change-line)
-     ("cw" "修改当前词" pinky-change-word)
-     ("ciw" "修改完整单词" pinky-change-inner-word)
-     ("caw" "修改单词及空白" pinky-change-a-word)
-     ("c$" "修改到行尾" pinky-change-line-end)
-     ("cG" "修改到文件尾" pinky-change-buffer-end)]
-    ["  单字符与重复"
-     :pad-keys t
-     ("s" "替换字符并输入" pinky-substitute-char)
-     ("x" "删除字符" pinky-delete-char)
-     ("r" "替换单个字符" pinky-replace-char)
-     ("R" "连续替换模式" pinky-replace-mode-start)
-     ("u" "撤销" undo-only)
-     ("C-r" "重做" undo-redo)
-     ("." "重复上次编辑" pinky-repeat-last-edit)])
-  "Pinky 菜单的十个语义分组；每组最多包含八个操作。")
+     ("dG" "删除到文件尾" pinky-delete-buffer-end)])
+  "Pinky 菜单只展示选定的六个语义分组；底层导航与编辑键仍可使用。")
 
 (defun my/pinky-transient-wide-p ()
   "Return non-nil when all Pinky groups fit in one horizontal row."
@@ -127,8 +87,8 @@
   "Return Pinky groups arranged in one wide row or two narrow rows."
   (if (my/pinky-transient-wide-p)
       (list my/pinky-transient-groups)
-    (list (seq-take my/pinky-transient-groups 5)
-          (seq-drop my/pinky-transient-groups 5))))
+    (list (seq-take my/pinky-transient-groups 3)
+          (seq-drop my/pinky-transient-groups 3))))
 
 (defun my/pinky-transient-setup-groups (_children)
   "Build responsive rows from `my/pinky-transient-groups'."
@@ -138,13 +98,12 @@
            (my/pinky-transient-group-rows))))
 
 (transient-define-prefix my/pinky-transient-menu ()
-  "显示 Pinky 的全部原生单键命令。
+  "显示 Pinky 精简后的导航、折叠与删除键位。
 
 该菜单由 `my/pinky-transient-show' 以被动方式渲染，不接管后续按键。"
-  ;; 中文是双宽字符，启用像素级对齐。宽屏优先显示为一行十组；较窄
-  ;; Frame（包括 11/13 寸屏幕）自动换成两行，每行五组。
+  ;; 中文是双宽字符，启用像素级对齐；窄屏按每行三组展示。
   :variable-pitch t
-  :column-widths '(24 24 24 24 24 24 24 24 24 24)
+  :column-widths '(24 24 24 24 24 24)
   [:class transient-subgroups
    :setup-children my/pinky-transient-setup-groups])
 
@@ -172,7 +131,7 @@
         (transient-display-buffer-action
          (append my/pinky-transient-display-buffer-action
                  `((window-height
-                    . ,(if (my/pinky-transient-wide-p) 0.38 0.68))))))
+                    . ,(if (my/pinky-transient-wide-p) 0.32 0.54))))))
     (transient--init-transient 'my/pinky-transient-menu nil nil)
     (transient--show)
     (setq my/pinky-transient-display-buffer transient--buffer
@@ -186,9 +145,12 @@
   (pinky-mode-activate)
   (my/pinky-transient-show))
 
-;; 用户明确指定 C-j 作为 Pinky 的唯一全局入口；这会替换原先的
-;; `suspend-frame'，不再启用 key-chord 的 k+j 入口。
-(keymap-global-set "C-j" #'my/pinky-activate)
+(defun my/pinky-toggle ()
+  "用 C-j 切换 Pinky；关闭时一并退出插入或替换状态。"
+  (interactive)
+  (if (bound-and-true-p pinky-mode)
+      (my/pinky-deactivate)
+    (my/pinky-activate)))
 
 ;; `lisp-interaction-mode'（例如 *scratch*）会在其 major-mode map 中把
 ;; C-j 绑定为 `eval-print-last-sexp'，优先级高于 global-map。使用 emulation
@@ -197,10 +159,18 @@
   "非 nil 时让 Pinky 的 C-j 激活键优先于 major-mode keymap。")
 
 (defvar my/pinky-activation-override-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-j") #'my/pinky-activate)
-    map)
+  (make-sparse-keymap)
   "为 Pinky 激活键提供高优先级的 emulation keymap。")
+
+;; C-j 是全局切换入口；原生 electric-newline-and-maybe-indent 由此让位。
+(with-eval-after-load 'general
+  (general-define-key "C-j" '("切换 Pinky 模式" . my/pinky-toggle))
+  (general-define-key :keymaps 'my/pinky-activation-override-map
+                      "C-j" '("切换 Pinky 模式" . my/pinky-toggle)))
+(with-eval-after-load 'which-key
+  (which-key-add-keymap-based-replacements global-map "C-j" "切换 Pinky 模式")
+  (which-key-add-keymap-based-replacements
+   my/pinky-activation-override-map "C-j" "切换 Pinky 模式"))
 
 (defvar my/pinky-activation-emulation-alist
   `((my/pinky-activation-override-active
@@ -237,6 +207,8 @@
                                (number-sequence 0 9))))
     (define-key pinky-mode-map (kbd key) nil))
   (define-key pinky-mode-map (kbd "i") #'my/pinky-deactivate)
+  ;; C-d 始终由全局个人工作台使用，不再触发 Pinky 半页滚动。
+  (define-key pinky-mode-map (kbd "C-d") nil)
   (define-key pinky-mode-map (kbd "<escape>") #'my/pinky-deactivate))
 
 (use-package pinky-mode

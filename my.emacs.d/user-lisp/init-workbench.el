@@ -11,6 +11,20 @@
 (require 'eldoc)
 (require 'xref)
 
+;; 这些内置模块按需加载；这里只声明延迟调用的接口供编译器检查。
+(defvar ibuffer-use-other-window)
+(defvar ibuffer-mode-map)
+(declare-function ibuffer-current-buffer "ibuffer" (&optional noerror))
+(declare-function ibuffer-visit-buffer "ibuffer" (&optional single))
+(declare-function ibuffer-mouse-visit-buffer "ibuffer" (event))
+(declare-function eglot-code-actions "eglot" ())
+
+;; 所有 Transient 菜单使用物理 ESC 退出、BS 返回上一级；菜单自身显式
+;; 定义的同名键仍可覆盖默认值，不改变原有 C-g 取消命令。
+(keymap-set transient-base-map "<escape>" #'transient-quit-one)
+(dolist (key '("DEL" "<backspace>" "<delete>"))
+  (keymap-set transient-base-map key #'transient-quit-one))
+
 (declare-function hydra-window-resize/body "init-window" ())
 
 ;; 独立启动本文件时也保留 C-c 用户前缀；正常启动时该变量已由
@@ -52,6 +66,7 @@
 (autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
 (autoload 'my/dirvish-open "init-dirvish" nil t)
+(autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
 (autoload 'hydra-window-resize/body "init-window" nil t)
 ;; 中文说明：单独加载工作台时也能显示书签菜单，选中后再加载 bm。
@@ -296,7 +311,9 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
    ["   历史与文档"
     ("b" "返回跳转位置" xref-go-back)
     ("f" "前进跳转位置" xref-go-forward)
-    ("h" "光标处文档" eldoc)]])
+    ("h" "光标处文档" eldoc)
+    ("DEL" "返回个人工作台" transient-quit-one)
+    ("C-d" "关闭个人工作台" transient-quit-all)]])
 
 (transient-define-prefix my/workbench-fold-menu ()
   "打开代码结构折叠与手工折叠操作菜单。"
@@ -312,7 +329,9 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("u" "展开全部手工折叠" vimish-fold-unfold-all)
     ("r" "重新折叠全部手工折叠" vimish-fold-refold-all)
     ("n" "下一个手工折叠" vimish-fold-next-fold)
-    ("p" "上一个手工折叠" vimish-fold-previous-fold)]])
+    ("p" "上一个手工折叠" vimish-fold-previous-fold)
+    ("DEL" "返回个人工作台" transient-quit-one)
+    ("C-d" "关闭个人工作台" transient-quit-all)]])
 
 (transient-define-prefix my/workbench-bm-menu ()
   "打开 bm.el 可视书签菜单。"
@@ -324,7 +343,9 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("l" "当前文件书签" bm-show)
     ("a" "全部可视书签" bm-show-all)
     ("d" "清空当前文件书签" bm-remove-all-current-buffer)
-    ("c" "清空所有可视书签" my/bm-clear-all)]])
+    ("c" "清空所有可视书签" my/bm-clear-all)
+    ("DEL" "返回个人工作台" transient-quit-one)
+    ("C-d" "关闭个人工作台" transient-quit-all)]])
 
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
@@ -362,6 +383,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("es" "选择当前缩进块" my/mark-indent-block)
     ("ei" "选择缩进块内部" my/mark-indent-block-inner)
     ("em" "匹配成对符号或标签" my/match-pair)
+    ("ep" "切换 Pinky 模式" my/pinky-toggle)
     ("eu" "可视撤销树" my/workbench-visual-undo)
     ("eb" "可视书签" my/workbench-bm-menu)
     ("ej" "Avy 跳转菜单" my/avy-menu)]
@@ -384,6 +406,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("ha" "上下文动作" my/workbench-context-actions)
     ("hb" "当前按键表" describe-bindings)
     ("hm" "当前模式帮助" describe-mode)
+    ("DEL" "关闭个人工作台" transient-quit-one)
+    ("C-d" "关闭个人工作台" transient-quit-all)
     ("<escape>" "关闭个人工作台" transient-quit-one)]])
 
 (defun my/workbench ()
@@ -397,17 +421,39 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
         (transient-align-variable-pitch t))
     (my/workbench-menu)))
 
-;; 保留语义化的 C-c 工作台入口，同时让物理 ESC 直接打开工作台。
-;; 这里使用 <escape> 事件而不是终端 ESC 字符，因此不会破坏 M-x 等 Meta 前缀。
-(define-key my-leader-map (kbd "SPC") #'my/workbench)
-(keymap-global-set "<escape>" #'my/workbench)
-;; C-z 由 Pinky 使用；工作台不覆盖该全局绑定。
+(defun my/workbench-toggle ()
+  "用 C-d 打开或关闭个人工作台。"
+  (interactive)
+  (if (transient-active-prefix
+       '(my/workbench-menu my/workbench-navigation-menu
+         my/workbench-fold-menu my/workbench-bm-menu))
+      (transient-quit-all)
+    (my/workbench)))
+
+(defvar-local my/workbench-toggle-override-active t
+  "非 nil 时让 C-d 个人工作台入口优先于 major-mode keymap。")
+(defvar my/workbench-toggle-override-map
+  (make-sparse-keymap)
+  "个人工作台 C-d 全局入口的高优先级 keymap。")
+;; C-d 是全局入口；emulation map 保证 major mode（含 Scratch）不能抢占。
+;; 保留 C-c SPC 语义入口，物理 ESC 则统一负责取消或退出。
+(with-eval-after-load 'general
+  (my-leader-def "SPC" '("个人工作台" . my/workbench))
+  (general-define-key "C-d" '("切换个人工作台" . my/workbench-toggle))
+  (general-define-key :keymaps 'my/workbench-toggle-override-map
+                      "C-d" '("切换个人工作台" . my/workbench-toggle)))
+(defvar my/workbench-toggle-emulation-alist
+  `((my/workbench-toggle-override-active . ,my/workbench-toggle-override-map))
+  "只提升个人工作台 C-d 入口的 emulation keymap alist。")
+(add-to-list 'emulation-mode-map-alists 'my/workbench-toggle-emulation-alist)
 (with-eval-after-load 'which-key
   ;; 将命令名替换为中文菜单说明，用户在 C-c 提示和按键查询中均可发现工作台。
   (which-key-add-keymap-based-replacements
    my-leader-map "SPC" "个人工作台")
   (which-key-add-keymap-based-replacements
-   global-map "<escape>" "个人工作台"))
+   global-map "C-d" "切换个人工作台")
+  (which-key-add-keymap-based-replacements
+   my/workbench-toggle-override-map "C-d" "切换个人工作台"))
 
 ;; Popper 仅处理短生命周期的帮助、诊断、搜索、日志和 Buffer List；不把源码、
 ;; Treemacs、Magit Status、Dired/Ranger 或 Org Agenda 归为弹窗。
@@ -437,9 +483,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; ---------------------------------------------------------------------------
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
-;; - 物理 `ESC' 用于切换个人工作台：关闭时打开、打开时关闭；`C-c SPC' 是
-;;   保留的语义化菜单入口。
-;;   `C-z' 由 Pinky 单键导航使用。
+;; - `C-d' 切换个人工作台，`C-c SPC' 是语义化入口；`ESC' 取消或退出。
+;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`C-j' 切换 Pinky。
 ;; - 菜单采用两段式小写助记键：首字母选择分组，第二个字母选择具体动作。
 ;;   `f/c/e/p/b/h' 分别表示文件、代码、编辑、项目、Buffer/笔记和帮助。
 ;; - “文件与搜索”中按 `fv' 从磁盘重新加载当前 Buffer；未保存的修改仍会要求确认。

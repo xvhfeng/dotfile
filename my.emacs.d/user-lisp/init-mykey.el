@@ -461,9 +461,9 @@ that was stored with my-point-to-register."
 ;;(keymap-global-set "C-w" #'my-copy-dwim)
 (global-set-key (kbd "C-t") #'kill-region)
 
-(keymap-global-set "C-k" #'my-cut-dwim)
-(keymap-global-set "M-k" #'my-move-line-up)
-(keymap-global-set "M-j" #'my-move-line-down)
+(keymap-global-set "M-k" #'my-cut-dwim)
+(keymap-global-set "M-[" #'my-move-line-up)
+(keymap-global-set "M-]" #'my-move-line-down)
 (keymap-global-set "C-x d" #'my-delete-whole-line-no-killring)
 (keymap-global-set "M-l" #'my-lower-dwim)
 (keymap-global-set "M-u" #'my-upper-dwim)
