@@ -1,5 +1,7 @@
 ;;; init-window.el --- Window management with ace-window -*- lexical-binding: t; -*-
 
+(require 'windmove)
+
 ;; ============================================================================
 ;; 1. Ace-Window: 窗口快速跳转、关闭、交换与切分核心
 ;; ============================================================================
@@ -42,7 +44,7 @@
           (delq 'treemacs-mode aw-ignored-buffers))))
 
 (defun my/window-shrink-horizontally ()
-  "Shrink the selected window, using Treemacs' own width API when needed."
+  "缩小当前窗口宽度；Treemacs 使用其专用接口。"
   (interactive)
   (if (and (derived-mode-p 'treemacs-mode)
            (fboundp 'treemacs-decrease-width))
@@ -50,12 +52,48 @@
     (shrink-window-horizontally 1)))
 
 (defun my/window-enlarge-horizontally ()
-  "Enlarge the selected window, using Treemacs' own width API when needed."
+  "增加当前窗口宽度；Treemacs 使用其专用接口。"
   (interactive)
   (if (and (derived-mode-p 'treemacs-mode)
            (fboundp 'treemacs-increase-width))
       (treemacs-increase-width)
     (enlarge-window-horizontally 1)))
+
+(defun my/balance-editor-windows ()
+  "均分当前 Frame 的主编辑区窗口，保留 Treemacs 等侧边窗口的尺寸。"
+  (interactive)
+  ;; Treemacs 在当前配置中使用 side window。只均分主窗口树，避免把
+  ;; 侧栏计入普通编辑窗口的份额，也不会改变侧栏的现有宽度。
+  (balance-windows (window-main-window)))
+
+(defun my/window-select-wrap (direction)
+  "沿 DIRECTION 选择窗口；到 Frame 边缘时从另一端继续。"
+  ;; 只让窗口菜单循环，不改变其他模式调用 windmove 时的行为。
+  (let* ((windmove-wrap-around t)
+         (target (windmove-find-other-window direction)))
+    ;; 单窗口时没有可选目标；向下搜索也可能返回未激活的 minibuffer。
+    (when (and target (not (window-minibuffer-p target)))
+      (select-window target))))
+
+(defun my/window-select-left ()
+  "向左循环选择窗口。"
+  (interactive)
+  (my/window-select-wrap 'left))
+
+(defun my/window-select-down ()
+  "向下循环选择窗口。"
+  (interactive)
+  (my/window-select-wrap 'down))
+
+(defun my/window-select-up ()
+  "向上循环选择窗口。"
+  (interactive)
+  (my/window-select-wrap 'up))
+
+(defun my/window-select-right ()
+  "向右循环选择窗口。"
+  (interactive)
+  (my/window-select-wrap 'right))
 
 (use-package hydra
   :straight t
@@ -91,10 +129,10 @@
 (with-eval-after-load 'general
   (my-window-def
     ;; 窗口方向移动
-    "h" '("向左切换窗口" . windmove-left)
-    "j" '("向下切换窗口" . windmove-down)
-    "k" '("向上切换窗口" . windmove-up)
-    "l" '("向右切换窗口" . windmove-right)
+    "h" '("向左循环切换窗口" . my/window-select-left)
+    "j" '("向下循环切换窗口" . my/window-select-down)
+    "k" '("向上循环切换窗口" . my/window-select-up)
+    "l" '("向右循环切换窗口" . my/window-select-right)
 
     ;; Ace Window 选择与窗口交换。
     "C-w" '("Ace Window：选择窗口" . ace-window)
@@ -116,6 +154,7 @@
     "o" '("关闭其他窗口" . delete-other-windows)
 
     ;; 窗口尺寸
+    "=" '("均分编辑窗口（不含 Treemacs）" . my/balance-editor-windows)
     "r" '("调整窗口大小" . hydra-window-resize/body)))
 
 (use-package dimmer
@@ -145,10 +184,10 @@
 ;; ---------------------------------------------------------------------------
 ;; - 普通 Buffer 的窗口命令可用 `C-w ...' 或 `C-c w ...'，两者等价。
 ;; - `C-w C-w' 使用 Ace Window 选择窗口。
-;; - `h/j/k/l' 移动窗口焦点；`M' 与目标窗口交换。
+;; - `h/j/k/l' 循环移动窗口焦点，到边缘后从另一端继续；`M' 与目标窗口交换。
 ;; - `v/s' 左右/上下分屏但不移动；`f/b/n/p' 向右/左/下/上分屏并进入新窗口。
 ;; - `d' 关闭当前窗口，`x' 选择后关闭目标窗口。
-;; - `m' 或 `o' 最大化当前窗口；`r' 进入尺寸调整，随后用 h/j/k/l 或方向键调整，q 退出。
-;; - 调整尺寸只改变当前窗口，不做窗口均分；选中 Treemacs 时会调用其专用宽度接口。
+;; - `m' 或 `o' 最大化当前窗口；`=' 均分主编辑区窗口，不改变 Treemacs 侧栏宽度。
+;; - `r' 进入尺寸调整，随后用 h/j/k/l 或方向键调整，q 退出；选中 Treemacs 时使用专用宽度接口。
 ;; - Ace Window 会把 Treemacs 也列为候选；Dimmer 自动变暗非活动窗口以突出当前窗口。
 ;;; init-window.el ends here
