@@ -428,23 +428,23 @@ that was stored with my-point-to-register."
 ;;; --- 自定义 Toggle Mark 函数 ---
 
 (defun my/toggle-mark-command ()
-;;  "类似 C-@ / C-SPC 的 Toggle 函数：
-;; 若选区未激活，则开启标记 (Set Mark)；
-;; 若选区已激活，则关闭/取消选区 (Deactivate Mark)。"
+  "切换标记的激活状态，包括尚未移动光标的空选区。"
   (interactive)
-  (if (use-region-p)
+  (if mark-active
       (deactivate-mark)
     (set-mark-command nil)))
 
-;; --- 快捷键绑定 ---
-
-;; 1. 原生 global-set-key 方式 (覆盖原生 C-2 的 digit-argument)
-(global-set-key (kbd "C-2") #'my/toggle-mark-command)
-
-;; 2. 如果使用 General.el 体系，可写为：
+;; C-m 与 RET 是同一事件，M-m 已有原生缩进定位功能；使用空闲的 C-M-m。
+;; 通过 General 统一注册，Which-Key 显示中文命令说明。
 (with-eval-after-load 'general
   (general-def
-    "C-2" #'my/toggle-mark-command))
+    "M-m" '("切换标记" . my/toggle-mark-command)))
+
+;;  关闭其它的windows，只留下自己
+(keymap-global-set "C-1" #'delete-other-windows)
+;; 关闭自身window
+(keymap-global-set "C-2" #'delete-window)
+
 
 
 ;; 绑定快捷键（可以根据个人习惯修改）
