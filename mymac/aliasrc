@@ -255,6 +255,8 @@ alias github="chrome \`git remote -v | grep github.com | grep fetch | head -1 | 
 #Show log of commits not dcommitted to svn
 alias notsvn="git log --branches --not --remotes --simplify-by-decoration --decorate --oneline"
 alias git-lg= "git log --all --graph --oneline --decorate"
+alias git-log="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
 deploy(){
 
     CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
