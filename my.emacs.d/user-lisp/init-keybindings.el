@@ -22,7 +22,7 @@
   "以 C-c 开始的全局用户命令 keymap。")
 
 (defvar-keymap my-window-map
-  :doc "以 C-w 开始、C-c w 兼容的窗口操作。")
+  :doc "以 C-c w 开始、由 General 与 Which-Key 管理的窗口操作。")
 
 (defun my/escape-quit ()
   "ESC 取消当前操作；位于临时窗口或侧栏时退出该窗口。"
@@ -313,7 +313,6 @@ start of every following column."
   ;; 全局键只保留不属于 C-c keymap 的入口。
   (which-key-add-keymap-based-replacements
     global-map
-    "C-w" "窗口操作"
     "<escape>" "取消或退出"
     "C-S-c" "多光标")
   (which-key-add-keymap-based-replacements
@@ -344,7 +343,6 @@ start of every following column."
   :config
   ;; 所有全局前缀与兼容快捷键都由 General 安装。
   (general-define-key
-    "C-w" (cons "窗口操作" my-window-map)
     "C-c w" (cons "窗口操作" my-window-map)
     "<escape>" '("取消或退出" . my/escape-quit)
     ;; Ibuffer 是可持续操作的真正 Buffer，适合由 Popper 隐藏、召回和轮换；
@@ -394,7 +392,7 @@ start of every following column."
 ;; - Which-Key 固定最多三列，按 26 字符说明宽度对齐；中文按实际双宽字符计算，
 ;;   不会再把同一行后续菜单推歪。当前前缀显示在菜单顶部。
 ;; - 粗体 `▸' 项是可继续进入的功能分组；普通字重项是立即执行的命令。
-;; - 窗口前缀为 `C-w'，兼容入口为 `C-c w'；`s h/l/k/j' 在四个方向分屏。
+;; - `C-w' 由窗口模块打开三列 Transient；`C-c w' 保留 General/Which-Key 的直接窗口命令。
 ;; - `C-t' 保留为 `kill-region'；`C-w C-w' 用 Ace Window 选择窗口。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
 ;;   `C-x C-b' 与 `C-c b l' 打开可由 Popper 召回的 Ibuffer；`C-c b e' 保留原有

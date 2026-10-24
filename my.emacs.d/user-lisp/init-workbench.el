@@ -83,6 +83,7 @@
 (autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
 (autoload 'hydra-window-resize/body "init-window" nil t)
+(autoload 'zoom-window-zoom "zoom-window" nil t)
 ;; 中文说明：单独加载工作台时也能显示书签菜单，选中后再加载 bm。
 (dolist (command '(bm-toggle bm-next bm-previous bm-show bm-show-all
                    bm-remove-all-current-buffer))
@@ -418,9 +419,10 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("q" "打开终端" my/workbench-open-terminal)]
    ["   Buffer、笔记与临时项"
     ("k" "关闭当前 Buffer" kill-current-buffer)
-    ("w" "切换临时窗口" my/workbench-toggle-popup)
     ("l" "新建笔记" org-capture)
-    ("A" "查看日程" org-agenda)]
+    ("A" "查看日程" org-agenda)
+    ;; 中文说明：Zoom 使用空闲的小写 w；再次执行即可恢复调用前的完整窗口布局。
+    ("w" "Zoom 当前窗口/恢复布局" zoom-window-zoom)]
    ["   帮助与发现"
     ("K" "查询按键" describe-key)
     ("H" "上下文动作" my/workbench-context-actions)

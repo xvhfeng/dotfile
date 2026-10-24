@@ -1,6 +1,16 @@
 ;;; init-window.el --- Window management with ace-window -*- lexical-binding: t; -*-
 
 (require 'windmove)
+(require 'transient)
+
+;; 中文说明：Zoom Window 将当前窗口临时最大化，再次调用会精确恢复调用前的
+;; 完整窗口布局，适合需要专注查看 Consult 打开结果后快速回到原布局的场景。
+;; 上游没有发布 tag，固定到已验证提交，确保新环境由 Straight 获取同一实现。
+(use-package zoom-window
+  :straight (:host github
+             :repo "emacsorphanage/zoom-window"
+             :commit "6b3aa468c0523c6b30a658f63537a2ecfeece1de")
+  :commands zoom-window-zoom)
 
 ;; ============================================================================
 ;; 1. Ace-Window: 窗口快速跳转、关闭、交换与切分核心
@@ -95,25 +105,44 @@
   (interactive)
   (my/window-select-wrap 'right))
 
+(defun my/window--select-buffer-in-new-window (new-window origin-window)
+  "在 NEW-WINDOW 选择 Buffer，完成或取消后回到 ORIGIN-WINDOW。"
+  (select-window new-window)
+  (unwind-protect
+      (if (fboundp 'consult-buffer)
+          ;; 中文说明：优先复用 Consult 的已打开 Buffer 选择体验；确认后内容
+          ;; 留在新窗口，不会替换来源窗口。
+          (call-interactively #'consult-buffer)
+        ;; Consult 不可用时安全回退到 Emacs 原生已打开 Buffer 选择。
+        (switch-to-buffer (read-buffer "新窗口显示 Buffer: " nil t)))
+    (when (window-live-p origin-window)
+      (select-window origin-window))))
+
+(defun my/window--split-and-select-buffer (side)
+  "向 SIDE 分割后在新窗口选择 Buffer，并把光标保持在原窗口。"
+  (let* ((origin-window (selected-window))
+         (new-window (split-window origin-window nil side)))
+    (my/window--select-buffer-in-new-window new-window origin-window)))
+
 (defun my/window-split-left ()
-  "在当前窗口左侧分割，光标留在原窗口。"
+  "向左分割并选择新窗口 Buffer，光标最后留在原窗口。"
   (interactive)
-  (split-window (selected-window) nil 'left))
+  (my/window--split-and-select-buffer 'left))
 
 (defun my/window-split-right ()
-  "在当前窗口右侧分割，光标留在原窗口。"
+  "向右分割并选择新窗口 Buffer，光标最后留在原窗口。"
   (interactive)
-  (split-window (selected-window) nil 'right))
+  (my/window--split-and-select-buffer 'right))
 
 (defun my/window-split-up ()
-  "在当前窗口上方分割，光标留在原窗口。"
+  "向上分割并选择新窗口 Buffer，光标最后留在原窗口。"
   (interactive)
-  (split-window (selected-window) nil 'above))
+  (my/window--split-and-select-buffer 'above))
 
 (defun my/window-split-down ()
-  "在当前窗口下方分割，光标留在原窗口。"
+  "向下分割并选择新窗口 Buffer，光标最后留在原窗口。"
   (interactive)
-  (split-window (selected-window) nil 'below))
+  (my/window--split-and-select-buffer 'below))
 
 (use-package hydra
   :straight t
@@ -144,8 +173,39 @@
     ("<return>" nil :exit t)))
 
 ;; ============================================================================
-;; 2. 将所有窗口操作集中到 C-w（C-c w 是兼容入口）
+;; 2. C-w 三列 Transient，与 C-c w General/Which-Key 入口
 ;; ============================================================================
+(transient-define-prefix my/window-menu ()
+  "打开按三列排列的窗口操作菜单。"
+  :column-widths '(26 32 30)
+  [["   选择与移动"
+    ("h" "向左循环切换窗口" my/window-select-left)
+    ("j" "向下循环切换窗口" my/window-select-down)
+    ("k" "向上循环切换窗口" my/window-select-up)
+    ("l" "向右循环切换窗口" my/window-select-right)
+    ("C-w" "Ace Window：选择窗口" ace-window)]
+   ["   空间分割"
+    ("a" "左侧分割，留在原窗口" my/window-split-left)
+    ("d" "右侧分割，留在原窗口" my/window-split-right)
+    ("w" "上方分割，留在原窗口" my/window-split-up)
+    ("s" "下方分割，留在原窗口" my/window-split-down)
+    ("f" "左侧分割并切换" my-split-left-and-switch)
+    ("c" "右侧分割并切换" my-split-right-and-switch)
+    ("v" "上方分割并切换" my-split-above-and-switch)
+    ("b" "下方分割并切换" my-split-below-and-switch)]
+   ["   布局与尺寸"
+    ("m" "与目标窗口交换" ace-swap-window)
+    ("q" "关闭当前窗口" delete-window)
+    ("x" "关闭目标窗口" ace-delete-window)
+    ("o" "最大化当前窗口" delete-other-windows)
+    ("z" "Zoom 当前窗口/恢复布局" zoom-window-zoom)
+    ("=" "均分编辑窗口" my/balance-editor-windows)
+    ("r" "调整窗口尺寸" hydra-window-resize/body)]])
+
+;; 中文说明：C-w 只负责打开上方 Transient，不经过 General；C-c w 的同一批
+;; 命令仍由 `my-window-map' 提供 Which-Key 可发现的直接键位。
+(keymap-global-set "C-w" #'my/window-menu)
+
 (with-eval-after-load 'general
   (my-window-def
     ;; 窗口方向移动
@@ -154,26 +214,26 @@
     "k" '("向上循环切换窗口" . my/window-select-up)
     "l" '("向右循环切换窗口" . my/window-select-right)
 
-    ;; Ace Window 选择与窗口交换。
+    ;; 第一列：方向移动与 C-w C-w 窗口选择。
     "C-w" '("Ace Window：选择窗口" . ace-window)
-    "M" '("与目标窗口交换" . ace-swap-window)
 
-    ;; 不切换焦点的方向分割直接放在窗口菜单；d 原本用于关闭窗口，现改为右分割。
-    "a" '("左侧分割，留在原窗口" . my/window-split-left)
-    "d" '("右侧分割，留在原窗口" . my/window-split-right)
-    "w" '("上方分割，留在原窗口" . my/window-split-up)
-    "s" '("下方分割，留在原窗口" . my/window-split-down)
-    ;; 原有的分割并切换快捷键继续保留。
-    "f" '("右侧分割并切换" . my-split-right-and-switch)
-    "b" '("左侧分割并切换" . my-split-left-and-switch)
-    "n" '("下方分割并切换" . my-split-below-and-switch)
-    "p" '("上方分割并切换" . my-split-above-and-switch)
+    ;; 第二列：小写分割后选 Buffer 并回到原窗口；fcvb 分割后直接切换。
+    "a" '("左侧分割，选择 Buffer 后返回" . my/window-split-left)
+    "d" '("右侧分割，选择 Buffer 后返回" . my/window-split-right)
+    "w" '("上方分割，选择 Buffer 后返回" . my/window-split-up)
+    "s" '("下方分割，选择 Buffer 后返回" . my/window-split-down)
+    "f" '("左侧分割并切换" . my-split-left-and-switch)
+    "c" '("右侧分割并切换" . my-split-right-and-switch)
+    "v" '("上方分割并切换" . my-split-above-and-switch)
+    "b" '("下方分割并切换" . my-split-below-and-switch)
 
-    ;; 窗口关闭与全屏
+    ;; 第三列：交换、关闭、布局与尺寸调整。
+    "m" '("与目标窗口交换" . ace-swap-window)
     "q" '("关闭当前窗口" . delete-window)
     "x" '("关闭目标窗口" . ace-delete-window)
-    "m" '("最大化当前窗口" . delete-other-windows)
-    "o" '("关闭其他窗口" . delete-other-windows)
+    "o" '("最大化当前窗口" . delete-other-windows)
+    ;; 中文说明：再次执行同一命令会恢复 Zoom 前保存的完整窗口布局。
+    "z" '("Zoom 当前窗口/恢复布局" . zoom-window-zoom)
 
     ;; 窗口尺寸
     "=" '("均分编辑窗口（不含 Treemacs）" . my/balance-editor-windows)
@@ -205,12 +265,12 @@
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 普通 Buffer 的窗口命令可用 `C-w ...' 或 `C-c w ...'，两者等价。
-;; - `C-w C-w' 使用 Ace Window 选择窗口。
-;; - `h/j/k/l' 循环移动窗口焦点，到边缘后从另一端继续；`M' 与目标窗口交换。
-;; - `a/d/w/s' 向左/右/上/下分割，光标保持在原窗口。
-;; - `f/b/n/p' 向右/左/下/上分割并切换。
-;; - `q' 关闭当前窗口，`x' 选择后关闭目标窗口。
-;; - `m' 或 `o' 最大化当前窗口；`=' 均分主编辑区窗口，不改变 Treemacs 侧栏宽度。
+;; - `C-w' 打开严格三列的 Transient：第一列选择/移动，第二列空间分割，第三列
+;;   交换、关闭、布局和尺寸；按 ESC 或 C-g 退出。
+;; - `C-c w' 使用 General/Which-Key 的直接窗口命令，按键与 C-w Transient 对应。
+;; - 小写 `a/d/w/s' 分割后会在新窗口用 Consult 选择已打开 Buffer，并自动回到来源窗口；
+;;   `f/c/v/b' 分割后直接切换到新窗口。
 ;; - `r' 进入尺寸调整，随后用 h/j/k/l 或方向键调整，q 退出；选中 Treemacs 时使用专用宽度接口。
+;; - 工作台按 W、窗口菜单按 C-w z 切换 Zoom 当前窗口与恢复原布局。
 ;; - Ace Window 会把 Treemacs 也列为候选；Dimmer 自动变暗非活动窗口以突出当前窗口。
 ;;; init-window.el ends here
