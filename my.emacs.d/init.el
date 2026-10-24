@@ -127,7 +127,6 @@
 (blink-cursor-mode -1) ;; 彻底关闭文本光标的闪烁效果，降低系统资源开销
 (global-auto-revert-mode 1) ;; 开启全局文件自动刷新，磁盘文件变更时自动同步到 Buffer
 (setq auto-revert-verbose nil) ;; 自动同步磁盘文件时关闭底部 Minibuffer 提示
-(winner-mode 1) ;; 开启 winner-mode，允许使用快捷键撤销或恢复分屏窗口布局
 
 ;; 使用安全 advice 机制替换 set-window-dedicated-p，避免窗口被某些插件锁定 ;; Window dedicated 解决策略
 (ora-advice-add 'set-window-dedicated-p :override #'ignore) ;; 忽略窗口锁定指令，保证窗口分屏的灵活操控

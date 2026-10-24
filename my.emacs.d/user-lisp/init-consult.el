@@ -269,6 +269,41 @@ phase, where `consult-customize' is guaranteed to be defined."
   (wgrep-setup)
   (wgrep-change-to-wgrep-mode))
 
+;; Consult 将不同搜索命令的输入分别保存；声明变量使字节编译明确这些历史由
+;; Consult 在运行时维护，而不要求启动阶段提前加载完整插件。
+(defvar consult--line-history)
+(defvar consult--grep-history)
+
+(defun my/consult--select-search-history (history prompt)
+  "从 HISTORY 中选择一条搜索词，PROMPT 用于说明历史类别。"
+  (let ((items (delete-dups (seq-filter #'stringp (copy-sequence history)))))
+    (unless items
+      (user-error "%s暂无搜索历史" prompt))
+    (completing-read (format "%s: " prompt) items nil t)))
+
+(defun my/consult-line-history ()
+  "选择当前 Buffer 的 Consult 搜索历史并重新打开搜索。"
+  (interactive)
+  (require 'consult)
+  (consult-line
+   (my/consult--select-search-history consult--line-history
+                                      "当前 Buffer 搜索历史")))
+
+(defun my/consult-ripgrep-history ()
+  "选择项目 Consult 搜索历史并重新打开项目搜索。"
+  (interactive)
+  (require 'consult)
+  (consult-ripgrep
+   nil
+   (my/consult--select-search-history consult--grep-history
+                                      "项目搜索历史")))
+
+(transient-define-prefix my/consult-search-history-menu ()
+  "查看并恢复最近使用过的 Consult 搜索词。"
+  [["   Consult 搜索历史"
+    ("l" "当前 Buffer 搜索历史" my/consult-line-history)
+    ("p" "项目搜索历史" my/consult-ripgrep-history)]])
+
 (use-package consult
   :straight t
   :defer t
@@ -300,6 +335,12 @@ phase, where `consult-customize' is guaranteed to be defined."
   ;; 预览，因此完全关闭该命令的自动预览，避免 C-n/C-p 触发磁盘读取。
   (my/consult-apply-customizations))
 
+(with-eval-after-load 'consult
+  ;; 中文说明：Consult 异步输入 map 会覆盖部分 Minibuffer 默认完成键；明确保留
+  ;; M-p/M-n 的历史浏览，确保重新打开搜索后可逐条恢复刚刚的搜索词。
+  (keymap-set consult-async-map "M-p" #'previous-history-element)
+  (keymap-set consult-async-map "M-n" #'next-history-element))
+
 ;; 不使用 use-package 的 :general 关键字；等 General 可用后再绑定。
 (with-eval-after-load 'general
   (general-define-key
@@ -307,6 +348,7 @@ phase, where `consult-customize' is guaranteed to be defined."
    "M-s r" '("项目 Ripgrep 搜索" . consult-ripgrep)
    "M-s l" '("当前文件搜索" . consult-line)
    "M-s f" '("查找文件" . consult-find)
+   "M-s h" '("Consult 搜索历史" . my/consult-search-history-menu)
    "C-c ! l" '("诊断列表" . consult-flymake)))
 
 ;; 中文说明：搜索与替换直接平铺在 C-c s 下，不另建 rg 子前缀。用户可通过
@@ -357,7 +399,8 @@ phase, where `consult-customize' is guaranteed to be defined."
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 含 `.projx' 的目录会被识别为项目根目录；项目搜索忽略 .git/node_modules/target/dist/log。
-;; - `C-c p s' 或 `M-s r' 搜索项目，`M-s l' 搜索当前 Buffer，`M-s f' 查找文件。
+;; - `C-c p s' 或 `M-s r' 搜索项目，`M-s l' 搜索当前 Buffer，`M-s f' 查找文件；
+;;   `M-s h' 打开 Consult 搜索历史，可按 l/p 恢复当前 Buffer/项目的搜索词。
 ;; - `C-c s l/p' 是 Consult 的当前 Buffer/项目搜索；`C-c s B/r/m/e' 分别是
 ;;   rg 当前文件搜索、rg 项目搜索、中文过滤/直接替换菜单与将 rg 结果切为可编辑替换模式。
 ;; - `C-c ! l' 或 `C-c c d l' 汇总 Flymake 诊断；`C-c E' 导出当前候选结果。

@@ -371,62 +371,61 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
-  ;; 所有入口使用“分组首字母 + 动作助记字母”的两段式小写键：
-  ;; f=file/search，c=code，e=edit，p=project，b=buffer/note，h=help。
-  ;; 这样菜单扩展时无需用大小写区分无关操作，看到按键即可推断所在分组。
+  ;; 中文说明：顶层入口全部使用单字符，先分配 26 个小写字母；功能数量超过
+  ;; 小写字母容量时才使用大写字母，减少打开工作台后的连续按键次数。
   ;; 固定每列的最小宽度，让各分组标题和子菜单左边缘一致，并在列间保留留白。
   :column-widths '(22 22 22 22 22 22)
   ;; 标题预留与“按键 + 空格”相同的宽度，使子菜单的中文描述从标题正下方开始。
   [["   文件与搜索"
-    ("ff" "打开文件（可预览）" consult-find)
-    ("fr" "最近文件" consult-recent-file)
-    ("fb" "切换 Buffer" consult-buffer)
+    ("f" "打开文件（可预览）" consult-find)
+    ("r" "最近文件" consult-recent-file)
+    ("b" "切换 Buffer" consult-buffer)
     ;; 中文说明：将 Consult 与 rg.el 聚合为专门子菜单，主工作台不再混排搜索项。
-    ("fs" "搜索&替换" my/workbench-search-replace-menu)
-    ("fv" "从磁盘重新加载" revert-buffer)
-    ("fd" "当前目录" my/workbench-current-directory)
-    ("fy" "剪贴历史" my/workbench-clipboard-history)]
+    ("s" "搜索&替换" my/workbench-search-replace-menu)
+    ("v" "从磁盘重新加载" revert-buffer)
+    ("d" "当前目录" my/workbench-current-directory)
+    ("y" "剪贴历史" my/workbench-clipboard-history)]
    ["   代码"
-    ("ci" "符号列表" consult-imenu)
-    ("co" "侧栏大纲" my/workbench-show-outline)
-    ("cd" "当前诊断" flymake-show-buffer-diagnostics)
-    ("cs" "搜索诊断" my/workbench-project-diagnostics)
-    ("ca" "代码动作" my/workbench-code-actions)
-    ("cn" "跳转与文档" my/workbench-navigation-menu)
-    ("cf" "代码折叠" my/workbench-fold-menu)
+    ("i" "符号列表" consult-imenu)
+    ("o" "侧栏大纲" my/workbench-show-outline)
+    ("x" "当前诊断" flymake-show-buffer-diagnostics)
+    ("X" "搜索诊断" my/workbench-project-diagnostics)
+    ("a" "代码动作" my/workbench-code-actions)
+    ("n" "跳转与文档" my/workbench-navigation-menu)
+    ("z" "代码折叠" my/workbench-fold-menu)
     ;; 合并冲突在独立 Transient 中操作，工作台只提供统一入口。
-    ("cm" "合并冲突" my/smerge-menu)
-    ("cb" "编译当前 Buffer" my/workbench-compile-current-buffer)
-    ("cc" "编译" compile)]
+    ("m" "合并冲突" my/smerge-menu)
+    ("C" "编译当前 Buffer" my/workbench-compile-current-buffer)
+    ("c" "编译" compile)]
    ["   编辑与跳转"
-    ("ee" "批量编辑符号" my/workbench-edit-occurrences)
-    ("es" "选择当前缩进块" my/mark-indent-block)
-    ("ei" "选择缩进块内部" my/mark-indent-block-inner)
-    ("em" "匹配成对符号或标签" my/match-pair)
-    ("ep" "切换 Pinky 模式" my/pinky-toggle)
-    ("eu" "可视撤销树" my/workbench-visual-undo)
-    ("eg" "切换标记" my/toggle-mark-command)
-    ("eb" "可视书签" my/workbench-bm-menu)
-    ("ej" "Avy 跳转菜单" my/avy-menu)]
+    ("e" "批量编辑符号" my/workbench-edit-occurrences)
+    ("g" "选择当前缩进块" my/mark-indent-block)
+    ("G" "选择缩进块内部" my/mark-indent-block-inner)
+    ("h" "匹配成对符号或标签" my/match-pair)
+    ("j" "切换 Pinky 模式" my/pinky-toggle)
+    ("u" "可视撤销树" my/workbench-visual-undo)
+    ("M" "切换标记" my/toggle-mark-command)
+    ("B" "可视书签" my/workbench-bm-menu)
+    ("J" "Avy 跳转菜单" my/avy-menu)]
    ["   项目与 Git"
-    ("pp" "切换项目" project-switch-project)
-    ("pg" "Git 状态" magit-status)
+    ("p" "切换项目" project-switch-project)
+    ("V" "Git 状态" magit-status)
     ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
-    ("pd" "Diffnav 改动浏览" diffnav-emacs-menu)
-    ("pf" "当前文件 Git 操作" magit-file-dispatch)
-    ("pm" "Dirvish 文件管理器" my/dirvish-open)
-    ("pt" "项目文件树" treemacs)
-    ("ps" "打开终端" my/workbench-open-terminal)]
+    ("D" "Diffnav 改动浏览" diffnav-emacs-menu)
+    ("F" "当前文件 Git 操作" magit-file-dispatch)
+    ("L" "Dirvish 文件管理器" my/dirvish-open)
+    ("t" "项目文件树" treemacs)
+    ("q" "打开终端" my/workbench-open-terminal)]
    ["   Buffer、笔记与临时项"
-    ("bk" "关闭当前 Buffer" kill-current-buffer)
-    ("bp" "切换临时窗口" my/workbench-toggle-popup)
-    ("bn" "新建笔记" org-capture)
-    ("ba" "查看日程" org-agenda)]
+    ("k" "关闭当前 Buffer" kill-current-buffer)
+    ("w" "切换临时窗口" my/workbench-toggle-popup)
+    ("l" "新建笔记" org-capture)
+    ("A" "查看日程" org-agenda)]
    ["   帮助与发现"
-    ("hk" "查询按键" describe-key)
-    ("ha" "上下文动作" my/workbench-context-actions)
-    ("hb" "当前按键表" describe-bindings)
-    ("hm" "当前模式帮助" describe-mode)
+    ("K" "查询按键" describe-key)
+    ("H" "上下文动作" my/workbench-context-actions)
+    ("E" "当前按键表" describe-bindings)
+    ("O" "当前模式帮助" describe-mode)
     ("DEL" "关闭个人工作台" transient-quit-one)
     ("C-d" "关闭个人工作台" transient-quit-all)
     ("<escape>" "关闭个人工作台" transient-quit-one)]])
@@ -506,14 +505,13 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; ---------------------------------------------------------------------------
 ;; - `C-d' 切换个人工作台，`C-c SPC' 是语义化入口；`ESC' 取消或退出。
 ;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`M-j' 切换 Pinky。
-;; - 菜单采用两段式小写助记键：首字母选择分组，第二个字母选择具体动作。
-;;   `f/c/e/p/b/h' 分别表示文件、代码、编辑、项目、Buffer/笔记和帮助。
-;; - “文件与搜索”中按 `fs' 打开搜索&替换，按 `fv' 从磁盘重新加载当前 Buffer；
+;; - 顶层菜单采用单字符键，优先使用小写；大写仅用于小写字母耗尽后的少数入口。
+;; - “文件与搜索”中按 `s' 打开搜索&替换，按 `v' 从磁盘重新加载当前 Buffer；
 ;;   未保存的修改仍会要求确认。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
 ;; - “编辑与跳转”提供 Iedit、缩进/配对选择、撤销树、可视书签和 Avy。
-;; - “Buffer、笔记与临时项”中按 `bk' 关闭当前 Buffer，按 `bp' 切换临时窗口。
-;; - “帮助与发现”可查询按键、查看当前按键表或模式帮助，适合遗忘快捷键时使用。
+;; - “Buffer、笔记与临时项”中按 `k' 关闭当前 Buffer，按 `w' 切换临时窗口。
+;; - “帮助与发现”中按 `K/E/O' 查询按键、查看当前按键表或模式帮助。
 ;; - 选择“临时窗口”后，Popper 显示或隐藏最近的帮助、编译或诊断类 Buffer。
 ;; - `C-x C-b' 或 `C-c b l' 在底部打开 Ibuffer；`C-c b e' 保留 Electric List。
 ;;   在 Ibuffer 中按 RET 或鼠标选择后，目标 Buffer 会回到原编辑窗口，弹窗关闭。

@@ -16,8 +16,7 @@
   :straight nil                        ; 内置包无需从外部下载
   :general
   (:keymaps 'flymake-mode-map
-   "M-n" '("next diagnostic" . flymake-goto-next-error)
-   "M-p" '("previous diagnostic" . flymake-goto-prev-error))
+   "M-n" '("next diagnostic" . flymake-goto-next-error))
   :hook
   ;; 中文说明：为全部编程模式和常见 Web/配置代码模式自动开启 Flymake。
   ;; C、Java、Python 等的语义诊断由 Eglot 已连接的语言服务器提供。
@@ -96,7 +95,8 @@ clangd/Eglot is the sole C/C++ diagnostic provider in this configuration."
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - Flymake 在编程和常用 Web/配置模式中自动开启；Eglot 连接后提供语言服务器诊断。
-;; - `M-n/M-p' 或 `C-c c d n/p' 跳到下一条/上一条诊断。
+;; - `M-n' 或 `C-c c d n/p' 跳到下一条/上一条诊断；`M-p' 保留给 Minibuffer
+;;   历史和局部模式，不再被 Flymake 诊断命令拦截。
 ;; - `C-c c d b/a' 显示当前 Buffer/整个项目的诊断；`C-c c d l' 交互搜索诊断。
 ;; - `C-c ! l' 是诊断列表的兼容入口；光标停在问题行时 Echo Area 显示说明。
 ;; - 本配置允许可信 Elisp 在检查期间执行代码；不要对未知来源代码盲目运行 Flymake。

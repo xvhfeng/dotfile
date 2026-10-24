@@ -98,7 +98,7 @@ its own closing tag rather than an inner sibling's closing tag."
 
 
 
-;;; 滚动：C-c C-d/C-c C-u 半屏上/下滚，C-1/C-2 整屏滚，C-3 重定位。
+;;; 标记与窗口：C-1 仅保留当前窗口，C-2 开始/切换 Region 标记，C-3 关闭当前窗口。
 ;;; 窗口：C-c w f/b/n/p 向右/左/下/上分割并进入；C-M-h/j/k/l
 ;;; 切换窗口；M-S-h/l 加宽/缩窄，M-S-k/j 增高/降低；M-F11 全屏。
 ;;; 编辑：ESC 取消，C-! 替换，C-c e r/R/w 替换包围符/成对替换/包围单词；M-w
@@ -530,16 +530,13 @@ that was stored with my-point-to-register."
       (deactivate-mark)
     (set-mark-command nil)))
 
-;; C-m 与 RET 是同一事件，M-m 已有原生缩进定位功能；使用空闲的 C-M-m。
-;; 通过 General 统一注册，Which-Key 显示中文命令说明。
-(with-eval-after-load 'general
-  (general-def
-    "M-p" '("切换标记" . my/toggle-mark-command)))
-
 ;;  关闭其它的windows，只留下自己
-(keymap-global-set "C-1" #'delete-other-windows)
-;; 关闭自身window
-(keymap-global-set "C-2" #'delete-window)
+(keymap-global-set "M-0" #'delete-other-windows)
+;; 中文说明：C-2 是开始/切换 Region 标记的全局入口；不放入 emulation map，
+;; 因此 Minibuffer 的 M-p 历史导航不会再被标记命令拦截。
+(keymap-global-set "M-2" #'my/toggle-mark-command)
+;; 关闭自身 window 改至 M-1，避免与新的 Region 标记入口冲突。
+(keymap-global-set "M-1" #'delete-window)
 
 
 
@@ -556,21 +553,22 @@ that was stored with my-point-to-register."
 (keymap-global-set "M-w" #'my-copy-dwim)
 (keymap-global-set "M-n" #'my-copy-region-or-line-begin)
 (keymap-global-set "M-m" #'my-copy-region-or-line-end)
-(keymap-global-set "M-p" #'my/toggle-mark-command)
+;; 中文说明：移除旧的 M-p 全局标记绑定，恢复其在 Minibuffer 等局部 keymap
+;; 中的原有用途；显式清空可兼容不重启时重新加载此配置的场景。
+;; :(keymap-global-set "M-p" nil)
 
-;; Flymake 和部分 major mode 会在局部 map 中占用 M-n/M-m/M-w/M-p。将复制和
-;; 标记键放入专用 emulation map，确保它们在普通编辑 Buffer 中不被局部 map 覆盖。
+;; Flymake 和部分 major mode 会在局部 map 中占用 M-n/M-m/M-w。仅将复制键
+;; 放入专用 emulation map；M-p 不再提升优先级，保证历史导航等局部绑定可用。
 (defvar-local my/copy-command-override-active t
-  "非 nil 时让 M-n/M-m/M-w 复制与 M-p 标记优先于局部 keymap。")
+  "非 nil 时让 M-n/M-m/M-w 复制命令优先于局部 keymap。")
 
 (defvar my/copy-command-override-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "M-n") #'my-copy-region-or-line-begin)
     (define-key map (kbd "M-m") #'my-copy-region-or-line-end)
     (define-key map (kbd "M-w") #'my-copy-dwim)
-    (define-key map (kbd "M-p") #'my/toggle-mark-command)
     map)
-  "为上下文复制与标记命令提供高优先级的 emulation keymap。")
+  "为上下文复制命令提供高优先级的 emulation keymap。")
 
 (defvar my/copy-command-emulation-alist
   `((my/copy-command-override-active . ,my/copy-command-override-map))
@@ -610,7 +608,8 @@ that was stored with my-point-to-register."
    "M-n" '("复制选区或至行首" . my-copy-region-or-line-begin)
    "M-m" '("复制选区或至行尾" . my-copy-region-or-line-end)
    "M-w" '("复制选区或整行" . my-copy-dwim)
-   "M-p" '("切换标记" . my/toggle-mark-command))
+   "C-2" '("切换标记" . my/toggle-mark-command)
+   "C-3" '("关闭当前窗口" . delete-window))
   (my-leader-def
     "t %" '("匹配成对符号或标签" . my/match-pair)))
 
