@@ -247,6 +247,13 @@
 
 (my/setup-straight-and-use-package) ;; 调用并执行上面定义好的宏，完成全套包管理器的初始化配置
 
+;; 中文说明：Transient 是个人工作台、Pinky、Smerge、Diffnav 与 rg 菜单的共同
+;; 基础。显式由 Straight 从 magit/transient 安装并立即加载，保证新环境首次启动
+;; 不会回退到 Emacs 内置旧版本而与已编译的菜单字节码产生对象协议不兼容。
+(use-package transient
+  :straight (:host github :repo "magit/transient")
+  :demand t)
+
 
 ;;;; 后续配置需要插件
 ;;;; 下载普通 MELPA 插件（自动从 GitHub 克隆）

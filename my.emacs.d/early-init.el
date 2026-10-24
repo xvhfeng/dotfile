@@ -135,6 +135,15 @@
 
 (my/user-lisp-refresh-bytecode-load-path)
 
+;; 中文说明：工作台、Pinky、Smerge、rg 等模块的字节码均按 Straight 构建的
+;; Transient 编译。只把 Transient 及其最小运行依赖预先加入 load-path，不提前
+;; require；这样各配置模块首次加载时不会误用 Emacs 内置的旧 Transient，避免
+;; 两套内部对象协议混用导致菜单初始化失败。
+(dolist (package '(compat cond-let llama transient))
+  (let ((directory (my/runtime-file (format "straight/build/%s/" package))))
+    (when (file-directory-p directory)
+      (add-to-list 'load-path directory))))
+
 (defun my/straight-build-load-paths ()
   "Return load paths for every package already built by Straight.
 

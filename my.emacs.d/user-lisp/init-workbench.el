@@ -49,6 +49,12 @@
   ;; 变量引用。函数和值命名空间独立，赋同名符号值不会影响命令调用。
   (unless (boundp command)
     (set command command)))
+;; 中文说明：rg.el 的搜索命令按需加载，保证打开工作台不会提前启动
+;; ripgrep 子进程；用户选择搜索项时才加载插件。
+(dolist (command '(rg-project rg-dwim-current-file))
+  (autoload command "rg" nil t)
+  (unless (boundp command)
+    (set command command)))
 (dolist (command '(magit-status magit-file-dispatch))
   (autoload command "magit" nil t))
 (autoload 'treemacs "treemacs" nil t)
@@ -65,11 +71,14 @@
 (autoload 'my/mark-indent-block "init-treesitter" nil t)
 (autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
-(autoload 'my/cut-to-line-beginning-or-region "init-mykey" nil t)
-(autoload 'my-copy-region-or-line-begin "init-mykey" nil t)
-(autoload 'my-copy-region-or-line-end "init-mykey" nil t)
-(autoload 'my-copy-dwim "init-mykey" nil t)
 (autoload 'my/toggle-mark-command "init-mykey" nil t)
+(autoload 'my/rg-search-current-buffer "init-consult" nil t)
+(autoload 'my/rg-search-project "init-consult" nil t)
+(autoload 'my/rg-edit-results "init-consult" nil t)
+(autoload 'my/rg-search-menu "init-consult" nil t)
+(autoload 'my/rg-direct-replace-current-buffer "init-consult" nil t)
+(autoload 'my/rg-direct-replace-project "init-consult" nil t)
+(autoload 'my/consult-edit-exported-results "init-consult" nil t)
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
@@ -231,16 +240,6 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (interactive)
   (my/workbench-call-on-demand 'iedit 'iedit-mode "Iedit 批量编辑"))
 
-(defun my/workbench-expand-selection ()
-  "按语法结构扩展当前选区。"
-  (interactive)
-  (my/workbench-call-on-demand 'expand-region 'er/expand-region "语义选区扩展"))
-
-(defun my/workbench-contract-selection ()
-  "按语法结构缩小当前选区。"
-  (interactive)
-  (my/workbench-call-on-demand 'expand-region 'er/contract-region "语义选区收缩"))
-
 (defun my/workbench-visual-undo ()
   "打开当前 Buffer 的可视化撤销树。"
   (interactive)
@@ -352,6 +351,24 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("DEL" "返回个人工作台" transient-quit-one)
     ("C-d" "关闭个人工作台" transient-quit-all)]])
 
+(transient-define-prefix my/workbench-search-replace-menu ()
+  "打开 Consult 与 rg.el 的搜索和替换菜单。"
+  [["   Consult 搜索"
+    ("cl" "当前 Buffer 搜索" consult-line)
+    ("cp" "项目文件搜索" consult-ripgrep)
+    ("cf" "查找文件" consult-find)
+    ("ce" "编辑导出结果并写回" my/consult-edit-exported-results)]
+   ["   rg 搜索与替换"
+    ("rb" "当前 Buffer 搜索（可替换）" my/rg-search-current-buffer)
+    ("rp" "项目文件搜索（可替换）" my/rg-search-project)
+    ("rm" "搜索、过滤与直接替换" my/rg-search-menu)
+    ("re" "编辑结果并写回" my/rg-edit-results)
+    ("rB" "直接替换当前 Buffer" my/rg-direct-replace-current-buffer)
+    ("rP" "直接替换项目文件" my/rg-direct-replace-project)]
+   ["   结果替换说明"
+    ("DEL" "返回个人工作台" transient-quit-one)
+    ("C-d" "关闭个人工作台" transient-quit-all)]])
+
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
   ;; 所有入口使用“分组首字母 + 动作助记字母”的两段式小写键：
@@ -364,8 +381,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("ff" "打开文件（可预览）" consult-find)
     ("fr" "最近文件" consult-recent-file)
     ("fb" "切换 Buffer" consult-buffer)
-    ("fs" "项目搜索" consult-ripgrep)
-    ("fl" "当前文件搜索" consult-line)
+    ;; 中文说明：将 Consult 与 rg.el 聚合为专门子菜单，主工作台不再混排搜索项。
+    ("fs" "搜索&替换" my/workbench-search-replace-menu)
     ("fv" "从磁盘重新加载" revert-buffer)
     ("fd" "当前目录" my/workbench-current-directory)
     ("fy" "剪贴历史" my/workbench-clipboard-history)]
@@ -383,17 +400,11 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("cc" "编译" compile)]
    ["   编辑与跳转"
     ("ee" "批量编辑符号" my/workbench-edit-occurrences)
-    ("ex" "扩展选区" my/workbench-expand-selection)
-    ("ec" "收缩选区" my/workbench-contract-selection)
     ("es" "选择当前缩进块" my/mark-indent-block)
     ("ei" "选择缩进块内部" my/mark-indent-block-inner)
     ("em" "匹配成对符号或标签" my/match-pair)
     ("ep" "切换 Pinky 模式" my/pinky-toggle)
     ("eu" "可视撤销树" my/workbench-visual-undo)
-    ("ek" "剪切选区或至行首" my/cut-to-line-beginning-or-region)
-    ("en" "复制选区或至行首" my-copy-region-or-line-begin)
-    ("el" "复制选区或至行尾" my-copy-region-or-line-end)
-    ("ew" "复制选区或整行" my-copy-dwim)
     ("eg" "切换标记" my/toggle-mark-command)
     ("eb" "可视书签" my/workbench-bm-menu)
     ("ej" "Avy 跳转菜单" my/avy-menu)]
@@ -497,9 +508,10 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`M-j' 切换 Pinky。
 ;; - 菜单采用两段式小写助记键：首字母选择分组，第二个字母选择具体动作。
 ;;   `f/c/e/p/b/h' 分别表示文件、代码、编辑、项目、Buffer/笔记和帮助。
-;; - “文件与搜索”中按 `fv' 从磁盘重新加载当前 Buffer；未保存的修改仍会要求确认。
+;; - “文件与搜索”中按 `fs' 打开搜索&替换，按 `fv' 从磁盘重新加载当前 Buffer；
+;;   未保存的修改仍会要求确认。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
-;; - “编辑与跳转”提供 Iedit、语义选区、撤销树、可视书签和 Avy。
+;; - “编辑与跳转”提供 Iedit、缩进/配对选择、撤销树、可视书签和 Avy。
 ;; - “Buffer、笔记与临时项”中按 `bk' 关闭当前 Buffer，按 `bp' 切换临时窗口。
 ;; - “帮助与发现”可查询按键、查看当前按键表或模式帮助，适合遗忘快捷键时使用。
 ;; - 选择“临时窗口”后，Popper 显示或隐藏最近的帮助、编译或诊断类 Buffer。
