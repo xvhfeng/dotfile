@@ -189,10 +189,10 @@
     ("d" "右侧分割，留在原窗口" my/window-split-right)
     ("w" "上方分割，留在原窗口" my/window-split-up)
     ("s" "下方分割，留在原窗口" my/window-split-down)
-    ("f" "左侧分割并切换" my-split-left-and-switch)
-    ("c" "右侧分割并切换" my-split-right-and-switch)
-    ("v" "上方分割并切换" my-split-above-and-switch)
-    ("b" "下方分割并切换" my-split-below-and-switch)]
+    ("c" "左侧分割并切换" my-split-left-and-switch)
+    ("b" "右侧分割并切换" my-split-right-and-switch)
+    ("f" "上方分割并切换" my-split-above-and-switch)
+    ("v" "下方分割并切换" my-split-below-and-switch)]
    ["   布局与尺寸"
     ("m" "与目标窗口交换" ace-swap-window)
     ("q" "关闭当前窗口" delete-window)
@@ -218,26 +218,26 @@
     "C-w" '("Ace Window：选择窗口" . ace-window)
 
     ;; 第二列：小写分割后选 Buffer 并回到原窗口；fcvb 分割后直接切换。
-    "a" '("左侧分割，选择 Buffer 后返回" . my/window-split-left)
-    "d" '("右侧分割，选择 Buffer 后返回" . my/window-split-right)
-    "w" '("上方分割，选择 Buffer 后返回" . my/window-split-up)
-    "s" '("下方分割，选择 Buffer 后返回" . my/window-split-down)
+    "a" '("仅左侧分割" . my/window-split-left)
+    "d" '("仅右侧分割" . my/window-split-right)
+    "w" '("仅上方分割" . my/window-split-up)
+    "s" '("仅下方分割" . my/window-split-down)
     "f" '("左侧分割并切换" . my-split-left-and-switch)
     "c" '("右侧分割并切换" . my-split-right-and-switch)
     "v" '("上方分割并切换" . my-split-above-and-switch)
     "b" '("下方分割并切换" . my-split-below-and-switch)
 
     ;; 第三列：交换、关闭、布局与尺寸调整。
-    "m" '("与目标窗口交换" . ace-swap-window)
+    "m" '("窗口交换（可选择）" . ace-swap-window)
     "q" '("关闭当前窗口" . delete-window)
-    "x" '("关闭目标窗口" . ace-delete-window)
-    "o" '("最大化当前窗口" . delete-other-windows)
+    "x" '("关闭窗口（可选择）" . ace-delete-window)
+    "o" '("删除所有其它窗口" . delete-other-windows)
     ;; 中文说明：再次执行同一命令会恢复 Zoom 前保存的完整窗口布局。
-    "z" '("Zoom 当前窗口/恢复布局" . zoom-window-zoom)
+    "z" '("Zoom 最大化窗口/恢复布局" . zoom-window-zoom)
 
     ;; 窗口尺寸
     "=" '("均分编辑窗口（不含 Treemacs）" . my/balance-editor-windows)
-    "r" '("调整窗口大小" . hydra-window-resize/body)))
+    "r" '("自调整窗口大小" . hydra-window-resize/body)))
 
 (use-package dimmer
   :straight t

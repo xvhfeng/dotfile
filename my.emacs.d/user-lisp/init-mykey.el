@@ -548,7 +548,7 @@ that was stored with my-point-to-register."
 ;; 下翻半页
 (keymap-global-set "C-9"  #'my-scroll-half-screen-down)
 (keymap-global-set "C-o"  #'my-open-line-below)
-(keymap-global-set "C-S-o"  #'my-open-line-above)
+(keymap-global-set "C-r"  #'my-open-line-above)
 
 (keymap-global-set "M-w" #'my-copy-dwim)
 (keymap-global-set "M-n" #'my-copy-region-or-line-begin)
@@ -587,7 +587,7 @@ that was stored with my-point-to-register."
 (keymap-global-set "M-l" #'my-lower-dwim)
 (keymap-global-set "M-u" #'my-upper-dwim)
 (keymap-global-set "M-c" #'my-capitalize-dwim)
-(keymap-global-set "C-x C-k" #'my-kill-with-save-and-delete-split-window)
+;;(keymap-global-set "C-x C-k" #'my-kill-with-save-and-delete-split-window)
 (keymap-global-set "C-!" #'my-replace-dwim)
 
 ;;============= *  更改 EMACS 自身的某些设置 *=====================

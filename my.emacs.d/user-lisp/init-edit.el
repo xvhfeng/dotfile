@@ -6,6 +6,86 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
+;; ============================================================================
+;; 0. CUA Mode：矩形选区与矩形编辑
+;; ============================================================================
+;; 中文说明：CUA 是 Emacs 内置功能。关闭 CUA 剪切/复制/粘贴键位接管，仅启用
+;; 矩形选区，避免覆盖本配置已有的 C-x/C-c/C-v 等编辑习惯。
+(use-package cua-base
+  :straight nil
+  :demand t
+  :init
+  (setq cua-enable-cua-keys nil)
+  :config
+  ;; 中文说明：不全局启用 cua-mode；它的高优先级 emulation keymap 会与 C-d
+  ;; 工作台冲突。矩形选区由下方按需调用的 cua-rectangle-mark-mode 独立提供。
+  (cua-mode -1)
+  (require 'cua-rect))
+
+(defun my/cua-rectangle-cancel ()
+  "取消当前 CUA 矩形选区并释放所有临时矩形状态。"
+  (interactive)
+  (setq-local my/cua-rectangle--persistent nil)
+  (remove-hook 'post-command-hook #'my/cua-rectangle--keep-active t)
+  (when (bound-and-true-p cua-rectangle-mark-mode)
+    (cua-rectangle-mark-mode -1))
+  (deactivate-mark))
+
+(defvar-local my/cua-rectangle--persistent nil
+  "非 nil 时除 ESC/C-g 外保持 CUA 矩形选区状态。")
+
+(defun my/cua-rectangle--keep-active ()
+  "在普通命令撤销 Region 后保持矩形选区激活。"
+  (when my/cua-rectangle--persistent
+    ;; 中文说明：CUA 的 deactivate-mark hook 可能已先关闭 minor mode；普通
+    ;; 编辑键触发的这种关闭立即重新启用，而 ESC/C-g 会先清除持久标记。
+    (unless (bound-and-true-p cua-rectangle-mark-mode)
+      (my/cua-rectangle--enable-persistent))
+    (unless mark-active
+      (activate-mark)
+      (setq deactivate-mark nil)
+      (unless cua--rectangle
+        (cua-set-rectangle-mark)))))
+
+(defun my/cua-rectangle-remind-exit ()
+  "在矩形选区中提示退出键，保持当前选区不变。"
+  (interactive)
+  (message "矩形选区中请按 ESC 或 C-g 退出"))
+
+(defun my/cua-rectangle--remove-auto-cancel-hook (before-hooks)
+  "移除 CUA 新增的自动取消钩子，与 BEFORE-HOOKS 对比。"
+  (dolist (hook (cl-set-difference (default-value 'deactivate-mark-hook)
+                                    before-hooks :test #'eq))
+    ;; 中文说明：CUA 原钩子在任意 Region 失活时直接关闭矩形模式；此处替换为
+    ;; 仅由 ESC/C-g 触发的显式取消。
+    (remove-hook 'deactivate-mark-hook hook)))
+
+(defun my/cua-rectangle--enable-persistent ()
+  "启用 CUA 矩形选区，并移除其自动取消钩子。"
+  (let ((before-hooks (copy-sequence (default-value 'deactivate-mark-hook))))
+    (cua-rectangle-mark-mode 1)
+    (my/cua-rectangle--remove-auto-cancel-hook before-hooks)
+    (setq-local my/cua-rectangle--persistent t)
+    ;; -100 让保持逻辑先于 CUA 自身矩形更新运行；`add-hook' 会自动去重。
+    (add-hook 'post-command-hook #'my/cua-rectangle--keep-active -100 t)))
+
+(defun my/cua-rectangle-toggle ()
+  "启动持久 CUA 矩形选区；仅 ESC 或 C-g 可以退出。"
+  (interactive)
+  (if (bound-and-true-p cua-rectangle-mark-mode)
+      (my/cua-rectangle-remind-exit)
+    (my/cua-rectangle--enable-persistent)))
+
+(with-eval-after-load 'cua-rect
+  ;; 中文说明：矩形状态只允许 ESC/C-g 退出。BS/DEL 保持未绑定状态，不会因
+  ;; 自动取消映射离开矩形选区。
+  (define-key cua--rectangle-keymap [escape] #'my/cua-rectangle-cancel)
+  (define-key cua--rectangle-keymap (kbd "C-g") #'my/cua-rectangle-cancel)
+  (define-key cua--rectangle-keymap (kbd "BS") nil)
+  (define-key cua--rectangle-keymap (kbd "DEL") nil))
+
 ;; ============================================================================
 ;; 1. Change-Inner: 实现类似 Vim 的 ci" / ca" / ci( / ca( 操作
 ;; ============================================================================
@@ -87,7 +167,7 @@
   (add-hook 'enable-theme-functions #'my/iedit-style-faces)
   ;; 中文说明：M-' 保留 Iedit 原本的“排除当前匹配项”能力，避免与 M-; 注释冲突。
   (define-key iedit-mode-keymap (kbd "M-;") #'my/iedit-comment-line)
-  (define-key iedit-mode-keymap (kbd "M-'") #'iedit-toggle-selection))
+  (define-key iedit-mode-keymap (kbd "C-s") #'iedit-toggle-selection))
 
 ;; --- 挂载到 General.el / C-c e 编辑前缀 ---
 (with-eval-after-load 'general
@@ -109,7 +189,9 @@
     "e p" '("mark previous occurrence" . mc/mark-previous-like-this)
     "e a" '("mark all occurrences" . mc/mark-all-like-this)
     "e e" '("iedit occurrences" . iedit-mode)
-    "e f" '("iedit current function" . iedit-mode-toggle-on-function)))
+    "e f" '("iedit current function" . iedit-mode-toggle-on-function)
+    ;; 中文说明：C-c e u 只切换矩形选区，不触发 CUA 全局剪切/复制/粘贴键。
+    "e u" '("CUA 矩形选区" . my/cua-rectangle-toggle)))
 
 (provide 'init-edit)
 
@@ -121,6 +203,7 @@
 ;; - `C-=/C--' 或 `C-c e +/-' 按语法结构扩展/收缩选区。
 ;; - `C->/C-<' 标记下/上一个相同文本，`C-c C-<' 标记全部，`C-S-c C-S-c' 按行多光标。
 ;; - `C-;' 或 `C-c e e' 切换 Iedit；`C-c e f' 只编辑当前函数内的匹配项。
+;; - `C-c e u' 启动 CUA 矩形选区；仅 `ESC' 退出，`C-g' 仅提示，CUA 全局键位保持关闭。
 ;; - `C-c e l/n/p/a' 分别为按行多光标、下一个、上一个和全部匹配。
 ;;; init-editing.el ends here
 
