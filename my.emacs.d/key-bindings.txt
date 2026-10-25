@@ -1,279 +1,552 @@
-Emacs 按键参考（生成于 2026-10-21）
-====================================
+Emacs 修饰键 Keymap（完整加载后自动生成）
+范围：所有已加载 keymap 的直接绑定；仅单事件 C-/C-S-/M-/M-S- 后接单字符、数字或单符号。
+说明：mode 列区分 global-map、个人 keymap、模式局部 map 与其他辅助 map。
 
-范围说明
---------
-1. Pinky 列表以当前 Pinky 的 Transient 菜单分组为准；进入 Pinky 后，这些键
-   优先于普通编辑输入。
-2. C- 与 M- 列表取自完整启动后的 global-map，只列出单字母和单数字绑定。
-   某些 major mode、minibuffer、vterm 等局部 keymap 可覆盖全局绑定。
-3. “前缀 keymap”表示该键后还要继续输入后续键，不会立即执行单一命令。
+key  ,命令                                      ,注释                                                                                               ,中文注释                    ,mode
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+C-d  ,Buffer-menu-delete-backwards              ,Mark the buffer on this Buffer Menu line for deletion， and move up. A subsequent \<Buffer-men...  ,模式局部直接绑定            ,Buffer-menu-mode-map
+C-k  ,Buffer-menu-delete                        ,Mark the buffer on this Buffer Menu buffer line for deletion. A subsequent \<Buffer-menu-mode...   ,模式局部直接绑定            ,Buffer-menu-mode-map
+C-o  ,Buffer-menu-switch-other-window           ,Make the other window select this line's buffer. The current window remains selected.              ,模式局部直接绑定            ,Buffer-menu-mode-map
+C-a  ,add-mode-abbrev                           ,Define a mode-specific abbrev whose expansion is the last word before point. If there's an ac...   ,已加载辅助 keymap 的直接绑定,abbrev-map
+C-d  ,c-electric-delete-forward                 ,Delete the following character or whitespace. If `c-hungry-delete-key' is non-nil (indicated ...   ,模式局部直接绑定            ,awk-mode-map
+C-d  ,bookmark-bmenu-delete-backwards           ,Mark bookmark on this line to be deleted， then move up one line. To carry out the deletions t...  ,模式局部直接绑定            ,bookmark-bmenu-mode-map
+C-o  ,bookmark-bmenu-switch-other-window        ,Make the other window select this line's bookmark. The current window remains selected.            ,模式局部直接绑定            ,bookmark-bmenu-mode-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,bookmark-minibuffer-read-name-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,bookmark-minibuffer-read-name-map
+C-w  ,bookmark-yank-word                        ,Get the next word from buffer `bookmark-current-buffer' and append it to the name of the book...   ,已加载辅助 keymap 的直接绑定,bookmark-minibuffer-read-name-map
+C-d  ,c-electric-delete-forward                 ,Delete the following character or whitespace. If `c-hungry-delete-key' is non-nil (indicated ...   ,模式局部直接绑定            ,c++-mode-map
+C-d  ,c-electric-delete-forward                 ,Delete the following character or whitespace. If `c-hungry-delete-key' is non-nil (indicated ...   ,已加载辅助 keymap 的直接绑定,c-mode-base-map
+C-d  ,c-electric-delete-forward                 ,Delete the following character or whitespace. If `c-hungry-delete-key' is non-nil (indicated ...   ,模式局部直接绑定            ,c-mode-map
+C-@  ,calendar-set-mark                         ,Mark the date under the cursor， or jump to marked date. With no prefix argument， push current... ,模式局部直接绑定            ,calendar-mode-map
+C-a  ,calendar-beginning-of-week                ,Move the cursor back ARG calendar-week-start-day's. (fn ARG)                                       ,模式局部直接绑定            ,calendar-mode-map
+C-b  ,calendar-backward-day                     ,Move the cursor back ARG days. Moves forward if ARG is negative. (fn ARG)                          ,模式局部直接绑定            ,calendar-mode-map
+C-e  ,calendar-end-of-week                      ,Move the cursor forward ARG calendar-week-start-day+6's. (fn ARG)                                  ,模式局部直接绑定            ,calendar-mode-map
+C-f  ,calendar-forward-day                      ,Move the cursor forward ARG days. Moves backward if ARG is negative. (fn ARG)                      ,模式局部直接绑定            ,calendar-mode-map
+C-n  ,calendar-forward-week                     ,Move the cursor forward ARG weeks. Moves backward if ARG is negative. (fn ARG)                     ,模式局部直接绑定            ,calendar-mode-map
+C-p  ,calendar-backward-week                    ,Move the cursor back ARG weeks. Moves forward if ARG is negative. (fn ARG)                         ,模式局部直接绑定            ,calendar-mode-map
+C-v  ,calendar-scroll-left-three-months         ,Scroll the displayed calendar window left by 3*ARG months. If ARG is negative the calendar is...   ,模式局部直接绑定            ,calendar-mode-map
+C-d  ,comint-delchar-or-maybe-eof               ,Delete ARG characters forward or send an EOF to subprocess. Sends an EOF only if point is at ...   ,模式局部直接绑定            ,comint-mode-map
+C-n  ,comint-next-prompt                        ,Move to end of Nth next prompt in the buffer. If `comint-use-prompt-regexp' is nil， then this...  ,已加载辅助 keymap 的直接绑定,comint-repeat-map
+C-p  ,comint-previous-prompt                    ,Move to end of Nth previous prompt in the buffer. If `comint-use-prompt-regexp' is nil， then ...  ,已加载辅助 keymap 的直接绑定,comint-repeat-map
+C-o  ,compilation-display-error                 ,Display the source for current error in another window.                                            ,模式局部直接绑定            ,compilation-minor-mode-map
+C-o  ,compilation-display-error                 ,Display the source for current error in another window.                                            ,模式局部直接绑定            ,compilation-mode-map
+C-g  ,corfu-quit                                ,Quit Corfu completion.                                                                             ,已加载辅助 keymap 的直接绑定,corfu-map
+C-f  ,find-file-other-window                    ,Edit file FILENAME， in another window. Like \[find-file] (which see)， but creates a new windo... ,已加载辅助 keymap 的直接绑定,ctl-x-4-map
+C-j  ,dired-jump-other-window                   ,Like \[dired-jump] (`dired-jump') but in other window. (fn &optional FILE-NAME)                    ,已加载辅助 keymap 的直接绑定,ctl-x-4-map
+C-o  ,display-buffer                            ,Display BUFFER-OR-NAME in some window， without selecting it. To change which window is used， ... ,已加载辅助 keymap 的直接绑定,ctl-x-4-map
+C-f  ,find-file-other-frame                     ,Edit file FILENAME， in another frame. Like \[find-file] (which see)， but creates a new frame ... ,已加载辅助 keymap 的直接绑定,ctl-x-5-map
+C-o  ,display-buffer-other-frame                ,Display buffer BUFFER preferably in another frame. This function attempts to look for a windo...   ,已加载辅助 keymap 的直接绑定,ctl-x-5-map
+C-+  ,text-scale-adjust                         ,Adjust the font size in the current buffer by INC steps. Interactively， INC is the prefix num...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C--  ,text-scale-adjust                         ,Adjust the font size in the current buffer by INC steps. Interactively， INC is the prefix num...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-0  ,text-scale-adjust                         ,Adjust the font size in the current buffer by INC steps. Interactively， INC is the prefix num...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-;  ,comment-line                              ,Comment or uncomment current line and leave point after it. With positive prefix， apply to N ...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-=  ,text-scale-adjust                         ,Adjust the font size in the current buffer by INC steps. Interactively， INC is the prefix num...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-@  ,pop-global-mark                           ,Pop off global mark ring and jump to the top location. This function has :after advice: ‘org-...   ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-c  ,save-buffers-kill-terminal                ,Offer to save each buffer， then kill the current connection. If the current frame has no clie...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-d  ,list-directory                            ,Display a list of files in or matching DIRNAME， a la `ls'. DIRNAME is globbed by the shell if...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-e  ,eval-last-sexp                            ,Evaluate sexp before point; print value in the echo area. Interactively， EVAL-LAST-SEXP-ARG-I...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-f  ,find-file                                 ,Edit file FILENAME. \<minibuffer-local-map>Switch to a buffer visiting file FILENAME， creatin...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-j  ,dired-jump                                ,Jump to Dired buffer corresponding to current buffer. If in a buffer visiting a file， Dired t...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-k  ,kmacro-keymap                             ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-l  ,downcase-region                           ,Convert the region to lower case.  In programs， wants two arguments. These arguments specify ...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-n  ,set-goal-column                           ,Set the current horizontal position as a goal column. This goal column will affect the \[next...   ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-o  ,delete-blank-lines                        ,On blank line， delete all surrounding blank lines， leaving just one. On isolated blank line， ...,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-p  ,mark-page                                 ,Put mark at end of page， point at beginning. A numeric arg specifies to move forward or backw...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-q  ,read-only-mode                            ,Change whether the current buffer is read-only. If buffer is read-only and `view-read-only' i...   ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-r  ,find-file-read-only                       ,Edit file FILENAME but don't allow changes. Like \[find-file]， but marks buffer as read-only....  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-s  ,save-buffer                               ,Save current buffer in visited file if modified. Variations are described below. By default， ...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-t  ,transpose-lines                           ,Exchange current line and previous line， leaving point after both. With argument ARG， takes p... ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-u  ,upcase-region                             ,Convert the region to upper case.  In programs， wants two arguments. These arguments specify ...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-v  ,find-alternate-file                       ,Find file FILENAME， select its buffer， kill previous buffer. If the current buffer now contai... ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-w  ,write-file                                ,Write current buffer into file FILENAME. This makes the buffer visit that file， and marks it ...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-x  ,exchange-point-and-mark                   ,Put the mark where point is now， and point where the mark is now. This command works even whe...  ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-z  ,suspend-frame                             ,Do whatever is right to suspend the current frame. Calls `suspend-emacs' if invoked from the ...   ,已加载辅助 keymap 的直接绑定,ctl-x-map
+C-@  ,point-to-register                         ,Store current location of point in REGISTER. With prefix argument ARG， store current frame co...  ,已加载辅助 keymap 的直接绑定,ctl-x-r-map
+C-e  ,widget-end-of-line                        ,Go to end of field or end of line， whichever is first. Trailing spaces at the end of padded f...  ,已加载辅助 keymap 的直接绑定,custom-dirlocals-field-map
+C-k  ,widget-kill-line                          ,Kill to end of field or end of line， whichever is first.                                          ,已加载辅助 keymap 的直接绑定,custom-dirlocals-field-map
+C-j  ,dired-jump                                ,Jump to Dired buffer corresponding to current buffer. If in a buffer visiting a file， Dired t...  ,已加载辅助 keymap 的直接绑定,dired-jump-map
+C-o  ,dired-display-file                        ,In Dired， display this file or directory in another window.                                       ,模式局部直接绑定            ,dired-mode-map
+C-o  ,dired-display-file                        ,In Dired， display this file or directory in another window.                                       ,模式局部直接绑定            ,dirvish-mode-map
+C-k  ,easy-kill-region                          ,Kill current selection and exit.                                                                   ,已加载辅助 keymap 的直接绑定,easy-kill-base-map
+C-w  ,my/easy-kill-remind-delete-key            ,提示 Easy Kill 的候选剪切键，避免 C-w 与窗口菜单冲突。                                             ,已加载辅助 keymap 的直接绑定,easy-kill-base-map
+C-\  ,describe-input-method                     ,Describe input method INPUT-METHOD. (fn INPUT-METHOD)                                              ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-a  ,about-emacs                               ,Display the *About GNU Emacs* buffer. A fancy display is used on graphic displays， normal oth...  ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-c  ,describe-copying                          ,Display info on how you may redistribute copies of GNU Emacs.                                      ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-d  ,view-emacs-debugging                      ,Display info on how to debug Emacs problems.                                                       ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-e  ,view-external-packages                    ,Display info on where to get more Emacs packages.                                                  ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-f  ,view-emacs-FAQ                            ,Display the Emacs Frequently Asked Questions (FAQ) file.                                           ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-h  ,help-for-help                             ,Help command.                                                                                      ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-n  ,view-emacs-news                           ,Display info on recent changes to Emacs. With argument， display info only for the selected ve...  ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-o  ,describe-distribution                     ,Display info on how to obtain the latest version of GNU Emacs.                                     ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-p  ,view-emacs-problems                       ,Display info on known problems with Emacs and possible workarounds.                                ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-q  ,help-quick-toggle                         ,Toggle display of a window showing popular commands and their bindings. This toggles on and o...   ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-s  ,search-forward-help-for-help              ,Search forward in the `help-for-help' window. This command is meant to be used after issuing ...   ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-t  ,view-emacs-todo                           ,Display the Emacs TODO list. (fn &optional ARG)                                                    ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-w  ,describe-no-warranty                      ,Display info on all the kinds of warranty Emacs does NOT have.                                     ,已加载辅助 keymap 的直接绑定,ehelp-map
+C-0  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-1  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-2  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-3  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-4  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-5  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-6  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-7  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-8  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-9  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-h  ,electric-help-help                        ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-u  ,electric-help-undefined                   ,                                                                                                   ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-x  ,electric-help-ctrl-x-prefix               , (fn PREFIXARG)                                                                                    ,已加载辅助 keymap 的直接绑定,electric-help-map
+C-%  ,query-replace-regexp                      ,Replace some things after point matching REGEXP with TO-STRING. As each match is found， the u...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-,  ,xref-go-forward                           ,Go to the point where a previous \[xref-go-back] was invoked.                                      ,已加载辅助 keymap 的直接绑定,esc-map
+C--  ,negative-argument                         ,Begin a negative numeric argument for the next command. \[universal-argument] following digit...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-.  ,xref-find-apropos                         ,Find all meaningful symbols that match PATTERN. The argument has the same meaning as in `apro...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-/  ,dabbrev-completion                        ,Completion on current word. Like \[dabbrev-expand] but finds all expansions in the current bu...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-0  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-1  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-2  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-3  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-4  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-5  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-6  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-7  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-8  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-9  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-@  ,mark-sexp                                 ,Set mark ARG sexps from point or move mark one sexp. When called from Lisp with ALLOW-EXTEND ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-S-l,recenter-other-window                     ,Call `recenter-top-bottom' in the other window. A prefix argument is handled like `recenter':...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-S-v,scroll-other-window-down                  ,Scroll next window downward LINES lines; or near full screen if no ARG. See `scroll-down-comm...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-\  ,indent-region                             ,Indent each nonblank line in the region. A numeric prefix argument specifies a column: indent...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-_  ,undo-redo                                 ,Undo the last ARG undos， i.e.， redo the last ARG changes. Interactively， ARG is the prefix nu...,已加载辅助 keymap 的直接绑定,esc-map
+C-a  ,beginning-of-defun                        ,Move backward to the beginning of a defun. With ARG， do it that many times.  Negative ARG mea...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-b  ,backward-sexp                             ,Move backward across one balanced expression (sexp). With ARG， do it that many times.  Negati...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-c  ,exit-recursive-edit                       ,Exit from the innermost recursive edit or minibuffer. (fn)                                         ,已加载辅助 keymap 的直接绑定,esc-map
+C-d  ,down-list                                 ,Move forward down one level of parentheses. This command will also work on other parentheses-...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-e  ,end-of-defun                              ,Move forward to next end of defun. With argument， do it that many times. Negative argument -N...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-f  ,forward-sexp                              ,Move forward across one balanced expression (sexp). With ARG， do it that many times.  Negativ...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-h  ,mark-defun                                ,Put mark at end of this defun， point at beginning. The defun marked is the one that contains ...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-j  ,default-indent-new-line                   ,Break line at point and indent. If a comment syntax is defined， call `comment-line-break-func...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-k  ,kill-sexp                                 ,Kill the sexp (balanced expression) following point. With ARG， kill that many sexps after poi...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-l  ,reposition-window                         ,Make the current definition and/or comment visible. Further invocations move it to the top of...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-n  ,forward-list                              ,Move forward across one balanced group of parentheses. This command will also work on other p...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-o  ,split-line                                ,Split current line， moving portion beyond point vertically down. If the current line starts w...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-p  ,backward-list                             ,Move backward across one balanced group of parentheses. This command will also work on other ...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-r  ,isearch-backward-regexp                   ,Do incremental search backward for regular expression. With a prefix argument， do a regular s...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-s  ,isearch-forward-regexp                    ,Do incremental search forward for regular expression. With a prefix argument， do a regular st...  ,已加载辅助 keymap 的直接绑定,esc-map
+C-t  ,transpose-sexps                           ,Like \[transpose-chars] (`transpose-chars')， but applies to sexps. Unlike `transpose-words'， ... ,已加载辅助 keymap 的直接绑定,esc-map
+C-u  ,backward-up-list                          ,Move backward out of one level of parentheses. This command will also work on other parenthes...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-v  ,scroll-other-window                       ,Scroll next window upward LINES lines; or near full screen if no ARG. See `scroll-up-command'...   ,已加载辅助 keymap 的直接绑定,esc-map
+C-w  ,append-next-kill                          ,Cause following command， if it kills， to add to previous kill. If the next command kills forw... ,已加载辅助 keymap 的直接绑定,esc-map
+C-k  ,eww-bookmark-kill                         ,Kill the current bookmark.                                                                         ,模式局部直接绑定            ,eww-bookmark-mode-map
+C-y  ,eww-bookmark-yank                         ,Yank a previously killed bookmark to the current line.                                             ,模式局部直接绑定            ,eww-bookmark-mode-map
+C-k  ,eww-buffer-kill                           ,Kill buffer from eww list.                                                                         ,模式局部直接绑定            ,eww-buffers-mode-map
+C-a  ,eww-beginning-of-text                     ,Move to the start of the input field.                                                              ,已加载辅助 keymap 的直接绑定,eww-text-map
+C-e  ,eww-end-of-text                           ,Move to the end of the text in the input field.                                                    ,已加载辅助 keymap 的直接绑定,eww-text-map
+C-!  ,my-replace-dwim                           , (fn FROM TO &optional DELIMITED START END)                                                        ,全局直接绑定                ,global-map
+C-'  ,imenu                                     ,Jump to a place in the buffer chosen using a buffer menu or mouse menu. INDEX-ITEM specifies ...   ,全局直接绑定                ,global-map
+C-/  ,undo                                      ,Undo some previous changes. Repeat this command to undo more changes. A numeric ARG serves as...   ,全局直接绑定                ,global-map
+C-0  ,my/pixel-scroll-half-screen-forward       ,平滑向前移动半屏，替代 C-0 的旧瞬间滚动入口。                                                      ,全局直接绑定                ,global-map
+C-1  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,全局直接绑定                ,global-map
+C-4  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,全局直接绑定                ,global-map
+C-5  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,全局直接绑定                ,global-map
+C-6  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,全局直接绑定                ,global-map
+C-7  ,my/pixel-scroll-page-backward-with-context,平滑向后翻页，并保留窗口顶部的上下文行。                                                           ,全局直接绑定                ,global-map
+C-8  ,my/pixel-scroll-page-forward-with-context ,平滑向前翻页，并保留窗口底部的上下文行。                                                           ,全局直接绑定                ,global-map
+C-9  ,my/pixel-scroll-half-screen-backward      ,平滑向后移动半屏，替代 C-9 的旧瞬间滚动入口。                                                      ,全局直接绑定                ,global-map
+C-?  ,undo-redo                                 ,Undo the last ARG undos， i.e.， redo the last ARG changes. Interactively， ARG is the prefix nu...,全局直接绑定                ,global-map
+C-@  ,set-mark-command                          ,Set the mark where point is， and activate it; or jump to the mark. Setting the mark also alte...  ,全局直接绑定                ,global-map
+C-S-a,move-beginning-of-line                    ,Move point to visible beginning of current logical line. This disregards any invisible newlin...   ,全局直接绑定                ,global-map
+C-\  ,toggle-input-method                       ,Enable or disable multilingual text input method for the current buffer. Only one input metho...   ,全局直接绑定                ,global-map
+C-]  ,abort-recursive-edit                      ,Abort the command that requested this recursive edit or minibuffer input. (fn)                     ,全局直接绑定                ,global-map
+C-_  ,undo                                      ,Undo some previous changes. Repeat this command to undo more changes. A numeric ARG serves as...   ,全局直接绑定                ,global-map
+C-a  ,move-beginning-of-line                    ,Move point to visible beginning of current logical line. This disregards any invisible newlin...   ,全局直接绑定                ,global-map
+C-b  ,backward-char                             ,Move point N characters backward (forward if N is negative). On attempt to pass beginning or ...   ,全局直接绑定                ,global-map
+C-c  ,mode-specific-command-prefix              ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,全局直接绑定                ,global-map
+C-e  ,move-end-of-line                          ,Move point to end of current line as displayed. With argument ARG not nil or 1， move forward ...  ,全局直接绑定                ,global-map
+C-f  ,forward-char                              ,Move point N characters forward (backward if N is negative). On reaching end or beginning of ...   ,全局直接绑定                ,global-map
+C-g  ,keyboard-quit                             ,Signal a `quit' condition. During execution of Lisp code， this character causes a quit direct...  ,全局直接绑定                ,global-map
+C-h  ,help-command                              ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,全局直接绑定                ,global-map
+C-k  ,kill-line                                 ,Kill the rest of the current line; if no nonblanks there， kill thru newline. With prefix argu...  ,全局直接绑定                ,global-map
+C-l  ,recenter-top-bottom                       ,Scroll the window so that current line is in the middle of the window. Successive invocations...   ,全局直接绑定                ,global-map
+C-n  ,next-line                                 ,Move cursor vertically down ARG lines. Interactively， vscroll tall lines if `auto-window-vscr...  ,全局直接绑定                ,global-map
+C-o  ,my-open-line-below                        ,在当前行下方插入一个空行，并保持光标位置不动。                                                     ,全局直接绑定                ,global-map
+C-p  ,previous-line                             ,Move cursor vertically up ARG lines. Interactively， vscroll tall lines if `auto-window-vscrol...  ,全局直接绑定                ,global-map
+C-q  ,quoted-insert                             ,Read next input character and insert it. This is useful for inserting control characters. Wit...   ,全局直接绑定                ,global-map
+C-r  ,my-open-line-above                        ,在当前行上方插入一个空行，并保持光标位置不动。                                                     ,全局直接绑定                ,global-map
+C-s  ,isearch-forward                           ,Do incremental search forward. With a prefix argument， do an incremental regular expression s...  ,全局直接绑定                ,global-map
+C-t  ,kill-region                               ,Kill ("cut") text between point and mark. This deletes the text from the buffer and saves it ...   ,全局直接绑定                ,global-map
+C-u  ,universal-argument                        ,Begin a numeric argument for the following command. Digits or minus sign following \[universa...   ,全局直接绑定                ,global-map
+C-v  ,scroll-up-command                         ,Scroll text of selected window upward ARG lines; or near full screen if no ARG. Interactively...   ,全局直接绑定                ,global-map
+C-w  ,my/window-menu                            ,打开按三列排列的窗口操作菜单。                                                                     ,全局直接绑定                ,global-map
+C-x  ,Control-X-prefix                          ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,全局直接绑定                ,global-map
+C-y  ,yank                                      ,Reinsert ("paste") the last stretch of killed text. More precisely， reinsert the most recent ...  ,全局直接绑定                ,global-map
+C-z  ,suspend-frame                             ,Do whatever is right to suspend the current frame. Calls `suspend-emacs' if invoked from the ...   ,全局直接绑定                ,global-map
+C-\  ,describe-input-method                     ,Describe input method INPUT-METHOD. (fn INPUT-METHOD)                                              ,已加载辅助 keymap 的直接绑定,help-map
+C-a  ,about-emacs                               ,Display the *About GNU Emacs* buffer. A fancy display is used on graphic displays， normal oth...  ,已加载辅助 keymap 的直接绑定,help-map
+C-c  ,describe-copying                          ,Display info on how you may redistribute copies of GNU Emacs.                                      ,已加载辅助 keymap 的直接绑定,help-map
+C-d  ,view-emacs-debugging                      ,Display info on how to debug Emacs problems.                                                       ,已加载辅助 keymap 的直接绑定,help-map
+C-e  ,view-external-packages                    ,Display info on where to get more Emacs packages.                                                  ,已加载辅助 keymap 的直接绑定,help-map
+C-f  ,view-emacs-FAQ                            ,Display the Emacs Frequently Asked Questions (FAQ) file.                                           ,已加载辅助 keymap 的直接绑定,help-map
+C-h  ,help-for-help                             ,Help command.                                                                                      ,已加载辅助 keymap 的直接绑定,help-map
+C-n  ,view-emacs-news                           ,Display info on recent changes to Emacs. With argument， display info only for the selected ve...  ,已加载辅助 keymap 的直接绑定,help-map
+C-o  ,describe-distribution                     ,Display info on how to obtain the latest version of GNU Emacs.                                     ,已加载辅助 keymap 的直接绑定,help-map
+C-p  ,view-emacs-problems                       ,Display info on known problems with Emacs and possible workarounds.                                ,已加载辅助 keymap 的直接绑定,help-map
+C-q  ,help-quick-toggle                         ,Toggle display of a window showing popular commands and their bindings. This toggles on and o...   ,已加载辅助 keymap 的直接绑定,help-map
+C-s  ,search-forward-help-for-help              ,Search forward in the `help-for-help' window. This command is meant to be used after issuing ...   ,已加载辅助 keymap 的直接绑定,help-map
+C-t  ,view-emacs-todo                           ,Display the Emacs TODO list. (fn &optional ARG)                                                    ,已加载辅助 keymap 的直接绑定,help-map
+C-w  ,describe-no-warranty                      ,Display info on all the kinds of warranty Emacs does NOT have.                                     ,已加载辅助 keymap 的直接绑定,help-map
+C-!  ,my-replace-dwim                           , (fn FROM TO &optional DELIMITED START END)                                                        ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-'  ,imenu                                     ,Jump to a place in the buffer chosen using a buffer menu or mouse menu. INDEX-ITEM specifies ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-/  ,undo                                      ,Undo some previous changes. Repeat this command to undo more changes. A numeric ARG serves as...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-0  ,my/pixel-scroll-half-screen-forward       ,平滑向前移动半屏，替代 C-0 的旧瞬间滚动入口。                                                      ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-1  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-4  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-5  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-6  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-7  ,my/pixel-scroll-page-backward-with-context,平滑向后翻页，并保留窗口顶部的上下文行。                                                           ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-8  ,my/pixel-scroll-page-forward-with-context ,平滑向前翻页，并保留窗口底部的上下文行。                                                           ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-9  ,my/pixel-scroll-half-screen-backward      ,平滑向后移动半屏，替代 C-9 的旧瞬间滚动入口。                                                      ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-?  ,undo-redo                                 ,Undo the last ARG undos， i.e.， redo the last ARG changes. Interactively， ARG is the prefix nu...,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-@  ,set-mark-command                          ,Set the mark where point is， and activate it; or jump to the mark. Setting the mark also alte...  ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-S-a,move-beginning-of-line                    ,Move point to visible beginning of current logical line. This disregards any invisible newlin...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-\  ,toggle-input-method                       ,Enable or disable multilingual text input method for the current buffer. Only one input metho...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-]  ,abort-recursive-edit                      ,Abort the command that requested this recursive edit or minibuffer input. (fn)                     ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-_  ,undo                                      ,Undo some previous changes. Repeat this command to undo more changes. A numeric ARG serves as...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-a  ,move-beginning-of-line                    ,Move point to visible beginning of current logical line. This disregards any invisible newlin...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-b  ,backward-char                             ,Move point N characters backward (forward if N is negative). On attempt to pass beginning or ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-c  ,mode-specific-command-prefix              ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-e  ,move-end-of-line                          ,Move point to end of current line as displayed. With argument ARG not nil or 1， move forward ...  ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-f  ,forward-char                              ,Move point N characters forward (backward if N is negative). On reaching end or beginning of ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-g  ,keyboard-quit                             ,Signal a `quit' condition. During execution of Lisp code， this character causes a quit direct...  ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-h  ,help-command                              ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-k  ,kill-line                                 ,Kill the rest of the current line; if no nonblanks there， kill thru newline. With prefix argu...  ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-l  ,recenter-top-bottom                       ,Scroll the window so that current line is in the middle of the window. Successive invocations...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-n  ,next-line                                 ,Move cursor vertically down ARG lines. Interactively， vscroll tall lines if `auto-window-vscr...  ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-o  ,my-open-line-below                        ,在当前行下方插入一个空行，并保持光标位置不动。                                                     ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-p  ,previous-line                             ,Move cursor vertically up ARG lines. Interactively， vscroll tall lines if `auto-window-vscrol...  ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-q  ,quoted-insert                             ,Read next input character and insert it. This is useful for inserting control characters. Wit...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-r  ,my-open-line-above                        ,在当前行上方插入一个空行，并保持光标位置不动。                                                     ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-s  ,isearch-forward                           ,Do incremental search forward. With a prefix argument， do an incremental regular expression s...  ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-t  ,kill-region                               ,Kill ("cut") text between point and mark. This deletes the text from the buffer and saves it ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-u  ,universal-argument                        ,Begin a numeric argument for the following command. Digits or minus sign following \[universa...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-v  ,scroll-up-command                         ,Scroll text of selected window upward ARG lines; or near full screen if no ARG. Interactively...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-w  ,my/window-menu                            ,打开按三列排列的窗口操作菜单。                                                                     ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-x  ,Control-X-prefix                          ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-y  ,yank                                      ,Reinsert ("paste") the last stretch of killed text. More precisely， reinsert the most recent ...  ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-z  ,suspend-frame                             ,Do whatever is right to suspend the current frame. Calls `suspend-emacs' if invoked from the ...   ,已加载辅助 keymap 的直接绑定,help-quick-use-map
+C-g  ,hum/keyboard-quit                         ,Leave hide-unmatched-lines mode                                                                    ,模式局部直接绑定            ,hum/hide-unmatched-lines-mode-map
+C-u  ,hydra--universal-argument                 ,Forward to (`universal-argument' ARG). (fn ARG)                                                    ,已加载辅助 keymap 的直接绑定,hydra-base-map
+C-d  ,c-electric-delete-forward                 ,Delete the following character or whitespace. If `c-hungry-delete-key' is non-nil (indicated ...   ,模式局部直接绑定            ,idl-mode-map
+C-h  ,iedit-help-for-help                       ,Display Iedit help menu.                                                                           ,已加载辅助 keymap 的直接绑定,iedit-help-map
+C-h  ,isearch-help-for-help                     ,Display Isearch help menu.                                                                         ,已加载辅助 keymap 的直接绑定,isearch-help-map
+C-\  ,isearch-toggle-input-method               ,Toggle input method in interactive search.                                                         ,模式局部直接绑定            ,isearch-mode-map
+C-^  ,isearch-toggle-specified-input-method     ,Select an input method and turn it on in interactive search.                                       ,模式局部直接绑定            ,isearch-mode-map
+C-g  ,isearch-abort                             ,Abort incremental search mode if searching is successful， signaling quit. Otherwise， revert t... ,模式局部直接绑定            ,isearch-mode-map
+C-q  ,isearch-quote-char                        ,Quote special characters for incremental search. With argument， add COUNT copies of the chara...  ,模式局部直接绑定            ,isearch-mode-map
+C-r  ,isearch-repeat-backward                   ,Repeat incremental search backwards. With a numeric argument， repeat the search ARG times. A ...  ,模式局部直接绑定            ,isearch-mode-map
+C-s  ,isearch-repeat-forward                    ,Repeat incremental search forwards. With a numeric argument， repeat the search ARG times. A n...  ,模式局部直接绑定            ,isearch-mode-map
+C-w  ,isearch-yank-word-or-char                 ,Pull next character or word from buffer into search string. If optional ARG is non-nil， pull ...  ,模式局部直接绑定            ,isearch-mode-map
+C-y  ,isearch-yank-kill                         ,Pull string from kill ring into search string.                                                     ,模式局部直接绑定            ,isearch-mode-map
+C-d  ,c-electric-delete-forward                 ,Delete the following character or whitespace. If `c-hungry-delete-key' is non-nil (indicated ...   ,模式局部直接绑定            ,java-mode-map
+C-]  ,quit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-d  ,skip                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-g  ,quit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-h  ,help                                      ,Help command.                                                                                      ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-k  ,skip-rest                                 ,                                                                                                   ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-l  ,recenter                                  ,Center point in selected window and maybe redisplay frame. With a numeric prefix argument ARG...   ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-r  ,edit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-v  ,scroll-up                                 ,Scroll text of selected window upward ARG lines. If ARG is omitted or nil， scroll upward by a...  ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-w  ,delete-and-edit                           ,                                                                                                   ,已加载辅助 keymap 的直接绑定,kmacro-step-edit-map
+C-j  ,eval-print-last-sexp                      ,Evaluate sexp before point; print value into current buffer. Interactively， EVAL-LAST-SEXP-AR...  ,模式局部直接绑定            ,lisp-interaction-mode-map
+C-f  ,lua-search-documentation                  ,Search Lua documentation for the word at the point.                                                ,模式局部直接绑定            ,lua-prefix-mode-map
+C-l  ,lua-send-buffer                           ,Send whole buffer to Lua process.                                                                  ,模式局部直接绑定            ,lua-prefix-mode-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,minibuffer-local-completion-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,minibuffer-local-completion-map
+C-f  ,isearch-yank-char-in-minibuffer           ,Pull next character from buffer into end of search string in minibuffer. (fn &optional ARG)        ,已加载辅助 keymap 的直接绑定,minibuffer-local-isearch-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,minibuffer-local-isearch-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,minibuffer-local-isearch-map
+C-r  ,isearch-reverse-exit-minibuffer           ,Resume isearching backward from the minibuffer that edits the search string.                       ,已加载辅助 keymap 的直接绑定,minibuffer-local-isearch-map
+C-s  ,isearch-forward-exit-minibuffer           ,Resume isearching forward from the minibuffer that edits the search string.                        ,已加载辅助 keymap 的直接绑定,minibuffer-local-isearch-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,minibuffer-local-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,minibuffer-local-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,minibuffer-local-must-match-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,minibuffer-local-must-match-map
+C-j  ,minibuffer-complete-and-exit              ,Exit if the minibuffer contains a valid completion. Otherwise， try to complete the minibuffer...  ,已加载辅助 keymap 的直接绑定,minibuffer-local-must-match-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,minibuffer-local-ns-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,minibuffer-local-ns-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,minibuffer-local-shell-command-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,minibuffer-local-shell-command-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,模式局部直接绑定            ,minibuffer-mode-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,模式局部直接绑定            ,minibuffer-mode-map
+C-g  ,minibuffer-hide-completions               ,Get rid of an out-of-date *Completions* buffer.                                                    ,已加载辅助 keymap 的直接绑定,minibuffer-visible-completions-map
+C-r  ,my-switch-to-project-root                 ,                                                                                                   ,已加载辅助 keymap 的直接绑定,mode-specific-map
+C-]  ,quit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,multi-query-replace-map
+C-g  ,quit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,multi-query-replace-map
+C-h  ,help                                      ,Help command.                                                                                      ,已加载辅助 keymap 的直接绑定,multi-query-replace-map
+C-l  ,recenter                                  ,Center point in selected window and maybe redisplay frame. With a numeric prefix argument ARG...   ,已加载辅助 keymap 的直接绑定,multi-query-replace-map
+C-r  ,edit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,multi-query-replace-map
+C-v  ,scroll-up                                 ,Scroll text of selected window upward ARG lines. If ARG is omitted or nil， scroll upward by a...  ,已加载辅助 keymap 的直接绑定,multi-query-replace-map
+C-w  ,delete-and-edit                           ,                                                                                                   ,已加载辅助 keymap 的直接绑定,multi-query-replace-map
+C-r  ,my-switch-to-project-root                 ,                                                                                                   ,个人配置直接绑定            ,my-leader-map
+C-d  ,c-electric-delete-forward                 ,Delete the following character or whitespace. If `c-hungry-delete-key' is non-nil (indicated ...   ,模式局部直接绑定            ,objc-mode-map
+C-o  ,occur-mode-display-occurrence             ,Display in another window the occurrence the current line describes.                               ,模式局部直接绑定            ,occur-edit-mode-map
+C-o  ,occur-mode-display-occurrence             ,Display in another window the occurrence the current line describes.                               ,模式局部直接绑定            ,occur-mode-map
+C-/  ,org-agenda-undo                           ,Undo a remote editing step in the agenda. This undoes changes both in the agenda buffer and i...   ,模式局部直接绑定            ,org-agenda-mode-map
+C-_  ,org-agenda-undo                           ,Undo a remote editing step in the agenda. This undoes changes both in the agenda buffer and i...   ,模式局部直接绑定            ,org-agenda-mode-map
+C-k  ,org-agenda-kill                           ,Kill the entry or subtree belonging to the current agenda entry.                                   ,模式局部直接绑定            ,org-agenda-mode-map
+C-n  ,org-agenda-next-line                      ,Move cursor to the next line， and show if follow mode is active.                                  ,模式局部直接绑定            ,org-agenda-mode-map
+C-p  ,org-agenda-previous-line                  ,Move cursor to the previous line， and show if follow mode is active.                              ,模式局部直接绑定            ,org-agenda-mode-map
+C-a  ,org-babel-sha1-hash                       ,Generate a sha1 hash based on the value of INFO. CONTEXT specifies the context of evaluation....   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-b  ,org-babel-execute-buffer                  ,Execute source code blocks in a buffer. Prefix argument ARG is passed to `org-babel-execute-s...   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-c  ,org-babel-check-src-block                 ,Check for misspelled header arguments in the current code block.                                   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-d  ,org-babel-demarcate-block                 ,Wrap or split the code in an active region or at point. With prefix argument ARG， also create...  ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-e  ,org-babel-execute-maybe                   ,Execute src block or babel call at point.                                                          ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-f  ,org-babel-tangle-file                     ,Extract the bodies of source code blocks in FILE. Source code blocks are extracted with `org-...   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-j  ,org-babel-insert-header-arg               ,Insert a header argument and its value. HEADER-ARG and VALUE， when provided， are the header a... ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-l  ,org-babel-load-in-session                 ,Load the body of the current source-code block. When optional argument INFO is non-nil， use s...  ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-n  ,org-babel-next-src-block                  ,Jump to the next source block. With optional prefix argument ARG， jump forward ARG many sourc...  ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-o  ,org-babel-open-src-block-result           ,Open results of source block at point. If `point' is on a source block then open the results ...   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-p  ,org-babel-previous-src-block              ,Jump to the previous source block. With optional prefix argument ARG， jump backward ARG many ...  ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-r  ,org-babel-goto-named-result               ,Go to a result with NAME. (fn NAME)                                                                ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-s  ,org-babel-execute-subtree                 ,Execute source code blocks in a subtree. Call `org-babel-execute-src-block' on every source b...   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-t  ,org-babel-tangle                          ,Write code blocks to source-specific files. Extract the bodies of all source code blocks from...   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-u  ,org-babel-goto-src-block-head             ,Go to the beginning of the current code block.                                                     ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-v  ,org-babel-expand-src-block                ,Expand the current source code block or block specified by INFO. INFO is the output of `org-b...   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-x  ,org-babel-do-key-sequence-in-edit-buffer  ,Read key sequence KEY and execute the command in edit buffer. Enter a key sequence to be exec...   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-z  ,org-babel-switch-to-session               ,Switch to the session of the current code block or block defined by INFO. Uses `org-babel-ini...   ,已加载辅助 keymap 的直接绑定,org-babel-map
+C-#  ,org-table-rotate-recalc-marks             ,Rotate the recalculation mark in the first column. If in any row， the first field is not cons...  ,模式局部直接绑定            ,org-mode-map
+C-'  ,org-cycle-agenda-files                    ,Cycle through the files in `org-agenda-files'. If the current buffer visits an agenda file， f...  ,模式局部直接绑定            ,org-mode-map
+C-,  ,org-cycle-agenda-files                    ,Cycle through the files in `org-agenda-files'. If the current buffer visits an agenda file， f...  ,模式局部直接绑定            ,org-mode-map
+C-j  ,org-return-and-maybe-indent               ,Goto next table row， or insert a newline， maybe indented. Call `org-table-next-row' or `org-r... ,模式局部直接绑定            ,org-mode-map
+C-.  ,org-calendar-goto-today                   ,Reposition the calendar window so the current date is visible.                                     ,已加载辅助 keymap 的直接绑定,org-read-date-minibuffer-local-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,org-read-date-minibuffer-local-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,org-read-date-minibuffer-local-map
+C-v  ,org-calendar-scroll-three-months-left     ,Scroll the displayed calendar left by three months.                                                ,已加载辅助 keymap 的直接绑定,org-read-date-minibuffer-local-map
+C-#  ,orgtbl-hijacker-command-28                ,In tables， run `org-table-rotate-recalc-marks'. Outside of tables， run the binding of `C-#'.     ,模式局部直接绑定            ,orgtbl-mode-map
+C-<  ,outline-promote                           ,Promote headings higher up the tree. If `transient-mark-mode' is on， and mark is active， prom... ,已加载辅助 keymap 的直接绑定,outline-editing-repeat-map
+C->  ,outline-demote                            ,Demote headings lower down the tree. If `transient-mark-mode' is on， and mark is active， demo... ,已加载辅助 keymap 的直接绑定,outline-editing-repeat-map
+C-^  ,outline-move-subtree-up                   ,Move the current subtree up past ARG headlines of the same level. (fn &optional ARG)               ,已加载辅助 keymap 的直接绑定,outline-editing-repeat-map
+C-v  ,outline-move-subtree-down                 ,Move the current subtree down past ARG headlines of the same level. (fn &optional ARG)             ,已加载辅助 keymap 的直接绑定,outline-editing-repeat-map
+C-<  ,outline-promote                           ,Promote headings higher up the tree. If `transient-mark-mode' is on， and mark is active， prom... ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C->  ,outline-demote                            ,Demote headings lower down the tree. If `transient-mark-mode' is on， and mark is active， demo... ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-^  ,outline-move-subtree-up                   ,Move the current subtree up past ARG headlines of the same level. (fn &optional ARG)               ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-a  ,outline-show-all                          ,Show all of the text in the buffer.                                                                ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-b  ,outline-backward-same-level               ,Move backward to the ARG'th subheading at same level as this one. Stop at the first and last ...   ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-c  ,outline-hide-entry                        ,Hide the body directly following this heading.                                                     ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-d  ,outline-hide-subtree                      ,Hide everything after this heading at deeper levels. If non-nil， EVENT should be a mouse even...  ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-e  ,outline-show-entry                        ,Show the body directly following this heading. Show the heading too， if it is currently invis...  ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-f  ,outline-forward-same-level                ,Move forward to the ARG'th subheading at same level as this one. Stop at the first and last s...   ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-k  ,outline-show-branches                     ,Show all subheadings of this heading， but not their bodies.                                       ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-l  ,outline-hide-leaves                       ,Hide the body after this heading and at deeper levels.                                             ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-n  ,outline-next-visible-heading              ,Move to the next visible heading line. With ARG， repeats or can move backward if negative. A ...  ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-o  ,outline-hide-other                        ,Hide everything except current body and parent and top-level headings. This also unhides the ...   ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-p  ,outline-previous-visible-heading          ,Move to the previous heading line. With ARG， repeats or can move forward if negative. A headi...  ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-q  ,outline-hide-sublevels                    ,Hide everything but the top LEVELS levels of headers， in whole buffer. This also unhides the ...  ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-s  ,outline-show-subtree                      ,Show everything after this heading at deeper levels. If non-nil， EVENT should be a mouse even...  ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-t  ,outline-hide-body                         ,Hide all body lines in buffer， leaving all headings visible. Note that this does not hide the...  ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-u  ,outline-up-heading                        ,Move to the visible heading line of which the present line is a subheading. With argument， mo...  ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-v  ,outline-move-subtree-down                 ,Move the current subtree down past ARG headlines of the same level. (fn &optional ARG)             ,已加载辅助 keymap 的直接绑定,outline-mode-prefix-map
+C-b  ,outline-backward-same-level               ,Move backward to the ARG'th subheading at same level as this one. Stop at the first and last ...   ,已加载辅助 keymap 的直接绑定,outline-navigation-repeat-map
+C-f  ,outline-forward-same-level                ,Move forward to the ARG'th subheading at same level as this one. Stop at the first and last s...   ,已加载辅助 keymap 的直接绑定,outline-navigation-repeat-map
+C-n  ,outline-next-visible-heading              ,Move to the next visible heading line. With ARG， repeats or can move backward if negative. A ...  ,已加载辅助 keymap 的直接绑定,outline-navigation-repeat-map
+C-p  ,outline-previous-visible-heading          ,Move to the previous heading line. With ARG， repeats or can move forward if negative. A headi...  ,已加载辅助 keymap 的直接绑定,outline-navigation-repeat-map
+C-u  ,outline-up-heading                        ,Move to the visible heading line of which the present line is a subheading. With argument， mo...  ,已加载辅助 keymap 的直接绑定,outline-navigation-repeat-map
+C-d  ,c-electric-delete-forward                 ,Delete the following character or whitespace. If `c-hungry-delete-key' is non-nil (indicated ...   ,模式局部直接绑定            ,pike-mode-map
+C-g  ,pinky-finish-insert-state                 ,Return from Pinky insertion to Pinky navigation.                                                   ,模式局部直接绑定            ,pinky-insert-state-mode-map
+C-b  ,scroll-down-command                       ,Scroll text of selected window down ARG lines; or near full screen if no ARG. Interactively， ...  ,模式局部直接绑定            ,pinky-mode-map
+C-e  ,scroll-up-line                            ,Scroll text of selected window upward ARG lines; or one line if no ARG. If ARG is omitted or ...   ,模式局部直接绑定            ,pinky-mode-map
+C-f  ,scroll-up-command                         ,Scroll text of selected window upward ARG lines; or near full screen if no ARG. Interactively...   ,模式局部直接绑定            ,pinky-mode-map
+C-r  ,undo-redo                                 ,Undo the last ARG undos， i.e.， redo the last ARG changes. Interactively， ARG is the prefix nu...,模式局部直接绑定            ,pinky-mode-map
+C-u  ,pinky-scroll-half-page-up                 ,Scroll backward by half a window， like Vim `C-u'. This function has :around advice: No docume...  ,模式局部直接绑定            ,pinky-mode-map
+C-y  ,scroll-down-line                          ,Scroll text of selected window down ARG lines; or one line if no ARG. If ARG is omitted or ni...   ,模式局部直接绑定            ,pinky-mode-map
+C-g  ,pinky-replace-mode-finish                 ,Finish replace mode and return to Pinky navigation.                                                ,模式局部直接绑定            ,pinky-replace-mode-map
+C-o  ,project-display-buffer-other-frame        ,Display BUFFER-OR-NAME preferably in another frame. When called interactively， prompts for a ...  ,已加载辅助 keymap 的直接绑定,project-other-frame-map
+C-o  ,project-display-buffer                    ,Display BUFFER-OR-NAME in some window， without selecting it. When called interactively， promp... ,已加载辅助 keymap 的直接绑定,project-other-window-map
+C-b  ,project-list-buffers                      ,Display a list of project buffers. The list is displayed in a buffer named "*Buffer List*". B...   ,已加载辅助 keymap 的直接绑定,project-prefix-map
+C-]  ,quit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,query-replace-map
+C-g  ,quit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,query-replace-map
+C-h  ,help                                      ,Help command.                                                                                      ,已加载辅助 keymap 的直接绑定,query-replace-map
+C-l  ,recenter                                  ,Center point in selected window and maybe redisplay frame. With a numeric prefix argument ARG...   ,已加载辅助 keymap 的直接绑定,query-replace-map
+C-r  ,edit                                      ,                                                                                                   ,已加载辅助 keymap 的直接绑定,query-replace-map
+C-v  ,scroll-up                                 ,Scroll text of selected window upward ARG lines. If ARG is omitted or nil， scroll upward by a...  ,已加载辅助 keymap 的直接绑定,query-replace-map
+C-w  ,delete-and-edit                           ,                                                                                                   ,已加载辅助 keymap 的直接绑定,query-replace-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,read--expression-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,read--expression-map
+C-j  ,read--expression-try-read                 ,Try to read an Emacs Lisp expression in the minibuffer. Exit the minibuffer if successful， el...  ,已加载辅助 keymap 的直接绑定,read--expression-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,read-char-from-minibuffer-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,read-char-from-minibuffer-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,read-expression-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,read-expression-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,read-passwd-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,read-passwd-map
+C-u  ,delete-minibuffer-contents                ,Delete all user input in a minibuffer. If the current buffer is not a minibuffer， erase its e...  ,已加载辅助 keymap 的直接绑定,read-passwd-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,read-regexp-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,read-regexp-map
+C-o  ,open-rectangle                            ,Blank out the region-rectangle， shifting text right. The text previously in the region is not...  ,模式局部直接绑定            ,rectangle-mark-mode-map
+C-t  ,string-rectangle                          ,Replace rectangle contents with STRING on each line. The length of STRING need not be the sam...   ,模式局部直接绑定            ,rectangle-mark-mode-map
+C-b  ,shell-backward-command                    ,Move backward across ARG shell command(s).  Does not cross lines. See `shell-command-regexp'....   ,已加载辅助 keymap 的直接绑定,shell-repeat-map
+C-f  ,shell-forward-command                     ,Move forward across ARG shell command(s).  Does not cross lines. See `shell-command-regexp'. ...   ,已加载辅助 keymap 的直接绑定,shell-repeat-map
+C-f  ,find-file-other-tab                       ,Edit file FILENAME， in another tab. Like \[find-file-other-frame] (which see)， but creates a ... ,已加载辅助 keymap 的直接绑定,tab-prefix-map
+C-r  ,find-file-read-only-other-tab             ,Edit file FILENAME， in another tab， but don't allow changes. Like \[find-file-other-frame] (w... ,已加载辅助 keymap 的直接绑定,tab-prefix-map
+C-d  ,tab-switcher-delete-backwards             ,Mark window configuration on this line to be deleted. Then move up one line.  Prefix arg mean...   ,模式局部直接绑定            ,tab-switcher-mode-map
+C-k  ,tab-switcher-delete                       ,Mark window configuration on this line to be deleted. Prefix arg says how many window configu...   ,模式局部直接绑定            ,tab-switcher-mode-map
+C-d  ,term-delchar-or-maybe-eof                 ,Delete ARG characters forward， or send an EOF to process if at end of buffer. (fn ARG)            ,模式局部直接绑定            ,term-mode-map
+C-u  ,universal-argument                        ,Begin a numeric argument for the following command. Digits or minus sign following \[universa...   ,已加载辅助 keymap 的直接绑定,term-pager-break-map
+C-x  ,Control-X-prefix                          ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,term-pager-break-map
+C-+  ,text-scale-adjust                         ,Adjust the font size in the current buffer by INC steps. Interactively， INC is the prefix num...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C--  ,text-scale-adjust                         ,Adjust the font size in the current buffer by INC steps. Interactively， INC is the prefix num...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-0  ,text-scale-adjust                         ,Adjust the font size in the current buffer by INC steps. Interactively， INC is the prefix num...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-;  ,comment-line                              ,Comment or uncomment current line and leave point after it. With positive prefix， apply to N ...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-=  ,text-scale-adjust                         ,Adjust the font size in the current buffer by INC steps. Interactively， INC is the prefix num...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-@  ,pop-global-mark                           ,Pop off global mark ring and jump to the top location. This function has :after advice: ‘org-...   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-c  ,save-buffers-kill-terminal                ,Offer to save each buffer， then kill the current connection. If the current frame has no clie...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-c  ,term-send-raw                             ,Send last typed character to the terminal-emulator without any interpretation.                     ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-d  ,list-directory                            ,Display a list of files in or matching DIRNAME， a la `ls'. DIRNAME is globbed by the shell if...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-e  ,eval-last-sexp                            ,Evaluate sexp before point; print value in the echo area. Interactively， EVAL-LAST-SEXP-ARG-I...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-f  ,find-file                                 ,Edit file FILENAME. \<minibuffer-local-map>Switch to a buffer visiting file FILENAME， creatin...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-j  ,dired-jump                                ,Jump to Dired buffer corresponding to current buffer. If in a buffer visiting a file， Dired t...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-j  ,term-line-mode                            ,Switch to line ("cooked") sub-mode of term mode. This means that Emacs editing commands work ...   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-k  ,kmacro-keymap                             ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-k  ,term-char-mode                            ,Switch to char ("raw") sub-mode of term mode. Each character you type is sent directly to the...   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-l  ,downcase-region                           ,Convert the region to lower case.  In programs， wants two arguments. These arguments specify ...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-n  ,set-goal-column                           ,Set the current horizontal position as a goal column. This goal column will affect the \[next...   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-o  ,delete-blank-lines                        ,On blank line， delete all surrounding blank lines， leaving just one. On isolated blank line， ...,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-p  ,mark-page                                 ,Put mark at end of page， point at beginning. A numeric arg specifies to move forward or backw...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-q  ,read-only-mode                            ,Change whether the current buffer is read-only. If buffer is read-only and `view-read-only' i...   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-q  ,term-pager-toggle                         ,                                                                                                   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-r  ,find-file-read-only                       ,Edit file FILENAME but don't allow changes. Like \[find-file]， but marks buffer as read-only....  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-s  ,save-buffer                               ,Save current buffer in visited file if modified. Variations are described below. By default， ...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-t  ,transpose-lines                           ,Exchange current line and previous line， leaving point after both. With argument ARG， takes p... ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-u  ,upcase-region                             ,Convert the region to upper case.  In programs， wants two arguments. These arguments specify ...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-u  ,universal-argument                        ,Begin a numeric argument for the following command. Digits or minus sign following \[universa...   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-v  ,find-alternate-file                       ,Find file FILENAME， select its buffer， kill previous buffer. If the current buffer now contai... ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-v  ,scroll-up-command                         ,Scroll text of selected window upward ARG lines; or near full screen if no ARG. Interactively...   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-w  ,write-file                                ,Write current buffer into file FILENAME. This makes the buffer visit that file， and marks it ...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-x  ,exchange-point-and-mark                   ,Put the mark where point is now， and point where the mark is now. This command works even whe...  ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-z  ,suspend-frame                             ,Do whatever is right to suspend the current frame. Calls `suspend-emacs' if invoked from the ...   ,已加载辅助 keymap 的直接绑定,term-raw-escape-map
+C-/  ,term-send-C-_                             ,                                                                                                   ,已加载辅助 keymap 的直接绑定,term-raw-map
+C-\  ,isearch-toggle-input-method               ,Toggle input method in interactive search.                                                         ,模式局部直接绑定            ,transient--isearch-mode-map
+C-^  ,isearch-toggle-specified-input-method     ,Select an input method and turn it on in interactive search.                                       ,模式局部直接绑定            ,transient--isearch-mode-map
+C-g  ,isearch-abort                             ,Abort incremental search mode if searching is successful， signaling quit. Otherwise， revert t... ,模式局部直接绑定            ,transient--isearch-mode-map
+C-q  ,isearch-quote-char                        ,Quote special characters for incremental search. With argument， add COUNT copies of the chara...  ,模式局部直接绑定            ,transient--isearch-mode-map
+C-r  ,isearch-repeat-backward                   ,Repeat incremental search backwards. With a numeric argument， repeat the search ARG times. A ...  ,模式局部直接绑定            ,transient--isearch-mode-map
+C-s  ,isearch-repeat-forward                    ,Repeat incremental search forwards. With a numeric argument， repeat the search ARG times. A n...  ,模式局部直接绑定            ,transient--isearch-mode-map
+C-w  ,isearch-yank-word-or-char                 ,Pull next character or word from buffer into search string. If optional ARG is non-nil， pull ...  ,模式局部直接绑定            ,transient--isearch-mode-map
+C-y  ,isearch-yank-kill                         ,Pull string from kill ring into search string.                                                     ,模式局部直接绑定            ,transient--isearch-mode-map
+C-g  ,transient-quit-one                        ,Exit the current transients， returning to outer transient， if any.                               ,已加载辅助 keymap 的直接绑定,transient-base-map
+C-q  ,transient-quit-all                        ,Exit all transients without saving the transient stack.                                            ,已加载辅助 keymap 的直接绑定,transient-base-map
+C-v  ,transient-scroll-up                       ,Scroll text of transient's menu window upward ARG lines. If ARG is nil scroll near full scree...   ,已加载辅助 keymap 的直接绑定,transient-base-map
+C-z  ,transient-suspend                         ,Suspend the current transient. It can later be resumed using `transient-resume'， while no oth...  ,已加载辅助 keymap 的直接绑定,transient-base-map
+C-g  ,transient-quit-one                        ,Exit the current transients， returning to outer transient， if any.                               ,已加载辅助 keymap 的直接绑定,transient-edit-map
+C-h  ,transient-help                            ,Show help for the active transient or one of its suffixes. (fn)                                    ,已加载辅助 keymap 的直接绑定,transient-edit-map
+C-q  ,transient-quit-all                        ,Exit all transients without saving the transient stack.                                            ,已加载辅助 keymap 的直接绑定,transient-edit-map
+C-v  ,transient-scroll-up                       ,Scroll text of transient's menu window upward ARG lines. If ARG is nil scroll near full scree...   ,已加载辅助 keymap 的直接绑定,transient-edit-map
+C-z  ,transient-suspend                         ,Suspend the current transient. It can later be resumed using `transient-resume'， while no oth...  ,已加载辅助 keymap 的直接绑定,transient-edit-map
+C--  ,negative-argument                         ,Begin a negative numeric argument for the next command. \[universal-argument] following digit...   ,已加载辅助 keymap 的直接绑定,transient-map
+C-g  ,transient-quit-one                        ,Exit the current transients， returning to outer transient， if any.                               ,已加载辅助 keymap 的直接绑定,transient-map
+C-h  ,transient-help                            ,Show help for the active transient or one of its suffixes. (fn)                                    ,已加载辅助 keymap 的直接绑定,transient-map
+C-q  ,transient-quit-all                        ,Exit all transients without saving the transient stack.                                            ,已加载辅助 keymap 的直接绑定,transient-map
+C-t  ,transient-show                            ,Show the transient's state in the menu buffer.                                                     ,已加载辅助 keymap 的直接绑定,transient-map
+C-u  ,universal-argument                        ,Begin a numeric argument for the following command. Digits or minus sign following \[universa...   ,已加载辅助 keymap 的直接绑定,transient-map
+C-v  ,transient-scroll-up                       ,Scroll text of transient's menu window upward ARG lines. If ARG is nil scroll near full scree...   ,已加载辅助 keymap 的直接绑定,transient-map
+C-z  ,transient-suspend                         ,Suspend the current transient. It can later be resumed using `transient-resume'， while no oth...  ,已加载辅助 keymap 的直接绑定,transient-map
+C-r  ,transient-isearch-backward                ,Do incremental search backward. With a prefix argument， do an incremental regular expression ...  ,已加载辅助 keymap 的直接绑定,transient-popup-navigation-map
+C-s  ,transient-isearch-forward                 ,Do incremental search forward. With a prefix argument， do an incremental regular expression s...  ,已加载辅助 keymap 的直接绑定,transient-popup-navigation-map
+C-g  ,transient-quit-one                        ,Exit the current transients， returning to outer transient， if any.                               ,已加载辅助 keymap 的直接绑定,transient-sticky-map
+C-g  ,transient-quit-seq                        ,Abort the current incomplete key sequence.                                                         ,已加载辅助 keymap 的直接绑定,transient-sticky-map
+C-q  ,transient-quit-all                        ,Exit all transients without saving the transient stack.                                            ,已加载辅助 keymap 的直接绑定,transient-sticky-map
+C-v  ,transient-scroll-up                       ,Scroll text of transient's menu window upward ARG lines. If ARG is nil scroll near full scree...   ,已加载辅助 keymap 的直接绑定,transient-sticky-map
+C-z  ,transient-suspend                         ,Suspend the current transient. It can later be resumed using `transient-resume'， while no oth...  ,已加载辅助 keymap 的直接绑定,transient-sticky-map
+C-?  ,treemacs-advanced-helpful-hydra           ,Summon a helpful hydra to show you the treemacs keymap. This hydra will show the more advance...   ,模式局部直接绑定            ,treemacs-mode-map
+C-j  ,treemacs-next-project                     ,Move to the next project root node.                                                                ,模式局部直接绑定            ,treemacs-mode-map
+C-k  ,treemacs-previous-project                 ,Move to the next project root node.                                                                ,模式局部直接绑定            ,treemacs-mode-map
+C-b  ,tty-menu-prev-menu                        ,                                                                                                   ,已加载辅助 keymap 的直接绑定,tty-menu-navigation-map
+C-f  ,tty-menu-next-menu                        ,                                                                                                   ,已加载辅助 keymap 的直接绑定,tty-menu-navigation-map
+C-g  ,tty-menu-exit                             ,                                                                                                   ,已加载辅助 keymap 的直接绑定,tty-menu-navigation-map
+C-j  ,tty-menu-select                           ,                                                                                                   ,已加载辅助 keymap 的直接绑定,tty-menu-navigation-map
+C-n  ,tty-menu-next-item                        ,                                                                                                   ,已加载辅助 keymap 的直接绑定,tty-menu-navigation-map
+C-p  ,tty-menu-prev-item                        ,                                                                                                   ,已加载辅助 keymap 的直接绑定,tty-menu-navigation-map
+C-r  ,tty-menu-select                           ,                                                                                                   ,已加载辅助 keymap 的直接绑定,tty-menu-navigation-map
+C-u  ,universal-argument-more                   , (fn ARG)                                                                                          ,已加载辅助 keymap 的直接绑定,universal-argument-map
+C-_  ,url-cookie-undo                           ,Undo deletion of a cookie.                                                                         ,模式局部直接绑定            ,url-cookie-mode-map
+C-k  ,url-cookie-delete                         ,Delete the cookie on the current line.                                                             ,模式局部直接绑定            ,url-cookie-mode-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,vertico-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,vertico-map
+C-j  ,View-scroll-line-forward                  ,Scroll forward one line (or prefix LINES lines) in View mode. See also `View-scroll-page-forw...   ,模式局部直接绑定            ,view-mode-map
+C-a  ,vterm-beginning-of-line                   ,Move point to the beginning of the line. Move the point to the first character after the shel...   ,模式局部直接绑定            ,vterm-copy-mode-map
+C-e  ,vterm-end-of-line                         ,Move point to the end of the line， bypassing line wraps.                                          ,模式局部直接绑定            ,vterm-copy-mode-map
+C-@  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-\  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-]  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-^  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-_  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-a  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-b  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-d  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-e  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-f  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-j  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-k  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-l  ,vterm-clear                               ,Send `<clear>' to the libvterm. `vterm-clear-scrollback' determines whether `vterm-clear' sho...   ,模式局部直接绑定            ,vterm-mode-map
+C-n  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-o  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-p  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-q  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-r  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-s  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-t  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-v  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-w  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-z  ,vterm--self-insert                        ,Send invoking key to libvterm.                                                                     ,模式局部直接绑定            ,vterm-mode-map
+C-a  ,which-key-abort                           ,Abort key sequence. (fn &optional _)                                                               ,已加载辅助 keymap 的直接绑定,which-key-C-h-map
+C-d  ,which-key-toggle-docstrings               ,Toggle the display of docstrings. (fn &optional _)                                                 ,已加载辅助 keymap 的直接绑定,which-key-C-h-map
+C-h  ,which-key-show-standard-help              ,Call the command in `which-key--prefix-help-cmd-backup'. Usually this is `describe-prefix-bin...   ,已加载辅助 keymap 的直接绑定,which-key-C-h-map
+C-n  ,which-key-show-next-page-cycle            ,Show the next page of keys， cycling from end to beginning. (fn &optional _)                       ,已加载辅助 keymap 的直接绑定,which-key-C-h-map
+C-p  ,which-key-show-previous-page-cycle        ,Show the previous page of keys， cycling from beginning to end. (fn &optional _)                   ,已加载辅助 keymap 的直接绑定,which-key-C-h-map
+C-u  ,which-key-undo-key                        ,Undo last keypress and force which-key update. (fn &optional _)                                    ,已加载辅助 keymap 的直接绑定,which-key-C-h-map
+C-!  ,my-replace-dwim                           , (fn FROM TO &optional DELIMITED START END)                                                        ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-'  ,imenu                                     ,Jump to a place in the buffer chosen using a buffer menu or mouse menu. INDEX-ITEM specifies ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-/  ,undo                                      ,Undo some previous changes. Repeat this command to undo more changes. A numeric ARG serves as...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-0  ,my/pixel-scroll-half-screen-forward       ,平滑向前移动半屏，替代 C-0 的旧瞬间滚动入口。                                                      ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-1  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-4  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-5  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-6  ,digit-argument                            ,Part of the numeric argument for the next command. \[universal-argument] following digits or ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-7  ,my/pixel-scroll-page-backward-with-context,平滑向后翻页，并保留窗口顶部的上下文行。                                                           ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-8  ,my/pixel-scroll-page-forward-with-context ,平滑向前翻页，并保留窗口底部的上下文行。                                                           ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-9  ,my/pixel-scroll-half-screen-backward      ,平滑向后移动半屏，替代 C-9 的旧瞬间滚动入口。                                                      ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-?  ,undo-redo                                 ,Undo the last ARG undos， i.e.， redo the last ARG changes. Interactively， ARG is the prefix nu...,已加载辅助 keymap 的直接绑定,widget-global-map
+C-@  ,set-mark-command                          ,Set the mark where point is， and activate it; or jump to the mark. Setting the mark also alte...  ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-S-a,move-beginning-of-line                    ,Move point to visible beginning of current logical line. This disregards any invisible newlin...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-\  ,toggle-input-method                       ,Enable or disable multilingual text input method for the current buffer. Only one input metho...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-]  ,abort-recursive-edit                      ,Abort the command that requested this recursive edit or minibuffer input. (fn)                     ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-_  ,undo                                      ,Undo some previous changes. Repeat this command to undo more changes. A numeric ARG serves as...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-a  ,move-beginning-of-line                    ,Move point to visible beginning of current logical line. This disregards any invisible newlin...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-b  ,backward-char                             ,Move point N characters backward (forward if N is negative). On attempt to pass beginning or ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-c  ,mode-specific-command-prefix              ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-e  ,move-end-of-line                          ,Move point to end of current line as displayed. With argument ARG not nil or 1， move forward ...  ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-f  ,forward-char                              ,Move point N characters forward (backward if N is negative). On reaching end or beginning of ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-g  ,keyboard-quit                             ,Signal a `quit' condition. During execution of Lisp code， this character causes a quit direct...  ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-h  ,help-command                              ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-k  ,kill-line                                 ,Kill the rest of the current line; if no nonblanks there， kill thru newline. With prefix argu...  ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-l  ,recenter-top-bottom                       ,Scroll the window so that current line is in the middle of the window. Successive invocations...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-n  ,next-line                                 ,Move cursor vertically down ARG lines. Interactively， vscroll tall lines if `auto-window-vscr...  ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-o  ,my-open-line-below                        ,在当前行下方插入一个空行，并保持光标位置不动。                                                     ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-p  ,previous-line                             ,Move cursor vertically up ARG lines. Interactively， vscroll tall lines if `auto-window-vscrol...  ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-q  ,quoted-insert                             ,Read next input character and insert it. This is useful for inserting control characters. Wit...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-r  ,my-open-line-above                        ,在当前行上方插入一个空行，并保持光标位置不动。                                                     ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-s  ,isearch-forward                           ,Do incremental search forward. With a prefix argument， do an incremental regular expression s...  ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-t  ,kill-region                               ,Kill ("cut") text between point and mark. This deletes the text from the buffer and saves it ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-u  ,universal-argument                        ,Begin a numeric argument for the following command. Digits or minus sign following \[universa...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-v  ,scroll-up-command                         ,Scroll text of selected window upward ARG lines; or near full screen if no ARG. Interactively...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-w  ,my/window-menu                            ,打开按三列排列的窗口操作菜单。                                                                     ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-x  ,Control-X-prefix                          ,Prefix command (definition is a keymap associating keystrokes with commands).                      ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-y  ,yank                                      ,Reinsert ("paste") the last stretch of killed text. More precisely， reinsert the most recent ...  ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-z  ,suspend-frame                             ,Do whatever is right to suspend the current frame. Calls `suspend-emacs' if invoked from the ...   ,已加载辅助 keymap 的直接绑定,widget-global-map
+C-e  ,widget-end-of-line                        ,Go to end of field or end of line， whichever is first. Trailing spaces at the end of padded f...  ,已加载辅助 keymap 的直接绑定,widget-key-sequence-map
+C-k  ,widget-kill-line                          ,Kill to end of field or end of line， whichever is first.                                          ,已加载辅助 keymap 的直接绑定,widget-key-sequence-map
+C-q  ,widget-key-sequence-read-event            , (fn EV)                                                                                           ,已加载辅助 keymap 的直接绑定,widget-key-sequence-map
+C-o  ,xref-show-location-at-point               ,Display the source of xref at point in the appropriate window， if any.                            ,模式局部直接绑定            ,xref--transient-buffer-mode-map
+C-o  ,xref-show-location-at-point               ,Display the source of xref at point in the appropriate window， if any.                            ,模式局部直接绑定            ,xref--xref-buffer-mode-map
+C-g  ,minibuffer-keyboard-quit                  ,Abort recursive edit. In Delete Selection mode， if the mark is active， just deactivate it; th... ,已加载辅助 keymap 的直接绑定,y-or-n-p-map
+C-j  ,exit-minibuffer                           ,Terminate this minibuffer argument.                                                                ,已加载辅助 keymap 的直接绑定,y-or-n-p-map
 
-一、Pinky Mode 按键
---------------------
-
-进入：M-j -> my/pinky-toggle -> 切换并启用 Pinky 单键导航。
-退出：i / ESC -> my/pinky-deactivate -> 退出 Pinky 并关闭键位表。
-
-【基础移动】
-键          函数                          操作        
-h           backward-char                 左移一个字符                        删除  
-j           next-line                     下移一行                           删除
-k           previous-line                 上移一行                           删除
-l           forward-char                  右移一个字符                       删除
-w           forward-word                  到下一个单词                       删除
-W           pinky-forward-WORD            到下一个空白分隔的 WORD            删除
-b           backward-word                 到上一个单词                        删除
-B           pinky-backward-WORD           到上一个空白分隔的 WORD             删除
-
-【词尾与行内】
-键          函数                          操作
-e           pinky-forward-word-end        到当前或下一个单词词尾              保留
-E           pinky-forward-WORD-end        到当前或下一个 WORD 词尾            保留
-ge          pinky-backward-word-end       到上一个单词词尾                    保留
-gE          pinky-backward-WORD-end       到上一个 WORD 词尾                  保留
-0           move-beginning-of-line        到行首                              保留
-^           back-to-indentation           到本行首个非空白字符                删除
-$           move-end-of-line              到行尾                             删除
-i / ESC     my/pinky-deactivate           退出 Pinky                         保留
-
-【字符与句子】
-键          函数                          操作
-f           pinky-find-char-forward       输入字符后向右定位该字符              保留
-F           pinky-find-char-backward      输入字符后向左定位该字符              保留
-t           pinky-till-char-forward       输入字符后停在其左侧                  保留
-T           pinky-till-char-backward      输入字符后停在其右侧                  保留
-;           pinky-repeat-find             按原方向重复上次字符定位              保留
-,           pinky-repeat-find-reverse     反方向重复上次字符定位                保留
-(           backward-sentence             上一句                                保留
-)           forward-sentence              下一句                                保留
-
-【搜索与跳转】
-键          函数                          操作
-/           pinky-search-forward          向前搜索                            保留
-?           pinky-search-backward         向后搜索                            保留
-n           pinky-search-next             沿原搜索方向继续                    保留
-N           pinky-search-previous         沿相反搜索方向继续                  保留
-gg          beginning-of-buffer           到文件开头                          删除
-G           end-of-buffer                 到文件结尾                          删除
-{           backward-paragraph            到上一段落                          保留
-}           forward-paragraph             到下一段落                          保留
-
-【视区与居中】
-键          函数                          操作
-g_          pinky-last-nonblank           到本行最后一个非空字符          删除
-H           pinky-window-top              到可视区域顶部                  保留
-M           pinky-window-middle           到可视区域中部                  保留
-L           pinky-window-bottom           到可视区域底部                  保留
-zz / z.     pinky-recenter-middle         当前行居中                      保留
-zt / z RET  pinky-recenter-top            当前行置顶                      保留
-zb / z-     pinky-recenter-bottom         当前行置底                      保留
-
-【滚动与定位】
-键          函数                          操作
-C-f         scroll-up-command             向下翻页                  删除
-C-b         scroll-down-command           向上翻页                  删除
-C-d         pinky-scroll-half-page-down   向下半页                  删除
-C-u         pinky-scroll-half-page-up     向上半页                  删除
-C-e         scroll-up-line                视口下移一行              删除
-C-y         scroll-down-line              视口上移一行              删除
-
-【代码折叠】
-键          函数                          操作
-za          pinky-fold-toggle             切换光标处折叠            
-zo          pinky-fold-open               展开当前折叠
-zc          pinky-fold-close              关闭当前折叠
-zR          pinky-fold-open-all           展开全部折叠
-zM          pinky-fold-close-all          关闭全部折叠
-zd          pinky-fold-delete             删除当前手工折叠
-
-【删除操作】
-键          函数                          操作
-dd          pinky-delete-line             删除当前整行
-dw          pinky-delete-word             删除到下一单词
-diw         pinky-delete-inner-word       删除完整当前单词
-daw         pinky-delete-a-word           删除单词及相邻空白
-d$          pinky-delete-line-end         删除到行尾
-dG          pinky-delete-buffer-end       删除到文件结尾
-
-【修改操作】
-键          函数                          操作
-cc          pinky-change-line             清空当前行并进入插入状态
-cw          pinky-change-word             修改到下一单词并进入插入状态
-ciw         pinky-change-inner-word       修改完整当前单词并进入插入状态
-caw         pinky-change-a-word           修改单词及空白并进入插入状态
-c$          pinky-change-line-end         修改到行尾并进入插入状态
-cG          pinky-change-buffer-end       修改到文件结尾并进入插入状态
-
-【单字符与重复】
-键          函数                          操作
-s           pinky-substitute-char         删除字符并进入插入状态
-x           pinky-delete-char             删除光标处字符
-r           pinky-replace-char            替换一个字符
-R           pinky-replace-mode-start      进入连续替换状态
-u           undo-only                     撤销
-C-r         undo-redo                     重做
-.           pinky-repeat-last-edit        重复最近一次 Pinky 编辑
-
-二、全局 C-单字母／数字按键
----------------------------
-
-键          函数 / keymap                         操作
-C-a         move-beginning-of-line                行首
-C-b         backward-char                         后退一个字符
-C-c         mode-specific-command-prefix          用户命令前缀
-C-d         delete-char                           删除光标处字符
-C-e         move-end-of-line                      行尾
-C-f         forward-char                          前进一个字符
-C-g         keyboard-quit                         取消当前操作
-C-h         help-command                          帮助前缀
-C-i         indent-for-tab-command                缩进或补全（TAB）
-C-j         my/cut-to-line-beginning-or-region     剪切选区或本行行首到光标位置
-C-k         my-cut-dwim                           智能剪切
-C-l         recenter-top-bottom                   重置当前行在窗口的位置
-C-m         newline                               换行（RET）
-C-n         next-line                             下移一行
-C-o         my-open-line-below                    在下方插入空行
-C-p         previous-line                         上移一行
-C-q         quoted-insert                         原样插入下一个字符
-C-r         isearch-backward                      向后增量搜索
-C-s         isearch-forward                       向前增量搜索
-C-t         kill-region                           剪切选区
-C-u         universal-argument                    通用前缀参数
-C-v         scroll-up-command                     向前翻页
-C-w         窗口操作前缀                           后续 r/o/m/x/d/p/n/b/f/s/v/M/l/k/j/h 等操作窗口
-C-x         Control-X-prefix                      Emacs 原生命令前缀
-C-y         yank                                  粘贴
-C-z         suspend-frame                         挂起 Emacs Frame
-C-0         my/pixel-scroll-half-screen-forward   平滑向前半页
-C-1         digit-argument                        数字前缀参数 1
-C-2         my/toggle-mark-command                切换选区／设置标记
-C-3         digit-argument                        数字前缀参数 3
-C-4         digit-argument                        数字前缀参数 4
-C-5         digit-argument                        数字前缀参数 5
-C-6         digit-argument                        数字前缀参数 6
-C-7         my/pixel-scroll-page-backward-with-context
-                                                平滑向后翻页，保留上下文
-C-8         my/pixel-scroll-page-forward-with-context
-                                                平滑向前翻页，保留上下文
-C-9         my/pixel-scroll-half-screen-backward  平滑向后半页
-
-三、全局 M-单字母／数字按键
----------------------------
-
-键          函数 / keymap                         操作
-M-a         backward-sentence                     上一句
-M-b         backward-word                         上一个单词
-M-c         my-capitalize-dwim                    智能首字母大写
-M-d         kill-word                             删除下一个单词
-M-e         forward-sentence                      下一句
-M-f         forward-word                          下一个单词
-M-g         导航前缀                               后续可跳转行、字符、错误、符号等
-M-h         mark-paragraph                        选择当前段落
-M-i         change-inner                          修改成对结构内部
-M-j         my/pinky-toggle                        切换 Pinky Mode
-M-k         my-move-line-up                       当前行上移
-M-l         my-lower-dwim                         智能小写转换
-M-m         my-copy-region-or-line-end            复制选区或光标至行尾
-M-n         my-copy-region-or-line-begin          复制选区或行首至光标
-M-o         change-outer                          修改成对结构外部
-M-p         my/toggle-mark-command                切换标记／选区状态
-M-q         fill-paragraph                        段落重新排版
-M-r         move-to-window-line-top-bottom        在窗口的顶／中／底行间切换
-M-s         搜索前缀                               后续查找文件、当前文件搜索、Ripgrep 等
-M-t         transpose-words                       交换相邻两个单词
-M-u         my-upper-dwim                         智能大写转换
-M-v         scroll-down-command                   向后翻页
-M-w         my-copy-dwim                          复制选区或整行（含行分隔符）
-M-x         execute-extended-command              执行 M-x 命令
-M-y         yank-pop                              循环选择粘贴历史
-M-z         zap-to-char                           删除至指定字符
-M-0         digit-argument                        数字前缀参数 0
-M-1         digit-argument                        数字前缀参数 1
-M-2         digit-argument                        数字前缀参数 2
-M-3         digit-argument                        数字前缀参数 3
-M-4         digit-argument                        数字前缀参数 4
-M-5         digit-argument                        数字前缀参数 5
-M-6         digit-argument                        数字前缀参数 6
-M-7         digit-argument                        数字前缀参数 7
-M-8         digit-argument                        数字前缀参数 8
-M-9         digit-argument                        数字前缀参数 9
-
-四、全局 C-S-单字母／数字按键
------------------------------
-
-键          函数 / keymap                         操作
-C-S-a       move-beginning-of-line                行首
-C-S-c       多光标前缀 keymap                      再按 C-S-c 调用 mc/edit-lines，在多行编辑
-C-S-c C-S-c mc/edit-lines                         为选中行创建多个光标
-C-S-o       my-open-line-above                    在当前行上方插入空行
-
-其它 C-S-单字母及 C-S-数字在当前 global-map 中未绑定。
-说明：部分终端或系统会把 C-S-字母与 C-字母视为同一个键；图形界面是否能区分
-取决于键盘布局和 Emacs 的事件解析。
-
-五、全局 M-S-单字母／数字按键
------------------------------
-
-键          函数                                操作
-M-S-x       execute-extended-command-for-buffer  只显示与当前 Buffer／模式相关的 M-x 命令
-
-其它 M-S-单字母及 M-S-数字在当前 global-map 中未绑定。
-
-六、全局 C-单个符号按键
--------------------------
-
-键          函数 / keymap                         操作
-C-SPC       set-mark-command                      设置标记／开始选区
-C-!         my-replace-dwim                       智能替换
-C-'         imenu                                 打开当前 Buffer 的符号索引
-C--         er/contract-region                    收缩语义选区
-C-.         embark-act                            对当前候选或目标执行 Embark 动作
-C-/         undo                                  撤销
-C-:         avy-goto-char-timer                   输入字符后进行 Avy 跳转
-C-;         iedit-mode                            批量编辑当前符号匹配项
-C-<         mc/mark-previous-like-this            多光标选择上一个相同项
-C-=         er/expand-region                      扩展语义选区
-C->         mc/mark-next-like-this                多光标选择下一个相同项
-C-?         undo-redo                             重做
-C-@         set-mark-command                      设置标记／开始选区（C-SPC 等价）
-C-[         ESC-prefix                            ESC 前缀
-C-\         toggle-input-method                  切换输入法
-C-]         abort-recursive-edit                  中止递归编辑／Minibuffer 嵌套
-C-_         undo                                  撤销（C-/ 等价）
-
-其它 C-单个符号在当前 global-map 中未绑定。
-
-七、全局 M-单个符号按键
--------------------------
-
-键          函数                                操作
-M-SPC       cycle-spacing                        循环整理光标附近空白
-M-!         shell-command                        执行 Shell 命令
-M-$         ispell-word                          拼写检查光标处单词
-M-%         query-replace                        交互式查找替换
-M-&         async-shell-command                  异步执行 Shell 命令
-M-'         abbrev-prefix-mark                   标记缩写展开前缀
-M-(         insert-parentheses                    插入括号
-M-)         move-past-close-and-reindent          越过右括号并重新缩进
-M-,         xref-go-back                          返回上一个跳转位置
-M--         negative-argument                     负数前缀参数
-M-.         embark-dwim                           对当前目标执行默认 Embark 动作
-M-/         dabbrev-expand                        动态缩写补全
-M-:         eval-expression                       求值 Emacs Lisp 表达式
-M-;         comment-line                          注释／取消注释当前行
-M-<         beginning-of-buffer                   文件开头
-M-=         count-words-region                    统计选区字数
-M->         end-of-buffer                         文件结尾
-M-?         xref-find-references                  查找光标处符号引用
-M-@         mark-word                             选择下一个单词
-M-\         delete-horizontal-space               删除相邻水平空白
-M-^         delete-indentation                     合并当前行与上一行
-M-`         tmm-menubar                           文本菜单栏
-M-{         backward-paragraph                    上一段落
-M-|         shell-command-on-region               对选区执行 Shell 命令
-M-}         forward-paragraph                     下一段落
-M-~         not-modified                          标记当前 Buffer 为未修改
-
-其它 M-单个符号在当前 global-map 中未绑定。
-
+共导出 544 条直接绑定。

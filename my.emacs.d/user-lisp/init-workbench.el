@@ -82,6 +82,8 @@
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'my/cua-rectangle-toggle "init-edit" nil t)
+(autoload 'my/easy-kill-menu "init-edit" nil t)
+(autoload 'my/view-mode-menu "init-edit" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
 (autoload 'hydra-window-resize/body "init-window" nil t)
 (autoload 'zoom-window-zoom "zoom-window" nil t)
@@ -409,7 +411,9 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("M" "切换标记" my/toggle-mark-command)
     ("B" "可视书签" my/workbench-bm-menu)
     ("J" "Avy 跳转菜单" my/avy-menu)
-    ("R" "矩形选区" my/cua-rectangle-toggle)]
+    ("R" "矩形选区" my/cua-rectangle-toggle)
+    ("Y" "Easy Kill 菜单" my/easy-kill-menu)
+    ("P" "View Mode 菜单" my/view-mode-menu)]
    ["   项目与 Git"
     ("p" "切换项目" project-switch-project)
     ("V" "Git 状态" magit-status)
