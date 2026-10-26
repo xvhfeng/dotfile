@@ -174,6 +174,8 @@ This delegates nested same-name tag matching to the `%` implementation in
       ;; go-ts-mode 的项目文件解析还需要 gomod；两项一起注册才能自动启用 Go recipe。
       (go . ("https://github.com/tree-sitter/tree-sitter-go" "v0.23.4"))
       (gomod . ("https://github.com/camdencheek/tree-sitter-go-mod" "v1.1.0"))
+      ;; Rust 优先使用 Emacs 内置 rust-ts-mode；grammar 缺失时由 lang-rust 回退 rust-mode。
+      (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
       (lua . ("https://github.com/tree-sitter-grammars/tree-sitter-lua"))
       (bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
       (elisp . ("https://github.com/Wilfred/tree-sitter-elisp"))
@@ -189,7 +191,7 @@ This delegates nested same-name tag matching to the `%` implementation in
                      "master" "typescript/src"))
       (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript"
               "master" "tsx/src")))
-    "启动时自动下载并编译的 17 个 Tree-sitter grammar 注册表。")
+    "启动时自动下载并编译的 18 个 Tree-sitter grammar 注册表。")
 
   (defconst my/treesit-registered-languages
     (mapcar #'car my/treesit-grammar-registry)

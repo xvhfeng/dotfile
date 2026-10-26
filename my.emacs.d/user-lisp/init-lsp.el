@@ -54,6 +54,7 @@
     (java-mode . "jdtls") (java-ts-mode . "jdtls")
     (python-mode . "pyright-langserver") (python-ts-mode . "pyright-langserver")
     (go-mode . "gopls") (go-ts-mode . "gopls")
+    (rust-mode . "rust-analyzer") (rust-ts-mode . "rust-analyzer")
     (lua-mode . "lua-language-server") (lua-ts-mode . "lua-language-server")
     (js-mode . "typescript-language-server") (js-ts-mode . "typescript-language-server")
     (typescript-mode . "typescript-language-server")
@@ -128,6 +129,8 @@ explicitly true during initialization.")
     python-ts-mode
     go-mode
     go-ts-mode
+    rust-mode
+    rust-ts-mode
     lua-mode
     lua-ts-mode
     js-mode
@@ -160,6 +163,8 @@ explicitly true during initialization.")
                    (python-mode . ("pyright-langserver" "--stdio"))
                    (python-ts-mode . ("pyright-langserver" "--stdio"))
                    (go-mode . ("gopls")) (go-ts-mode . ("gopls"))
+                   ;; Rust Analyzer 同时服务 Tree-sitter 与回退模式，输出交给 Flymake。
+                   (rust-mode . ("rust-analyzer")) (rust-ts-mode . ("rust-analyzer"))
                    (lua-mode . ("lua-language-server")) (lua-ts-mode . ("lua-language-server"))
                    (js-mode . ("typescript-language-server" "--stdio"))
                    (js-ts-mode . ("typescript-language-server" "--stdio"))

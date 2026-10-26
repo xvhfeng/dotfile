@@ -32,6 +32,7 @@
      ("clangd" . "C / C++ 语言服务器")
      ("pyright" . "Python 语言服务器")
      ("gopls" . "Go 语言服务器")
+     ("rust-analyzer" . "Rust 语言服务器")
      ("jdtls" . "Java 语言服务器")
      ("lua-language-server" . "Lua 语言服务器")
      ("yaml-language-server" . "YAML 语言服务器")
@@ -56,7 +57,7 @@
      ("local-lua-debugger-vscode" . "Lua 调试适配器")
      ("bash-debug-adapter" . "Bash 调试适配器")))
   "Mason 自动管理的工具注册表。
-共 23 项：16 个语言、格式化及检查工具，7 个调试适配器。")
+共 24 项：17 个语言、格式化及检查工具，7 个调试适配器。")
 
 (defun my/mason-packages-in-category (category)
   "返回 `my/mason-tool-registry' 中 CATEGORY 对应的包名。"
