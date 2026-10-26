@@ -46,10 +46,13 @@
                     js-debug-node-attach js-debug-chrome))
       (my/debug--set-dape-config
        name 'command-args (list js-server :autoport)))
-    ;; Node 24+ 可以直接运行大多数采用可擦除类型语法的 .ts 文件。
+    ;; Node 24+ 可运行可擦除类型的 .ts，但不能直接执行含 JSX 的 .tsx。
     (my/debug--set-dape-config
      'js-debug-node 'modes
-     '(js-mode js-ts-mode typescript-mode typescript-ts-mode tsx-ts-mode))
+     '(js-mode js-ts-mode typescript-mode typescript-ts-mode))
+    (my/debug--set-dape-config
+     'js-debug-tsx 'modes
+     '(typescript-mode typescript-ts-mode tsx-ts-mode))
 
     ;; Bash：除 adapter 外还要告诉它 bashdb 运行库的位置。
     (my/debug--set-dape-config
@@ -99,16 +102,6 @@
        :args []
        :stopOnEntry nil))))
 
-(defun my/debug-configure-java-adapter ()
-  "让 Eglot 启动 jdtls 时加载 Mason 的 Java Debug Server。"
-  (let ((jar (my/debug-mason-file
-              "share/java-debug-adapter/com.microsoft.java.debug.plugin.jar")))
-    (when (file-exists-p jar)
-      (add-to-list
-       'eglot-server-programs
-       `((java-mode java-ts-mode) .
-         ("jdtls" :initializationOptions (:bundles [,jar])))))))
-
 (use-package dape
   :straight (:host github :repo "svaante/dape")
   :commands (dape dape-breakpoint-toggle dape-continue dape-next
@@ -118,7 +111,10 @@
                   dape-breakpoint-hits dape-breakpoint-remove-all)
   :init
   ;; Dape 自带的 C-x C-a 前缀与本配置的 General 体系重复，统一只保留 Leader。
-  (setq dape-key-prefix nil)
+  (setq dape-key-prefix nil
+        ;; 断点状态属于运行时数据，不应写到配置源码根目录。
+        dape-default-breakpoints-file (my/runtime-file "dape/breakpoints"))
+  (make-directory (file-name-directory dape-default-breakpoints-file) t)
   :config
   (setq dape-buffer-window-arrangement 'right)
   (my/debug-configure-dape)
@@ -126,9 +122,6 @@
   (add-hook 'kill-emacs-hook #'dape-breakpoint-save)
   (add-hook 'after-init-hook #'dape-breakpoint-load)
   (dape-breakpoint-global-mode 1))
-
-(with-eval-after-load 'eglot
-  (my/debug-configure-java-adapter))
 
 (with-eval-after-load 'general
   (my-leader-def

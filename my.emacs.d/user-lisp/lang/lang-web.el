@@ -41,6 +41,7 @@
   :mode "\\.twig\\'"
   :mode "\\.jinja2?\\'"
   :mode "\\.eco\\'"
+  :mode "\\.php\\'"
   :mode "wp-content/themes/.+/.+\\.php\\'"
   :mode "templates/.+\\.php\\'"
   :mode "\\.vue\\'"

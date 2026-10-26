@@ -31,6 +31,7 @@
   '((language-server
      ("clangd" . "C / C++ 语言服务器")
      ("pyright" . "Python 语言服务器")
+     ("gopls" . "Go 语言服务器")
      ("jdtls" . "Java 语言服务器")
      ("lua-language-server" . "Lua 语言服务器")
      ("yaml-language-server" . "YAML 语言服务器")
@@ -48,13 +49,14 @@
      ("luacheck" . "Lua 静态检查"))
     (debug-adapter
      ("codelldb" . "C / C++ 调试适配器")
+     ("delve" . "Go 调试适配器")
      ("debugpy" . "Python 调试适配器")
      ("js-debug-adapter" . "JavaScript / TypeScript 调试适配器")
      ("java-debug-adapter" . "Java 调试适配器")
      ("local-lua-debugger-vscode" . "Lua 调试适配器")
      ("bash-debug-adapter" . "Bash 调试适配器")))
   "Mason 自动管理的工具注册表。
-共 21 项：15 个语言、格式化及检查工具，6 个调试适配器。")
+共 23 项：16 个语言、格式化及检查工具，7 个调试适配器。")
 
 (defun my/mason-packages-in-category (category)
   "返回 `my/mason-tool-registry' 中 CATEGORY 对应的包名。"
@@ -193,7 +195,7 @@ Apple Silicon, Intel macOS, Linux, Homebrew, and version-manager installs."
 ;; ---------------------------------------------------------------------------
 ;; - Mason 把语言服务器、格式化器和检查器安装到 `runtimes/mason/'，不修改系统目录。
 ;; - `C-c x m' 打开 Mason 管理器，查看、安装、更新或删除外部工具。
-;; - Mason 首次初始化时自动安装 21 个注册工具；以后只补装新增或缺失项。
+;; - Mason 首次初始化时自动安装 23 个注册工具；以后只补装新增或缺失项。
 ;; - 注册表是 `my/mason-tool-registry'；也可手动运行 `M-x my/mason-install-missing-packages'。
 ;; - GUI Emacs 会同步 Shell PATH，并把 `runtimes/mason/bin/' 放到 Eglot 可搜索的最前面。
 ;; - 下载失败时先在 Mason 管理器重试，并检查网络、GitHub 访问和 *Messages* 的具体错误。

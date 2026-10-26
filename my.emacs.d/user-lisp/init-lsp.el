@@ -53,6 +53,7 @@
     (c-ts-mode . "clangd") (c++-ts-mode . "clangd")
     (java-mode . "jdtls") (java-ts-mode . "jdtls")
     (python-mode . "pyright-langserver") (python-ts-mode . "pyright-langserver")
+    (go-mode . "gopls") (go-ts-mode . "gopls")
     (lua-mode . "lua-language-server") (lua-ts-mode . "lua-language-server")
     (js-mode . "typescript-language-server") (js-ts-mode . "typescript-language-server")
     (typescript-mode . "typescript-language-server")
@@ -60,6 +61,7 @@
     (js-json-mode . "vscode-json-language-server") (json-ts-mode . "vscode-json-language-server")
     (yaml-mode . "yaml-language-server") (yaml-ts-mode . "yaml-language-server")
     (sh-mode . "bash-language-server")
+    (bash-ts-mode . "bash-language-server")
     ;; HTML 的传统、Tree-sitter 和模板模式都复用 Microsoft HTML LSP。
     (html-mode . "vscode-html-language-server")
     (html-ts-mode . "vscode-html-language-server")
@@ -72,7 +74,14 @@
 (defun my/lsp-maybe-ensure ()
   "在当前主模式存在本地语言服务器时安全启动 Eglot。"
   (let ((server (alist-get major-mode my/lsp-server-commands)))
-    (when (and server (executable-find server))
+    ;; HTML 服务器不解析 PHP、Vue 和 Svelte 模板中的语言代码。
+    (when (and server (executable-find server)
+               (or (not (eq major-mode 'web-mode))
+                   (and buffer-file-name
+                        (string-match-p "\\.html?\\'" buffer-file-name)))
+               ;; Bash 服务器不解析 Zsh 专有语法；Zsh 保留语法高亮和本地编辑。
+               (not (and (eq major-mode 'sh-mode)
+                         (eq (and (boundp 'sh-shell) sh-shell) 'zsh))))
       (eglot-ensure))))
 
 (defconst my/html-lsp-server-contact
@@ -81,6 +90,26 @@
   "Eglot connection description for the Microsoft HTML language server.
 The server deliberately disables its formatter unless `provideFormatter' is
 explicitly true during initialization.")
+
+(defun my/jdtls-server-command (&optional _interactive)
+  "用真实 Python 启动 Mason 的 JDT LS，并在已安装时加载 Java 调试扩展。"
+  (let* ((script (my/runtime-file "mason/packages/jdtls/bin/jdtls"))
+         (python (my/treemacs-find-stable-python))
+         ;; 每个项目独立存储 Eclipse 元数据，避免默认写入用户 Cache，也避免项目冲突。
+         (root (if-let ((project (project-current)))
+                   (project-root project)
+                 default-directory))
+         (workspace (my/runtime-file
+                     (concat "jdtls/workspaces/" (secure-hash 'sha1 root))))
+         (jar (my/runtime-file
+               "mason/share/java-debug-adapter/com.microsoft.java.debug.plugin.jar"))
+         (command (if (and python (file-exists-p script))
+                      (list python script "-data" workspace)
+                    (list "jdtls"))))
+    (make-directory (file-name-directory workspace) t)
+    (if (file-exists-p jar)
+        (append command (list :initializationOptions (list :bundles (vector jar))))
+      command)))
 
 (use-package eglot
   ;; Emacs 29+ 已内置 Eglot。必须显式关闭 Straight，避免它把旧版
@@ -97,6 +126,8 @@ explicitly true during initialization.")
     java-ts-mode
     python-mode
     python-ts-mode
+    go-mode
+    go-ts-mode
     lua-mode
     lua-ts-mode
     js-mode
@@ -109,6 +140,7 @@ explicitly true during initialization.")
     yaml-mode
     yaml-ts-mode
     sh-mode
+    bash-ts-mode
     html-mode
     html-ts-mode
     mhtml-mode
@@ -123,9 +155,11 @@ explicitly true during initialization.")
 
   :config
   ;; 显式声明常见服务器命令，保证 Mason 安装到 mason/bin/ 后能被 Eglot 正确调用。
-  (dolist (entry '((java-mode . ("jdtls")) (java-ts-mode . ("jdtls"))
+  (dolist (entry '((java-mode . my/jdtls-server-command)
+                   (java-ts-mode . my/jdtls-server-command)
                    (python-mode . ("pyright-langserver" "--stdio"))
                    (python-ts-mode . ("pyright-langserver" "--stdio"))
+                   (go-mode . ("gopls")) (go-ts-mode . ("gopls"))
                    (lua-mode . ("lua-language-server")) (lua-ts-mode . ("lua-language-server"))
                    (js-mode . ("typescript-language-server" "--stdio"))
                    (js-ts-mode . ("typescript-language-server" "--stdio"))
@@ -136,7 +170,8 @@ explicitly true during initialization.")
                    (json-ts-mode . ("vscode-json-language-server" "--stdio"))
                    (yaml-mode . ("yaml-language-server" "--stdio"))
                    (yaml-ts-mode . ("yaml-language-server" "--stdio"))
-                   (sh-mode . ("bash-language-server" "start"))))
+                   (sh-mode . ("bash-language-server" "start"))
+                   (bash-ts-mode . ("bash-language-server" "start"))))
     (add-to-list 'eglot-server-programs entry))
   ;; HTML server 只接受 "html" 这个 LSP languageId；不能让 `web-mode'
   ;; 默认转换成 "web"，否则服务器虽启动却不会提供格式化能力。

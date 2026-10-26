@@ -1,0 +1,60 @@
+Emacs 多语言能力核对与调试手册（2026-10-26）
+
+一、通用入口
+打开项目内文件并保存；项目根优先 .projx，其次 Git。M-: major-mode 查看模式；M-x eglot-reconnect 重连 LSP；M-x eglot-events-buffer 查看协议问题。C-c o i 查符号，C-c o s 开侧栏；C-c c d b 看本缓冲区诊断。Dape 调试统一用 C-c c D：b b 切换断点，s s 选择/启动配置，x c/n/i/o 继续/跳过/进入/跳出，i v/e/r 查状态/表达式/REPL，s r 重启，s q 结束。若调试器缺失，先 C-c c D m 补装，再检查 runtimes/mason/bin/。修改 Dape 启动配置中的 :program、:cwd、:args 时，指向实际项目目标，不能把源代码路径当作已编译程序。
+
+二、本机核对结论
+实际打开代表文件并检查模式、高亮、Outline、Imenu、Flymake；另对 C/C++、Java、Python、Go、JS/TS/TSX、Lua、JSON、YAML、Bash、HTML 做了 Eglot 真实连接测试。这些连接成功且由 eglot-flymake-backend 提供诊断。Go 的 dlv 已安装并可执行；Java 的 jdtls 已连接，且确认暴露 vscode.java.startDebugSession 命令。Dape 配置、适配器路径和依赖已核对；未逐一运行全部语言的交互式断点会话。下表“诊断”表示有可用后端，不保证任意文件必有错误。
+
+文件/语言             LSP                    诊断                大纲/符号       调试
+C、C++               clangd 已连接           Eglot/Flymake       有               CodeLLDB
+Java                  jdtls 已连接            Eglot/Flymake       有               JDT LS + Java Debug
+Python                Pyright 已连接          Eglot/Flymake       有               debugpy
+Go                    gopls 已连接            Eglot/Flymake       有               Delve
+JS、JSX、TS、TSX       TypeScript LS 已连接    Eglot/Flymake       有               js-debug；JSX/TSX 需运行时
+Lua                   lua-language-server 已连接 Eglot/Flymake    有               Local Lua Debugger
+Bash (.sh/.bash)      bash-language-server 已连接 Eglot/Flymake   有               bash-debug
+JSON、JSONC           JSON LS 已连接         Eglot/Flymake       有               数据文件，无单步调试
+YAML、YML             YAML LS 已连接         Eglot/Flymake       Outline 有；Imenu 视文档符号而定  数据文件
+HTML                  HTML LS 已连接         Eglot/Flymake       有               标记本身无单步调试
+Zsh                   未配置专用 LSP         sh-mode 本地后端需 shellcheck  有         Bash 调试器不适用
+PowerShell            未配置 LSP             Flymake 开启但无后端 有             未配置 DAP
+CSS                   未配置 LSP             Flymake 开启但无后端 有             样式本身无单步调试
+Vue、Svelte、PHP       未配置对应 LSP         Flymake 开启但无后端 有             需调试其中的运行时代码
+Emacs Lisp            不使用 LSP             内置字节编译/Checkdoc 有             Edebug
+Markdown              不使用 LSP             未启用 Flymake      标题 Imenu/折叠   文档，无单步调试
+Org                   不使用 LSP             未启用 Flymake      标题 Imenu/折叠   文档，无单步调试
+LaTeX                 不使用 LSP             Flymake 后端存在但未自动启用 RefTeX 目录  编译日志
+Texinfo               不使用 LSP             未启用 Flymake      节点结构         导出日志
+CSV、TSV              不使用 LSP             未启用 Flymake      不适用           数据校验
+XML                   lemminx 已安装但未接入 nxml-mode；目前无 LSP/Flymake/Imenu/DAP。
+
+三、逐语言调试步骤
+1. C：在项目根执行 clang -g -O0 main.c -o a.out；打开 main.c 设断点；C-c c D s s 选 codelldb，将 :program 设为 a.out 的绝对路径；继续和单步。多文件项目先用现有构建系统生成含调试符号的目标；clangd 如误报，核对 compile_commands.json。
+2. C++：用 clang++ -g -O0 main.cpp -o a.out（或用 CMake Debug 构建）；其余选择 codelldb、设置 :program 和断点的步骤同 C。头文件断点须让对应编译单元实际执行。
+3. Java：在 Maven/Gradle 项目中打开含 main 方法的 .java，等 Eglot 连接；设置断点，选 jdtls 配置。若有多个 main，指定正确 :mainClass、:projectName 和 :filePath。JDT LS 加载 Mason 的 Java Debug 扩展，调试入口依赖它；先解决项目导入或编译错误再启动。元数据存于 runtimes/jdtls/workspaces/。
+4. Go：在有 go.mod 的项目打开 main 包源文件，go test ./... 先确认可构建；设断点，选 dlv，默认 :program 为当前目录，子目录 main 包则改成该包目录。调试测试时将 Dape 配置改为 :mode "test" 且 :program 指向被测包目录。go.mod/go.work 只用于项目配置，不设代码断点。
+5. Python：启用项目虚拟环境并打开 .py；选 debugpy，:program 指向当前脚本，:cwd 指向项目根，:args 填脚本参数；需要特定解释器时在启动配置指定 :python 为虚拟环境的 python。模块入口改选 debugpy-module 并指定 :module。断点后启动并用 i e 检查变量。
+6. JavaScript（Node）：在可用 Node 的项目中打开 .js/.mjs/.cjs，设断点，选 js-debug-node；核对 :program、:cwd、:args 后启动。浏览器脚本或 JSX 不直接选 Node：先启动开发服务器，再选 js-debug-chrome，填写实际 :url（默认 localhost:3000）和 :webRoot，浏览器加载页面后命中断点。浏览器会话需本机 Chrome/兼容调试端口，尚未实测。
+7. TypeScript：简单可擦除类型的 .ts 在本机 Node 24 下可选 js-debug-node；使用装饰器、路径别名或需转译的项目先安装项目运行器，选 js-debug-ts-node 或 js-debug-tsx，并将 :runtimeExecutable 指向实际可执行文件（例如项目 node_modules/.bin/tsx）。先在终端确认运行器能启动同一文件，再调试。
+8. TSX：.tsx 不能直接由 Node 运行。终端在项目安装并验证 tsx 运行器，Dape 选 js-debug-tsx，:runtimeExecutable 指向项目 node_modules/.bin/tsx。React 等浏览器页面按第 6 条的 js-debug-chrome 流程调试，保证源码映射可用。当前本机未安装 tsx，需在具体项目中安装后才能启动此配置。
+9. Lua：确认 lua 与 node 可执行，打开 .lua 设断点，选 lua-local；:program 中 :file 指向当前脚本、:lua 指向项目 Lua 可执行文件，:cwd 指向项目根。若是游戏引擎嵌入式 Lua，需引擎专用适配器；当前 lua-local 只覆盖独立 Lua 脚本。
+10. Bash：用 .sh/.bash 文件且首行写 #!/usr/bin/env bash；先运行 bash -n script.sh。打开文件设断点，选 bash-debug，确认 :program 为脚本、:pathBash 指向 bash；启动后逐行查看变量。Zsh 专有脚本不要用这个调试器。
+11. Zsh：当前只有 sh-mode 高亮、结构导航；没有专用 LSP/DAP，且不会启动 Bash LSP。执行 zsh -n script.zsh 查语法；需要逐步追踪时在终端用 zsh -x script.zsh，并在关键行打印变量。
+12. PowerShell：当前有 powershell-mode 高亮和 Imenu，没有 LSP、有效 Flymake 后端或 DAP。先在终端用 pwsh -NoProfile -File script.ps1 运行，并用 Set-PSDebug -Trace 1 跟踪；项目若要断点调试，需另接 PowerShell Editor Services，现有菜单不能直接启动。
+13. JSON/JSONC：保存后查看 C-c c d b 的 JSON LS 诊断；C-c o i 看可用键。数据没有执行栈；验证业务含义需运行消费它的程序并在该程序的语言调试器中设断点。
+14. YAML/YML：保存后查看 YAML LS 诊断；若未指定 schema，只能检查可识别的语法/结构，无法保证业务字段正确。用消费该文件的程序或项目校验命令定位语义错误，不存在 YAML 单步调试。
+15. HTML：HTML LS 可给标记诊断；C-c o i 查标签结构。页面交互错误先在浏览器控制台定位对应 JS，再按第 6 条以 js-debug-chrome 调试；HTML 标签没有执行断点。
+16. CSS：当前只有 css-ts-mode 高亮和结构导航，没有 CSS LSP/Flymake 诊断后端。用浏览器开发者工具检查元素的计算样式、层叠来源和媒体查询；涉及 JS 动态修改时转到 JS 调试。
+17. Vue/Svelte：web-mode 提供模板高亮/标签结构，但本配置没有对应框架 LSP/Flymake/DAP。先运行项目开发服务器，用浏览器工具检查组件和控制台；脚本断点按第 6 条的 js-debug-chrome，确认构建器提供源码映射。不要把 HTML LSP 的结果当成 Vue/Svelte 语义诊断。
+18. PHP：web-mode 已提供独立 .php 文件高亮，但无 PHP LSP、有效 Flymake 后端或 DAP。终端先运行 php -l file.php 查语法；需要断点时须安装并配置 Xdebug 及 PHP DAP 适配器，当前 C-c c D 没有可直接使用的 PHP 配置。
+19. Emacs Lisp：打开 .el，光标置于 defun 内按 C-c c D E d 插桩，调用该函数；进入 Edebug 后使用 SPC 单步、g 继续、q 退出。C-c c D E e 切换遇错调试；C-c c d b 查看字节编译/Checkdoc 诊断。此语言不用 Dape。
+20. Markdown：C-c k p 开实时预览，C-c k v 导出并预览；标题用 C-c o i 或 TAB 折叠。代码围栏按 C-c ' 放进对应语言的间接 Buffer，再按该语言条目调试；Markdown 本身无 LSP/Flymake/DAP。
+21. Org：用 TAB 折叠标题、C-c o i 跳标题；C-c n e 导出检查。Org Babel 代码块应放到对应语言文件/会话中按该语言调试；Org 文档本身无 DAP。
+22. LaTeX：先确保有 latexmk/TeX 引擎；C-c l c 编译，在 AUCTeX 编译输出中定位首个错误，C-c l v 查看 PDF，C-c l r 查看 RefTeX 结构。当前不会自动启用 Flymake，不能把没有诊断列表当作编译通过。
+23. Texinfo：C-c i p 预览 Info，C-c i f/h/t 分别导出 Info/HTML/文本；失败查看 *Texinfo Export*。C-c i s 看节点结构；无 LSP/DAP。
+24. CSV/TSV：C-c v g 检查分隔符，C-c v H 固定表头，C-c v a 检查列对齐；字段含义和约束要用消费数据的程序验证，再调试该程序。无 LSP/Flymake/DAP。
+25. XML：目前 nxml-mode 可高亮，但已安装的 lemminx 尚未挂到 Eglot；只能用外部 XML 校验器或消费程序定位错误。本配置尚无 XML 调试会话。
+
+四、故障定位顺序
+先检查 major-mode，再查 grammar/高亮；LSP 用 M-x eglot-events-buffer 看启动命令与 languageId；Flymake 用 C-c c d b 看后端诊断；Dape 先核对适配器二进制、项目编译产物和 :program/:cwd/:args。普通文件没有报错时诊断列表为空是正常的；Flymake 已开启但没有后端的语言不会自动产生诊断。

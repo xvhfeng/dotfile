@@ -171,6 +171,9 @@ This delegates nested same-name tag matching to the `%` implementation in
       (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
       (java . ("https://github.com/tree-sitter/tree-sitter-java"))
       (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+      ;; go-ts-mode 的项目文件解析还需要 gomod；两项一起注册才能自动启用 Go recipe。
+      (go . ("https://github.com/tree-sitter/tree-sitter-go" "v0.23.4"))
+      (gomod . ("https://github.com/camdencheek/tree-sitter-go-mod" "v1.1.0"))
       (lua . ("https://github.com/tree-sitter-grammars/tree-sitter-lua"))
       (bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
       (elisp . ("https://github.com/Wilfred/tree-sitter-elisp"))
@@ -186,7 +189,7 @@ This delegates nested same-name tag matching to the `%` implementation in
                      "master" "typescript/src"))
       (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript"
               "master" "tsx/src")))
-    "启动时自动下载并编译的 15 个 Tree-sitter grammar 注册表。")
+    "启动时自动下载并编译的 17 个 Tree-sitter grammar 注册表。")
 
   (defconst my/treesit-registered-languages
     (mapcar #'car my/treesit-grammar-registry)
@@ -268,7 +271,7 @@ This delegates nested same-name tag matching to the `%` implementation in
       (treesit-auto-install nil)
 
       :config
-      ;; 只管理中央注册表中的 15 种语言，不下载 treesit-auto 的全部 recipe。
+      ;; 只管理中央注册表中的 17 种语言，不下载 treesit-auto 的全部 recipe。
       (setq treesit-auto-langs (copy-sequence my/treesit-registered-languages))
 
       ;; 设置 Treesit 高亮精细度等级 (1: 极简 -> 4: 最精细/最漂亮)
@@ -319,7 +322,7 @@ This delegates nested same-name tag matching to the `%` implementation in
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 已安装 grammar 时自动使用对应 `*-ts-mode'，缺失时回退传统 major mode，不阻断打开文件。
-;; - 首次初始化自动安装注册的 15 个 grammar，以后启动只检查并补齐缺失项。
+;; - 首次初始化自动安装注册的 17 个 grammar，以后启动只检查并补齐缺失项。
 ;; - `C-c t a' 可手动重试；产物固定保存在 `runtimes/tree-sitter/'。
 ;; - `C-c t f' 折叠/展开当前代码块，`C-c t F' 展开当前 Buffer 的全部折叠。
 ;; - `C-c t i' 打开语法树检查模式，适合确认光标处 AST 节点及排查高亮问题。

@@ -246,6 +246,12 @@
 
 (my/setup-straight-and-use-package) ;; 调用并执行上面定义好的宏，完成全套包管理器的初始化配置
 
+;; Go 传统模式是 go-ts-mode 缺少 grammar 时的高亮回退。语言模块首次编译前
+;; 先由 Straight 安装并加载，避免字节编译器找不到尚未下载的 go-mode。
+(use-package go-mode
+  :straight (:host github :repo "dominikh/go-mode.el")
+  :demand t)
+
 ;; 中文说明：Transient 是个人工作台、Pinky、Smerge、Diffnav 与 rg 菜单的共同
 ;; 基础。显式由 Straight 从 magit/transient 安装并立即加载，保证新环境首次启动
 ;; 不会回退到 Emacs 内置旧版本而与已编译的菜单字节码产生对象协议不兼容。
