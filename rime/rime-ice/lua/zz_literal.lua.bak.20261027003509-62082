@@ -1,0 +1,113 @@
+-- 用 zz…zz 包裹 ASCII 字串，结束时生成一个原样候选。
+local processor = {}
+local translator = {}
+
+local key_to_literal = {
+  space = ' ', exclam = '!', quotedbl = '"', numbersign = '#', dollar = '$',
+  percent = '%', ampersand = '&', apostrophe = "'", parenleft = '(', parenright = ')',
+  asterisk = '*', plus = '+', comma = ',', minus = '-', period = '.', slash = '/',
+  colon = ':', semicolon = ';', less = '<', equal = '=', greater = '>', question = '?',
+  at = '@', bracketleft = '[', backslash = '\\', bracketright = ']', asciicircum = '^',
+  underscore = '_', grave = '`', braceleft = '{', bar = '|', braceright = '}', asciitilde = '~',
+}
+
+local function encode(text)
+  return (text:gsub('.', function(char)
+    return string.format('%02X', string.byte(char))
+  end))
+end
+
+local function decode(hex)
+  return (hex:gsub('(%x%x)', function(byte)
+    return string.char(tonumber(byte, 16))
+  end))
+end
+
+local function refresh_candidate(context, text)
+  context:clear()
+  if text ~= '' then
+    context:push_input('zZ' .. encode(text))
+  end
+end
+
+local function append_key(env, key_name)
+  local literal = key_to_literal[key_name] or key_name:match('^[A-Za-z0-9]$')
+  if literal then
+    env.buffer = env.buffer .. literal
+    return true
+  end
+  return false
+end
+
+function processor.init(env)
+  env.active = false
+  env.pending_z = false
+  env.buffer = ''
+end
+
+function processor.func(key, env)
+  if key:release() or key:ctrl() or key:alt() or key:super() then
+    return 2 -- kNoop
+  end
+
+  local context = env.engine.context
+  local key_name = key:repr()
+
+  if not env.active then
+    if context.input == 'z' and key_name == 'z' then
+      context:clear()
+      env.active = true
+      env.pending_z = false
+      env.buffer = ''
+      return 1 -- kAccepted
+    end
+    return 2 -- kNoop
+  end
+
+  if key_name == 'Escape' then
+    context:clear()
+    env.active = false
+    env.pending_z = false
+    env.buffer = ''
+    return 1 -- kAccepted
+  end
+  if key_name == 'BackSpace' then
+    if env.pending_z then
+      env.pending_z = false
+    else
+      env.buffer = env.buffer:sub(1, -2)
+    end
+    refresh_candidate(context, env.buffer)
+    return 1 -- kAccepted
+  end
+  if key_name == 'z' then
+    if env.pending_z then
+      env.active = false
+      env.pending_z = false
+      refresh_candidate(context, env.buffer)
+      env.buffer = ''
+    else
+      env.pending_z = true
+    end
+    return 1 -- kAccepted
+  end
+
+  if env.pending_z then
+    env.buffer = env.buffer .. 'z'
+    env.pending_z = false
+  end
+  if append_key(env, key_name) then
+    refresh_candidate(context, env.buffer)
+    return 1 -- kAccepted
+  end
+  return 2 -- kNoop
+end
+
+function translator.func(input, seg, _)
+  local hex = input:match('^zZ([0-9A-F]+)$')
+  if hex and #hex % 2 == 0 then
+    yield(Candidate('zz_literal', seg.start, seg._end, decode(hex), ' 〔字串〕'))
+  end
+end
+
+return { processor = processor, translator = translator }

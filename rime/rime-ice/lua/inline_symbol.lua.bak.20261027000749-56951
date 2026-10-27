@@ -1,0 +1,61 @@
+-- 在拼音输入中插入可选符号；空输入时保持直接上屏。
+-- 此文件由 rime_ice_inline_symbols.yaml 挂载，独立于雾凇上游方案。
+local processor = {}
+
+local key_to_symbol = {
+  comma = ',', period = '.', slash = '/', semicolon = ';', colon = ':',
+  question = '?', exclam = '!', at = '@', numbersign = '#', percent = '%',
+  asterisk = '*', plus = '+', backslash = '\\', bar = '|',
+}
+
+local direct_full_shape = {
+  [','] = '，', ['.'] = '。', ['/'] = '／', [';'] = '；', [':'] = '：',
+  ['?'] = '？', ['!'] = '！', ['@'] = '＠', ['#'] = '＃', ['%'] = '％',
+  ['*'] = '＊', ['+'] = '＋', ['\\'] = '、', ['|'] = '·',
+}
+
+local direct_half_shape = {
+  [','] = '，', ['.'] = '。', ['/'] = '/', [';'] = '；', [':'] = '：',
+  ['?'] = '？', ['!'] = '！', ['@'] = '@', ['#'] = '#', ['%'] = '%',
+  ['*'] = '*', ['+'] = '+', ['\\'] = '、', ['|'] = '|',
+}
+
+local function is_special_input(input)
+  return input:match('^[vV][A-Za-z0-9]*$')
+      or input:match('^uU[a-z]*$')
+      or input:match('^U[a-f0-9]*$')
+      or input:match('^R[0-9.]*$')
+      or input:match('^cC.*$')
+      or input:match('^(https?|ftp|mailto|file):.*$')
+      or input:match('^www[.].*$')
+      or input:match('^[A-Za-z][-_.0-9A-Za-z]*@.*$')
+end
+
+function processor.func(key, env)
+  if key:release() or key:ctrl() or key:alt() or key:super() then
+    return 2 -- kNoop
+  end
+
+  local symbol = key_to_symbol[key:repr()]
+  if not symbol then
+    return 2 -- kNoop
+  end
+
+  local context = env.engine.context
+  if not context:is_composing() then
+    local direct = context:get_option('ascii_punct') and direct_half_shape[symbol]
+      or direct_full_shape[symbol]
+    env.engine:commit_text(direct)
+    return 1 -- kAccepted
+  end
+
+  if is_special_input(context.input) then
+    return 2 -- preserve URLs, email, v-symbols, reverse lookup, and calculators
+  end
+
+  -- 将字符插入编码流，再由内置 punct_segmentor/punct_translator 生成独立候选段。
+  context:push_input(symbol)
+  return 1 -- kAccepted
+end
+
+return processor
