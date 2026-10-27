@@ -36,13 +36,13 @@
 (with-eval-after-load 'general
   (my-leader-def
     ;; 搜索与定位 (Search)
-    "ss"  '("搜索当前缓冲区" . consult-line)
-    "sS"  '("搜索已打开缓冲区" . consult-line-multi)
-    "sp"  '("搜索项目（rg）" . consult-ripgrep)
-    "sf"  '("使用 fd/find 查找文件" . consult-find)
-    "sg"  '("搜索 Git 仓库" . consult-git-grep)
-    "si"  '("代码符号列表" . consult-imenu)
-    "sb"  '("书签" . consult-bookmark)
+    "ss"  '("搜索当前缓冲区〔Consult〕" . consult-line)
+    "sS"  '("搜索已打开缓冲区〔Consult〕" . consult-line-multi)
+    "sp"  '("搜索项目〔Consult〕" . consult-ripgrep)
+    "sf"  '("查找文件〔Consult〕" . consult-find)
+    "sg"  '("搜索 Git 仓库〔Consult〕" . consult-git-grep)
+    "si"  '("代码符号列表〔Consult〕" . consult-imenu)
+    "sb"  '("书签〔Consult〕" . consult-bookmark)
 
     ;; Buffer 与文件增强
     "b b" '("切换缓冲区或最近文件" . consult-buffer)

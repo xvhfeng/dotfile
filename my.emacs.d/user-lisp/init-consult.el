@@ -3,6 +3,7 @@
 ;; 中文说明：rg 的自定义搜索参数使用 Transient 展示；仅加载其菜单框架，实际
 ;; ripgrep 搜索仍保持按需启动。
 (require 'transient)
+(autoload 'my/workbench-search-replace-menu "init-workbench" nil t)
 
 ;; 中文说明：当前 Transient 0.7.2.2 未提供新版 rg.el 原生 `rg-menu' 所需的
 ;; `transient--set-layout' 内部接口。升级 Transient 会影响既有 Magit/工作台，
@@ -65,6 +66,45 @@ phase, where `consult-customize' is guaranteed to be defined."
 ;; 将 .projx 识别逻辑追加到 project.el 的项目查找钩子最前端 (优先于 .git)
 (with-eval-after-load 'project
   (add-hook 'project-find-functions #'my/find-projx-root -10))
+
+;; Projectile 的项目替换是 `projectile-replace' 命令，不是独立包。
+;; 仅安装命令而不启用 projectile-mode，避免接管现有 project.el 的项目发现。
+(use-package projectile
+  :straight (:host github :repo "bbatsov/projectile")
+  :commands (projectile-replace projectile-replace-regexp)
+  :init
+  (setq projectile-known-projects-file (my/runtime-file "projectile/known-projects.eld")
+        projectile-cache-file (my/runtime-file "projectile/cache.eld"))
+  (make-directory (my/runtime-file "projectile/") t)
+  :config
+  ;; 与 project.el 一样先识别 .projx，再使用 Projectile 自带的 Git 等规则。
+  (defun my/projectile-projx-root (dir)
+    "优先返回 DIR 上层由 .projx 标记的项目根。"
+    (when-let ((root (locate-dominating-file dir ".projx")))
+      (file-name-as-directory (expand-file-name root))))
+  (add-to-list 'projectile-project-root-functions #'my/projectile-projx-root))
+
+;; 普通编辑时保留 M-% 的原生替换；增量搜索进行中用 Anzu 接续替换。
+(use-package anzu
+  :straight (:host github :repo "emacsorphanage/anzu")
+  :demand t
+  :custom
+  ;; 光标处范围替换只作用于当前函数，避免无询问命令改动整个缓冲区。
+  (anzu-replace-at-cursor-thing 'defun)
+  :config
+  (global-anzu-mode 1)
+  ;; 增量搜索显示当前命中与其他命中；Anzu 替换覆盖层也使用高对比颜色。
+  (setq isearch-lazy-highlight t)
+  (custom-set-faces
+   '(isearch ((t (:background "#e0af68" :foreground "#1f2335" :weight bold))))
+   '(lazy-highlight ((t (:background "#3b4261" :foreground "#c0caf5"))))
+   '(anzu-mode-line ((t (:foreground "#7aa2f7" :weight bold))))
+   '(anzu-mode-line-no-match ((t (:foreground "#f7768e" :weight bold))))
+   '(anzu-replace-highlight ((t (:background "#e0af68" :foreground "#1f2335" :weight bold))))
+   '(anzu-replace-to ((t (:foreground "#9ece6a" :weight bold))))
+   '(anzu-match-1 ((t (:background "#7aa2f7" :foreground "#1f2335"))))
+   '(anzu-match-2 ((t (:background "#9ece6a" :foreground "#1f2335"))))
+   '(anzu-match-3 ((t (:background "#bb9af7" :foreground "#1f2335"))))))
 
 ;; ============================================================================
 ;; 2. Consult + Ripgrep 自定义项目搜索配置
@@ -244,18 +284,18 @@ phase, where `consult-customize' is guaranteed to be defined."
 (transient-define-prefix my/rg-search-menu ()
   "打开 rg 的搜索、文件过滤与直接替换菜单。"
   [["   常用搜索参数"
-    ("g" "自定义 Glob（如 *.c 或 !vendor/**）" "--glob=")
-    ("t" "仅文件类型（如 c）" "--type=")
-    ("T" "排除文件类型" "--type-not=")
-    ("i" "忽略大小写" "--ignore-case")
-    ("S" "严格区分大小写" "--case-sensitive")
-    ("n" "忽略 .gitignore 等规则" "--no-ignore")]
+    ("g" "自定义文件匹配〔rg〕" "--glob=")
+    ("t" "仅文件类型〔rg〕" "--type=")
+    ("T" "排除文件类型〔rg〕" "--type-not=")
+    ("i" "忽略大小写〔rg〕" "--ignore-case")
+    ("S" "严格区分大小写〔rg〕" "--case-sensitive")
+    ("n" "包含被忽略文件〔rg〕" "--no-ignore")]
    ["   rg 搜索"
-    ("b" "搜索当前 Buffer" my/rg-menu-search-current-buffer)
-    ("p" "搜索项目文件" my/rg-menu-search-project)]
+    ("b" "搜索当前缓冲区〔rg〕" my/rg-menu-search-current-buffer)
+    ("p" "搜索项目文件〔rg〕" my/rg-menu-search-project)]
    ["   rg 直接替换（字面量）"
-    ("B" "直接替换当前 Buffer" my/rg-direct-replace-current-buffer)
-    ("P" "直接替换项目文件" my/rg-direct-replace-project)]])
+    ("B" "直接替换当前文件〔rg〕" my/rg-direct-replace-current-buffer)
+    ("P" "直接替换项目文件〔rg〕" my/rg-direct-replace-project)]])
 
 (defun my/consult-edit-exported-results ()
   "将 Embark 导出的 Consult grep 结果变为可编辑替换模式。"
@@ -300,9 +340,22 @@ phase, where `consult-customize' is guaranteed to be defined."
 
 (transient-define-prefix my/consult-search-history-menu ()
   "查看并恢复最近使用过的 Consult 搜索词。"
-  [["   Consult 搜索历史"
-    ("l" "当前 Buffer 搜索历史" my/consult-line-history)
-    ("p" "项目搜索历史" my/consult-ripgrep-history)]])
+  [["   搜索历史"
+    ("l" "当前缓冲区搜索词〔Consult〕" my/consult-line-history)
+    ("p" "项目搜索词〔Consult〕" my/consult-ripgrep-history)]])
+
+(transient-define-prefix my/anzu-menu ()
+  "打开 Anzu 命中计数与替换菜单。"
+  [["   搜索计数与替换"
+    ("t" "切换全局命中计数〔Anzu〕" global-anzu-mode)
+    ("q" "逐一替换〔Anzu〕" anzu-query-replace)
+    ("r" "正则逐一替换〔Anzu〕" anzu-query-replace-regexp)
+    ("s" "替换光标处符号〔Anzu〕" anzu-query-replace-at-cursor)
+    ("d" "当前函数内逐一替换光标处符号〔Anzu〕" anzu-query-replace-at-cursor-thing)
+    ("x" "当前函数内直接替换光标处符号〔Anzu〕" anzu-replace-at-cursor-thing)]
+   ["   增量搜索中：M-% 逐一替换，C-M-% 正则替换"
+    ("DEL" "返回上级菜单" transient-quit-one)
+    ("C-d" "关闭菜单" transient-quit-all)]])
 
 (use-package consult
   :straight t
@@ -345,25 +398,79 @@ phase, where `consult-customize' is guaranteed to be defined."
 (with-eval-after-load 'general
   (general-define-key
    "C-c p s" '("项目搜索" . consult-ripgrep)
-   "M-s r" '("项目 Ripgrep 搜索" . consult-ripgrep)
-   "M-s l" '("当前文件搜索" . consult-line)
-   "M-s f" '("查找文件" . consult-find)
-   "M-s h" '("Consult 搜索历史" . my/consult-search-history-menu)
+   "M-s r" '("项目全文搜索〔Consult〕" . consult-ripgrep)
+   "M-s l" '("当前缓冲区搜索〔Consult〕" . consult-line)
+   "M-s f" '("查找文件〔Consult〕" . consult-find)
+   "M-s H" '("搜索历史〔Consult〕" . my/consult-search-history-menu)
+   "M-s s" '("搜索与替换菜单〔综合〕" . my/workbench-search-replace-menu)
+   "M-s i" '("向前增量搜索〔i-search〕" . isearch-forward)
+   "M-s I" '("向后增量搜索〔i-search〕" . isearch-backward)
+   "M-s q" '("逐一替换〔Emacs〕" . query-replace)
+   "M-s Q" '("正则逐一替换〔Emacs〕" . query-replace-regexp)
+   "M-s p" '("项目逐一替换〔Projectile〕" . projectile-replace)
+   "M-s a" '("替换与计数菜单〔Anzu〕" . my/anzu-menu)
+   "M-s A" '("切换命中计数〔Anzu〕" . global-anzu-mode)
    "C-c ! l" '("诊断列表" . consult-flymake)))
+
+;; isearch 自带 M-% / C-M-% 本来分别进入普通/正则逐一替换；仅在 isearch
+;; 过程中换成 Anzu 版本，保留普通编辑状态的原生 M-% / C-M-%。
+(with-eval-after-load 'general
+  (general-define-key :keymaps 'isearch-mode-map
+    "M-%" '("增量搜索后逐一替换〔Anzu〕" . anzu-isearch-query-replace)
+    "C-M-%" '("增量搜索后正则逐一替换〔Anzu〕" . anzu-isearch-query-replace-regexp)
+    ;; 终端无法稳定发送 C-M-% 时，也可从当前 isearch 的 M-s 菜单进入。
+    "M-s a" '("增量搜索后逐一替换〔Anzu〕" . anzu-isearch-query-replace)
+    "M-s A" '("增量搜索后正则逐一替换〔Anzu〕" . anzu-isearch-query-replace-regexp)))
+
+;; M-s 保留 Emacs 原生搜索命令与按键，只把 Which-Key 的命令说明统一为中文。
+(with-eval-after-load 'which-key
+  (which-key-add-keymap-based-replacements
+    global-map "M-s" "搜索与替换")
+  (which-key-add-keymap-based-replacements
+    isearch-mode-map "M-s" "增量搜索选项")
+  (which-key-add-keymap-based-replacements
+    search-map
+    "." "搜索光标处符号〔i-search〕"
+    "_" "向前搜索符号〔i-search〕"
+    "w" "向前搜索单词〔i-search〕"
+    "o" "列出匹配行〔Emacs〕"
+    "h" "高亮匹配"
+    "ESC" "扩展搜索"
+    "ESC ." "搜索光标处内容〔i-search〕"
+    "ESC w" "网页搜索词〔EWW〕")
+  ;; M-s h 是 Emacs 原生 hi-lock 前缀；保留原键，只翻译各动作说明。
+  (which-key-add-keymap-based-replacements
+    (lookup-key search-map (kbd "h"))
+    "r" "高亮正则匹配〔Emacs〕"
+    "p" "高亮短语〔Emacs〕"
+    "l" "高亮匹配行〔Emacs〕"
+    "." "高亮光标处符号〔Emacs〕"
+    "u" "取消高亮〔Emacs〕"
+    "f" "查找高亮规则〔Emacs〕"
+    "w" "保存高亮规则〔Emacs〕"))
 
 ;; 中文说明：搜索与替换直接平铺在 C-c s 下，不另建 rg 子前缀。用户可通过
 ;; Which-Key 一次看到 Consult 的即时搜索，以及 rg 的当前文件/项目替换流程。
 (with-eval-after-load 'general
   (my-leader-def
-    "s l" '("Consult：当前 Buffer 搜索" . consult-line)
-    "s p" '("Consult：项目搜索" . consult-ripgrep)
-    "s E" '("Consult：编辑导出结果并写回" . my/consult-edit-exported-results)
+    ;; s/s 与 s/i 已分别用于 Consult 搜索、符号列表；沿用原键位。
+    "s M" '("搜索与替换菜单〔综合〕" . my/workbench-search-replace-menu)
+    "s /" '("向前增量搜索〔i-search〕" . isearch-forward)
+    "s I" '("向后增量搜索〔i-search〕" . isearch-backward)
+    "s q" '("逐一替换〔Emacs〕" . query-replace)
+    "s Q" '("正则逐一替换〔Emacs〕" . query-replace-regexp)
+    "s P" '("项目逐一替换〔Projectile〕" . projectile-replace)
+    "s a" '("替换与计数菜单〔Anzu〕" . my/anzu-menu)
+    "s A" '("切换命中计数〔Anzu〕" . global-anzu-mode)
+    "s l" '("当前缓冲区搜索〔Consult〕" . consult-line)
+    "s p" '("项目搜索〔Consult〕" . consult-ripgrep)
+    "s E" '("编辑导出结果并写回〔Consult〕" . my/consult-edit-exported-results)
     ;; 中文说明：小写 s b 已由 Consult 作为书签入口使用；用大写 B 保留现有
     ;; 书签功能，同时让 rg 当前 Buffer 搜索拥有稳定且可发现的独立键位。
-    "s B" '("rg：当前 Buffer 搜索/替换" . my/rg-search-current-buffer)
-    "s r" '("rg：项目文件搜索/替换" . my/rg-search-project)
-    "s m" '("rg：搜索、过滤与直接替换" . my/rg-search-menu)
-    "s e" '("rg：编辑结果并写回" . my/rg-edit-results)))
+    "s B" '("当前缓冲区搜索/替换〔rg〕" . my/rg-search-current-buffer)
+    "s r" '("项目文件搜索/替换〔rg〕" . my/rg-search-project)
+    "s m" '("搜索、过滤与直接替换〔rg〕" . my/rg-search-menu)
+    "s e" '("编辑结果并写回〔rg〕" . my/rg-edit-results)))
 
 
 
@@ -400,7 +507,7 @@ phase, where `consult-customize' is guaranteed to be defined."
 ;; ---------------------------------------------------------------------------
 ;; - 含 `.projx' 的目录会被识别为项目根目录；项目搜索忽略 .git/node_modules/target/dist/log。
 ;; - `C-c p s' 或 `M-s r' 搜索项目，`M-s l' 搜索当前 Buffer，`M-s f' 查找文件；
-;;   `M-s h' 打开 Consult 搜索历史，可按 l/p 恢复当前 Buffer/项目的搜索词。
+;;   `M-s H' 打开 Consult 搜索历史，可按 l/p 恢复当前 Buffer/项目的搜索词。
 ;; - `C-c s l/p' 是 Consult 的当前 Buffer/项目搜索；`C-c s B/r/m/e' 分别是
 ;;   rg 当前文件搜索、rg 项目搜索、中文过滤/直接替换菜单与将 rg 结果切为可编辑替换模式。
 ;; - `C-c ! l' 或 `C-c c d l' 汇总 Flymake 诊断；`C-c E' 导出当前候选结果。

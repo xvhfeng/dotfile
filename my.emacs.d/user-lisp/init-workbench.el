@@ -79,6 +79,14 @@
 (autoload 'my/rg-direct-replace-current-buffer "init-consult" nil t)
 (autoload 'my/rg-direct-replace-project "init-consult" nil t)
 (autoload 'my/consult-edit-exported-results "init-consult" nil t)
+(autoload 'my/anzu-menu "init-consult" nil t)
+(autoload 'projectile-replace "projectile" nil t)
+(autoload 'projectile-replace-regexp "projectile" nil t)
+(autoload 'anzu-query-replace "anzu" nil t)
+(autoload 'anzu-query-replace-regexp "anzu" nil t)
+(autoload 'anzu-query-replace-at-cursor "anzu" nil t)
+(autoload 'anzu-query-replace-at-cursor-thing "anzu" nil t)
+(autoload 'anzu-replace-at-cursor-thing "anzu" nil t)
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'my/cua-rectangle-toggle "init-edit" nil t)
@@ -356,20 +364,36 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("C-d" "关闭个人工作台" transient-quit-all)]])
 
 (transient-define-prefix my/workbench-search-replace-menu ()
-  "打开 Consult 与 rg.el 的搜索和替换菜单。"
-  [["   Consult 搜索"
-    ("cl" "当前 Buffer 搜索" consult-line)
-    ("cp" "项目文件搜索" consult-ripgrep)
-    ("cf" "查找文件" consult-find)
-    ("ce" "编辑导出结果并写回" my/consult-edit-exported-results)]
-   ["   rg 搜索与替换"
-    ("rb" "当前 Buffer 搜索（可替换）" my/rg-search-current-buffer)
-    ("rp" "项目文件搜索（可替换）" my/rg-search-project)
-    ("rm" "搜索、过滤与直接替换" my/rg-search-menu)
-    ("re" "编辑结果并写回" my/rg-edit-results)
-    ("rB" "直接替换当前 Buffer" my/rg-direct-replace-current-buffer)
-    ("rP" "直接替换项目文件" my/rg-direct-replace-project)]
-   ["   结果替换说明"
+  "打开原生搜索、Consult、rg、Projectile 与 Anzu 的搜索替换菜单。"
+  [["   原生搜索与替换"
+    ("if" "向前增量搜索〔i-search〕" isearch-forward)
+    ("ib" "向后增量搜索〔i-search〕" isearch-backward)
+    ("ir" "正则增量搜索〔i-search〕" isearch-forward-regexp)
+    ("iR" "向后正则搜索〔i-search〕" isearch-backward-regexp)
+    ("io" "列出匹配行〔Emacs〕" occur)
+    ("q" "逐一替换〔Emacs〕" query-replace)
+    ("Q" "正则逐一替换〔Emacs〕" query-replace-regexp)]
+   ["   补全搜索与计数"
+    ("cl" "当前缓冲区搜索〔Consult〕" consult-line)
+    ("cp" "项目文件搜索〔Consult〕" consult-ripgrep)
+    ("cf" "查找文件〔Consult〕" consult-find)
+    ("ce" "编辑导出结果并写回〔Consult〕" my/consult-edit-exported-results)
+    ("aa" "切换全局命中计数〔Anzu〕" global-anzu-mode)
+    ("aq" "逐一替换〔Anzu〕" anzu-query-replace)
+    ("ar" "正则逐一替换〔Anzu〕" anzu-query-replace-regexp)
+    ("as" "替换光标处符号〔Anzu〕" anzu-query-replace-at-cursor)
+    ("ad" "当前函数内逐一替换光标处符号〔Anzu〕" anzu-query-replace-at-cursor-thing)
+    ("ax" "当前函数内直接替换光标处符号〔Anzu〕" anzu-replace-at-cursor-thing)]
+   ["   文件搜索与替换"
+    ("rb" "当前缓冲区搜索〔rg〕" my/rg-search-current-buffer)
+    ("rp" "项目文件搜索〔rg〕" my/rg-search-project)
+    ("rm" "搜索过滤菜单〔rg〕" my/rg-search-menu)
+    ("re" "编辑结果并写回〔rg〕" my/rg-edit-results)
+    ("rB" "直接替换当前文件〔rg〕" my/rg-direct-replace-current-buffer)
+    ("rP" "直接替换项目文件〔rg〕" my/rg-direct-replace-project)]
+   ["   项目替换"
+    ("pr" "项目逐一替换〔Projectile〕" projectile-replace)
+    ("pR" "项目正则替换〔Projectile〕" projectile-replace-regexp)
     ("DEL" "返回个人工作台" transient-quit-one)
     ("C-d" "关闭个人工作台" transient-quit-all)]])
 
@@ -380,60 +404,61 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   ;; 固定每列的最小宽度，让各分组标题和子菜单左边缘一致，并在列间保留留白。
   :column-widths '(22 22 22 22 22 22)
   ;; 标题预留与“按键 + 空格”相同的宽度，使子菜单的中文描述从标题正下方开始。
-  [["   文件与搜索"
+  [["   文件与视图"
     ("f" "打开文件（可预览）" consult-find)
     ("r" "最近文件" consult-recent-file)
     ("b" "切换 Buffer" consult-buffer)
-    ;; 中文说明：将 Consult 与 rg.el 聚合为专门子菜单，主工作台不再混排搜索项。
-    ("s" "搜索&替换" my/workbench-search-replace-menu)
-    ("v" "从磁盘重新加载" revert-buffer)
+    ("k" "关闭当前 Buffer" kill-current-buffer)
+    ("t" "项目文件树" treemacs)
+    ("L" "Dirvish 文件管理器" my/dirvish-open)
     ("d" "当前目录" my/workbench-current-directory)
-    ("y" "剪贴历史" my/workbench-clipboard-history)]
-   ["   代码"
-    ("i" "符号列表" consult-imenu)
-    ("o" "侧栏大纲" my/workbench-show-outline)
-    ("x" "当前诊断" flymake-show-buffer-diagnostics)
-    ("X" "搜索诊断" my/workbench-project-diagnostics)
-    ("a" "代码动作" my/workbench-code-actions)
-    ("n" "跳转与文档" my/workbench-navigation-menu)
-    ("z" "代码折叠" my/workbench-fold-menu)
-    ;; 合并冲突在独立 Transient 中操作，工作台只提供统一入口。
-    ("m" "合并冲突" my/smerge-menu)
-    ("C" "编译当前 Buffer" my/workbench-compile-current-buffer)
-    ("c" "编译" compile)]
-   ["   编辑与跳转"
-    ("e" "批量编辑符号" my/workbench-edit-occurrences)
-    ("g" "选择当前缩进块" my/mark-indent-block)
-    ("G" "选择缩进块内部" my/mark-indent-block-inner)
-    ("h" "匹配成对符号或标签" my/match-pair)
-    ("j" "切换 Pinky 模式" my/pinky-toggle)
-    ("u" "可视撤销树" my/workbench-visual-undo)
-    ("M" "切换标记" my/toggle-mark-command)
-    ("B" "可视书签" my/workbench-bm-menu)
-    ("J" "Avy 跳转菜单" my/avy-menu)
-    ("R" "矩形选区" my/cua-rectangle-toggle)
-    ("Y" "Easy Kill 菜单" my/easy-kill-menu)
-    ("P" "View Mode 菜单" my/view-mode-menu)]
-   ["   项目与 Git"
+    ("v" "从磁盘重新加载" revert-buffer)
+    ("y" "剪贴历史" my/workbench-clipboard-history)
+    ("w" "Zoom 当前窗口/恢复布局" zoom-window-zoom)]
+   ["   搜索与替换"
+    ("s" "搜索与替换菜单〔综合〕" my/workbench-search-replace-menu)
+    ("I" "向前增量搜索〔i-search〕" isearch-forward)
+    ("Q" "项目逐一替换〔Projectile〕" projectile-replace)
+    ("N" "替换与计数菜单〔Anzu〕" my/anzu-menu)]
+   ["   项目与版本控制"
     ("p" "切换项目" project-switch-project)
     ("V" "Git 状态" magit-status)
     ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
     ("D" "Diffnav 改动浏览" diffnav-emacs-menu)
+    ("m" "合并冲突" my/smerge-menu)
     ("F" "当前文件 Git 操作" magit-file-dispatch)
-    ("L" "Dirvish 文件管理器" my/dirvish-open)
-    ("t" "项目文件树" treemacs)
     ("q" "打开终端" my/workbench-open-terminal)]
-   ["   Buffer、笔记与临时项"
-    ("k" "关闭当前 Buffer" kill-current-buffer)
+   ["   代码与诊断"
+    ("i" "符号列表" consult-imenu)
+    ("o" "侧栏大纲" my/workbench-show-outline)
+    ("n" "跳转与文档" my/workbench-navigation-menu)
+    ("x" "当前诊断" flymake-show-buffer-diagnostics)
+    ("X" "搜索诊断" my/workbench-project-diagnostics)
+    ("a" "代码动作" my/workbench-code-actions)
+    ("z" "代码折叠" my/workbench-fold-menu)
+    ("C" "编译当前 Buffer" my/workbench-compile-current-buffer)
+    ("c" "编译" compile)]
+   ["   编辑与跳转"
+    ("J" "Avy 跳转菜单" my/avy-menu)
+    ("e" "批量编辑符号" my/workbench-edit-occurrences)
+    ("g" "选择当前缩进块" my/mark-indent-block)
+    ("G" "选择缩进块内部" my/mark-indent-block-inner)
+    ("h" "匹配成对符号或标签" my/match-pair)
+    ("R" "矩形选区" my/cua-rectangle-toggle)
+    ("Y" "Easy Kill 菜单" my/easy-kill-menu)
+    ("u" "可视撤销树" my/workbench-visual-undo)
+    ("M" "切换标记" my/toggle-mark-command)
+    ("B" "可视书签" my/workbench-bm-menu)
+    ("j" "切换 Pinky 模式" my/pinky-toggle)
+    ("P" "View Mode 菜单" my/view-mode-menu)]
+   ["   笔记与帮助"
     ("l" "新建笔记" org-capture)
     ("A" "查看日程" org-agenda)
-    ;; 中文说明：Zoom 使用空闲的小写 w；再次执行即可恢复调用前的完整窗口布局。
-    ("w" "Zoom 当前窗口/恢复布局" zoom-window-zoom)]
-   ["   帮助与发现"
     ("K" "查询按键" describe-key)
     ("H" "上下文动作" my/workbench-context-actions)
     ("E" "当前按键表" describe-bindings)
-    ("O" "当前模式帮助" describe-mode)
+    ;; 数字 0 易于在最后一列识别，也避免与大写字母 O 混淆。
+    ("0" "当前模式帮助" describe-mode)
     ("DEL" "关闭个人工作台" transient-quit-one)
     ("C-d" "关闭个人工作台" transient-quit-all)
     ("<escape>" "关闭个人工作台" transient-quit-one)]])
@@ -454,7 +479,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (interactive)
   (if (transient-active-prefix
        '(my/workbench-menu my/workbench-navigation-menu
-         my/workbench-fold-menu my/workbench-bm-menu))
+         my/workbench-fold-menu my/workbench-bm-menu
+         my/workbench-search-replace-menu my/anzu-menu))
       (transient-quit-all)
     (my/workbench)))
 
@@ -514,13 +540,12 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; - `C-d' 切换个人工作台，`C-c SPC' 是语义化入口；`ESC' 取消或退出。
 ;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`M-j' 切换 Pinky。
 ;; - 顶层菜单采用单字符键，优先使用小写；大写仅用于小写字母耗尽后的少数入口。
-;; - “文件与搜索”中按 `s' 打开搜索&替换，按 `v' 从磁盘重新加载当前 Buffer；
+;; - “搜索与替换”中按 `s' 打开多来源搜索菜单；“文件与视图”中按 `v' 从磁盘重新加载当前 Buffer；
 ;;   未保存的修改仍会要求确认。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
 ;; - “编辑与跳转”提供 Iedit、缩进/配对选择、撤销树、可视书签和 Avy。
-;; - “Buffer、笔记与临时项”中按 `k' 关闭当前 Buffer，按 `w' 切换临时窗口。
-;; - “帮助与发现”中按 `K/E/O' 查询按键、查看当前按键表或模式帮助。
-;; - 选择“临时窗口”后，Popper 显示或隐藏最近的帮助、编译或诊断类 Buffer。
+;; - “文件与视图”中按 `k' 关闭当前 Buffer，按 `w' 切换 Zoom 窗口布局。
+;; - “笔记与帮助”中按 `K/E/0' 查询按键、查看当前按键表或模式帮助。
 ;; - `C-x C-b' 或 `C-c b l' 在底部打开 Ibuffer；`C-c b e' 保留 Electric List。
 ;;   在 Ibuffer 中按 RET 或鼠标选择后，目标 Buffer 会回到原编辑窗口，弹窗关闭。
 ;; - `C-c b p t/n/k/m'：切换最近弹窗、轮换弹窗、关闭最近弹窗、切换当前
