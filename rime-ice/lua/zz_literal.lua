@@ -1,4 +1,4 @@
--- 用 zz…zz 包裹 ASCII 字串，结束时生成一个原样候选。
+-- 用 zv…zv 包裹 ASCII 字串，结束时生成一个原样候选。
 local processor = {}
 local translator = {}
 
@@ -42,8 +42,9 @@ function processor.func(key, env)
   local state, buffer = parse_state(context.input)
 
   if not state then
-    if context.input == '' and key_name == 'z' then
-      refresh_candidate(context, '0', '')
+    if context.input == 'z' and key_name == 'v' then
+      context:clear()
+      refresh_candidate(context, '1', '')
       return 1
     end
     return 2
@@ -51,21 +52,15 @@ function processor.func(key, env)
   if key_name == 'Escape' then context:clear(); return 1 end
 
   if key_name == 'BackSpace' then
-    if state == '0' then context:clear()
-    elseif state == '1' then refresh_candidate(context, '0', '')
+    if state == '1' then
+      context:clear(); context:push_input('z')
     elseif state == '2' then
-      if buffer == '' then refresh_candidate(context, '1', '')
+      if #buffer <= 1 then refresh_candidate(context, '1', '')
       else refresh_candidate(context, '2', buffer:sub(1, -2)) end
     elseif state == '3' then refresh_candidate(context, '2', buffer)
     elseif state == '4' then refresh_candidate(context, '3', buffer)
     end
     return 1
-  end
-
-  if state == '0' then
-    if key_name == 'z' then refresh_candidate(context, '1', ''); return 1 end
-    context:clear(); context:push_input('z')
-    return 2
   end
 
   if state == '1' or state == '2' then
@@ -76,7 +71,7 @@ function processor.func(key, env)
   end
 
   if state == '3' then
-    if key_name == 'z' then refresh_candidate(context, '4', buffer); return 1 end
+    if key_name == 'v' then refresh_candidate(context, '4', buffer); return 1 end
     local updated = append_key(buffer .. 'z', key_name)
     if updated then refresh_candidate(context, '2', updated) end
     return 1
@@ -91,10 +86,9 @@ function translator.func(input, seg, _)
   local state, encoded = payload:sub(1, 1), payload:sub(2)
   if #encoded % 2 ~= 0 then return end
   local text
-  if state == '0' then text = 'z'
-  elseif state == '1' then text = 'zz'
-  elseif state == '2' then text = 'zz' .. decode(encoded)
-  elseif state == '3' then text = 'zz' .. decode(encoded) .. 'z'
+  if state == '1' then text = 'zv'
+  elseif state == '2' then text = 'zv' .. decode(encoded)
+  elseif state == '3' then text = 'zv' .. decode(encoded) .. 'z'
   elseif state == '4' then text = decode(encoded)
   end
   if text then yield(Candidate('zz_literal', seg.start, seg._end, text, ' 〔字串〕')) end
