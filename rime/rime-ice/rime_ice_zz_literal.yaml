@@ -1,6 +1,6 @@
 # zv…zv 原样字串模式。
 # 例：zvc-vzv 候选为 c-v；选择候选后上屏。
 patch:
-  engine/processors/@before 3: lua_processor@*zz_literal_processor
+  engine/processors/@before 0: lua_processor@*zz_literal_processor
   engine/translators/@before 2: lua_translator@*zz_literal_translator
   recognizer/patterns/zz_literal: "^zZ[0-9A-F]+$"

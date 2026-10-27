@@ -7,8 +7,19 @@ local key_to_literal = {
   percent = '%', ampersand = '&', apostrophe = "'", parenleft = '(', parenright = ')',
   asterisk = '*', plus = '+', comma = ',', minus = '-', period = '.', slash = '/',
   colon = ':', semicolon = ';', less = '<', equal = '=', greater = '>', question = '?',
-  at = '@', bracketleft = '[', backslash = '\\', bracketright = ']', asciicircum = '^',
-  underscore = '_', grave = '`', braceleft = '{', bar = '|', braceright = '}', asciitilde = '~',
+  at = '@', bracketleft = '[', backslash = string.char(92), bracketright = ']', asciicircum = '^',
+  underscore = '_', grave = '`', quoteleft = '`', quoteright = "'",
+  braceleft = '{', bar = '|', braceright = '}', asciitilde = '~',
+  KP_Decimal = '.', KP_Add = '+', KP_Subtract = '-', KP_Multiply = '*',
+  KP_Divide = '/', KP_Equal = '=',
+}
+
+local shifted_literal = {
+  ['1'] = '!', ['2'] = '@', ['3'] = '#', ['4'] = '$', ['5'] = '%',
+  ['6'] = '^', ['7'] = '&', ['8'] = '*', ['9'] = '(', ['0'] = ')',
+  minus = '_', equal = '+', bracketleft = '{', bracketright = '}',
+  backslash = '|', semicolon = ':', apostrophe = '"', quoteright = '"',
+  comma = '<', period = '>', slash = '?', grave = '~', quoteleft = '~',
 }
 
 local function encode(text)
@@ -25,7 +36,11 @@ local function refresh_candidate(context, state, text)
 end
 
 local function append_key(buffer, key_name)
-  local literal = key_to_literal[key_name] or key_name:match('^[A-Za-z0-9]$')
+  local shifted = key_name:match('^Shift%+(.+)$')
+  if shifted then key_name = shifted end
+  local literal = (shifted and shifted_literal[key_name]) or key_to_literal[key_name]
+    or key_name:match('^[A-Za-z0-9]$') or key_name:match('^KP_([0-9])$')
+  if shifted and literal and literal:match('^[a-z]$') then literal = literal:upper() end
   return literal and buffer .. literal or nil
 end
 
@@ -50,6 +65,12 @@ function processor.func(key, env)
     return 2
   end
   if key_name == 'Escape' then context:clear(); return 1 end
+  if state ~= '4' and (key_name == 'Return' or key_name == 'KP_Enter') then
+    local text = state == '3' and 'zv' .. buffer .. 'z' or 'zv' .. buffer
+    env.engine:commit_text(text)
+    context:clear()
+    return 1
+  end
 
   if key_name == 'BackSpace' then
     if state == '1' then
