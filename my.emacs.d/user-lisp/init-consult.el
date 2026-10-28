@@ -101,11 +101,11 @@ phase, where `consult-customize' is guaranteed to be defined."
   (anzu-replace-at-cursor-thing 'defun)
   :config
   (global-anzu-mode 1)
-  ;; 增量搜索显示当前命中与其他命中；Anzu 替换覆盖层也使用高对比颜色。
+  ;; 增量搜索用黄色标记当前命中、亮青色标记其他命中，便于在深色背景上区分。
   (setq isearch-lazy-highlight t)
   (custom-set-faces
    '(isearch ((t (:background "#e0af68" :foreground "#1f2335" :weight bold))))
-   '(lazy-highlight ((t (:background "#3b4261" :foreground "#c0caf5"))))
+   '(lazy-highlight ((t (:background "#7dcfff" :foreground "#1f2335" :weight bold))))
    '(anzu-mode-line ((t (:foreground "#7aa2f7" :weight bold))))
    '(anzu-mode-line-no-match ((t (:foreground "#f7768e" :weight bold))))
    '(anzu-replace-highlight ((t (:background "#e0af68" :foreground "#1f2335" :weight bold))))
@@ -592,8 +592,8 @@ phase, where `consult-customize' is guaranteed to be defined."
   (call-interactively #'isearch-forward-regexp))
 
 (transient-define-prefix my/m-s-search-menu ()
-  "打开四列平铺的搜索与替换菜单。"
-  :column-widths '(21 21 21 21)
+  "打开三列平铺的搜索与替换菜单。"
+  :column-widths '(21 21 21)
   [["   Consult 搜索"
     ("c" "当前搜索" consult-line)
     ("p" "项目搜索" consult-ripgrep)
@@ -602,7 +602,7 @@ phase, where `consult-customize' is guaranteed to be defined."
     ("y" "搜索历史" my/consult-line-history)]
    ["   Anzu 搜索与替换"
     ("g" "全 Buffer 匹配" my/anzu-buffer-search)
-    ("G" "全 Buffer 正则匹配" my/anzu-buffer-regexp-search)
+    ("h" "全 Buffer 正则匹配" my/anzu-buffer-regexp-search)
     ("t" "计数开关" global-anzu-mode)
     ("q" "逐一替换" anzu-query-replace)
     ("r" "正则替换" anzu-query-replace-regexp)
@@ -614,15 +614,8 @@ phase, where `consult-customize' is guaranteed to be defined."
     ("v" "正则前搜" isearch-forward-regexp)
     ("z" "正则后搜" isearch-backward-regexp)
     ("o" "列出匹配行" occur)
-    ("R" "正则替换" query-replace-regexp)
-    ("S" "逐一替换" query-replace)]
-   ["   基本操作"
-    ("n" "下一个匹配" isearch-repeat-forward)
-    ("N" "上一个匹配" isearch-repeat-backward)
-    ("e" "导出结果编辑" my/consult-edit-exported-results)
-    ("w" "写回结果修改" my/consult-exported-results-write)
-    ("A" "放弃结果修改" my/consult-exported-results-abort)
-    ("m" "结果菜单开关" my/consult-exported-results-toggle-menu)]])
+    ("s" "正则替换" query-replace-regexp)
+    ("l" "逐一替换" query-replace)]])
 
 (use-package consult
   :straight t
