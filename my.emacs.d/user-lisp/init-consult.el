@@ -5,6 +5,15 @@
 (require 'transient)
 (autoload 'my/workbench-search-replace-menu "init-workbench" nil t)
 
+;; M-s 改为本配置的四列搜索菜单；移除 Emacs 原生 search-map 的 hi-lock 前缀，
+;; 避免高亮匹配功能继续出现在搜索入口中。
+(define-key search-map (kbd "h") nil)
+(defconst my/search-map-extended-search-map
+  (lookup-key search-map (kbd "ESC"))
+  "Emacs 原生 search-map 中原先位于 ESC 下的扩展搜索子 map。")
+(define-key search-map (kbd "ESC") nil)
+(define-key search-map (kbd "e") my/search-map-extended-search-map)
+
 ;; 中文说明：当前 Transient 0.7.2.2 未提供新版 rg.el 原生 `rg-menu' 所需的
 ;; `transient--set-layout' 内部接口。升级 Transient 会影响既有 Magit/工作台，
 ;; 因此在旧接口环境提供最小兼容层，跳过 rg.el 的英文原生菜单，统一使用下方
@@ -309,6 +318,218 @@ phase, where `consult-customize' is guaranteed to be defined."
   (wgrep-setup)
   (wgrep-change-to-wgrep-mode))
 
+(defun my/consult-exported-results-enable-edit ()
+  "将当前导出结果切换到 Wgrep 或 Wdired 编辑模式。"
+  (interactive)
+  (cond
+   ((derived-mode-p 'grep-mode)
+    (my/consult-edit-exported-results))
+   ((derived-mode-p 'dired-mode)
+    (require 'wdired)
+    (wdired-change-to-wdired-mode))
+   ((derived-mode-p 'occur-mode)
+    (my/consult-exported-results--snapshot-occur-sources)
+    (occur-edit-mode))
+   (t
+    (user-error "当前导出结果不支持直接编辑"))))
+
+(defvar-local my/consult-exported-results-p nil
+  "Non-nil when the current buffer was created by Embark Export/Collect.")
+(put 'my/consult-exported-results-p 'permanent-local t)
+
+(define-minor-mode my/consult-exported-results-menu-mode
+  "Keep the exported-results operation menu reachable across mode changes."
+  :init-value nil
+  :lighter nil)
+(put 'my/consult-exported-results-menu-mode 'permanent-local t)
+
+(defvar my/consult-exported-results-menu-emulation-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-t") #'my/consult-exported-results-toggle-menu)
+    map)
+  "High-priority C-t keymap used only by Embark Export/Collect buffers.")
+
+(defvar my/consult-exported-results-menu-emulation-alist
+  `((my/consult-exported-results-menu-mode
+     . ,my/consult-exported-results-menu-emulation-map))
+  "Emulation map alist that preserves the Export menu key across modes.")
+
+(add-to-list 'emulation-mode-map-alists
+             'my/consult-exported-results-menu-emulation-alist)
+
+(defun my/consult-exported-results-buffer-p ()
+  "Return non-nil in an Embark Export or Collect result buffer."
+  (or my/consult-exported-results-p
+      (derived-mode-p 'embark-collect-mode)
+      (string-prefix-p "*Embark Export:" (buffer-name))))
+
+(defun my/consult-exported-results-grep-p ()
+  "Return non-nil when current exported results support Wgrep operations."
+  (derived-mode-p 'grep-mode))
+
+(defun my/consult-exported-results-occur-p ()
+  "Return non-nil when current exported results are an Occur buffer."
+  (derived-mode-p 'occur-mode))
+
+(defvar-local my/consult-exported-results-occur-snapshots nil
+  "Snapshots of source buffers before entering Occur Edit mode.")
+(put 'my/consult-exported-results-occur-snapshots 'permanent-local t)
+
+(defun my/consult-exported-results--occur-markers (value)
+  "Collect markers recursively contained in an Occur target VALUE."
+  (cond
+   ((markerp value) (list value))
+   ((consp value)
+    (append (my/consult-exported-results--occur-markers (car value))
+            (my/consult-exported-results--occur-markers (cdr value))))))
+
+(defun my/consult-exported-results--snapshot-occur-sources ()
+  "Snapshot source buffers referenced by the current Occur buffer."
+  (let (buffers)
+    (save-excursion
+      (goto-char (point-min))
+      (while (< (point) (point-max))
+        (dolist (marker (my/consult-exported-results--occur-markers
+                         (get-text-property (point) 'occur-target)))
+          (when-let ((buffer (marker-buffer marker)))
+            (cl-pushnew buffer buffers)))
+        (goto-char (next-single-property-change
+                    (point) 'occur-target nil (point-max)))))
+    (setq-local my/consult-exported-results-occur-snapshots
+                (mapcar (lambda (buffer)
+                          (with-current-buffer buffer
+                            (list buffer (buffer-string) (buffer-modified-p))))
+                        buffers))))
+
+(defun my/consult-exported-results--restore-occur-sources ()
+  "Restore source buffers from the Occur Edit snapshot."
+  (dolist (snapshot my/consult-exported-results-occur-snapshots)
+    (pcase-let ((`(,buffer ,content ,modified) snapshot))
+      (when (buffer-live-p buffer)
+        (with-current-buffer buffer
+          (let ((inhibit-read-only t))
+            (erase-buffer)
+            (insert content)
+            (set-buffer-modified-p modified))))))
+  (setq-local my/consult-exported-results-occur-snapshots nil))
+
+(defun my/consult-exported-results-setup-menu ()
+  "Install the exported-results menu toggle in the newly created buffer."
+  (setq-local my/consult-exported-results-p t)
+  (my/consult-exported-results-menu-mode 1))
+
+(defun my/consult-exported-results-restore-toggle ()
+  "Restore the local C-t menu key after an exported result changes edit mode."
+  ;; Occur Edit/Wdired 可能清除普通局部变量；名称兜底能恢复永久 minor mode。
+  (when (my/consult-exported-results-buffer-p)
+    (setq-local my/consult-exported-results-p t)
+    (my/consult-exported-results-menu-mode 1)))
+
+(defun my/consult-exported-results-write ()
+  "写回当前 Consult 导出结果中的 Wgrep 修改。"
+  (interactive)
+  (cond
+   ((bound-and-true-p wgrep-mode)
+    (wgrep-finish-edit))
+   ((bound-and-true-p wdired-mode)
+    (wdired-finish-edit))
+   ((derived-mode-p 'occur-edit-mode)
+    (occur-cease-edit)
+    (dolist (snapshot my/consult-exported-results-occur-snapshots)
+      (when-let ((buffer (car snapshot)))
+        (with-current-buffer buffer
+          (when (and buffer-file-name (buffer-modified-p))
+            (save-buffer)))))
+    (setq-local my/consult-exported-results-occur-snapshots nil))
+   (t
+    (user-error "当前结果尚未进入编辑模式；请先按 e"))))
+
+(defun my/consult-exported-results-abort ()
+  "放弃当前 Consult 导出结果中的 Wgrep 修改。"
+  (interactive)
+  (cond
+   ((bound-and-true-p wgrep-mode)
+    (wgrep-abort-changes))
+   ((bound-and-true-p wdired-mode)
+    (wdired-abort-changes))
+   ((derived-mode-p 'occur-edit-mode)
+    ;; Occur 编辑即时同步来源 Buffer，故由本配置的快照恢复。
+    (my/consult-exported-results--restore-occur-sources)
+    (occur-cease-edit)
+    (message "已恢复 Occur 编辑前的来源 Buffer 内容"))
+   (t
+    (message "当前结果没有待放弃的编辑修改"))))
+
+(defun my/consult-exported-results-rerun ()
+  "重新执行当前 Consult 导出结果的来源搜索。"
+  (interactive)
+  (cond
+   ((fboundp 'embark-rerun-collect-or-export)
+    (call-interactively #'embark-rerun-collect-or-export))
+   ((fboundp 'recompile)
+    (recompile))
+   (t
+    (revert-buffer))))
+
+(defun my/consult-exported-results-query-replace ()
+  "在当前 Consult 导出结果 Buffer 中执行普通逐一替换。"
+  (interactive)
+  (unless (derived-mode-p 'grep-mode)
+    (user-error "文本替换仅适用于 grep 类型的导出结果"))
+  (call-interactively #'query-replace))
+
+(defun my/consult-exported-results-query-replace-regexp ()
+  "在当前 Consult 导出结果 Buffer 中执行正则逐一替换。"
+  (interactive)
+  (unless (derived-mode-p 'grep-mode)
+    (user-error "正则替换仅适用于 grep 类型的导出结果"))
+  (call-interactively #'query-replace-regexp))
+
+(defun my/consult-exported-results-close ()
+  "放弃未确认编辑、退出菜单并关闭当前 Embark Export Buffer。"
+  (interactive)
+  (let ((buffer (current-buffer)))
+    (when (or (bound-and-true-p wgrep-mode)
+              (bound-and-true-p wdired-mode)
+              (derived-mode-p 'occur-edit-mode))
+      (my/consult-exported-results-abort))
+    (when (transient-active-prefix '(my/consult-exported-results-menu))
+      (transient-quit-all))
+    (when (buffer-live-p buffer)
+      (kill-buffer buffer))))
+
+(transient-define-prefix my/consult-exported-results-menu ()
+  "操作由 Consult 导出到 grep Buffer 的搜索结果。"
+  [["   搜索与定位"
+    ("r" "重新执行来源搜索" my/consult-exported-results-rerun)]
+   ["   写回与替换"
+    ("e" "开启编辑" my/consult-exported-results-enable-edit)
+    ("w" "写回修改" my/consult-exported-results-write)
+    ("a" "放弃修改" my/consult-exported-results-abort)
+    ("s" "逐一替换（grep）" my/consult-exported-results-query-replace)
+    ("x" "正则替换（grep）" my/consult-exported-results-query-replace-regexp)
+    ("q" "退出并关闭结果" my/consult-exported-results-close)]])
+
+(defun my/consult-exported-results-toggle-menu ()
+  "切换当前 Consult 导出结果 Buffer 的操作菜单。"
+  (interactive)
+  (if (transient-active-prefix '(my/consult-exported-results-menu))
+      (transient-quit-all)
+    (unless (my/consult-exported-results-buffer-p)
+      (user-error "此菜单仅用于 Embark 导出或 Collect 结果 Buffer"))
+    (my/consult-exported-results-menu)))
+
+(with-eval-after-load 'embark
+  ;; Embark Export 的文件结果是 Dired、Buffer 结果是 Ibuffer，Consult 搜索
+  ;; 结果才可能是 grep/occur；统一在导出钩子中设置局部 C-t。
+  (add-hook 'embark-after-export-hook #'my/consult-exported-results-setup-menu)
+  (add-hook 'embark-collect-mode-hook #'my/consult-exported-results-setup-menu))
+
+;; Occur、Wdired 与 Wgrep 进入编辑模式时会替换局部 map；在模式切换结束后
+;; 恢复 Export Buffer 的 C-t 菜单开关。
+(dolist (hook '(occur-edit-mode-hook wdired-mode-hook wgrep-mode-hook))
+  (add-hook hook #'my/consult-exported-results-restore-toggle))
+
 ;; Consult 将不同搜索命令的输入分别保存；声明变量使字节编译明确这些历史由
 ;; Consult 在运行时维护，而不要求启动阶段提前加载完整插件。
 (defvar consult--line-history)
@@ -357,6 +578,53 @@ phase, where `consult-customize' is guaranteed to be defined."
     ("DEL" "返回上级菜单" transient-quit-one)
     ("C-d" "关闭菜单" transient-quit-all)]])
 
+(defun my/anzu-buffer-search ()
+  "启动带 Anzu 全 Buffer 命中计数的普通增量搜索。"
+  (interactive)
+  (unless global-anzu-mode
+    (global-anzu-mode 1))
+  (call-interactively #'isearch-forward))
+
+(defun my/anzu-buffer-regexp-search ()
+  "启动带 Anzu 全 Buffer 命中计数的正则增量搜索。"
+  (interactive)
+  (unless global-anzu-mode
+    (global-anzu-mode 1))
+  (call-interactively #'isearch-forward-regexp))
+
+(transient-define-prefix my/m-s-search-menu ()
+  "打开四列平铺的搜索与替换菜单。"
+  :column-widths '(21 21 21 21)
+  [["   Consult 搜索"
+    ("c" "当前搜索" consult-line)
+    ("p" "项目搜索" consult-ripgrep)
+    ("f" "文件搜索" consult-find)
+    ("b" "切换 Buffer" consult-buffer)
+    ("y" "搜索历史" my/consult-line-history)]
+   ["   Anzu 搜索与替换"
+    ("g" "全 Buffer 匹配" my/anzu-buffer-search)
+    ("G" "全 Buffer 正则匹配" my/anzu-buffer-regexp-search)
+    ("t" "计数开关" global-anzu-mode)
+    ("q" "逐一替换" anzu-query-replace)
+    ("r" "正则替换" anzu-query-replace-regexp)
+    ("d" "替换光标符号" anzu-query-replace-at-cursor)
+    ("x" "函数内替换符号" anzu-replace-at-cursor-thing)]
+   ["   Emacs 原生搜索与替换"
+    ("i" "向前搜索" isearch-forward)
+    ("j" "向后搜索" isearch-backward)
+    ("v" "正则前搜" isearch-forward-regexp)
+    ("z" "正则后搜" isearch-backward-regexp)
+    ("o" "列出匹配行" occur)
+    ("R" "正则替换" query-replace-regexp)
+    ("S" "逐一替换" query-replace)]
+   ["   基本操作"
+    ("n" "下一个匹配" isearch-repeat-forward)
+    ("N" "上一个匹配" isearch-repeat-backward)
+    ("e" "导出结果编辑" my/consult-edit-exported-results)
+    ("w" "写回结果修改" my/consult-exported-results-write)
+    ("A" "放弃结果修改" my/consult-exported-results-abort)
+    ("m" "结果菜单开关" my/consult-exported-results-toggle-menu)]])
+
 (use-package consult
   :straight t
   :defer t
@@ -398,18 +666,7 @@ phase, where `consult-customize' is guaranteed to be defined."
 (with-eval-after-load 'general
   (general-define-key
    "C-c p s" '("项目搜索" . consult-ripgrep)
-   "M-s r" '("项目全文搜索〔Consult〕" . consult-ripgrep)
-   "M-s l" '("当前缓冲区搜索〔Consult〕" . consult-line)
-   "M-s f" '("查找文件〔Consult〕" . consult-find)
-   "M-s H" '("搜索历史〔Consult〕" . my/consult-search-history-menu)
-   "M-s s" '("搜索与替换菜单〔综合〕" . my/workbench-search-replace-menu)
-   "M-s i" '("向前增量搜索〔i-search〕" . isearch-forward)
-   "M-s I" '("向后增量搜索〔i-search〕" . isearch-backward)
-   "M-s q" '("逐一替换〔Emacs〕" . query-replace)
-   "M-s Q" '("正则逐一替换〔Emacs〕" . query-replace-regexp)
-   "M-s p" '("项目逐一替换〔Projectile〕" . projectile-replace)
-   "M-s a" '("替换与计数菜单〔Anzu〕" . my/anzu-menu)
-   "M-s A" '("切换命中计数〔Anzu〕" . global-anzu-mode)
+   "M-s" '("搜索与替换" . my/m-s-search-menu)
    "C-c ! l" '("诊断列表" . consult-flymake)))
 
 ;; isearch 自带 M-% / C-M-% 本来分别进入普通/正则逐一替换；仅在 isearch
@@ -422,10 +679,10 @@ phase, where `consult-customize' is guaranteed to be defined."
     "M-s a" '("增量搜索后逐一替换〔Anzu〕" . anzu-isearch-query-replace)
     "M-s A" '("增量搜索后正则逐一替换〔Anzu〕" . anzu-isearch-query-replace-regexp)))
 
-;; M-s 保留 Emacs 原生搜索命令与按键，只把 Which-Key 的命令说明统一为中文。
+;; M-s 使用自定义四列菜单；保留 search-map 其余原生键并移除高亮匹配前缀。
 (with-eval-after-load 'which-key
   (which-key-add-keymap-based-replacements
-    global-map "M-s" "搜索与替换")
+    global-map "M-s" "搜索与替换菜单")
   (which-key-add-keymap-based-replacements
     isearch-mode-map "M-s" "增量搜索选项")
   (which-key-add-keymap-based-replacements
@@ -434,20 +691,9 @@ phase, where `consult-customize' is guaranteed to be defined."
     "_" "向前搜索符号〔i-search〕"
     "w" "向前搜索单词〔i-search〕"
     "o" "列出匹配行〔Emacs〕"
-    "h" "高亮匹配"
-    "ESC" "扩展搜索"
-    "ESC ." "搜索光标处内容〔i-search〕"
-    "ESC w" "网页搜索词〔EWW〕")
-  ;; M-s h 是 Emacs 原生 hi-lock 前缀；保留原键，只翻译各动作说明。
-  (which-key-add-keymap-based-replacements
-    (lookup-key search-map (kbd "h"))
-    "r" "高亮正则匹配〔Emacs〕"
-    "p" "高亮短语〔Emacs〕"
-    "l" "高亮匹配行〔Emacs〕"
-    "." "高亮光标处符号〔Emacs〕"
-    "u" "取消高亮〔Emacs〕"
-    "f" "查找高亮规则〔Emacs〕"
-    "w" "保存高亮规则〔Emacs〕"))
+    "e" "扩展搜索"
+    "e ." "搜索光标处内容〔i-search〕"
+    "e w" "网页搜索词〔EWW〕"))
 
 ;; 中文说明：搜索与替换直接平铺在 C-c s 下，不另建 rg 子前缀。用户可通过
 ;; Which-Key 一次看到 Consult 的即时搜索，以及 rg 的当前文件/项目替换流程。
