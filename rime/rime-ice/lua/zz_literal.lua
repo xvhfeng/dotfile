@@ -1,4 +1,4 @@
--- 用 zv…zv 包裹 ASCII 字串，结束时生成一个原样候选。
+-- zv 后记录 ASCII 字串；回车直接上屏，或以 zv 结束后按空格/回车上屏。
 local processor = {}
 local translator = {}
 
@@ -65,8 +65,8 @@ function processor.func(key, env)
     return 2
   end
   if key_name == 'Escape' then context:clear(); return 1 end
-  if state ~= '4' and (key_name == 'Return' or key_name == 'KP_Enter') then
-    local text = state == '3' and 'zv' .. buffer .. 'z' or 'zv' .. buffer
+  if key_name == 'Return' or key_name == 'KP_Enter' or (state == '4' and key_name == 'space') then
+    local text = state == '1' and 'zv' or state == '3' and buffer .. 'z' or buffer
     env.engine:commit_text(text)
     context:clear()
     return 1
@@ -98,7 +98,7 @@ function processor.func(key, env)
     return 1
   end
 
-  return 2 -- 状态 4 是最终候选，交由 selector/editor 处理。
+  return 2 -- 状态 4 的其他按键交由后续处理器处理。
 end
 
 function translator.func(input, seg, _)
@@ -108,8 +108,8 @@ function translator.func(input, seg, _)
   if #encoded % 2 ~= 0 then return end
   local text
   if state == '1' then text = 'zv'
-  elseif state == '2' then text = 'zv' .. decode(encoded)
-  elseif state == '3' then text = 'zv' .. decode(encoded) .. 'z'
+  elseif state == '2' then text = decode(encoded)
+  elseif state == '3' then text = decode(encoded) .. 'z'
   elseif state == '4' then text = decode(encoded)
   end
   if text then yield(Candidate('zz_literal', seg.start, seg._end, text, ' 〔字串〕')) end
