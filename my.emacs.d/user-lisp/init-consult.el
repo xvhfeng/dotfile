@@ -3,7 +3,6 @@
 ;; 中文说明：rg 的自定义搜索参数使用 Transient 展示；仅加载其菜单框架，实际
 ;; ripgrep 搜索仍保持按需启动。
 (require 'transient)
-(autoload 'my/workbench-search-replace-menu "init-workbench" nil t)
 
 ;; M-s 改为本配置的四列搜索菜单；移除 Emacs 原生 search-map 的 hi-lock 前缀，
 ;; 避免高亮匹配功能继续出现在搜索入口中。
@@ -700,7 +699,6 @@ phase, where `consult-customize' is guaranteed to be defined."
 (with-eval-after-load 'general
   (my-leader-def
     ;; s/s 与 s/i 已分别用于 Consult 搜索、符号列表；沿用原键位。
-    "s M" '("搜索与替换菜单〔综合〕" . my/workbench-search-replace-menu)
     "s /" '("向前增量搜索〔i-search〕" . isearch-forward)
     "s I" '("向后增量搜索〔i-search〕" . isearch-backward)
     "s q" '("逐一替换〔Emacs〕" . query-replace)

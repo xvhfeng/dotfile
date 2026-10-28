@@ -72,21 +72,6 @@
 (autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
 (autoload 'my/toggle-mark-command "init-mykey" nil t)
-(autoload 'my/rg-search-current-buffer "init-consult" nil t)
-(autoload 'my/rg-search-project "init-consult" nil t)
-(autoload 'my/rg-edit-results "init-consult" nil t)
-(autoload 'my/rg-search-menu "init-consult" nil t)
-(autoload 'my/rg-direct-replace-current-buffer "init-consult" nil t)
-(autoload 'my/rg-direct-replace-project "init-consult" nil t)
-(autoload 'my/consult-edit-exported-results "init-consult" nil t)
-(autoload 'my/anzu-menu "init-consult" nil t)
-(autoload 'projectile-replace "projectile" nil t)
-(autoload 'projectile-replace-regexp "projectile" nil t)
-(autoload 'anzu-query-replace "anzu" nil t)
-(autoload 'anzu-query-replace-regexp "anzu" nil t)
-(autoload 'anzu-query-replace-at-cursor "anzu" nil t)
-(autoload 'anzu-query-replace-at-cursor-thing "anzu" nil t)
-(autoload 'anzu-replace-at-cursor-thing "anzu" nil t)
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'my/cua-rectangle-toggle "init-edit" nil t)
@@ -363,40 +348,6 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("DEL" "返回个人工作台" transient-quit-one)
     ("C-d" "关闭个人工作台" transient-quit-all)]])
 
-(transient-define-prefix my/workbench-search-replace-menu ()
-  "打开原生搜索、Consult、rg、Projectile 与 Anzu 的搜索替换菜单。"
-  [["   原生搜索与替换"
-    ("if" "向前增量搜索〔i-search〕" isearch-forward)
-    ("ib" "向后增量搜索〔i-search〕" isearch-backward)
-    ("ir" "正则增量搜索〔i-search〕" isearch-forward-regexp)
-    ("iR" "向后正则搜索〔i-search〕" isearch-backward-regexp)
-    ("io" "列出匹配行〔Emacs〕" occur)
-    ("q" "逐一替换〔Emacs〕" query-replace)
-    ("Q" "正则逐一替换〔Emacs〕" query-replace-regexp)]
-   ["   补全搜索与计数"
-    ("cl" "当前缓冲区搜索〔Consult〕" consult-line)
-    ("cp" "项目文件搜索〔Consult〕" consult-ripgrep)
-    ("cf" "查找文件〔Consult〕" consult-find)
-    ("ce" "编辑导出结果并写回〔Consult〕" my/consult-edit-exported-results)
-    ("aa" "切换全局命中计数〔Anzu〕" global-anzu-mode)
-    ("aq" "逐一替换〔Anzu〕" anzu-query-replace)
-    ("ar" "正则逐一替换〔Anzu〕" anzu-query-replace-regexp)
-    ("as" "替换光标处符号〔Anzu〕" anzu-query-replace-at-cursor)
-    ("ad" "当前函数内逐一替换光标处符号〔Anzu〕" anzu-query-replace-at-cursor-thing)
-    ("ax" "当前函数内直接替换光标处符号〔Anzu〕" anzu-replace-at-cursor-thing)]
-   ["   文件搜索与替换"
-    ("rb" "当前缓冲区搜索〔rg〕" my/rg-search-current-buffer)
-    ("rp" "项目文件搜索〔rg〕" my/rg-search-project)
-    ("rm" "搜索过滤菜单〔rg〕" my/rg-search-menu)
-    ("re" "编辑结果并写回〔rg〕" my/rg-edit-results)
-    ("rB" "直接替换当前文件〔rg〕" my/rg-direct-replace-current-buffer)
-    ("rP" "直接替换项目文件〔rg〕" my/rg-direct-replace-project)]
-   ["   项目替换"
-    ("pr" "项目逐一替换〔Projectile〕" projectile-replace)
-    ("pR" "项目正则替换〔Projectile〕" projectile-replace-regexp)
-    ("DEL" "返回个人工作台" transient-quit-one)
-    ("C-d" "关闭个人工作台" transient-quit-all)]])
-
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
   ;; 中文说明：顶层入口全部使用单字符，先分配 26 个小写字母；功能数量超过
@@ -415,11 +366,6 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("v" "从磁盘重新加载" revert-buffer)
     ("y" "剪贴历史" my/workbench-clipboard-history)
     ("w" "Zoom 当前窗口/恢复布局" zoom-window-zoom)]
-   ["   搜索与替换"
-    ("s" "搜索与替换菜单〔综合〕" my/workbench-search-replace-menu)
-    ("I" "向前增量搜索〔i-search〕" isearch-forward)
-    ("Q" "项目逐一替换〔Projectile〕" projectile-replace)
-    ("N" "替换与计数菜单〔Anzu〕" my/anzu-menu)]
    ["   项目与版本控制"
     ("p" "切换项目" project-switch-project)
     ("V" "Git 状态" magit-status)
@@ -479,8 +425,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (interactive)
   (if (transient-active-prefix
        '(my/workbench-menu my/workbench-navigation-menu
-         my/workbench-fold-menu my/workbench-bm-menu
-         my/workbench-search-replace-menu my/anzu-menu))
+         my/workbench-fold-menu my/workbench-bm-menu))
       (transient-quit-all)
     (my/workbench)))
 
@@ -540,8 +485,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; - `C-d' 切换个人工作台，`C-c SPC' 是语义化入口；`ESC' 取消或退出。
 ;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`M-j' 切换 Pinky。
 ;; - 顶层菜单采用单字符键，优先使用小写；大写仅用于小写字母耗尽后的少数入口。
-;; - “搜索与替换”中按 `s' 打开多来源搜索菜单；“文件与视图”中按 `v' 从磁盘重新加载当前 Buffer；
-;;   未保存的修改仍会要求确认。
+;; - “文件与视图”中按 `v' 从磁盘重新加载当前 Buffer；未保存的修改仍会要求确认。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
 ;; - “编辑与跳转”提供 Iedit、缩进/配对选择、撤销树、可视书签和 Avy。
 ;; - “文件与视图”中按 `k' 关闭当前 Buffer，按 `w' 切换 Zoom 窗口布局。
