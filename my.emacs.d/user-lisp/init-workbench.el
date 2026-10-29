@@ -358,22 +358,22 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   [["   文件与视图"
     ("f" "打开文件（可预览）" consult-find)
     ("r" "最近文件" consult-recent-file)
-    ("b" "切换 Buffer" consult-buffer)
+    ("b" "切换Buffer (含历史)" consult-buffer)
     ("k" "关闭当前 Buffer" kill-current-buffer)
-    ("t" "项目文件树" treemacs)
-    ("L" "Dirvish 文件管理器" my/dirvish-open)
+    ("t" "Treemacs" treemacs)
+    ("L" "Dirvish" my/dirvish-open)
     ("d" "当前目录" my/workbench-current-directory)
     ("v" "从磁盘重新加载" revert-buffer)
-    ("y" "剪贴历史" my/workbench-clipboard-history)
-    ("w" "Zoom 当前窗口/恢复布局" zoom-window-zoom)]
+    ("y" "KillRing历史" my/workbench-clipboard-history)
+    ("w" "Zoom Windows" zoom-window-zoom)]
    ["   项目与版本控制"
-    ("p" "切换项目" project-switch-project)
+    ("P" "切换项目" project-switch-project)
     ("g" "Git 状态" magit-status)
     ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
     ("D" "Diffnav 改动浏览" diffnav-emacs-menu)
     ("m" "合并冲突" my/smerge-menu)
     ("F" "当前文件 Git 操作" magit-file-dispatch)
-    ("q" "打开终端" my/workbench-open-terminal)]
+    ("/" "打开终端" my/workbench-open-terminal)]
    ["   代码与诊断"
     ("i" "符号列表" consult-imenu)
     ("o" "侧栏大纲" my/workbench-show-outline)
@@ -385,18 +385,18 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("C" "编译当前 Buffer" my/workbench-compile-current-buffer)
     ("c" "编译" compile)]
    ["   编辑与跳转"
-    ("J" "Avy 跳转菜单" my/avy-menu)
+    ("j" "Avy 跳转菜单" my/avy-menu)
     ("e" "批量编辑符号" my/workbench-edit-occurrences)
     ("[" "选择当前缩进块" my/mark-indent-block)
     ("]" "选择缩进块内部" my/mark-indent-block-inner)
     ("h" "匹配成对符号或标签" my/match-pair)
-    ("R" "矩形选区" my/cua-rectangle-toggle)
-    ("Y" "Easy Kill 菜单" my/easy-kill-menu)
+    ("'" "矩形选区" my/cua-rectangle-toggle)
+    ("=" "Easy Kill 菜单" my/easy-kill-menu)
     ("u" "可视撤销树" my/workbench-visual-undo)
     ("M" "切换标记" my/toggle-mark-command)
-    ("B" "可视书签" my/workbench-bm-menu)
-    ("j" "切换 Pinky 模式" my/pinky-toggle)
-    ("P" "View Mode 菜单" my/view-mode-menu)]
+    ("-" "可视书签" my/workbench-bm-menu)
+    ("," "切换 Pinky 模式" my/pinky-toggle)
+    ("p" "View Mode 菜单" my/view-mode-menu)]
    ["   笔记与帮助"
     ("l" "新建笔记" org-capture)
     ("A" "查看日程" org-agenda)

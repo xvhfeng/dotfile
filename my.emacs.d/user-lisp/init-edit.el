@@ -136,9 +136,8 @@
 ;; ============================================================================
 ;; 1.5. Easy Kill：按对象选择、复制或标记文本
 ;; ============================================================================
-;; 中文说明：不采用上游常见的 M-w / C-w 全局绑定。M-w 已用于本配置的复制，
-;; C-w 是窗口 Transient；Easy Kill 仅从 C-c e k 或工作台菜单启动。插件进入
-;; 自己的临时选择状态后，C-w 只对当前候选执行剪切，不会改写全局窗口快捷键。
+;; 中文说明：M-w 打开本配置的 Easy Kill 菜单，C-w 保留给窗口 Transient。
+;; 插件进入临时选择状态后，M-w 确认复制候选，C-k 剪切候选。
 (use-package easy-kill
   :straight (:host github
              :repo "leoliu/easy-kill"
@@ -178,18 +177,33 @@ N 保持 Easy Kill 的对象选择接口。"
 
 (transient-define-prefix my/easy-kill-transient-menu ()
   "显示 Easy Kill 临时选择状态的键位，不接管输入。"
-  :column-widths '(24 24 26)
+  :variable-pitch t
+  :column-widths '(26 26 26)
   [["   选择对象"
-    ("w/s/l/f/d" "词/表达式/列表/文件名/函数" easy-kill-thing)
-    ("=/-" "扩展/收缩候选" easy-kill-expand)
-    ("SPC" "循环选择对象类型" easy-kill-cycle)]
-   ["   复制与标记"
-    ("C-k" "剪切当前候选" easy-kill-region)
-    ("m" "标记当前对象" easy-mark)
-    ("@" "追加到上一复制项" easy-kill-append)]
-   ["   退出与帮助"
-    ("M-3" "取消 Easy Kill" easy-kill-abort)
-    ("C-g" "取消 Easy Kill" easy-kill-abort)
+    :pad-keys t
+    ("w" "单词" easy-kill-thing)
+    ("s" "表达式" easy-kill-thing)
+    ("l" "列表" easy-kill-thing)
+    ("f" "文件名" easy-kill-thing)
+    ("d" "函数" easy-kill-thing)
+    ("D" "函数名" easy-kill-thing)
+    ("e" "整行" easy-kill-thing)
+    ("b" "当前文件路径" easy-kill-thing)]
+   ["   调整候选"
+    :pad-keys t
+    ("=" "扩展候选" easy-kill-expand)
+    ("+" "扩展候选" easy-kill-expand)
+    ("-" "收缩候选" easy-kill-shrink)
+    ("SPC" "循环对象类型" easy-kill-cycle)]
+   ["   完成与帮助"
+    :pad-keys t
+    ("RET" "复制候选并退出" easy-kill-terminate)
+    ("M-w" "复制候选并退出" easy-kill-terminate)
+    ("k" "剪切候选并退出" easy-kill-region)
+    ("m" "标记候选并退出" easy-kill-mark-region)
+    ("@" "追加到上一复制项" easy-kill-append)
+    ("M-3" "取消选择" easy-kill-abort)
+    ("q" "取消选择" easy-kill-abort)
     ("?" "显示完整键位帮助" easy-kill-help)]])
 
 (defun my/easy-kill-transient-hide (&rest _)
@@ -216,7 +230,7 @@ N 保持 Easy Kill 的对象选择接口。"
          '((display-buffer-in-side-window)
            (side . bottom)
            (slot . -1)
-           (window-height . 0.18)
+           (window-height . 12)
            (preserve-size . (nil . t)))))
     (transient--init-transient 'my/easy-kill-transient-menu nil nil)
     (transient--show)
@@ -238,15 +252,19 @@ N 保持 Easy Kill 的对象选择接口。"
 (defun my/easy-kill-remind-delete-key ()
   "提示 Easy Kill 的候选剪切键，避免 C-w 与窗口菜单冲突。"
   (interactive)
-  (message "Easy Kill 中按 C-k 剪切当前候选；C-w 保留给窗口菜单"))
+  (message "Easy Kill 中按 k 剪切当前候选；C-w 保留给窗口菜单"))
 
 (with-eval-after-load 'easy-kill
-  ;; 中文说明：C-w 已被全局窗口 Transient 使用。Easy Kill 临时状态中把候选
-  ;; 剪切改为 C-k，C-w 仅提示，避免打开窗口菜单导致选择状态意外退出。
+  ;; 中文说明：C-w 已被全局窗口 Transient 使用。Easy Kill 临时状态中
+  ;; k 剪切候选、m 标记候选、q 取消；原组合键仍可使用。
+  (define-key easy-kill-base-map (kbd "k") #'easy-kill-region)
+  (define-key easy-kill-base-map (kbd "m") #'easy-kill-mark-region)
+  (define-key easy-kill-base-map (kbd "q") #'easy-kill-abort)
   (define-key easy-kill-base-map (kbd "C-k") #'easy-kill-region)
   (define-key easy-kill-base-map (kbd "C-w") #'my/easy-kill-remind-delete-key)
-  ;; 中文说明：M-w 在 Easy Kill 临时 map 内确认复制候选并退出；全局 M-w
-  ;; 仍保持 `my-copy-dwim'，两者不共享或互相覆盖。
+  ;; 中文说明：RET/M-w 在 Easy Kill 临时 map 内确认复制候选并退出；
+  ;; 普通编辑状态的 M-w 打开 Easy Kill 菜单。
+  (define-key easy-kill-base-map (kbd "RET") #'easy-kill-terminate)
   (define-key easy-kill-base-map (kbd "M-w") #'easy-kill-terminate)
   ;; 中文说明：与全局同一按键构成开关式体验，临时状态中只执行取消。
   (define-key easy-kill-base-map (kbd "M-3") #'easy-kill-abort)
@@ -257,6 +275,7 @@ N 保持 Easy Kill 的对象选择接口。"
 (transient-define-prefix my/easy-kill-menu ()
   "打开 Easy Kill 的对象选择、复制与标记菜单。"
   [["   Easy Kill"
+    ("c" "复制选区或整行" my-copy-dwim)
     ("k" "选择并复制对象" my/easy-kill-toggle)
     ("m" "选择并标记对象" easy-mark)
     ("d" "在选区后复制对象" easy-dup)
@@ -375,7 +394,8 @@ N 保持 Easy Kill 的对象选择接口。"
 ;; - `C-=/C--' 或 `C-c e +/-' 按语法结构扩展/收缩选区。
 ;; - `C->/C-<' 标记下/上一个相同文本，`C-c C-<' 标记全部，`C-S-c C-S-c' 按行多光标。
 ;; - `C-;' 或 `C-c e e' 切换 Iedit；`C-c e f' 只编辑当前函数内的匹配项。
-;; - `C-c e k' 打开 Easy Kill；进入后按字母选择对象，`M-w' 复制候选、`C-k' 剪切、`C-g' 取消。
+;; - `M-w' 或 `C-c e k' 打开 Easy Kill 菜单；`c' 直接复制选区或整行，`k' 按对象选择。
+;; - 进入 Easy Kill 选择状态后，`RET/M-w' 复制候选、`k' 剪切、`m' 标记、`q' 取消。
 ;; - `M-3' 启动 Easy Kill；处于 Easy Kill 选择状态时再次按 `M-3' 取消。
 ;; - `C-c e u' 启动 CUA 矩形选区；仅 `ESC' 退出，`C-g' 仅提示，CUA 全局键位保持关闭。
 ;; - `C-c e l/n/p/a' 分别为按行多光标、下一个、上一个和全部匹配。

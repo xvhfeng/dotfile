@@ -102,7 +102,7 @@ its own closing tag rather than an inner sibling's closing tag."
 ;;; 窗口：C-c w f/b/n/p 向右/左/下/上分割并进入；C-M-h/j/k/l
 ;;; 切换窗口；M-S-h/l 加宽/缩窄，M-S-k/j 增高/降低；M-F11 全屏。
 ;;; 编辑：ESC 取消，C-! 替换，C-c e r/R/w 替换包围符/成对替换/包围单词；M-w
-;;; 复制、C-w 剪切、C-v 粘贴、C-z/C-S-z 撤销/重做；C-x C-d 删除整行但不进
+;;; 打开 Easy Kill 菜单、C-w 剪切、C-v 粘贴、C-z/C-S-z 撤销/重做；C-x C-d 删除整行但不进
 ;;; kill-ring，C-, 复制当前行并下移，M-[/M-] 上下移动行，M-l/M-r 转小/大写。
 ;;; 导航：C-c C-r 到项目根，C-c C-j 打开项目 Dired，C-~ 打开主目录，C-' 打开
 ;;; Imenu；C-TAB/C-S-TAB 切换下/上一个缓冲区；C-a 到缩进首字符，C-M-a 到行首。
@@ -550,25 +550,25 @@ that was stored with my-point-to-register."
 (keymap-global-set "C-o"  #'my-open-line-below)
 (keymap-global-set "C-r"  #'my-open-line-above)
 
-(keymap-global-set "M-w" #'my-copy-dwim)
+(keymap-global-set "M-w" #'my/easy-kill-menu)
 (keymap-global-set "M-n" #'my-copy-region-or-line-begin)
 (keymap-global-set "M-m" #'my-copy-region-or-line-end)
 ;; 中文说明：移除旧的 M-p 全局标记绑定，恢复其在 Minibuffer 等局部 keymap
 ;; 中的原有用途；显式清空可兼容不重启时重新加载此配置的场景。
 ;; :(keymap-global-set "M-p" nil)
 
-;; Flymake 和部分 major mode 会在局部 map 中占用 M-n/M-m/M-w。仅将复制键
-;; 放入专用 emulation map；M-p 不再提升优先级，保证历史导航等局部绑定可用。
+;; Flymake 和部分 major mode 会在局部 map 中占用 M-n/M-m/M-w。将复制键与
+;; Easy Kill 菜单放入专用 emulation map；M-p 不再提升优先级。
 (defvar-local my/copy-command-override-active t
-  "非 nil 时让 M-n/M-m/M-w 复制命令优先于局部 keymap。")
+  "非 nil 时让 M-n/M-m 复制和 M-w 菜单优先于局部 keymap。")
 
 (defvar my/copy-command-override-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "M-n") #'my-copy-region-or-line-begin)
     (define-key map (kbd "M-m") #'my-copy-region-or-line-end)
-    (define-key map (kbd "M-w") #'my-copy-dwim)
+    (define-key map (kbd "M-w") #'my/easy-kill-menu)
     map)
-  "为上下文复制命令提供高优先级的 emulation keymap。")
+  "为上下文复制与 Easy Kill 菜单提供高优先级的 emulation keymap。")
 
 (defvar my/copy-command-emulation-alist
   `((my/copy-command-override-active . ,my/copy-command-override-map))
@@ -607,7 +607,7 @@ that was stored with my-point-to-register."
    "C-j" '("剪切选区或至行首" . my/cut-to-line-beginning-or-region)
    "M-n" '("复制选区或至行首" . my-copy-region-or-line-begin)
    "M-m" '("复制选区或至行尾" . my-copy-region-or-line-end)
-   "M-w" '("复制选区或整行" . my-copy-dwim)
+   "M-w" '("Easy Kill 菜单" . my/easy-kill-menu)
    "C-2" '("切换标记" . my/toggle-mark-command)
    "C-3" '("关闭当前窗口" . delete-window))
   (my-leader-def
