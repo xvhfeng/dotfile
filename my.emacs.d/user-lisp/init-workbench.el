@@ -368,7 +368,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("w" "Zoom 当前窗口/恢复布局" zoom-window-zoom)]
    ["   项目与版本控制"
     ("p" "切换项目" project-switch-project)
-    ("V" "Git 状态" magit-status)
+    ("g" "Git 状态" magit-status)
     ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
     ("D" "Diffnav 改动浏览" diffnav-emacs-menu)
     ("m" "合并冲突" my/smerge-menu)
@@ -387,8 +387,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
    ["   编辑与跳转"
     ("J" "Avy 跳转菜单" my/avy-menu)
     ("e" "批量编辑符号" my/workbench-edit-occurrences)
-    ("g" "选择当前缩进块" my/mark-indent-block)
-    ("G" "选择缩进块内部" my/mark-indent-block-inner)
+    ("[" "选择当前缩进块" my/mark-indent-block)
+    ("]" "选择缩进块内部" my/mark-indent-block-inner)
     ("h" "匹配成对符号或标签" my/match-pair)
     ("R" "矩形选区" my/cua-rectangle-toggle)
     ("Y" "Easy Kill 菜单" my/easy-kill-menu)
