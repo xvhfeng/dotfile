@@ -8,6 +8,7 @@
 
 (require 'cl-lib)
 (require 'transient)
+(autoload 'consult-yank-from-kill-ring "consult" nil t)
 
 ;; ============================================================================
 ;; 0.5. View Mode：当前 Buffer 的只读浏览开关
@@ -137,7 +138,7 @@
 ;; 1.5. Easy Kill：按对象选择、复制或标记文本
 ;; ============================================================================
 ;; 中文说明：M-w 打开本配置的 Easy Kill 菜单，C-w 保留给窗口 Transient。
-;; 插件进入临时选择状态后，M-w 确认复制候选，C-k 剪切候选。
+;; 在单层菜单中开始对象选择后，y/RET/M-w 确认复制候选，k 剪切候选。
 (use-package easy-kill
   :straight (:host github
              :repo "leoliu/easy-kill"
@@ -170,84 +171,111 @@ N 保持 Easy Kill 的对象选择接口。"
        (overlayp easy-kill-candidate)
        (overlay-buffer easy-kill-candidate)))
 
-(defconst my/easy-kill-transient-display-buffer-name " *Easy Kill 键位表*"
-  "Easy Kill 被动 Transient 菜单使用的内部 Buffer 名称。")
-(defvar my/easy-kill-transient-display-buffer nil)
-(defvar my/easy-kill-transient-display-window nil)
+(defun my/easy-kill--content ()
+  "返回候选、活动选区或当前行的可插入文本。"
+  (cond
+   ((my/easy-kill-active-p)
+    (if (stringp (easy-kill-get candidate))
+        (easy-kill-get candidate)
+      (buffer-substring-no-properties (overlay-start easy-kill-candidate)
+                                      (overlay-end easy-kill-candidate))))
+   ((use-region-p) (buffer-substring-no-properties (region-beginning) (region-end)))
+   (t (buffer-substring-no-properties (line-beginning-position)
+                                      (line-beginning-position 2)))))
 
-(transient-define-prefix my/easy-kill-transient-menu ()
-  "显示 Easy Kill 临时选择状态的键位，不接管输入。"
-  :variable-pitch t
-  :column-widths '(26 26 26)
-  [["   选择对象"
-    :pad-keys t
-    ("w" "单词" easy-kill-thing)
-    ("s" "表达式" easy-kill-thing)
-    ("l" "列表" easy-kill-thing)
-    ("f" "文件名" easy-kill-thing)
-    ("d" "函数" easy-kill-thing)
-    ("D" "函数名" easy-kill-thing)
-    ("e" "整行" easy-kill-thing)
-    ("b" "当前文件路径" easy-kill-thing)]
-   ["   调整候选"
-    :pad-keys t
-    ("=" "扩展候选" easy-kill-expand)
-    ("+" "扩展候选" easy-kill-expand)
-    ("-" "收缩候选" easy-kill-shrink)
-    ("SPC" "循环对象类型" easy-kill-cycle)]
-   ["   完成与帮助"
-    :pad-keys t
-    ("RET" "复制候选并退出" easy-kill-terminate)
-    ("M-w" "复制候选并退出" easy-kill-terminate)
-    ("k" "剪切候选并退出" easy-kill-region)
-    ("m" "标记候选并退出" easy-kill-mark-region)
-    ("@" "追加到上一复制项" easy-kill-append)
-    ("M-3" "取消选择" easy-kill-abort)
-    ("q" "取消选择" easy-kill-abort)
-    ("?" "显示完整键位帮助" easy-kill-help)]])
+(defun my/easy-kill-insert-after ()
+  "在候选、选区或当前行后插入其内容。"
+  (interactive)
+  (let ((text (my/easy-kill--content)))
+    (goto-char (if (my/easy-kill-active-p) (overlay-end easy-kill-candidate)
+                 (if (use-region-p) (region-end) (line-beginning-position 2))))
+    (insert text)))
 
-(defun my/easy-kill-transient-hide (&rest _)
-  "关闭 Easy Kill 的被动 Transient 键位表。"
-  (when (window-live-p my/easy-kill-transient-display-window)
-    (quit-window nil my/easy-kill-transient-display-window))
-  (when (buffer-live-p my/easy-kill-transient-display-buffer)
-    (kill-buffer my/easy-kill-transient-display-buffer))
-  (setq my/easy-kill-transient-display-buffer nil
-        my/easy-kill-transient-display-window nil))
+(defun my/easy-kill-insert-before ()
+  "在候选、选区或当前行前插入其内容。"
+  (interactive)
+  (let ((text (my/easy-kill--content)))
+    (goto-char (if (my/easy-kill-active-p) (overlay-start easy-kill-candidate)
+                 (if (use-region-p) (region-beginning) (line-beginning-position))))
+    (insert text)))
 
-(defun my/easy-kill-transient-show ()
-  "显示 Easy Kill 被动 Transient 键位表，保留原始临时选择键。"
-  (my/easy-kill-transient-hide)
-  ;; 中文说明：不调用常规 Transient 前缀命令，避免其覆盖 Easy Kill 的临时 map。
-  (let ((transient--buffer-name my/easy-kill-transient-display-buffer-name)
-        (transient--buffer nil)
-        (transient--window nil)
-        (transient--prefix nil)
-        (transient--layout nil)
-        (transient--suffixes nil)
-        (transient--showp nil)
-        (transient-display-buffer-action
-         '((display-buffer-in-side-window)
-           (side . bottom)
-           (slot . -1)
-           (window-height . 12)
-           (preserve-size . (nil . t)))))
-    (transient--init-transient 'my/easy-kill-transient-menu nil nil)
-    (transient--show)
-    (setq my/easy-kill-transient-display-buffer transient--buffer
-          my/easy-kill-transient-display-window transient--window)
-    (redisplay t)))
+(defun my/easy-kill-select ()
+  "按当前菜单键直接启动 Easy Kill 并选择对应对象。"
+  (interactive)
+  (let ((thing (pcase last-command-event
+                 (?w 'word) (?s 'sexp) (?l 'list) (?f 'filename)
+                 (?d 'defun) (?e 'line))))
+    (unless thing
+      (user-error "未定义的 Easy Kill 对象键"))
+    (unless (my/easy-kill-active-p)
+      (easy-kill))
+    (easy-kill-thing thing)))
+
+(defun my/easy-kill-copy-and-quit ()
+  "复制当前候选到 kill-ring，并关闭 Easy Kill 菜单。"
+  (interactive)
+  (unless (my/easy-kill-active-p)
+    (user-error "请先选择对象或标记选区"))
+  (pcase (easy-kill-get bounds)
+    (`(,beg . ,end) (kill-ring-save beg end)))
+  (my/easy-kill-cancel))
+
+(defun my/easy-kill-show-kill-ring ()
+  "在临时 Buffer 中查看当前 kill ring。"
+  (interactive)
+  (with-output-to-temp-buffer "*Kill Ring*"
+    (princ "Kill Ring\n=========\n\n")
+    (if kill-ring
+        (cl-loop for item in kill-ring
+                 for index from 1
+                 do (princ (format "%d. %s\n\n" index item)))
+      (princ "(空)\n"))))
+
+;; 让 Easy Kill 的临时 keymap 在复制后销毁候选并运行退出钩子。
+(put 'my/easy-kill-copy-and-quit 'easy-kill-exit t)
 
 (defun my/easy-kill-toggle ()
-  "用 M-3 启动 Easy Kill；在其临时选择状态中再次按 M-3 取消。"
+  "用 M-3 打开或关闭 Easy Kill 菜单。"
   (interactive)
-  (if (my/easy-kill-active-p)
-      (progn
-        (easy-kill-abort)
-        (my/easy-kill-transient-hide))
-    (easy-kill)
-    (when (my/easy-kill-active-p)
-      (my/easy-kill-transient-show))))
+  (if (transient-active-prefix)
+      (my/easy-kill-cancel)
+    (my/easy-kill-menu)))
+
+(defun my/easy-kill-cancel ()
+  "无条件退出 Easy Kill、Transient 与普通 Emacs 标记状态。"
+  (interactive)
+  (when (my/easy-kill-active-p)
+    (easy-kill-abort))
+  (deactivate-mark)
+  (when (transient-active-prefix)
+    (transient-quit-all)))
+
+(defun my/easy-mark-start ()
+  "进入统一的 Easy Mark 状态。"
+  (interactive)
+  (unless (my/easy-kill-active-p)
+    (easy-mark)))
+
+(defun my/easy-mark-expand ()
+  "在 Easy Mark 状态中扩展候选。"
+  (interactive)
+  (unless (my/easy-kill-active-p)
+    (user-error "请先按 m 开始标记"))
+  (easy-kill-expand))
+
+(defun my/easy-mark-shrink ()
+  "在 Easy Mark 状态中收缩候选。"
+  (interactive)
+  (unless (my/easy-kill-active-p)
+    (user-error "请先按 m 开始标记"))
+  (easy-kill-shrink))
+
+(defun my/easy-mark-cycle ()
+  "在 Easy Mark 状态中循环候选类型。"
+  (interactive)
+  (unless (my/easy-kill-active-p)
+    (user-error "请先按 m 开始标记"))
+  (easy-kill-cycle))
 
 (defun my/easy-kill-remind-delete-key ()
   "提示 Easy Kill 的候选剪切键，避免 C-w 与窗口菜单冲突。"
@@ -262,27 +290,65 @@ N 保持 Easy Kill 的对象选择接口。"
   (define-key easy-kill-base-map (kbd "q") #'easy-kill-abort)
   (define-key easy-kill-base-map (kbd "C-k") #'easy-kill-region)
   (define-key easy-kill-base-map (kbd "C-w") #'my/easy-kill-remind-delete-key)
-  ;; 中文说明：RET/M-w 在 Easy Kill 临时 map 内确认复制候选并退出；
-  ;; 普通编辑状态的 M-w 打开 Easy Kill 菜单。
-  (define-key easy-kill-base-map (kbd "RET") #'easy-kill-terminate)
-  (define-key easy-kill-base-map (kbd "M-w") #'easy-kill-terminate)
+  ;; RET/M-w/y 均复制候选到 kill-ring 并关闭单层菜单；普通编辑状态的 M-w
+  ;; 仍打开 Easy Kill 菜单。
+  (define-key easy-kill-base-map (kbd "RET") #'my/easy-kill-copy-and-quit)
+  (define-key easy-kill-base-map (kbd "M-w") #'my/easy-kill-copy-and-quit)
+  (define-key easy-kill-base-map (kbd "y") #'my/easy-kill-copy-and-quit)
+  ;; Easy Mark 会接管 Transient 的临时 map；这些键必须也在其 base map 中。
+  (define-key easy-kill-base-map (kbd "=") #'my/easy-mark-expand)
+  (define-key easy-kill-base-map (kbd "-") #'my/easy-mark-shrink)
+  (define-key easy-kill-base-map (kbd "SPC") #'my/easy-mark-cycle)
   ;; 中文说明：与全局同一按键构成开关式体验，临时状态中只执行取消。
-  (define-key easy-kill-base-map (kbd "M-3") #'easy-kill-abort)
-  ;; Easy Kill 正常复制、剪切、取消或标记结束后都收起提示面板。
-  (add-hook 'easy-kill-exit-hook #'my/easy-kill-transient-hide)
-  (add-hook 'easy-mark-exit-hook #'my/easy-kill-transient-hide))
+  (define-key easy-kill-base-map (kbd "M-3") #'my/easy-kill-toggle)
+  (define-key easy-kill-base-map [escape] #'my/easy-kill-cancel))
 
 (transient-define-prefix my/easy-kill-menu ()
-  "打开 Easy Kill 的对象选择、复制与标记菜单。"
-  [["   Easy Kill"
-    ("c" "复制选区或整行" my-copy-dwim)
-    ("k" "选择并复制对象" my/easy-kill-toggle)
-    ("m" "选择并标记对象" easy-mark)
-    ("d" "在选区后复制对象" easy-dup)
-    ("b" "在选区前复制对象" easy-dup-before)
-    ("M-w" "复制当前候选并退出" easy-kill-terminate)
-    ("?" "Easy Kill 键位帮助" easy-kill-help)
-    ("C-k" "剪切当前候选" easy-kill-region)]])
+  "打开单层 Easy Kill 对象选择、复制与标记菜单。"
+  :variable-pitch t
+  :column-widths '(26 26 26)
+  [["   开始操作"
+    ("m" "开始 Easy Mark" my/easy-mark-start :transient t)
+    ;; ("p" "Emacs 标记" my/toggle-mark-command :transient t)
+    ;; ("C-n" "向下扩展标记" next-line :transient t)
+    ;; ("C-p" "向上扩展标记" previous-line :transient t)
+    ("]" "在选区后插入对象" my/easy-kill-insert-after :transient t)
+    ("[" "在选区前插入对象" my/easy-kill-insert-before :transient t)]
+   ["   选择对象"
+    :pad-keys t
+    ("w" "单词" my/easy-kill-select :transient t)
+    ("s" "表达式" my/easy-kill-select :transient t)
+    ("l" "列表" my/easy-kill-select :transient t)
+    ("f" "文件名" my/easy-kill-select :transient t)
+    ("d" "函数" my/easy-kill-select :transient t)
+    ("e" "整行" my/easy-kill-select :transient t)
+    ]
+   ["   调整与完成"
+    :pad-keys t
+    ("=" "扩展候选" my/easy-mark-expand :transient t)
+    ("-" "收缩候选" my/easy-mark-shrink :transient t)
+    ("SPC" "循环对象类型" my/easy-mark-cycle :transient t)
+    ;; ("@" "复制候选并退出" my/easy-kill-copy-and-quit)
+    ("y" "复制到 kill-ring 并退出" my/easy-kill-copy-and-quit)
+    ("RET" "复制候选并退出" my/easy-kill-copy-and-quit)
+    ("k" "剪切候选并退出" easy-kill-region)
+    ("<escape>" "取消选择" my/easy-kill-cancel)
+    ("h" "查看 Kill Ring" consult-yank-from-kill-ring)
+    ("?" "显示完整键位帮助" easy-kill-help :transient t)]])
+
+;; 在本模块中显式恢复全局入口，避免单独重载时丢失 M-w 绑定。
+(keymap-global-set "M-3" #'my/easy-kill-menu)
+(with-eval-after-load 'general
+  (general-define-key "M-3" '("Easy Kill 菜单" . my/easy-kill-menu)))
+
+(defvar my/easy-kill-toggle-override-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "M-3") #'my/easy-kill-toggle)
+    map)
+  "保证 M-3 优先于局部 keymap 的 Easy Kill toggle map。")
+(defvar my/easy-kill-toggle-emulation-alist
+  `((t . ,my/easy-kill-toggle-override-map)))
+(add-to-list 'emulation-mode-map-alists 'my/easy-kill-toggle-emulation-alist)
 
 ;; ============================================================================
 ;; 2. Embrace: 实现类似 Vim 的 ys / cs / ds (Surround 围栏符号增删改)
@@ -394,9 +460,10 @@ N 保持 Easy Kill 的对象选择接口。"
 ;; - `C-=/C--' 或 `C-c e +/-' 按语法结构扩展/收缩选区。
 ;; - `C->/C-<' 标记下/上一个相同文本，`C-c C-<' 标记全部，`C-S-c C-S-c' 按行多光标。
 ;; - `C-;' 或 `C-c e e' 切换 Iedit；`C-c e f' 只编辑当前函数内的匹配项。
-;; - `M-w' 或 `C-c e k' 打开 Easy Kill 菜单；`c' 直接复制选区或整行，`k' 按对象选择。
-;; - 进入 Easy Kill 选择状态后，`RET/M-w' 复制候选、`k' 剪切、`m' 标记、`q' 取消。
-;; - `M-3' 启动 Easy Kill；处于 Easy Kill 选择状态时再次按 `M-3' 取消。
+;; - `M-w' 或 `C-c e k' 打开单层 Easy Kill 菜单；`l' 复制选区或整行，`c' 开始对象选择。
+;; - 对象选择期间，`w/s/L/f/d/D/e/b' 切换对象，`y/RET/M-w' 复制候选到 kill-ring 并退出，
+;;   `k' 剪切、`M' 标记、`q' 取消。
+;; - `M-3' 打开 Easy Kill 菜单；处于对象选择状态时再次按 `M-3' 取消。
 ;; - `C-c e u' 启动 CUA 矩形选区；仅 `ESC' 退出，`C-g' 仅提示，CUA 全局键位保持关闭。
 ;; - `C-c e l/n/p/a' 分别为按行多光标、下一个、上一个和全部匹配。
 ;;; init-editing.el ends here

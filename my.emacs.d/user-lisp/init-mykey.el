@@ -550,7 +550,7 @@ that was stored with my-point-to-register."
 (keymap-global-set "C-o"  #'my-open-line-below)
 (keymap-global-set "C-r"  #'my-open-line-above)
 
-(keymap-global-set "M-w" #'my/easy-kill-menu)
+(keymap-global-set "M-w" #'my-copy-dwim)
 (keymap-global-set "M-n" #'my-copy-region-or-line-begin)
 (keymap-global-set "M-m" #'my-copy-region-or-line-end)
 ;; 中文说明：移除旧的 M-p 全局标记绑定，恢复其在 Minibuffer 等局部 keymap
@@ -566,7 +566,7 @@ that was stored with my-point-to-register."
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "M-n") #'my-copy-region-or-line-begin)
     (define-key map (kbd "M-m") #'my-copy-region-or-line-end)
-    (define-key map (kbd "M-w") #'my/easy-kill-menu)
+    (define-key map (kbd "M-w") #'my-copy-dwim)
     map)
   "为上下文复制与 Easy Kill 菜单提供高优先级的 emulation keymap。")
 
@@ -607,7 +607,7 @@ that was stored with my-point-to-register."
    "C-j" '("剪切选区或至行首" . my/cut-to-line-beginning-or-region)
    "M-n" '("复制选区或至行首" . my-copy-region-or-line-begin)
    "M-m" '("复制选区或至行尾" . my-copy-region-or-line-end)
-   "M-w" '("Easy Kill 菜单" . my/easy-kill-menu)
+   "M-w" '("复制选区" . kill-ring-save)
    "C-2" '("切换标记" . my/toggle-mark-command)
    "C-3" '("关闭当前窗口" . delete-window))
   (my-leader-def
