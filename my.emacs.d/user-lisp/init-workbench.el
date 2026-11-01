@@ -361,6 +361,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("b" "切换Buffer (含历史)" consult-buffer)
     ("k" "关闭当前 Buffer" kill-current-buffer)
     ("t" "Treemacs" treemacs)
+    ("N" "NeoTree" my/neotree-toggle)
     ("L" "Dirvish" my/dirvish-open)
     ("d" "当前目录" my/workbench-current-directory)
     ("v" "从磁盘重新加载" revert-buffer)

@@ -1,0 +1,71 @@
+;;; init-neotree.el --- NeoTree integration -*- lexical-binding: t; -*-
+(require 'project)
+(require 'cl-lib)
+(defun my/neotree-toggle ()
+  "Toggle NeoTree at project root without retargeting an open tree."
+  (interactive)
+  (if (and (fboundp 'neo-global--window-exists-p) (neo-global--window-exists-p))
+      (neotree-hide)
+    (neotree-dir (if-let ((project (project-current nil)))
+                     (project-root project) default-directory))))
+(defun my/neotree-parent-directory ()
+  "Visit NeoTree's parent directory."
+  (interactive)
+  (neotree-dir (file-name-directory (directory-file-name neo-buffer--start-node))))
+(defun my/neotree--file-at-point ()
+  "Return the regular file at the current NeoTree entry."
+  (let ((file (neo-buffer--get-filename-current-line)))
+    (unless (and file (not (file-directory-p file)))
+      (user-error "当前条目不是可打开的文件"))
+    file))
+(defun my/neotree--editor-window ()
+  "Return a non-NeoTree window in the selected frame."
+  (or (cl-find-if (lambda (window)
+                    (with-current-buffer (window-buffer window)
+                      (not (derived-mode-p 'neotree-mode))))
+                  (window-list nil 'no-minibuffer))
+      (user-error "没有可用于打开文件的编辑窗口")))
+(defun my/neotree-open ()
+  "Open the current NeoTree file in an editor window."
+  (interactive)
+  (let ((file (my/neotree--file-at-point)))
+    (select-window (my/neotree--editor-window))
+    (find-file file)))
+(defun my/neotree-open-split (horizontal)
+  "Open current file in a split of an editor window; HORIZONTAL chooses split." 
+  (interactive)
+  (let ((file (my/neotree--file-at-point)))
+    (with-selected-window (my/neotree--editor-window)
+      (let ((new-window (if horizontal
+                            (split-window-below)
+                          (split-window-right))))
+        (select-window new-window)
+        (find-file file)))))
+(defun my/neotree-open-with-ace-window ()
+  "Use Ace Window to choose an editor window for the current file."
+  (interactive)
+  (let ((file (my/neotree--file-at-point)))
+    (ace-select-window)
+    (when (derived-mode-p 'neotree-mode)
+      (user-error "请选择编辑窗口，而不是 NeoTree"))
+    (find-file file)))
+(use-package nerd-icons :straight t :defer t)
+(use-package neotree
+  :straight t
+  :commands (neotree-dir neotree-hide neo-global--window-exists-p)
+  :init (setq neo-show-hidden-files t neo-window-width 35 neo-smart-open nil neo-theme 'nerd-icons)
+  :config
+  (define-key neotree-mode-map (kbd "j") #'next-line)
+  (define-key neotree-mode-map (kbd "k") #'previous-line)
+  (define-key neotree-mode-map (kbd "n") nil)
+  (define-key neotree-mode-map (kbd "p") nil)
+  (define-key neotree-mode-map (kbd "u") #'my/neotree-parent-directory)
+  (define-key neotree-mode-map (kbd "?") #'describe-mode)
+  (define-key neotree-mode-map (kbd "RET") #'my/neotree-open)
+  (define-key neotree-mode-map (kbd "o") #'my/neotree-open)
+  (define-key neotree-mode-map (kbd "v") (lambda () (interactive) (my/neotree-open-split nil)))
+  (define-key neotree-mode-map (kbd "s") (lambda () (interactive) (my/neotree-open-split t)))
+  (define-key neotree-mode-map (kbd "c") #'my/neotree-open-with-ace-window))
+(with-eval-after-load 'general
+  (my-leader-def "d n" '("NeoTree 文件树" . my/neotree-toggle)))
+(provide 'init-neotree)

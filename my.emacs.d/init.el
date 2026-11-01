@@ -331,6 +331,7 @@
     init-indent-bars
     init-fold
     init-lsp
+    init-neotree
     init-flymake
     init-lang
     ;; 文档编辑与预览保持为两个互不依赖的模块。
