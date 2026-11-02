@@ -380,6 +380,10 @@ N 保持 Easy Kill 的对象选择接口。"
   ("C-<" '("mark previous occurrence" . mc/mark-previous-like-this))
   ("C-c C-<" '("mark all occurrences" . mc/mark-all-like-this)))
 
+(with-eval-after-load 'multiple-cursors-core
+  ;; 复制只需执行一次并写入一次 kill ring；避免多光标首次执行时询问策略。
+  (add-to-list 'mc/cmds-to-run-once #'my-copy-dwim))
+
 
 ;; 另一个多光标的编辑软件，非常轻量
 (defun my/iedit-style-faces (&rest _)

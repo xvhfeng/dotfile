@@ -671,7 +671,7 @@ that was stored with my-point-to-register."
 (global-set-key (kbd "C-t") #'kill-region)
 
 (keymap-global-set "C-j" #'my/cut-to-line-beginning-or-region)
-(keymap-global-set "M-k" #'my-cut-dwim)
+(keymap-global-set "C-S-k" #'my-cut-dwim)
 
 (keymap-global-set "M-[" #'my-move-line-up)
 (keymap-global-set "M-]" #'my-move-line-down)
