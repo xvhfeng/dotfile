@@ -44,7 +44,12 @@
     (formatter
      ("clang-format" . "C / C++ 格式化")
      ("black" . "Python 格式化")
-     ("prettier" . "Web / JSON / YAML 格式化"))
+     ("prettier" . "Web / JSON / YAML / Markdown 格式化")
+     ("gofumpt" . "Go 格式化")
+     ("google-java-format" . "Java 格式化")
+     ("stylua" . "Lua 格式化")
+     ("shfmt" . "Shell 格式化")
+     ("latexindent" . "LaTeX 格式化"))
     (linter
      ("flake8" . "Python 静态检查")
      ("luacheck" . "Lua 静态检查"))
@@ -57,7 +62,7 @@
      ("local-lua-debugger-vscode" . "Lua 调试适配器")
      ("bash-debug-adapter" . "Bash 调试适配器")))
   "Mason 自动管理的工具注册表。
-共 24 项：17 个语言、格式化及检查工具，7 个调试适配器。")
+共 29 项：22 个语言、格式化及检查工具，7 个调试适配器。")
 
 (defun my/mason-packages-in-category (category)
   "返回 `my/mason-tool-registry' 中 CATEGORY 对应的包名。"
@@ -196,7 +201,7 @@ Apple Silicon, Intel macOS, Linux, Homebrew, and version-manager installs."
 ;; ---------------------------------------------------------------------------
 ;; - Mason 把语言服务器、格式化器和检查器安装到 `runtimes/mason/'，不修改系统目录。
 ;; - `C-c x m' 打开 Mason 管理器，查看、安装、更新或删除外部工具。
-;; - Mason 首次初始化时自动安装 23 个注册工具；以后只补装新增或缺失项。
+;; - Mason 首次初始化时自动安装 29 个注册工具；以后只补装新增或缺失项。
 ;; - 注册表是 `my/mason-tool-registry'；也可手动运行 `M-x my/mason-install-missing-packages'。
 ;; - GUI Emacs 会同步 Shell PATH，并把 `runtimes/mason/bin/' 放到 Eglot 可搜索的最前面。
 ;; - 下载失败时先在 Mason 管理器重试，并检查网络、GitHub 访问和 *Messages* 的具体错误。

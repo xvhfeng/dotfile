@@ -70,6 +70,11 @@
 (autoload 'my/avy-menu "init-avy" nil t)
 (autoload 'my/mark-indent-block "init-treesitter" nil t)
 (autoload 'my/mark-indent-block-inner "init-treesitter" nil t)
+(autoload 'my/apheleia-format-code "init-format" nil t)
+(autoload 'my/format-selected-region "init-format" nil t)
+(autoload 'my/format-current-indent-region "init-format" nil t)
+(autoload 'my/format-current-function "init-format" nil t)
+(autoload 'my/select-whole-buffer "init-format" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
 (autoload 'my/toggle-mark-command "init-mykey" nil t)
 (autoload 'my/dirvish-open "init-dirvish" nil t)
@@ -376,6 +381,10 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("F" "当前文件 Git 操作" magit-file-dispatch)
     ("/" "打开终端" my/workbench-open-terminal)]
    ["   代码与诊断"
+    ("q" "格式化整个文件" my/apheleia-format-code)
+    ("Q" "格式化选中区域" my/format-selected-region)
+    ("I" "格式化当前缩进区域" my/format-current-indent-region)
+    ("B" "格式化当前函数" my/format-current-function)
     ("i" "符号列表" consult-imenu)
     ("o" "侧栏大纲" my/workbench-show-outline)
     ("n" "跳转与文档" my/workbench-navigation-menu)
@@ -386,6 +395,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("C" "编译当前 Buffer" my/workbench-compile-current-buffer)
     ("c" "编译" compile)]
    ["   编辑与跳转"
+    ("s" "选择整个文件" my/select-whole-buffer)
     ("j" "Avy 跳转菜单" my/avy-menu)
     ("e" "批量编辑符号" my/workbench-edit-occurrences)
     ("[" "选择当前缩进块" my/mark-indent-block)
@@ -488,7 +498,9 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; - 顶层菜单采用单字符键，优先使用小写；大写仅用于小写字母耗尽后的少数入口。
 ;; - “文件与视图”中按 `v' 从磁盘重新加载当前 Buffer；未保存的修改仍会要求确认。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。
-;; - “编辑与跳转”提供 Iedit、缩进/配对选择、撤销树、可视书签和 Avy。
+;; - “代码与诊断”按 `q/Q/I/B' 格式化全文件/选区/缩进区域/当前函数。
+;; - “编辑与跳转”按 `s' 选择整个文件。
+;; - “编辑与跳转”还提供 Iedit、缩进/配对选择、撤销树、可视书签和 Avy。
 ;; - “文件与视图”中按 `k' 关闭当前 Buffer，按 `w' 切换 Zoom 窗口布局。
 ;; - “笔记与帮助”中按 `K/E/0' 查询按键、查看当前按键表或模式帮助。
 ;; - `C-x C-b' 或 `C-c b l' 在底部打开 Ibuffer；`C-c b e' 保留 Electric List。

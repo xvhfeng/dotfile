@@ -521,6 +521,52 @@ that was stored with my-point-to-register."
 ;; (global-set-key "%" 'match-paren)
 
 
+(defun my/format-defun-spacing-buffer ()
+  "格式化整个 Buffer：确保所有顶级函数/方法之间恰好只有 1 个空行。
+兼容处理函数间存在多个空行或完全没有空行（0 空行）的情况。"
+  (interactive)
+  (save-excursion
+    (save-restriction
+      (widen)
+      ;; 第一步：遍历所有顶级函数，在每个函数头部上方确保至少有一个换行
+      (goto-char (point-min))
+      (let ((last-pos nil))
+        (while (and (not (eobp))
+                    (let ((curr (point)))
+                      (end-of-defun)
+                      (beginning-of-defun)
+                      ;; 确保光标向前移动了，防止死循环
+                      (if (and last-pos (= (point) last-pos))
+                          (progn (forward-line 1) nil)
+                        (setq last-pos (point))
+                        t)))
+          ;; 如果不是 Buffer 开头，且前一行非空行，插入一个换行符
+          (unless (bobp)
+            (save-excursion
+              (beginning-of-line)
+              (let ((prev-char (char-before)))
+                (when (and prev-char (not (eq prev-char ?\n)))
+                  (insert "\n")))))
+          ;; 移动到当前函数的结尾，准备找下一个函数
+          (end-of-defun)))
+
+      ;; 第二步：全局用正则将所有连续的多个空行（3个及以上 \n）压缩为恰好 1 个空行（2个 \n）
+      (goto-char (point-min))
+      (while (re-search-forward "\n\\(\n\\{2,\\}\\)" nil t)
+        (replace-match "\n\n"))
+
+      ;; 第三步：清理 Buffer 顶部的多余空行
+      (goto-char (point-min))
+      (when (looking-at "\n+")
+        (replace-match ""))))
+  (message "已成功将所有函数间距格式化为标准单空行！"))
+
+
+
+
+
+
+
 ;;; --- 自定义 Toggle Mark 函数 ---
 
 (defun my/toggle-mark-command ()
@@ -589,7 +635,7 @@ that was stored with my-point-to-register."
 (keymap-global-set "M-c" #'my-capitalize-dwim)
 ;;(keymap-global-set "C-x C-k" #'my-kill-with-save-and-delete-split-window)
 (keymap-global-set "C-!" #'my-replace-dwim)
-
+(keymap-global-set "C-]" #'match-paren)
 ;;============= *  更改 EMACS 自身的某些设置 *=====================
 ;; 保留 Emacs 原生 ESC/Meta 前缀语义；取消当前操作统一使用 C-g。
 ;; 把 c-k 设置为不管什么位姿都删除当前行

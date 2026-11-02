@@ -325,6 +325,8 @@
     init-window
     ;; 编程能力模块：外部工具、补全、语法树、LSP、诊断和语言配置。
     init-mason
+    ;; Apheleia 显式格式化复用 Mason 管理的外部工具，不接管保存流程。
+    init-format
     init-completion
     init-treesitter
     ;; 用点状引导线显示代码与 Web 文件的缩进层级，不改变文本或快捷键。
