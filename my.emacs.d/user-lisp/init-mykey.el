@@ -419,33 +419,79 @@ its own closing tag rather than an inner sibling's closing tag."
 
 
 ;; 类似于vim的f和F，向前/先后定位到当前行的某个char
-(defun my-go-to-char (char)
-  "Move forward to CHAR.
-  Typing CHAR again will move forwad to the next occurence of CHAR."
-  (interactive "cGo to char: ")
-  (let ((case-fold-search nil))
-    (search-forward (string char) nil nil 1)
-    (backward-char)
-    (while (equal (read -key) char)
-      (forward-char)
-      (search-forward (string char) nil nil 1)
-      (backward-char))
-    )
-  (setq unread-command-events (list last-input-event)))
+;; (defun my-go-to-char (char)
+;;   "Move forward to CHAR.
+;;   Typing CHAR again will move forwad to the next occurence of CHAR."
+;;   (interactive "cGo to char: ")
+;;   (let ((case-fold-search nil))
+;;     (search-forward (string char) nil nil 1)
+;;     (backward-char)
+;;     (while (equal (read-key) char)
+;;       (forward-char)
+;;       (search-forward (string char) nil nil 1)
+;;       (backward-char))
+;;     )
+;;   (setq unread-command-events (list last-input-event)))
 
-(defun my-backward-go-to-char (char)
-  "Move backward to CHAR.
-   Typing CHAR again will move backward to the next occurence of CHAR."
-  (interactive "cGo to char: ")
-  (let ((case-fold-search nil))
-    ;; backward
-    (search-backward (string char) nil nil )
-    (while (equal (read-key) char)
-      (search-backward (string char) nil nil )))
-  (setq unread-command-events (list last-input-event)))
+;; (defun my-backward-go-to-char (char)
+;;   "Move backward to CHAR.
+;;    Typing CHAR again will move backward to the next occurence of CHAR."
+;;   (interactive "cGo to char: ")
+;;   (let ((case-fold-search nil))
+;;     ;; backward
+;;     (search-backward (string char) nil nil )
+;;     (while (equal (read-key) char)
+;;       (search-backward (string char) nil nil )))
+;;   (setq unread-command-events (list last-input-event)))
 
-;;(global-set-key (kbd "C-z f") 'my-go-to-char)
-;;(global-set-key (kbd "C-z F") 'my-backward-go-to-char)
+(defun my-go-to-char (char &optional arg)
+  "Move forward to CHAR in current line.
+Optional ARG specifies the N-th occurrence (default 1).
+Typing CHAR again will move forward to the next occurrence of CHAR.
+Stays on the last match if no more occurrences exist."
+  (interactive "cGo to char: \np")
+  (let ((case-fold-search nil)
+        (count (or arg 1))
+        (bound (line-end-position))
+        (next-key nil))
+    ;; 首次跳转：向后找到当前行的第 count 个目标字符
+    (when (search-forward (string char) bound t count)
+      (backward-char)
+      (setq next-key (read-key))
+      ;; 循环读取后续按键：如果是 char，则尝试继续向后跳；
+      ;; 如果已经到头找不到下一个，则光标保持在原地不动，继续等待下一个按键
+      (while (equal next-key char)
+        (let ((pos (point)))
+          (forward-char)
+          (if (search-forward (string char) bound t 1)
+              (backward-char)
+            (goto-char pos)))
+        (setq next-key (read-key))))))
+
+(defun my-backward-go-to-char (char &optional arg)
+  "Move backward to CHAR in current line.
+Optional ARG specifies the N-th occurrence (default 1).
+Typing CHAR again will move backward to the next occurrence of CHAR.
+Stays on the last match if no more occurrences exist."
+  (interactive "cGo to char: \np")
+  (let ((case-fold-search nil)
+        (count (or arg 1))
+        (bound (line-beginning-position))
+        (next-key nil))
+    ;; 首次跳转：向前找到当前行的第 count 个目标字符
+    (when (search-backward (string char) bound t count)
+      (setq next-key (read-key))
+      ;; 循环读取后续按键：如果是 char，则尝试继续向前跳；
+      ;; 如果已经到头找不到上一个，则光标保持在原地不动，继续等待下一个按键
+      (while (equal next-key char)
+        (let ((pos (point)))
+          (if (search-backward (string char) bound t 1)
+              nil
+            (goto-char pos)))
+        (setq next-key (read-key))))))
+
+(global-set-key (kbd "C-}") 'my-go-to-char)
+(global-set-key (kbd "C-{") 'my-backward-go-to-char)
 
 
 ;; 类似vim中的寄存器功能，能跳转
