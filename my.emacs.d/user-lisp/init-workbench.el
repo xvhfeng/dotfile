@@ -193,6 +193,10 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (setq ibuffer-use-other-window t)
   (define-key ibuffer-mode-map [remap ibuffer-visit-buffer]
               #'my/ibuffer-visit-buffer-in-origin-window)
+  ;; GUI 下物理 <return> 已与 C-m 解耦；Ibuffer 原本只绑定 RET，需显式
+  ;; 镜像到物理键，才能继续确认并在原编辑窗口打开选中的 Buffer。
+  ;; (define-key ibuffer-mode-map (kbd "<return>")
+              ;; #'my/ibuffer-visit-buffer-in-origin-window)
   (define-key ibuffer-mode-map [remap ibuffer-mouse-visit-buffer]
               #'my/ibuffer-mouse-visit-buffer-in-origin-window))
 

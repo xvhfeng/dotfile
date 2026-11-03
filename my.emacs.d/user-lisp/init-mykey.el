@@ -429,54 +429,48 @@ its own closing tag rather than an inner sibling's closing tag."
 ;;       (search-backward (string char) nil nil )))
 ;;   (setq unread-command-events (list last-input-event)))
 
-(defun my-go-to-char (char &optional arg)
-  "Move forward to CHAR in current line.
-Optional ARG specifies the N-th occurrence (default 1).
-Typing CHAR again will move forward to the next occurrence of CHAR.
-Stays on the last match if no more occurrences exist."
-  (interactive "cGo to char: \np")
+(defun my-forward-char (char)
+  "向前跳到当前行的 CHAR；重复输入 CHAR 继续跳转。
+输入其他键会提示退出；到达最后一个 CHAR 时也会提示并退出。"
+  (interactive "cForward to char: ")
   (let ((case-fold-search nil)
-        (count (or arg 1))
-        (bound (line-end-position))
-        (next-key nil))
-    ;; 首次跳转：向后找到当前行的第 count 个目标字符
-    (when (search-forward (string char) bound t count)
+        (bound (line-end-position)))
+    (if (not (search-forward (string char) bound t))
+        (message "当前行后没有字符 %c" char)
       (backward-char)
-      (setq next-key (read-key))
-      ;; 循环读取后续按键：如果是 char，则尝试继续向后跳；
-      ;; 如果已经到头找不到下一个，则光标保持在原地不动，继续等待下一个按键
-      (while (equal next-key char)
-        (let ((pos (point)))
-          (forward-char)
-          (if (search-forward (string char) bound t 1)
-              (backward-char)
-            (goto-char pos)))
-        (setq next-key (read-key))))))
+      (catch 'done
+        (while t
+          (if (not (equal (read-key) char))
+              (progn (message "已退出向前字符跳转") (throw 'done nil))
+            (let ((position (point)))
+              (forward-char)
+              (if (search-forward (string char) bound t)
+                  (backward-char)
+                (goto-char position)
+                (message "达到最后一个字符,退出跳转")
+                (throw 'done nil)))))))))
 
-(defun my-backward-go-to-char (char &optional arg)
-  "Move backward to CHAR in current line.
-Optional ARG specifies the N-th occurrence (default 1).
-Typing CHAR again will move backward to the next occurrence of CHAR.
-Stays on the last match if no more occurrences exist."
-  (interactive "cGo to char: \np")
+(defun my-backword-char (char)
+  "向后跳到当前行的 CHAR；重复输入 CHAR 继续跳转。
+输入其他键会提示退出；到达最后一个 CHAR 时也会提示并退出。"
+  (interactive "cBackward to char: ")
   (let ((case-fold-search nil)
-        (count (or arg 1))
-        (bound (line-beginning-position))
-        (next-key nil))
-    ;; 首次跳转：向前找到当前行的第 count 个目标字符
-    (when (search-backward (string char) bound t count)
-      (setq next-key (read-key))
-      ;; 循环读取后续按键：如果是 char，则尝试继续向前跳；
-      ;; 如果已经到头找不到上一个，则光标保持在原地不动，继续等待下一个按键
-      (while (equal next-key char)
-        (let ((pos (point)))
-          (if (search-backward (string char) bound t 1)
-              nil
-            (goto-char pos)))
-        (setq next-key (read-key))))))
+        (bound (line-beginning-position)))
+    (if (not (search-backward (string char) bound t))
+        (message "当前行前没有字符 %c" char)
+      (catch 'done
+        (while t
+          (if (not (equal (read-key) char))
+              (progn (message "已退出向后字符跳转") (throw 'done nil))
+            (let ((position (point)))
+              (if (search-backward (string char) bound t)
+                  nil
+                (goto-char position)
+                (message "达到最后一个字符，退出跳转")
+                (throw 'done nil)))))))))
 
-(global-set-key (kbd "C-}") 'my-go-to-char)
-(global-set-key (kbd "C-{") 'my-backward-go-to-char)
+(global-set-key (kbd "C-c ]") #'my-forward-char)
+(global-set-key (kbd "C-c [") #'my-backword-char)
 
 ;; 快速移动行数
 ;; 向下移动指定行数（仅接受正整数）
@@ -556,9 +550,10 @@ that was stored with my-point-to-register."
 (move-to-window-line nil))
 
 ;;C-zh, C-zm, C-zl 类似于vim的H,M,L
-;;(global-set-key (kbd "C-z h") 'cursor-to-top-of-window)
-;; (global-set-key (kbd "C-z m") 'cursor-to-middle-of-window)
-;; (global-set-key (kbd "C-z l") 'cursor-to-bottom-of-window)
+;; 不能直接bind为c-m，在emacs中，c-m是回车
+;; (global-set-key (kbd "C-H") 'cursor-to-top-of-window)
+;; (global-set-key (kbd "C-") 'cursor-to-middle-of-window)
+;; (global-set-key (kbd "C-L") 'cursor-to-bottom-of-window)
 
 ; replace C-u 0 C-l
 (defun line-to-top-of-window ()

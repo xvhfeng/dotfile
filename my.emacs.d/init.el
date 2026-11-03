@@ -36,11 +36,9 @@
   (advice-remove sym fn) ;; 先尝试移除已经存在的 advice
   (advice-add sym where fn)) ;; 重新将 advice 绑定到指定的函数上
 
-
 (eval-when-compile
   (require 'cl-lib))
 
-  
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 2. 编码与区域语言设置 (UTF-8 全局化) ;; 编码模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
@@ -102,7 +100,6 @@
       undo-limit (* 13 160000) ;; 将基础 Undo 撤销历史内存上限提升至约 2MB
       undo-strong-limit (* 13 240000) ;; 将强边界 Undo 撤销内存上限提升至约 3MB
       undo-outer-limit (* 13 24000000)) ;; 将最外层 Undo 撤销内存上限提升至约 300MB
-
 
 ;; 行号设置，当前行为具体行号，上下都是相对行号
 (global-display-line-numbers-mode t)
@@ -201,6 +198,102 @@
 (mapc (lambda (x) (put x 'disabled nil)) ;; 批量解除 Emacs 默认对高阶命令的禁用保护
       '(erase-buffer upcase-region downcase-region dired-find-alternate-file narrow-to-region set-goal-column)) ;; 解禁：清空Buffer、转大写、转小写、Dired替换打开、局部收缩编辑、固定列游标
 
+;;在现在的计算机下，这些都已经具有了物理按键，所有取消keymep的设置，但保留物理按键的意义
+;; (defun my-isolate-control-keys ()
+  ;; "在 GUI 模式下，将物理特殊按键与对应的 C- 组合键在底层解耦，
+   ;; 保留物理按键的原意，并释放 C- 组合键。"
+  ;; (interactive)
+  ;; (when (display-graphic-p)
+;;    定义需要处理的物理按键与对应组合键的映射关系 
+    ;; (let ((key-mappings
+           ;; '(
+              ;; (<return> . "C-m")   ; 回车键 vs Ctrl+M  这个不能删除
+             ;; (<tab>    . "C-i")   ; Tab 键 vs Ctrl+I
+             ;; (<escape> . "C-[")   ; ESC 键 vs Ctrl+[
+             ;; )))
+      ;; (dolist (item key-mappings)
+        ;; (let* ((phys-key (car item))
+               ;; (ctrl-str (cdr item))
+               ;; (phys-vector (vector phys-key)))
+          
+          ;; 1. 切断底层等价映射，让物理按键成为独立事件
+          ;; (define-key input-decode-map phys-vector phys-vector)
+          
+          ;; 2. 恢复物理按键的 Emacs 标准全局语义。局部 keymap（如
+          ;; Vertico、NeoTree、Dired）仍可为 <return>/<tab>/<escape>
+          ;; 提供确认、补全与退出行为；这里不再强制改变这些上下文语义。
+          ;; (define-key function-key-map (kbd "<return>") (kbd "RET"))
+          ;; (define-key function-key-map (kbd "<tab>") (kbd "TAB"))
+          ;; (define-key function-key-map (kbd "<escape>") (kbd "<escape>"))
+          ;; (cond
+          ;;  ((eq phys-key '<return>) (global-set-key (kbd "<return>") #'newline))
+          ;;  ((eq phys-key '<tab>)    (global-set-key (kbd "<tab>")    #'indent-for-tab-command))
+          ;;  ((eq phys-key '<escape>) (global-set-key (kbd "<escape>") #'keyboard-escape-quit)))
+          
+          ;; 3. 将对应的 C- 组合键解除全局绑定（你可以随后给它绑定新功能）
+          ;; (global-unset-key (kbd ctrl-str))
+          
+          ;; (message "已成功解耦物理键 %s 与组合键 %s" phys-key ctrl-str))))))
+
+;; ;; 在配置文件中直接调用此函数
+;; (my-isolate-control-keys)
+
+;; GUI 物理键与其控制等价键分离后，老插件常只在局部 map 中绑定 RET/TAB/ESC
+;; 或 C-m/C-i/C-[。下面的分派器优先调用这些局部语义，再使用标准全局回退。
+(require 'cl-lib)
+(defun my/physical-key--legacy-command (keys fallback)
+  "Return the first active command for legacy KEYS, or FALLBACK.
+The physical-key dispatcher itself is excluded to avoid recursion."
+  (or (cl-loop for map in (current-active-maps t)
+               for command = (lookup-key map keys)
+               when (and (commandp command)
+                         (not (memq command
+                                    '(my/physical-return
+                                      my/physical-tab
+                                      my/physical-escape))))
+               return command)
+      fallback))
+
+(defun my/physical-return ()
+  "Run the active RET/C-m meaning for a physical Return key."
+  (interactive)
+  (call-interactively
+   (my/physical-key--legacy-command (kbd "RET") #'newline)))
+
+(defun my/physical-tab ()
+  "Run the active TAB/C-i meaning for a physical Tab key."
+  (interactive)
+  (call-interactively
+   (my/physical-key--legacy-command (kbd "TAB") #'indent-for-tab-command)))
+
+(defun my/physical-escape ()
+  "Run the active ESC/C-[ meaning for a physical Escape key."
+  (interactive)
+  (call-interactively
+   (my/physical-key--legacy-command (kbd "ESC") #'keyboard-escape-quit)))
+
+(defun my/isolate-control-keys ()
+  "Free global C-m/C-i/C-[ while preserving physical key semantics in GUI."
+  (interactive)
+  (when (display-graphic-p)
+    ;; Keep GUI events distinct from their historical control-character aliases.
+    ;; (define-key input-decode-map [return] [return])
+    (define-key input-decode-map [tab] [tab])
+    (define-key input-decode-map [escape] [escape])
+    ;; (global-unset-key (kbd "C-m"))
+    (global-unset-key (kbd "C-i"))
+    (global-unset-key (kbd "C-["))
+    ;; (global-set-key (kbd "<return>") #'my/physical-return)
+    (global-set-key (kbd "<tab>") #'my/physical-tab)
+    (global-set-key (kbd "<escape>") #'my/physical-escape)))
+
+;; 这3个key还是不解除的好
+;; (my/isolate-control-keys)
+
+;; (global-unset-key (kbd "C-m"))
+;; (global-unset-key (kbd "C-["))
+;; (global-unset-key (kbd "C-i"))
+
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 ;; 6. 网络设置 ;; 网络模块标题
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
@@ -212,7 +305,7 @@
 ;; ---------------------------------------------------------------------------- ;; 模块分隔装饰线
 (defmacro my/setup-straight-and-use-package ()
   "自动化初始化 straight.el：若本地不存在则先自动用 git clone 拉取，再加载。"
-  `(progn
+  `(progn 
      (setq package-enable-at-startup nil)
      (setq straight-vc-git-default-clone-depth 1)
      (setq straight-check-for-modifications nil)
@@ -268,7 +361,6 @@
 (use-package transient
   :straight (:host github :repo "magit/transient")
   :demand t)
-
 
 ;;;; 后续配置需要插件
 ;;;; 下载普通 MELPA 插件（自动从 GitHub 克隆）

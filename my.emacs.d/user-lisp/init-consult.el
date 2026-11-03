@@ -730,6 +730,8 @@ phase, where `consult-customize' is guaranteed to be defined."
 
 (provide 'init-consult)
 
+;; 搜索的时候，上一个C-r，下一个C-s    
+;; M-n  M-p 下一个，上一个历史搜索词
 
 ;; 替换三步法流程：
 ;; 搜索： 执行 M-x consult-ripgrep（或 consult-grep），输入你想查找的文本。
@@ -753,4 +755,4 @@ phase, where `consult-customize' is guaranteed to be defined."
 ;; - 在 Wgrep 中编辑后按 `C-c C-c' 写回文件，按 `C-c C-k' 放弃全部修改。
 ;; - rg 搜索后，在结果 Buffer 使用 `re' / `C-c s e' 进入可编辑模式，编辑完成
 ;;   按 `C-c C-c' 写回文件，按 `C-c C-k' 放弃。`C-c s m' 菜单的 B/P 提供
-;;   当前文件/项目的字面量直接替换，确认后立即写回匹配文件。
+;;   当前文件/项目的字面量直接替换，确认后立即写回匹配文件。  
