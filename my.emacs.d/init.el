@@ -108,6 +108,11 @@
 (global-display-line-numbers-mode t)
 (setq display-line-numbers-type 'visual)
 
+;; 如果 Emacs server 尚未运行，则启动它
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
 ;; Tab 缩进与折行策略 ;; 缩进与折行注释
 (setq-default tab-width 2 ;; 设置所有 Buffer 默认的 Tab 制表符显示宽度为 2 列
               tab-always-indent 'complete ;; 按 TAB 键先尝试缩进，若已正确缩进则触发代码补全
