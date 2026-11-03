@@ -96,8 +96,6 @@ its own closing tag rather than an inner sibling's closing tag."
 
 ;;; 根据自我习惯增加/修改/重置的emacs的keybinding方式
 
-
-
 ;;; 标记与窗口：C-1 仅保留当前窗口，C-2 开始/切换 Region 标记，C-3 关闭当前窗口。
 ;;; 窗口：C-c w f/b/n/p 向右/左/下/上分割并进入；C-M-h/j/k/l
 ;;; 切换窗口；M-S-h/l 加宽/缩窄，M-S-k/j 增高/降低；M-F11 全屏。
@@ -130,7 +128,6 @@ its own closing tag rather than an inner sibling's closing tag."
   ;; (if (use-region-p)
   ;;     (copy-region-as-kill (region-beginning) (region-end))
   ;;   (progn (kill-ring-save (line-beginning-position) (line-beginning-position 2)))))
-
 
 (defun my-copy-dwim ()
   "DWIM 复制函数：
@@ -184,7 +181,6 @@ its own closing tag rather than an inner sibling's closing tag."
           (pulse-momentary-highlight-region beg end))
         (message "Copied %s" type)))))
 
-
 (defun my-copy-region-or-line-end ()
   "DWIM 复制函数：
 1. 有选中区域（Region）时，复制选区内容；
@@ -212,11 +208,6 @@ its own closing tag rather than an inner sibling's closing tag."
         (when (fboundp 'pulse-momentary-highlight-region)
           (pulse-momentary-highlight-region beg end))
         (message "Copied %s" type)))))
-
-
-
-
-
 
 ;; 将当前行与上一行交换，并保持光标随当前行向上移动。
 (defun my-move-line-up ()
@@ -282,7 +273,6 @@ its own closing tag rather than an inner sibling's closing tag."
           (upcase-region (car bounds) (cdr bounds))
         ;; 如果光标不在任何单词上（如空白处），则按原生逻辑转换下一个单词
         (upcase-word 1)))))
-
 
 ;; 2. 整个单词/选区首字母大写
 (defun my-capitalize-dwim ()
@@ -385,7 +375,6 @@ its own closing tag rather than an inner sibling's closing tag."
 (defun my-split-below-and-switch ()  (interactive) (my-split-and-switch 'below))
 (defun my-split-above-and-switch ()  (interactive) (my-split-and-switch 'above))
 
-
 ;; 将文本向上滚动当前窗口高度的一半。
 (defun my-scroll-half-screen-up ()
   "向下滚动半屏（文字向上移动）。"
@@ -413,10 +402,6 @@ its own closing tag rather than an inner sibling's closing tag."
   (save-excursion
     (beginning-of-line)
     (open-line 1)))
-
-
-
-
 
 ;; 类似于vim的f和F，向前/先后定位到当前行的某个char
 ;; (defun my-go-to-char (char)
@@ -493,8 +478,6 @@ Stays on the last match if no more occurrences exist."
 (global-set-key (kbd "C-}") 'my-go-to-char)
 (global-set-key (kbd "C-{") 'my-backward-go-to-char)
 
-
-
 ;; 快速移动行数
 ;; 向下移动指定行数（仅接受正整数）
 (defun my-move-down-lines (n)
@@ -511,6 +494,32 @@ Stays on the last match if no more occurrences exist."
   (if (and (integerp n) (> n 0))
       (forward-line (- n))
     (user-error "请输入大于 0 的正整数")))
+
+(defun my-clean-extra-lines-and-comments ()
+  "清理当前 Buffer（或选中区域）中的多余行：
+1. 仅包含注释符和空白字符的行将被清空为纯空行。
+2. 2个及以上的连续空行将被压缩为1个空行。"
+  (interactive)
+  (save-excursion
+    (save-restriction
+      (let* ((beg (if (use-region-p) (region-beginning) (point-min)))
+             (end (if (use-region-p) (region-end) (point-max)))
+             ;; 获取当前 major-mode 的单行注释符，若未定义则默认使用 "#"
+             (comment-prefix (regexp-quote (or comment-start "#"))))
+        (narrow-to-region beg end)
+
+        ;; 第一步：匹配“仅包含一个或多个注释符以及一个或多个空格/制表符”的行，并将其清空
+        (goto-char (point-min))
+        ;; 正则解析：行首 + 可选空白 + 一个或多个注释符 + 一个或多个空白 + 行尾
+        (let ((comment-regex (concat "^[ \t]*" comment-prefix "+" "[ \t]*$")))
+          (while (re-search-forward comment-regex nil t)
+            (replace-match "")))
+
+        ;; 第二步：将 2 个或更多连续的空行（允许行内含有空白字符）压缩为 1 个空行
+        (goto-char (point-min))
+        (while (re-search-forward "\n[ \t]*\n[ \t]*\n+" nil t)
+          (replace-match "\n\n"))))
+  (message "多余行及空注释清理完毕！")))
 
 ;; 类似vim中的寄存器功能，能跳转
 (defun my-point-to-register()
@@ -533,8 +542,6 @@ that was stored with my-point-to-register."
 ;;(global-set-key "\C-z." 'my-point-to-register)
 ;;(global-set-key "\C-z," 'my-jump-to-register)
 
-
-
 (defun cursor-to-top-of-window()
 "Move cursor to top of window."
 (interactive)
@@ -552,7 +559,6 @@ that was stored with my-point-to-register."
 ;;(global-set-key (kbd "C-z h") 'cursor-to-top-of-window)
 ;; (global-set-key (kbd "C-z m") 'cursor-to-middle-of-window)
 ;; (global-set-key (kbd "C-z l") 'cursor-to-bottom-of-window)
-
 
 ; replace C-u 0 C-l
 (defun line-to-top-of-window ()
@@ -573,17 +579,112 @@ that was stored with my-point-to-register."
 ;; (global-set-key (kbd "C-z b") 'line-to-bottom-of-window)
 ;; (global-set-key (kbd "C-z z") 'line-to-center-of-window)
 
-
 ;; vim中的%匹配命令
+;; 对所有的成对的符号都支持: (),[],{},<>."",'',``
+(require 'cl-lib)
+
 (defun match-paren (arg)
-"Go to the matching parenthesis if on parenthesis otherwise insert %."
-(interactive "p")
-(cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
- ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
- (t (self-insert-command (or arg 1)))))
+  "在成对符号之间跳转；光标不在符号上时插入 ARG 个 %。"
+  (interactive "p")
+  (let* ((origin (point))
+         (char (char-after))
+         (pairs '((?\( . ?\)) (?\[ . ?\]) (?\{ . ?\}) (?< . ?>)))
+         (opening (assoc char pairs))
+         (closing (rassoc char pairs))
+         (quote-p (memq char '(?\" ?\' ?\`)))
+         target)
+    (cl-labels
+        ((escaped-p (pos)
+           (save-excursion
+             (goto-char pos)
+             (let ((n 0))
+               (while (eq (char-before) ?\\)
+                 (setq n (1+ n))
+                 (backward-char))
+               (cl-oddp n))))
+         (valid-p (pos)
+           (let ((state (syntax-ppss pos)))
+             (and (not (escaped-p pos))
+                  (not (nth 4 state))
+                  (or (not (nth 3 state))
+                      (and quote-p
+                           (eq (char-syntax char) ?\")
+                           (eq (nth 3 state) char)))))))
+      (when (and char (or opening closing quote-p)
+                 (valid-p origin)
+                 (not (and quote-p (eq (char-syntax char) ?\'))))
+        (condition-case nil
+            (cond
+             ((and opening (eq (char-syntax char) ?\())
+              (setq target (1- (scan-sexps origin 1))))
+             ((and closing (eq (char-syntax char) ?\)))
+              (setq target (scan-sexps (1+ origin) -1)))
+             ((and quote-p (eq (char-syntax char) ?\"))
+              (setq target
+                    (if (nth 3 (syntax-ppss origin))
+                        (scan-sexps (1+ origin) -1)
+                      (1- (scan-sexps origin 1))))))
+          (scan-error nil))
+
+        (unless (and target
+                     (eq (char-after target)
+                         (cond (opening (cdr opening))
+                               (closing (car closing))
+                               (t char))))
+          (setq target nil))
+
+        (when (and (not target) (or opening closing))
+          (let* ((left (if opening char (car closing)))
+                 (right (if closing char (cdr opening)))
+                 (direction (if opening 1 -1))
+                 (depth 1)
+                 (pos (+ origin direction)))
+            (while (and (> depth 0)
+                        (<= (point-min) pos)
+                        (< pos (point-max)))
+              (let ((c (char-after pos)))
+                (when (and (or (eq c left) (eq c right))
+                           (save-excursion
+                             (goto-char pos)
+                             (let ((state (syntax-ppss pos)))
+                               (and (not (nth 3 state))
+                                    (not (nth 4 state))
+                                    (not (escaped-p pos))))))
+                  (setq depth (+ depth (if (eq c char) 1 -1)))
+                  (when (= depth 0)
+                    (setq target pos))))
+              (setq pos (+ pos direction)))))
+
+        (when (and (not target) quote-p)
+          (let ((count 0)
+                (needle (char-to-string char)))
+            (save-excursion
+              (goto-char (point-min))
+              (while (search-forward needle origin t)
+                (let ((pos (1- (point))))
+                  (unless (or (escaped-p pos)
+                              (nth 4 (save-excursion (syntax-ppss pos))))
+                    (setq count (1+ count))))))
+            (let ((direction (if (cl-evenp count) 1 -1)))
+              (save-excursion
+                (goto-char (if (> direction 0) (1+ origin) origin))
+                (while (and (not target)
+                            (if (> direction 0)
+                                (search-forward needle nil t)
+                              (search-backward needle nil t)))
+                  (let ((pos (if (> direction 0)
+                                 (1- (point))
+                               (point))))
+                    (unless (or (escaped-p pos)
+                                (nth 4 (save-excursion (syntax-ppss pos))))
+                      (setq target pos)))))))))
+    (if target
+        (goto-char target)
+      ;; (insert (make-string (max 0 (or arg 1)) ?%))
+))))
+
 
 ;; (global-set-key "%" 'match-paren)
-
 
 (defun my/format-defun-spacing-buffer ()
   "格式化整个 Buffer：确保所有顶级函数/方法之间恰好只有 1 个空行。
@@ -625,12 +726,6 @@ that was stored with my-point-to-register."
         (replace-match ""))))
   (message "已成功将所有函数间距格式化为标准单空行！"))
 
-
-
-
-
-
-
 ;;; --- 自定义 Toggle Mark 函数 ---
 
 (defun my/toggle-mark-command ()
@@ -647,8 +742,6 @@ that was stored with my-point-to-register."
 (keymap-global-set "M-2" #'my/toggle-mark-command)
 ;; 关闭自身 window 改至 M-1，避免与新的 Region 标记入口冲突。
 (keymap-global-set "M-1" #'delete-window)
-
-
 
 ;; 绑定快捷键（可以根据个人习惯修改）
 
@@ -699,7 +792,8 @@ that was stored with my-point-to-register."
 (keymap-global-set "M-c" #'my-capitalize-dwim)
 ;;(keymap-global-set "C-x C-k" #'my-kill-with-save-and-delete-split-window)
 (keymap-global-set "C-!" #'my-replace-dwim)
-(keymap-global-set "C-]" #'match-paren)
+(keymap-global-set "C-5" #'match-paren)
+
 ;;============= *  更改 EMACS 自身的某些设置 *=====================
 ;; 保留 Emacs 原生 ESC/Meta 前缀语义；取消当前操作统一使用 C-g。
 ;; 把 c-k 设置为不管什么位姿都删除当前行
@@ -723,11 +817,17 @@ that was stored with my-point-to-register."
    "C-2" '("向下移动指定行数" . my-move-down-lines)
    "M-g u" '("向上移动指定行数" . my-move-up-lines)
    "M-g d" '("向下移动指定行数" . my-move-down-lines)
+   "C-]" '("清理空行与空注释" . my-clean-extra-lines-and-comments)
    "M-2" '("切换标记" . my/toggle-mark-command)
    "C-3" '("关闭当前窗口" . delete-window))
   (my-leader-def
+    "e c" '("清理空行与空注释" . my-clean-extra-lines-and-comments)
     "t %" '("匹配成对符号或标签" . my/match-pair)))
 
+(with-eval-after-load 'which-key
+  ;; 编辑分组与原有 C-] 快捷键使用相同的中文名称。
+  (which-key-add-keymap-based-replacements
+   my-leader-map "e c" "清理空行与空注释"))
 
 ;;(keymap-global-set "C-!" #'my-replace)
 (keymap-global-set "C-c C-r" #'my-switch-to-project-root)
