@@ -34,8 +34,11 @@
   :defer t
   :general
   ("C-:" '("按字符快速跳转" . avy-goto-char-timer))
-  ;; M-g 的原生 c/g/i/n/p 保持不动；d/u 由 init-mykey 注册，Avy 使用 l/w。
+  ;; M-g c 直接按字符跳转；原生数字位置跳转移到 C，避免菜单名称与行为不符。
+  ;; g/i/n/p 保持原生功能，d/u 由 init-mykey 注册，Avy 继续使用 l/w。
   ("M-g f" nil)
+  ("M-g c" '("跳转到指定字符" . avy-goto-char))
+  ("M-g C" '("跳转到数字字符位置" . goto-char))
   ("M-g l" '("跳转到可见行" . avy-goto-line))
   ("M-g w" '("跳转到可见单词" . avy-goto-word-1))
   :config
@@ -251,7 +254,8 @@
   (which-key-add-key-based-replacements "M-g" "跳转")
   (which-key-add-keymap-based-replacements
    goto-map
-   "c" "跳转到字符位置"
+   "c" "跳转到指定字符"
+   "C" "跳转到数字字符位置"
    "d" "向下移动指定行数"
    "g" "跳转到指定行"
    "i" "跳转到符号索引"
@@ -268,7 +272,7 @@
 ;; ---------------------------------------------------------------------------
 ;; - `C-z' → `j' 菜单中的每个项目都会显示 Dispatch Transient；直接按标签跳转，或先按 x/k/w/y/t/z/I/H 再按标签执行动作。
 ;; - `C-:' 或 `C-c j j' 输入字符后跳到屏幕目标；`C-c j c/l/w/s' 按字符/行/词/符号跳转。
-;; - `M-g d/u' 按指定行数下移/上移，`M-g l/w' 跳可见行/单词；原生 `M-g c/g/i/n/p' 保持原功能。
+;; - `M-g c' 按字符跳转，`M-g C' 跳数字字符位置；`M-g d/u' 按行数移动，`M-g l/w' 跳可见行/单词。
 ;; - `C-c j y' 远程复制目标文本；`C-c j L' 跳转并选中目标行。
 ;; - `M-x my/avy-menu' 打开对应的 Transient 菜单；个人工作台的“Avy 跳转”也会进入此菜单。
 ;; - 出现 Avy 标签时可先按 x/k/w/y/t/z，再选标签，执行剪切、删除、复制、粘贴、移动或删除区间。
