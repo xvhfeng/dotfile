@@ -33,9 +33,11 @@
   :straight t
   :defer t
   :general
-  ("C-:" '("jump by chars" . avy-goto-char-timer))
-  ("M-g f" '("jump to visible line" . avy-goto-line))
-  ("M-g w" '("jump to visible word" . avy-goto-word-1))
+  ("C-:" '("按字符快速跳转" . avy-goto-char-timer))
+  ;; M-g 的原生 c/g/i/n/p 保持不动；d/u 由 init-mykey 注册，Avy 使用 l/w。
+  ("M-g f" nil)
+  ("M-g l" '("跳转到可见行" . avy-goto-line))
+  ("M-g w" '("跳转到可见单词" . avy-goto-word-1))
   :config
   ;; ============================================================================
   ;; 1. 核心体验与键位设置
@@ -243,6 +245,22 @@
     "jy"  '("远程复制区域" . my/avy-copy-region)
     "jL"  '("选择行" . my/avy-select-line)))
 
+(with-eval-after-load 'which-key
+  ;; M-g 保留原生 keymap，只统一中文说明；单字母顺序由 Which-Key 按键排序。
+  ;; 前缀仅改显示名称，避免把 global-map 的 M-g 与原生 goto-map 拆成两份。
+  (which-key-add-key-based-replacements "M-g" "跳转")
+  (which-key-add-keymap-based-replacements
+   goto-map
+   "c" "跳转到字符位置"
+   "d" "向下移动指定行数"
+   "g" "跳转到指定行"
+   "i" "跳转到符号索引"
+   "l" "跳转到可见行"
+   "n" "下一处错误"
+   "p" "上一处错误"
+   "u" "向上移动指定行数"
+   "w" "跳转到可见单词"))
+
 (provide 'init-avy)
 
 ;; ---------------------------------------------------------------------------
@@ -250,7 +268,7 @@
 ;; ---------------------------------------------------------------------------
 ;; - `C-z' → `j' 菜单中的每个项目都会显示 Dispatch Transient；直接按标签跳转，或先按 x/k/w/y/t/z/I/H 再按标签执行动作。
 ;; - `C-:' 或 `C-c j j' 输入字符后跳到屏幕目标；`C-c j c/l/w/s' 按字符/行/词/符号跳转。
-;; - 兼容键 `M-g f/M-g w' 分别跳到可见行和可见单词。
+;; - `M-g d/u' 按指定行数下移/上移，`M-g l/w' 跳可见行/单词；原生 `M-g c/g/i/n/p' 保持原功能。
 ;; - `C-c j y' 远程复制目标文本；`C-c j L' 跳转并选中目标行。
 ;; - `M-x my/avy-menu' 打开对应的 Transient 菜单；个人工作台的“Avy 跳转”也会进入此菜单。
 ;; - 出现 Avy 标签时可先按 x/k/w/y/t/z，再选标签，执行剪切、删除、复制、粘贴、移动或删除区间。

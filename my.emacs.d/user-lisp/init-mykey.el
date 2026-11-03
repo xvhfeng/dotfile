@@ -494,6 +494,24 @@ Stays on the last match if no more occurrences exist."
 (global-set-key (kbd "C-{") 'my-backward-go-to-char)
 
 
+
+;; 快速移动行数
+;; 向下移动指定行数（仅接受正整数）
+(defun my-move-down-lines (n)
+  "Move cursor down by N lines. N must be a positive integer."
+  (interactive "n向下移动行数: ")
+  (if (and (integerp n) (> n 0))
+      (forward-line n)
+    (user-error "请输入大于 0 的正整数")))
+
+;; 向上移动指定行数（仅接受正整数）
+(defun my-move-up-lines (n)
+  "Move cursor up by N lines. N must be a positive integer."
+  (interactive "n向上移动行数: ")
+  (if (and (integerp n) (> n 0))
+      (forward-line (- n))
+    (user-error "请输入大于 0 的正整数")))
+
 ;; 类似vim中的寄存器功能，能跳转
 (defun my-point-to-register()
   "Store cursor position to a register.
@@ -700,7 +718,12 @@ that was stored with my-point-to-register."
    "M-n" '("复制选区或至行首" . my-copy-region-or-line-begin)
    "M-m" '("复制选区或至行尾" . my-copy-region-or-line-end)
    "M-w" '("复制选区" . kill-ring-save)
-   "C-2" '("切换标记" . my/toggle-mark-command)
+   ;; 行数移动统一交给 General，确保 Which-Key 与 M-g 显示中文说明。
+   "C-1" '("向上移动指定行数" . my-move-up-lines)
+   "C-2" '("向下移动指定行数" . my-move-down-lines)
+   "M-g u" '("向上移动指定行数" . my-move-up-lines)
+   "M-g d" '("向下移动指定行数" . my-move-down-lines)
+   "M-2" '("切换标记" . my/toggle-mark-command)
    "C-3" '("关闭当前窗口" . delete-window))
   (my-leader-def
     "t %" '("匹配成对符号或标签" . my/match-pair)))

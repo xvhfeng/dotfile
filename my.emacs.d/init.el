@@ -103,6 +103,11 @@
       undo-strong-limit (* 13 240000) ;; 将强边界 Undo 撤销内存上限提升至约 3MB
       undo-outer-limit (* 13 24000000)) ;; 将最外层 Undo 撤销内存上限提升至约 300MB
 
+
+;; 行号设置，当前行为具体行号，上下都是相对行号
+(global-display-line-numbers-mode t)
+(setq display-line-numbers-type 'visual)
+
 ;; Tab 缩进与折行策略 ;; 缩进与折行注释
 (setq-default tab-width 2 ;; 设置所有 Buffer 默认的 Tab 制表符显示宽度为 2 列
               tab-always-indent 'complete ;; 按 TAB 键先尝试缩进，若已正确缩进则触发代码补全
