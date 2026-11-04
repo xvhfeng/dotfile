@@ -489,6 +489,39 @@ its own closing tag rather than an inner sibling's closing tag."
       (forward-line (- n))
     (user-error "请输入大于 0 的正整数")))
 
+(defun my-read-choose-lines ()
+  "读取行数；空输入时返回默认值 1。"
+  (let ((input (read-string "choose lines: ")))
+    (cond
+     ((string-empty-p input) 1)
+     ((string-match-p "\\`[1-9][0-9]*\\'" input)
+      (string-to-number input))
+     (t (user-error "请输入正整数")))))
+
+(defun my-choose-up-lines (&optional lines)
+  "从当前行行尾开始，向上选择 LINES 行。
+LINES 默认为 1，可在提示中输入正整数指定。"
+  (interactive (list (my-read-choose-lines)))
+  (let ((lines (or lines 1)))
+    (unless (> lines 0)
+      (user-error "请输入大于 0 的行数"))
+    (end-of-line)
+    (push-mark (point) t t)
+    (forward-line (- lines))
+    (activate-mark)))
+
+(defun my-choose-down-lines (&optional lines)
+  "从当前行行首开始，向下选择 LINES 行。
+LINES 默认为 1，可在提示中输入正整数指定。"
+  (interactive (list (my-read-choose-lines)))
+  (let ((lines (or lines 1)))
+    (unless (> lines 0)
+      (user-error "请输入大于 0 的行数"))
+    (beginning-of-line)
+    (push-mark (point) t t)
+    (forward-line lines)
+    (activate-mark)))
+
 (defun my-clean-extra-lines-and-comments ()
   "清理当前 Buffer（或选中区域）中的多余行：
 1. 仅包含注释符和空白字符的行将被清空为纯空行。
@@ -812,6 +845,8 @@ that was stored with my-point-to-register."
    "C-2" '("向下移动指定行数" . my-move-down-lines)
    "M-g u" '("向上移动指定行数" . my-move-up-lines)
    "M-g d" '("向下移动指定行数" . my-move-down-lines)
+   "M-g U" '("向上选择指定行" . my-choose-up-lines)
+   "M-g D" '("向下选择指定行" . my-choose-down-lines)
    "C-]" '("清理空行与空注释" . my-clean-extra-lines-and-comments)
    "M-2" '("切换标记" . my/toggle-mark-command)
    "C-3" '("关闭当前窗口" . delete-window))

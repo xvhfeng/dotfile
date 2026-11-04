@@ -401,6 +401,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("c" "编译" compile)]
    ["   编辑与跳转"
     ("s" "选择整个文件" my/select-whole-buffer)
+    ("U" "向上选择行" my-choose-up-lines)
+    ("D" "向下选择行" my-choose-down-lines)
     ("T" "清理空行与空注释" my-clean-extra-lines-and-comments)
     ("j" "Avy 跳转菜单" my/avy-menu)
     ("e" "批量编辑符号" my/workbench-edit-occurrences)

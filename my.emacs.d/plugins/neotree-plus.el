@@ -1,49 +1,29 @@
+;;; -*- lexical-binding: t -*-
+
+;;; neotree.el --- 类似于 Vim 中 NerdTree 的 Emacs 侧边栏文件树插件
+;;; 版权所有 (C) 2014 jaypei
+;;; 作者: jaypei jaypei97159@gmail.com
+;;; 网址: https://github.com/jaypei/emacs-neotree
+;;; 版本: 0.6.0
+;;; 依赖包: ((cl-lib "0.5"))
+;;; 本程序为自由软件；您可以根据自由软件基金会发布的 GNU 通用公共许可证（第3版
+;;; 或更高版本）的条款重新分发和/或修改它。
+;;; 简要说明 (Commentary):
+;;; 要使用此文件，请将类似以下的代码放入您的 ~/.emacs 配置中：
+;;; (add-to-list 'load-path "/放置/neotree/的路径/")
+;;; (require 'neotree)
+;;; 输入 M-x neotree 即可启动。
 
 
-; -*- lexical-binding: t -*-
-
-; Copyright (C) 2026  xvhfeng
-
-; Author: xvhfeng <xvhfeng@xvhfengdeMacBook-Air.local>
-
-; Keywords: lisp
-
-; neotree.el --- 类似于 Vim 中 NerdTree 的 Emacs 侧边栏文件树插件
-
-; 版权所有 (C) 2014 jaypei
-
-; 作者: jaypei jaypei97159@gmail.com
-
-; 网址: https://github.com/jaypei/emacs-neotree
-
-; 版本: 0.6.0
-
-; 依赖包: ((cl-lib "0.5"))
-
-; 本程序为自由软件；您可以根据自由软件基金会发布的 GNU 通用公共许可证（第3版
-
-; 或更高版本）的条款重新分发和/或修改它。
-
-; 简要说明 (Commentary):
-
-; 要使用此文件，请将类似以下的代码放入您的 ~/.emacs 配置中：
-
-; (add-to-list 'load-path "/放置/neotree/的路径/")
-
-; (require 'neotree)
-
-; 输入 M-x neotree 即可启动。
-
-; 代码实现 (Code):
+;;; Copyright (C) 2026  spk xu
 
 ; 引入 Common Lisp 扩展库
 (require 'cl-lib)
 
-; 常量定义 (Constants)
+;;; 常量定义 (Constants)
 
 ; 定义 NeoTree 侧边栏 Buffer 的名称
 (defconst neo-buffer-name " NeoTree"
-
   "NeoTree 用于显示目录内容的 Buffer 名称。")
 
 ; 获取当前插件所在的路径
