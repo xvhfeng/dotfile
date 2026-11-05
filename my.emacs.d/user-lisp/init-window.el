@@ -10,6 +10,9 @@
   :straight (:host github
              :repo "emacsorphanage/zoom-window"
              :commit "6b3aa468c0523c6b30a658f63537a2ecfeece1de")
+  :custom
+  ;; Tokyo Night Moon 的低饱和蓝灰，提示 Zoom 状态但不抢占内容视觉焦点。
+  (zoom-window-mode-line-color "#3b4261")
   :commands zoom-window-zoom)
 
 ;; ============================================================================
