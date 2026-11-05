@@ -380,6 +380,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
    ["   项目与版本控制"
     ("P" "切换项目" project-switch-project)
     ("g" "Git 状态" magit-status)
+    ("B" "Magit 项目面板" magit-board-open)
     ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
     ("D" "Diffnav 改动浏览" diffnav-emacs-menu)
     ("m" "合并冲突" my/smerge-menu)
