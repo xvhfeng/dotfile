@@ -158,6 +158,13 @@
 ;; 作用：开启最近打开文件记录（Recentf）模式。
 ;; 影响：Emacs 会在后台持续追踪并保存你打开过的文件列表。
 
+(defun my/recentf-cleanup-silently (original &rest arguments)
+  "运行 Recentf 清理，但不在 echo area 显示周期性完成提示。"
+  (let ((inhibit-message t))
+    (apply original arguments)))
+
+(advice-add #'recentf-cleanup :around #'my/recentf-cleanup-silently)
+
 (setq recentf-max-saved-items 100)
 ;; 作用：将最近文件列表中保留的最大条目数提升至 100 项。
 ;; 影响：可以让你通过 `recentf-open-files` 快速回溯并打开更久之前访问过的历史文件。
