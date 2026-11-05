@@ -413,6 +413,7 @@ The physical-key dispatcher itself is excluded to avoid recursion."
     ;; 新建代码文件时按扩展名自动插入本地 template/ 示例模板。
     init-template
     init-magit
+    init-magit-delta
     init-magit-board
     ;; 本地 diffnav-emacs 插件提供终端式 Git diff 浏览与操作入口。
     init-diffnav
