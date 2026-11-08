@@ -422,6 +422,7 @@ The physical-key dispatcher itself is excluded to avoid recursion."
     init-smerge
     init-vundo
     init-mykey
+    init-evil-matchit
     ;; Pinky 单键导航由 C-z 进入，并显示被动键位表。
     init-pinky
     ;; 使用 Emacs 内置像素插值平滑指定的键盘翻页按键。

@@ -423,7 +423,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 
 (transient-define-prefix my/code-workbench-menu ()
   "打开代码工作台：集中项目、版本控制、代码与诊断操作。"
-  :column-widths '(22 22 22 22)
+  :column-widths '(22 22 22 22 22)
   [["   项目与版本控制"
     ("p" "切换项目" project-switch-project)
     ("g" "Git 状态" magit-status)
@@ -445,6 +445,11 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("l" "切换 Imenu List 侧栏" my/workbench-imenu-list-toggle)
     ("n" "跳转与文档" my/workbench-navigation-menu)
     ("z" "代码折叠" my/workbench-fold-menu)]
+   ["   代码块"
+    ("j" "匹配跳转" evilmi-jump-items-native)
+    ("v" "选中文本块" evilmi-select-items)
+    ("k" "删除文本块" evilmi-delete-items)
+    ("h" "高亮当前文本项" evilmi-highlight-items)]
    ["   诊断"
     ("x" "当前诊断" flymake-show-buffer-diagnostics)
     ("y" "搜索诊断" my/workbench-project-diagnostics)
