@@ -398,6 +398,7 @@ The physical-key dispatcher itself is excluded to avoid recursion."
     ;; 主题在基础设置后立即加载，后续界面和插件继承统一颜色。
     init-theme
     init-keybindings
+    init-transient-lifecycle
     ;; init-input-method
     ;; bm 可视书签在工作台加载前注册，列表与跳转命令可直接使用。
     init-bm

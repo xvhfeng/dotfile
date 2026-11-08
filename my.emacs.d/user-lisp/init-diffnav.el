@@ -3,6 +3,8 @@
 ;; 中文说明：此模块使用 use-package 引入仓库内的 diffnav-emacs 插件；插件
 ;; 只在用户主动启动时检查外部可执行文件，不改变 Magit、Diff Mode 或 Git 配置。
 
+(require 'init-transient-lifecycle)
+
 (use-package diffnav-emacs
   ;; 中文说明：use-package 会将相对路径按 user-emacs-directory 展开；使用
   ;; 字符串而非表达式，保证冷启动和字节编译时都能正确加入 load-path。

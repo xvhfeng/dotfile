@@ -267,14 +267,13 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 
 ;; 中文说明：Treemacs 仅负责稳定显示项目文件树；当前安装版本的“标签自动跟随”
 ;; 无法处理 Eglot Document Symbol 的整数位置，会在 C/clangd 中报 markerp 错误。
-;; 代码大纲改由专门的 Imenu List 展示，避免让文件树功能影响 LSP 编辑。
-(defun my/treemacs-show-current-file-outline ()
-  "打开当前文件的 Imenu/LSP 代码大纲，不启用不兼容的 Treemacs 标签跟随。"
+;; Imenu List 使用独立入口展示代码大纲，避免让文件树功能影响 LSP 编辑。
+(defun my/imenu-list-toggle ()
+  "按需加载并切换当前文件的 Imenu List 侧栏。"
   (interactive)
   (if (require 'imenu-list nil t)
       (imenu-list-smart-toggle)
-    ;; Imenu List 缺失时仍可使用 Emacs 内置 Imenu，不阻断代码跳转。
-    (call-interactively #'imenu)))
+    (user-error "Imenu List 尚未安装或加载")))
 
 (with-eval-after-load 'treemacs
   ;; 中文说明：关闭 Treemacs 的标签自动跟随。该第三方实现把 Eglot 返回的整数
@@ -374,11 +373,11 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
               :around #'my/treemacs-allow-delete-last-project))
 
 ;; 中文说明：lsp-treemacs 依赖 lsp-mode，与当前 Eglot 客户端不兼容；
-;; C-c o s 改用稳定的 Imenu List 代码大纲，兼容 LSP、Tree-sitter 与普通 major mode。
+;; C-c o t 提供稳定的 Imenu List 代码大纲，兼容 LSP、Tree-sitter 与普通 major mode。
 (with-eval-after-load 'general
   (my-leader-def
     "d t" '("切换 Treemacs 文件树" . treemacs)
-    "o s" '("显示当前文件大纲" . my/treemacs-show-current-file-outline)))
+    "o t" '("切换大纲侧栏" . my/imenu-list-toggle)))
 
 (use-package zoutline
   :straight (:host github :repo "abo-abo/zoutline")
@@ -416,7 +415,7 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
     ;; 代码大纲与导航 (Outline / Imenu)
     "oi"  '("跳转到当前文件符号" . consult-imenu)
     "oI"  '("跳转到全部缓冲区符号" . consult-imenu-multi)
-    "ot"  '("切换大纲侧栏" . imenu-list-smart-toggle)))
+    "ot"  '("切换大纲侧栏" . my/imenu-list-toggle)))
 
 (provide 'init-lsp)
 

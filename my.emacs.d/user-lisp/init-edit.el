@@ -144,7 +144,11 @@
              :repo "leoliu/easy-kill"
              :commit "98cbae5d8c378ad14d612d7c88a78484c49a80b8")
   :commands (easy-kill easy-mark easy-dup easy-dup-before easy-kill-help
-                       easy-kill-abort))
+                       easy-kill-abort easy-kill-region))
+
+;; Transient 在展示菜单前会校验每个后缀；即使 Easy Kill 尚未加载，也必须
+;; 让剪切候选命令作为可交互 autoload 可见。
+(autoload 'easy-kill-region "easy-kill" nil t)
 
 (defun easy-kill-on-word (n)
   "选择单词；当前位置没有单词时选择一个字符，兼容空格和符号。
@@ -234,12 +238,14 @@ N 保持 Easy Kill 的对象选择接口。"
 ;; 让 Easy Kill 的临时 keymap 在复制后销毁候选并运行退出钩子。
 (put 'my/easy-kill-copy-and-quit 'easy-kill-exit t)
 
+(require 'init-transient-lifecycle)
+
 (defun my/easy-kill-toggle ()
   "用 M-3 打开或关闭 Easy Kill 菜单。"
   (interactive)
-  (if (transient-active-prefix)
-      (my/easy-kill-cancel)
-    (my/easy-kill-menu)))
+  (if (transient-active-prefix '(my/easy-kill-menu))
+      (my/transient-force-close :easy-kill-toggle)
+    (my/transient-open #'my/easy-kill-menu)))
 
 (defun my/easy-kill-cancel ()
   "无条件退出 Easy Kill、Transient 与普通 Emacs 标记状态。"
@@ -248,7 +254,7 @@ N 保持 Easy Kill 的对象选择接口。"
     (easy-kill-abort))
   (deactivate-mark)
   (when (transient-active-prefix)
-    (transient-quit-all)))
+    (my/transient-force-close :easy-kill-cancel)))
 
 (defun my/easy-mark-start ()
   "进入统一的 Easy Mark 状态。"

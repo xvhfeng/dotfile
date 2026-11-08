@@ -5,6 +5,7 @@
 
 (require 'smerge-mode)
 (require 'transient)
+(require 'init-transient-lifecycle)
 
 ;; 中文说明：快捷键定义器由较早加载的 init-keybindings 提供；声明它可避免
 ;; 字节编译时把正常的跨模块调用误报为未定义函数。

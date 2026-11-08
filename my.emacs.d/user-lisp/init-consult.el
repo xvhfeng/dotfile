@@ -3,6 +3,7 @@
 ;; 中文说明：rg 的自定义搜索参数使用 Transient 展示；仅加载其菜单框架，实际
 ;; ripgrep 搜索仍保持按需启动。
 (require 'transient)
+(require 'init-transient-lifecycle)
 
 ;; M-s 改为本配置的四列搜索菜单；移除 Emacs 原生 search-map 的 hi-lock 前缀，
 ;; 避免高亮匹配功能继续出现在搜索入口中。
@@ -513,10 +514,15 @@ phase, where `consult-customize' is guaranteed to be defined."
   "切换当前 Consult 导出结果 Buffer 的操作菜单。"
   (interactive)
   (if (transient-active-prefix '(my/consult-exported-results-menu))
-      (transient-quit-all)
+      (my/transient-force-close :consult-export-toggle)
     (unless (my/consult-exported-results-buffer-p)
       (user-error "此菜单仅用于 Embark 导出或 Collect 结果 Buffer"))
-    (my/consult-exported-results-menu)))
+    (my/transient-open #'my/consult-exported-results-menu)))
+
+(defun my/m-s-search-menu-open ()
+  "Open the search menu after closing another managed root menu."
+  (interactive)
+  (my/transient-open #'my/m-s-search-menu))
 
 (with-eval-after-load 'embark
   ;; Embark Export 的文件结果是 Dired、Buffer 结果是 Ibuffer，Consult 搜索
@@ -658,7 +664,7 @@ phase, where `consult-customize' is guaranteed to be defined."
 (with-eval-after-load 'general
   (general-define-key
    "C-c p s" '("项目搜索" . consult-ripgrep)
-   "M-s" '("搜索与替换" . my/m-s-search-menu)
+   "M-s" '("搜索与替换" . my/m-s-search-menu-open)
    "C-c ! l" '("诊断列表" . consult-flymake)))
 
 ;; isearch 自带 M-% / C-M-% 本来分别进入普通/正则逐一替换；仅在 isearch

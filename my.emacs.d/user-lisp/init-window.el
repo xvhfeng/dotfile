@@ -2,6 +2,7 @@
 
 (require 'windmove)
 (require 'transient)
+(require 'init-transient-lifecycle)
 
 ;; 中文说明：Zoom Window 将当前窗口临时最大化，再次调用会精确恢复调用前的
 ;; 完整窗口布局，适合需要专注查看 Consult 打开结果后快速回到原布局的场景。
@@ -207,7 +208,12 @@
 
 ;; 中文说明：C-w 只负责打开上方 Transient，不经过 General；C-c w 的同一批
 ;; 命令仍由 `my-window-map' 提供 Which-Key 可发现的直接键位。
-(keymap-global-set "C-w" #'my/window-menu)
+(defun my/window-menu-open ()
+  "Open the window menu after closing another managed root menu."
+  (interactive)
+  (my/transient-open #'my/window-menu))
+
+(keymap-global-set "C-w" #'my/window-menu-open)
 
 (with-eval-after-load 'general
   (my-window-def

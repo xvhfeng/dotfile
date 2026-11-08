@@ -4,6 +4,7 @@
 ;; 记忆大量按键的使用方式。所有菜单项仍然调用现有模块提供的原始命令。
 
 (require 'transient)
+(require 'init-transient-lifecycle)
 (eval-when-compile
   ;; 让 `transient-define-prefix' 在受管字节编译期作为宏展开，避免菜单
   ;; 后缀命令被错误地当作变量求值。
@@ -40,10 +41,68 @@
     (window-height . 0.38))
   "个人工作台专用的宽阔底部 Transient 面板显示规则。")
 
+(defconst my/transient-menu-help-entries
+  '(("C-d"   "个人工作台"             "my/workbench-menu"                    "全局开关")
+    ("M-c"   "代码工作台"             "my/code-workbench-menu"               "全局开关")
+    ("C-w"   "窗口菜单"               "my/window-menu"                       "全局")
+    ("M-3"   "Easy Kill 菜单"          "my/easy-kill-menu"                    "全局开关")
+    ("M-s"   "搜索与替换菜单"         "my/m-s-search-menu"                   "全局")
+    ("C-t"   "Consult 导出结果菜单"   "my/consult-exported-results-menu"     "仅 Export/Collect 结果")
+    ("C-c s m" "rg 搜索/替换菜单"     "my/rg-search-menu"                    "搜索前缀")
+    ("C-c s a" "Anzu 替换菜单"        "my/anzu-menu"                         "搜索前缀")
+    ("C-c c m" "合并冲突菜单"         "my/smerge-menu"                       "代码前缀")
+    ("C-c g n" "Diffnav 操作菜单"     "diffnav-emacs-menu"                   "Git 前缀")
+    ("C-c g b" "Diffnav 提交比较"     "diffnav-emacs-revision-menu"          "Git 前缀")
+    ("C-c g F" "Diffnav 当前文件菜单" "diffnav-emacs-current-file-menu"      "Git 前缀")
+    ("C-d j" "Avy 跳转菜单"           "my/avy-transient-menu"                "个人工作台")
+    ("C-d =" "Easy Kill 菜单"         "my/easy-kill-menu"                    "个人工作台")
+    ("C-d -" "可视书签菜单"           "my/workbench-bm-menu"                 "个人工作台")
+    ("C-d p" "View Mode 菜单"         "my/view-mode-menu"                    "个人工作台")
+    ("M-c n" "跳转与文档菜单"         "my/workbench-navigation-menu"         "代码工作台")
+    ("M-c z" "代码折叠菜单"           "my/workbench-fold-menu"               "代码工作台"))
+  "自定义可交互 Transient 菜单的入口、名称、命令和适用范围。")
+
+(defvar my/transient-menu-help-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "q") #'quit-window)
+    (define-key map (kbd "<escape>") #'quit-window)
+    map)
+  "Keymap for `my/transient-menu-help-mode'.")
+
+(define-derived-mode my/transient-menu-help-mode special-mode "Transient 菜单帮助"
+  "显示所有自定义可交互 Transient 菜单的入口总览。"
+  (setq-local truncate-lines t))
+
+(defun my/transient-menu-help-buffer ()
+  "Return a freshly rendered buffer that documents custom Transient menus."
+  (let ((buffer (get-buffer-create "*Transient 菜单帮助*")))
+    (with-current-buffer buffer
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (my/transient-menu-help-mode)
+        (insert "自定义 Transient 菜单总览\n\n")
+        (insert (format "%-10s %-24s %-42s %s\n"
+                        "入口" "菜单" "命令" "适用范围"))
+        (insert (make-string 96 ?─) "\n")
+        (dolist (entry my/transient-menu-help-entries)
+          (pcase-let ((`(,key ,name ,command ,scope) entry))
+            (insert (format "%-10s %-24s %-42s %s\n"
+                            key name command scope))))
+        (insert "\nPinky 与 Avy Dispatch 使用被动提示表，不是可交互的 Transient 入口。\n")
+        (insert "按 q 或 ESC 关闭本帮助。\n")
+        (goto-char (point-min))))
+    buffer))
+
+(defun my/transient-menu-help ()
+  "关闭当前 Transient 后打开自定义菜单入口帮助。"
+  (interactive)
+  (when (transient-active-prefix)
+    (my/transient-force-close :transient-menu-help))
+  (pop-to-buffer (my/transient-menu-help-buffer)))
+
 ;; Transient 会在打开菜单时校验每个后缀命令。为延迟加载的第三方包预先注册
 ;; 自动加载，确保 Scratch 等尚未访问过代码/搜索功能的 Buffer 也能打开菜单。
-(dolist (command '(consult-find consult-recent-file consult-buffer consult-ripgrep consult-line
-                  consult-imenu))
+(dolist (command '(consult-find consult-recent-file consult-buffer consult-ripgrep consult-line))
   (autoload command "consult" nil t)
   ;; 兼容早期受管字节码中的 Transient 后缀：它们可能将裸命令符号编译为
   ;; 变量引用。函数和值命名空间独立，赋同名符号值不会影响命令调用。
@@ -207,13 +266,6 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
       (project-root current-project)
     default-directory))
 
-(defun my/workbench-show-outline ()
-  "显示当前文件大纲；大纲模块不可用时只给出提示。"
-  (interactive)
-  (if (fboundp 'my/treemacs-show-current-file-outline)
-      (call-interactively #'my/treemacs-show-current-file-outline)
-    (message "代码大纲模块尚未加载；请完成 Emacs 启动后再试。")))
-
 (defun my/workbench-code-actions ()
   "在 Eglot 正在管理当前代码 Buffer 时显示代码动作。"
   (interactive)
@@ -240,6 +292,17 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
         (message "%s尚未安装或加载；其他编辑功能不受影响。" description)))
     (error
      (message "%s暂时不可用：%s" description (error-message-string err)))))
+
+(defun my/workbench-symbol-list ()
+  "按需加载 Consult，并搜索当前 Buffer 的符号。"
+  (interactive)
+  (my/workbench-call-on-demand 'consult 'consult-imenu "符号列表"))
+
+(defun my/workbench-imenu-list-toggle ()
+  "按需加载并切换 Imenu List 侧栏。"
+  (interactive)
+  (my/workbench-call-on-demand 'imenu-list 'imenu-list-smart-toggle
+                              "Imenu List 侧栏"))
 
 ;; 以下小命令是工作台的稳定入口；它们不改变各插件既有的全局短键。
 (defun my/workbench-edit-occurrences ()
@@ -358,71 +421,82 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("DEL" "返回个人工作台" transient-quit-one)
     ("C-d" "关闭个人工作台" transient-quit-all)]])
 
+(transient-define-prefix my/code-workbench-menu ()
+  "打开代码工作台：集中项目、版本控制、代码与诊断操作。"
+  :column-widths '(22 22 22 22)
+  [["   项目与版本控制"
+    ("p" "切换项目" project-switch-project)
+    ("g" "Git 状态" magit-status)
+    ("b" "Magit 项目面板" magit-board-open)
+    ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
+    ("d" "Diffnav 改动浏览" diffnav-emacs-menu)
+    ("m" "合并冲突" my/smerge-menu)
+    ("f" "当前文件 Git 操作" magit-file-dispatch)]
+   ["   格式化与编译"
+    ("q" "格式化整个文件" my/apheleia-format-code)
+    ("r" "格式化选中区域" my/format-selected-region)
+    ("i" "格式化当前缩进区域" my/format-current-indent-region)
+    ("u" "格式化当前函数" my/format-current-function)
+    ("c" "编译当前 Buffer" my/workbench-compile-current-buffer)
+    ("e" "编译" compile)]
+   ["   大纲与代码结构"
+    ("s" "符号列表" my/workbench-symbol-list)
+    ("o" "切换 Outline 模式" outline-minor-mode)
+    ("l" "切换 Imenu List 侧栏" my/workbench-imenu-list-toggle)
+    ("n" "跳转与文档" my/workbench-navigation-menu)
+    ("z" "代码折叠" my/workbench-fold-menu)]
+   ["   诊断"
+    ("x" "当前诊断" flymake-show-buffer-diagnostics)
+    ("y" "搜索诊断" my/workbench-project-diagnostics)
+    ("a" "代码动作" my/workbench-code-actions)
+    ("M-c" "关闭代码工作台" transient-quit-all)
+    ("<escape>" "关闭代码工作台" transient-quit-one)]])
+
 (transient-define-prefix my/workbench-menu ()
   "打开个人工作台：将高频操作组织为可见菜单。"
   ;; 中文说明：顶层入口全部使用单字符，先分配 26 个小写字母；功能数量超过
   ;; 小写字母容量时才使用大写字母，减少打开工作台后的连续按键次数。
   ;; 固定每列的最小宽度，让各分组标题和子菜单左边缘一致，并在列间保留留白。
-  :column-widths '(22 22 22 22 22 22)
+  :column-widths '(22 22 22 22 22)
   ;; 标题预留与“按键 + 空格”相同的宽度，使子菜单的中文描述从标题正下方开始。
-  [["   文件与视图"
+  [["   文件"
     ("f" "打开文件（可预览）" consult-find)
     ("r" "最近文件" consult-recent-file)
     ("b" "切换Buffer (含历史)" consult-buffer)
     ("k" "关闭当前 Buffer" kill-current-buffer)
+    ("." "当前目录" my/workbench-current-directory)
+    ("/" "打开终端" my/workbench-open-terminal)
+    ("v" "从磁盘重新加载" revert-buffer)]
+   ["   视图"
     ("t" "Treemacs" treemacs)
-    ("N" "NeoTree" my/neotree-toggle)
-    ("L" "Dirvish" my/dirvish-open)
-    ("d" "当前目录" my/workbench-current-directory)
-    ("v" "从磁盘重新加载" revert-buffer)
-    ("y" "KillRing历史" my/workbench-clipboard-history)
-    ("w" "Zoom Windows" zoom-window-zoom)]
-   ["   项目与版本控制"
-    ("P" "切换项目" project-switch-project)
-    ("g" "Git 状态" magit-status)
-    ("B" "Magit 项目面板" magit-board-open)
-    ;; Diffnav 使用终端 TUI 展示文件树与 diff，菜单提供不同范围的浏览操作。
-    ("D" "Diffnav 改动浏览" diffnav-emacs-menu)
-    ("m" "合并冲突" my/smerge-menu)
-    ("F" "当前文件 Git 操作" magit-file-dispatch)
-    ("/" "打开终端" my/workbench-open-terminal)]
-   ["   代码与诊断"
-    ("q" "格式化整个文件" my/apheleia-format-code)
-    ("Q" "格式化选中区域" my/format-selected-region)
-    ("I" "格式化当前缩进区域" my/format-current-indent-region)
-    ("B" "格式化当前函数" my/format-current-function)
-    ("i" "符号列表" consult-imenu)
-    ("o" "侧栏大纲" my/workbench-show-outline)
-    ("n" "跳转与文档" my/workbench-navigation-menu)
-    ("x" "当前诊断" flymake-show-buffer-diagnostics)
-    ("X" "搜索诊断" my/workbench-project-diagnostics)
-    ("a" "代码动作" my/workbench-code-actions)
-    ("z" "代码折叠" my/workbench-fold-menu)
-    ("C" "编译当前 Buffer" my/workbench-compile-current-buffer)
-    ("c" "编译" compile)]
-   ["   编辑与跳转"
-    ("s" "选择整个文件" my/select-whole-buffer)
-    ("U" "向上选择行" my-choose-up-lines)
-    ("D" "向下选择行" my-choose-down-lines)
-    ("T" "清理空行与空注释" my-clean-extra-lines-and-comments)
-    ("j" "Avy 跳转菜单" my/avy-menu)
-    ("e" "批量编辑符号" my/workbench-edit-occurrences)
-    ("[" "选择当前缩进块" my/mark-indent-block)
-    ("]" "选择缩进块内部" my/mark-indent-block-inner)
-    ("h" "匹配成对符号或标签" my/match-pair)
-    ("'" "矩形选区" my/cua-rectangle-toggle)
-    ("=" "Easy Kill 菜单" my/easy-kill-menu)
-    ("u" "可视撤销树" my/workbench-visual-undo)
-    ("M" "切换标记" my/toggle-mark-command)
-    ("-" "可视书签" my/workbench-bm-menu)
-    ("," "切换 Pinky 模式" my/pinky-toggle)
+    ("n" "NeoTree" my/neotree-toggle)
+    ("d" "Dirvish" my/dirvish-open)
+    ("z" "Zoom Windows" zoom-window-zoom)
     ("p" "View Mode 菜单" my/view-mode-menu)]
+   ["   编辑"
+    ("j" "Avy 跳转菜单" my/avy-menu)
+    ("c" "清理空行与空注释" my-clean-extra-lines-and-comments)
+    ("e" "批量编辑符号" my/workbench-edit-occurrences)
+    ("h" "匹配成对符号或标签" my/match-pair)
+    ("=" "Easy Kill 菜单" my/easy-kill-menu)
+    ("a" "可视撤销树" my/workbench-visual-undo)
+    ("y" "KillRing历史" my/workbench-clipboard-history)
+    ("-" "可视书签" my/workbench-bm-menu)
+    ("," "切换 Pinky 模式" my/pinky-toggle)]
+   ["   选择"
+    ("s" "选择整个文件" my/select-whole-buffer)
+    ("u" "向上选择行" my-choose-up-lines)
+    ("w" "向下选择行" my-choose-down-lines)
+    ("'" "矩形选区" my/cua-rectangle-toggle)
+    ("m" "切换标记" my/toggle-mark-command)
+    ("[" "选择当前缩进块" my/mark-indent-block)
+    ("]" "选择缩进块内部" my/mark-indent-block-inner)]
    ["   笔记与帮助"
     ("l" "新建笔记" org-capture)
-    ("A" "查看日程" org-agenda)
-    ("K" "查询按键" describe-key)
-    ("H" "上下文动作" my/workbench-context-actions)
-    ("E" "当前按键表" describe-bindings)
+    ("g" "查看日程" org-agenda)
+    ("?" "Transient 菜单帮助" my/transient-menu-help)
+    (";" "上下文动作" my/workbench-context-actions)
+    ("!" "当前按键表" describe-bindings)
     ;; 数字 0 易于在最后一列识别，也避免与大写字母 O 混淆。
     ("0" "当前模式帮助" describe-mode)
     ("DEL" "关闭个人工作台" transient-quit-one)
@@ -438,7 +512,17 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
         ;; 中文全角字符与 Git 等半角文字混排时，按字符数计算列宽会错位；
         ;; 仅在工作台启用像素级对齐，保证每列标题与描述的实际显示位置一致。
         (transient-align-variable-pitch t))
-    (my/workbench-menu)))
+    (my/transient-open #'my/workbench-menu)))
+
+(defun my/code-workbench ()
+  "打开代码工作台菜单。"
+  (interactive)
+  (let ((transient-display-buffer-action
+         my/workbench-transient-display-buffer-action)
+        (transient-align-variable-pitch t))
+    (my/transient-open #'my/code-workbench-menu)))
+
+(keymap-global-set "M-c" #'my/code-workbench)
 
 (defun my/workbench-toggle ()
   "用 C-d 打开或关闭个人工作台。"
@@ -446,7 +530,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (if (transient-active-prefix
        '(my/workbench-menu my/workbench-navigation-menu
          my/workbench-fold-menu my/workbench-bm-menu))
-      (transient-quit-all)
+      (my/transient-force-close :workbench-toggle)
     (my/workbench)))
 
 (defvar-local my/workbench-toggle-override-active t
@@ -471,6 +555,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
    my-leader-map "SPC" "个人工作台")
   (which-key-add-keymap-based-replacements
    global-map "C-d" "切换个人工作台")
+  (which-key-add-keymap-based-replacements
+   global-map "M-c" "代码工作台")
   (which-key-add-keymap-based-replacements
    my/workbench-toggle-override-map "C-d" "切换个人工作台"))
 
@@ -504,6 +590,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; ---------------------------------------------------------------------------
 ;; - `C-d' 切换个人工作台，`C-c SPC' 是语义化入口；`ESC' 取消或退出。
 ;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`M-j' 切换 Pinky。
+;; - `M-c' 打开代码工作台，其中包含项目/Git、代码与诊断操作；在该菜单中再次
+;;   按 `M-c' 关闭。Consult 导出结果 Buffer 的局部 C-t 菜单不受影响。
 ;; - 顶层菜单采用单字符键，优先使用小写；大写仅用于小写字母耗尽后的少数入口。
 ;; - “文件与视图”中按 `v' 从磁盘重新加载当前 Buffer；未保存的修改仍会要求确认。
 ;; - 文件、搜索、代码、编辑、Git、窗口和 Org 操作均复用既有命令及其原有快捷键。

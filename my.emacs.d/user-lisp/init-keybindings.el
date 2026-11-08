@@ -393,7 +393,8 @@ start of every following column."
 ;;   不会再把同一行后续菜单推歪。当前前缀显示在菜单顶部。
 ;; - 粗体 `▸' 项是可继续进入的功能分组；普通字重项是立即执行的命令。
 ;; - `C-w' 由窗口模块打开三列 Transient；`C-c w' 保留 General/Which-Key 的直接窗口命令。
-;; - `C-t' 保留为 `kill-region'；`C-w C-w' 用 Ace Window 选择窗口。
+;; - `M-c' 打开代码工作台；Consult 导出结果 Buffer 保留其局部 C-t 菜单。
+;;   `C-w C-w' 用 Ace Window 选择窗口。
 ;; - `C-c f f/r' 打开文件/最近文件；`C-c b b/k/l' 切换/关闭/列出 Buffer。
 ;;   `C-x C-b' 与 `C-c b l' 打开可由 Popper 召回的 Ibuffer；`C-c b e' 保留原有
 ;;   Electric Buffer List，适合只进行一次快速选择。
