@@ -140,7 +140,7 @@
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'my/cua-rectangle-toggle "init-edit" nil t)
-(autoload 'my/easy-kill-menu "init-edit" nil t)
+(autoload 'my/easy-kill-menu "init-easykill" nil t)
 (autoload 'my/view-mode-menu "init-edit" nil t)
 (autoload 'diffnav-emacs-menu "diffnav-emacs" nil t)
 (autoload 'hydra-window-resize/body "init-window" nil t)

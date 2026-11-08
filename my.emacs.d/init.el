@@ -410,6 +410,7 @@ The physical-key dispatcher itself is excluded to avoid recursion."
     init-consult
     init-rainbow
     init-edit
+    init-easykill
     init-separedit
     ;; 新建代码文件时按扩展名自动插入本地 template/ 示例模板。
     init-template
