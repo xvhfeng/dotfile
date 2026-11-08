@@ -9,9 +9,60 @@
 (defvar transient--prefix)
 (defvar transient--stack)
 (defvar transient-current-command)
+(defvar transient--original-window)
 
 (defvar my/transient--force-closing nil
   "Non-nil while `my/transient-force-close' is cleaning up a menu.")
+
+;; A below-selected window always consumes layout space from the current
+;; editor.  Unlike an overlay/popup, it guarantees that visible text ends
+;; exactly above the Transient menu.
+(setq transient-display-buffer-action
+      '(display-buffer-below-selected
+        (window-height . 0.28)
+        (dedicated . t)
+        (inhibit-same-window . t)
+        (window-parameters . ((no-other-window . t)))))
+(defvar-local my/transient-viewport-padding nil
+  "Display-only end padding used while an active Transient protects point.")
+
+(defun my/transient--clear-viewport-padding ()
+  "Remove temporary end padding from the original editing buffer."
+  (when (overlayp my/transient-viewport-padding)
+    (delete-overlay my/transient-viewport-padding))
+  (setq my/transient-viewport-padding nil))
+
+(defun my/transient-ensure-origin-point-visible (&rest _)
+  "Keep the original editing point clear of a newly shown side-window menu.
+
+This runs only for an active interactive Transient.  It never changes point
+or mark; if the available editing area became too small, it scrolls the
+original window while preserving the user's selection."
+  (when (and (transient-active-prefix)
+             (window-live-p transient--original-window))
+    (let* ((window transient--original-window)
+           (buffer (window-buffer window)))
+      (with-current-buffer buffer
+        (let* ((point (window-point window))
+               (safety (+ scroll-margin 2))
+               (remaining (count-lines point (point-max))))
+          ;; Near EOF, add virtual lines so Emacs can still scroll the point
+          ;; above the bottom side window.  This never inserts file contents.
+          (when (< remaining safety)
+            (my/transient--clear-viewport-padding)
+            (setq my/transient-viewport-padding
+                  (make-overlay (point-max) (point-max) buffer nil t))
+            (overlay-put my/transient-viewport-padding 'after-string
+                         (make-string (+ (window-body-height window) safety) ?\n)))
+          (when (or (not (pos-visible-in-window-p point window))
+                    (< (count-screen-lines point (window-end window t) nil window)
+                       safety))
+            (with-selected-window window
+              (save-mark-and-excursion
+                (goto-char point)
+                ;; Keep point in the upper third, leaving ample text above
+                ;; the bottom Transient side window.
+                (recenter (max safety (/ (window-body-height window) 3)))))))))))
 
 (defun my/transient-managed-prefix-p (prefix)
   "Return non-nil when PREFIX is a lifecycle-managed custom Transient."
@@ -74,9 +125,16 @@ This hook is intentionally attached to `transient-post-exit-hook', not
 parent, when clearing the stack would be incorrect."
   (my/transient-force-close :post-exit))
 
+(defun my/transient--cleanup-origin-viewport ()
+  "Remove display-only padding once the final Transient has exited."
+  (when (window-live-p transient--original-window)
+    (with-current-buffer (window-buffer transient--original-window)
+      (my/transient--clear-viewport-padding))) )
+
 (unless (advice-member-p #'my/transient--setup-managed-root #'transient-setup)
   (advice-add #'transient-setup :around #'my/transient--setup-managed-root))
 (add-hook 'transient-post-exit-hook #'my/transient--finalize-after-last-exit)
+(add-hook 'transient-post-exit-hook #'my/transient--cleanup-origin-viewport)
 
 (provide 'init-transient-lifecycle)
 ;;; init-transient-lifecycle.el ends here

@@ -154,22 +154,6 @@
   ("C-=" '("expand selection" . er/expand-region))
   ("C--" '("contract selection" . er/contract-region)))
 
-;; ============================================================================
-;; 4. Multiple-Cursors: 多光标并发编辑
-;; ============================================================================
-(use-package multiple-cursors
-  :straight t
-  :general
-  ("C-S-c C-S-c" '("multiple cursors on lines" . mc/edit-lines))
-  ("C->" '("mark next occurrence" . mc/mark-next-like-this))
-  ("C-<" '("mark previous occurrence" . mc/mark-previous-like-this))
-  ("C-c C-<" '("mark all occurrences" . mc/mark-all-like-this)))
-
-(with-eval-after-load 'multiple-cursors-core
-  ;; 复制只需执行一次并写入一次 kill ring；避免多光标首次执行时询问策略。
-  (add-to-list 'mc/cmds-to-run-once #'my-copy-dwim))
-
-
 ;; 另一个多光标的编辑软件，非常轻量
 (defun my/iedit-style-faces (&rest _)
   "让 Iedit 的可编辑与只读匹配项保持清晰、易辨认。"
@@ -229,10 +213,6 @@
     "e w" '("surround word" . my-surround-word)
     "e +" '("expand selection" . er/expand-region)
     "e -" '("contract selection" . er/contract-region)
-    "e l" '("multiple cursors on lines" . mc/edit-lines)
-    "e n" '("mark next occurrence" . mc/mark-next-like-this)
-    "e p" '("mark previous occurrence" . mc/mark-previous-like-this)
-    "e a" '("mark all occurrences" . mc/mark-all-like-this)
     "e e" '("iedit occurrences" . iedit-mode)
     "e f" '("iedit current function" . iedit-mode-toggle-on-function)
     ;; 中文说明：C-c e u 只切换矩形选区，不触发 CUA 全局剪切/复制/粘贴键。

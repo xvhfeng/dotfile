@@ -34,11 +34,12 @@
   "以 C-c 开始的全局用户命令 keymap。")
 
 (defconst my/workbench-transient-display-buffer-action
-  '((display-buffer-in-side-window)
-    (side . bottom)
-    (slot . 0)
+  '((display-buffer-below-selected)
     ;; 六个功能分组横向排成一行；保留足够高度显示最长一列的所有子菜单。
-    (window-height . 0.38))
+    (window-height . 0.38)
+    (dedicated . t)
+    (inhibit-same-window . t)
+    (window-parameters . ((no-other-window . t))))
   "个人工作台专用的宽阔底部 Transient 面板显示规则。")
 
 (defconst my/transient-menu-help-entries
@@ -46,6 +47,7 @@
     ("M-c"   "代码工作台"             "my/code-workbench-menu"               "全局开关")
     ("C-w"   "窗口菜单"               "my/window-menu"                       "全局")
     ("M-3"   "Easy Kill 菜单"          "my/easy-kill-menu"                    "全局开关")
+    ("C-,"   "多光标工作台"            "my/multiple-cursors-workbench"        "全局开关")
     ("M-s"   "搜索与替换菜单"         "my/m-s-search-menu"                   "全局")
     ("C-t"   "Consult 导出结果菜单"   "my/consult-exported-results-menu"     "仅 Export/Collect 结果")
     ("C-c s m" "rg 搜索/替换菜单"     "my/rg-search-menu"                    "搜索前缀")
