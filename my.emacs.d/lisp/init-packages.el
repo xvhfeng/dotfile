@@ -7,7 +7,7 @@
 (defvar nn-package-elpa-packages
   '(ace-window apheleia bufler calfw calfw-org citre colorful-mode
     corfu dape editorconfig emmet-mode ghostel indent-bars magit
-    markdown-ts-mode multiple-cursors neotree nerd-icons nerd-icons-corfu
+    markdown-ts-mode neotree nerd-icons nerd-icons-corfu
     olivetti org-modern posframe powershell rainbow-delimiters rg
     symbol-overlay telega web-mode wgrep yaml-ts-mode yasnippet)
   "ELPA packages required by this configuration.")

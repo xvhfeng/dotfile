@@ -3,6 +3,18 @@
 
 key	菜单名	命令
 
+
+
+
+
+
+
+
+
+
+
+
+
 这个为“常用”栏
 n	下一个相同文本	mc/mark-next-like-this
 w	下一个匹配单词	mc/mark-next-like-this-word
@@ -25,6 +37,17 @@ x p	标记栈添加光标	mc/mark-pop
 u n	取消最下方光标	mc/unmark-next-like-this
 u p	取消最上方光标	mc/unmark-previous-like-this
 q n	跳过当前并标记下一个	mc/skip-to-next-like-this
+
+
+
+
+
+
+
+
+
+
+
 q p	跳过当前并标记上一个	mc/skip-to-previous-like-this
 e l	当前区域逐行添加光标	mc/edit-lines
 e b	当前区域行首添加光标	mc/edit-beginnings-of-lines

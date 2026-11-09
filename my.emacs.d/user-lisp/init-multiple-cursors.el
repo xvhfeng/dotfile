@@ -3,26 +3,27 @@
 (use-package multiple-cursors :straight t :demand t)
 (use-package hydra :straight t :demand t)
 
-;; lv 后端会在底部创建提示窗口并遮挡编辑文本；统一使用 echo area。
-(setq hydra-hint-display-type 'message)
-
-(define-minor-mode muilt-curs-mode
-  "Mode active while the Multiple Cursors Hydra workbench is open."
-  :lighter " μC")
-
-(defun my/multiple-cursors-workbench-exit ()
-  "Exit the Multiple Cursors workbench and disable its session mode."
+(defun mc/unmark-current-like-this ()
+  "Unmark the current cursor, keeping the nearest other cursor active."
   (interactive)
-  (muilt-curs-mode -1))
+  (let ((cursor (car (sort (mc/all-fake-cursors)
+                           (lambda (a b)
+                             (< (abs (- (marker-position (overlay-get a 'point)) (point)))
+                                (abs (- (marker-position (overlay-get b 'point)) (point)))))))))
+    (unless cursor
+      (user-error "No other cursor to keep"))
+    (mc/pop-state-from-overlay cursor)
+    (mc/maybe-multiple-cursors-mode)))
+
 
 (defhydra my/multiple-cursors-workbench (:hint nil :color pink :foreign-keys warn)
   "
 常用: _n_ 下一个  _w_ 匹配单词  _s_ 匹配符号  _m_ 完整单词  _y_ 完整符号
-      _N_ 上一个  _W_ 上词  _S_ 上符号  _M_ 上完整词  _Y_ 上完整符号  _k_ 跳过当前
+      _N_ 上一个  _W_ 上词  _S_ 上符号  _M_ 上完整词  _Y_ 上完整符号  _k_ 取消当前
 批量: _a a_ 全部  _a d_ 智能全部  _a w_ 全词  _a s_ 全符号  _a r_ 区域  _a f_ 函数
 编辑: _e l_ 按行  _e b_ 行首  _e e_ 行尾  _i n_ 数字  _i l_ 字母
 整理: _o s_ 排序  _o r_ 反转  _o v_ 垂直对齐  _o w_ 空格对齐
-退出: _C-,_ / _ESC_ / _C-g_"
+退出: _C-,_ / ESC / _C-g_"
   ("n" mc/mark-next-like-this)
   ("w" mc/mark-next-like-this-word)
   ("s" mc/mark-next-like-this-symbol)
@@ -33,7 +34,7 @@
   ("S" mc/mark-previous-like-this-symbol)
   ("M" mc/mark-previous-word-like-this)
   ("Y" mc/mark-previous-symbol-like-this)
-  ("k" mc/skip-to-next-like-this)
+  ("k" mc/unmark-current-like-this)
   ("a a" mc/mark-all-like-this)
   ("a d" mc/mark-all-dwim)
   ("a w" mc/mark-all-words-like-this)
@@ -60,9 +61,9 @@
   ("o w" mc/vertical-align-with-space)
   ("t t" mc/mark-sgml-tag-pair)
   ("r c" set-rectangular-region-anchor)
-  ("C-," my/multiple-cursors-workbench-exit :exit t)
-  ("<escape>" my/multiple-cursors-workbench-exit :exit t)
-  ("C-g" my/multiple-cursors-workbench-exit :exit t))
+  ("C-," nil :exit t)
+  ("<escape>" nil :exit t)
+  ("C-g" nil :exit t))
 
 (defun my/multiple-cursors-register-hydra-commands ()
   "Tell Multiple Cursors to run generated Hydra wrapper commands only once."
@@ -74,18 +75,10 @@
 
 (my/multiple-cursors-register-hydra-commands)
 
-(defun my/multiple-cursors-workbench-toggle ()
-  "Toggle the Multiple Cursors Hydra workbench."
-  (interactive)
-  (if muilt-curs-mode
-      (my/multiple-cursors-workbench-exit)
-    (muilt-curs-mode 1)
-    (my/multiple-cursors-workbench/body)))
-
-(keymap-global-set "C-," #'my/multiple-cursors-workbench-toggle)
+(keymap-global-set "C-," #'my/multiple-cursors-workbench/body)
 
 (with-eval-after-load 'general
-  (general-define-key "C-," '("多光标工作台" . my/multiple-cursors-workbench-toggle))
+  (general-define-key "C-," '("多光标工作台" . my/multiple-cursors-workbench/body))
   (my-leader-def
     "e l" '("multiple cursors on lines" . mc/edit-lines)
     "e n" '("mark next occurrence" . mc/mark-next-like-this)
@@ -93,6 +86,7 @@
     "e a" '("mark all occurrences" . mc/mark-all-like-this)))
 
 (with-eval-after-load 'multiple-cursors-core
+  (add-to-list 'mc/cmds-to-run-once #'mc/unmark-current-like-this)
   (add-to-list 'mc/cmds-to-run-once #'my-copy-dwim)
   (my/multiple-cursors-register-hydra-commands))
 
