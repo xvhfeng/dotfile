@@ -1,8 +1,6 @@
 ;;; init-window.el --- Window management with ace-window -*- lexical-binding: t; -*-
 
 (require 'windmove)
-(require 'transient)
-(require 'init-transient-lifecycle)
 
 ;; 中文说明：Zoom Window 将当前窗口临时最大化，再次调用会精确恢复调用前的
 ;; 完整窗口布局，适合需要专注查看 Consult 打开结果后快速回到原布局的场景。
@@ -80,13 +78,46 @@
   ;; 侧栏计入普通编辑窗口的份额，也不会改变侧栏的现有宽度。
   (balance-windows (window-main-window)))
 
+(defun my/window--navigable-p (window)
+  "Return non-nil when WINDOW can be selected from the window menu."
+  (and (window-live-p window)
+       (not (window-minibuffer-p window))))
+
+(defun my/window--edge-window (direction source)
+  "Return the farthest navigable window in DIRECTION from side window SOURCE."
+  ;; A full-height Treemacs side window has no vertical neighbour.  In that
+  ;; case `windmove-find-other-window' wraps to the minibuffer (or SOURCE),
+  ;; instead of entering the top or bottom editor window.  Choose that edge
+  ;; explicitly while retaining normal windmove behaviour for all other cases.
+  (when (window-parameter source 'window-side)
+    (let ((candidates
+           (delq source
+                 (seq-filter #'my/window--navigable-p
+                             (window-list (window-frame source) 'nomini)))))
+      (car
+       (sort candidates
+             (lambda (left right)
+               (let ((left-edges (window-edges left))
+                     (right-edges (window-edges right)))
+                 (pcase direction
+                   ('up (< (nth 1 left-edges) (nth 1 right-edges)))
+                   ('down (> (nth 3 left-edges) (nth 3 right-edges)))
+                   ('left (< (nth 0 left-edges) (nth 0 right-edges)))
+                   ('right (> (nth 2 left-edges) (nth 2 right-edges)))))))))))
+
 (defun my/window-select-wrap (direction)
   "沿 DIRECTION 选择窗口；到 Frame 边缘时从另一端继续。"
   ;; 只让窗口菜单循环，不改变其他模式调用 windmove 时的行为。
-  (let* ((windmove-wrap-around t)
-         (target (windmove-find-other-window direction)))
-    ;; 单窗口时没有可选目标；向下搜索也可能返回未激活的 minibuffer。
-    (when (and target (not (window-minibuffer-p target)))
+  (let* ((source (selected-window))
+         (windmove-wrap-around t)
+         (target (windmove-find-other-window direction source)))
+    ;; 单窗口时没有可选目标。侧边窗口在与其平行的方向上则会错误地
+    ;; 回到自身或 minibuffer，此时改为进入主区域相应边缘的窗口。
+    (when (or (not (my/window--navigable-p target))
+              (eq target source))
+      (setq target (my/window--edge-window direction source)))
+    (when (and (my/window--navigable-p target)
+               (not (eq target source)))
       (select-window target))))
 
 (defun my/window-select-left ()
@@ -154,7 +185,7 @@
   ;; 否则 `defhydra' 不会执行，按键只会指向一个未定义的符号。
   :demand t
   :config
-  ;; 定义一个专门用于调整窗口大小的 Transient Hydra 键盘态
+  ;; 定义一个专门用于调整窗口大小的 Hydra 键盘态
   (defhydra hydra-window-resize (:hint nil)
 ;;    "
 ;;  ^Resizing Window^
@@ -177,43 +208,40 @@
     ("<return>" nil :exit t)))
 
 ;; ============================================================================
-;; 2. C-w 三列 Transient，与 C-c w General/Which-Key 入口
+;; 2. C-w 三列 Hydra，与 C-c w General/Which-Key 入口
 ;; ============================================================================
-(transient-define-prefix my/window-menu ()
-  "打开按三列排列的窗口操作菜单。"
-  :column-widths '(26 32 30)
-  [["   选择与移动"
-    ("h" "向左循环切换窗口" my/window-select-left)
-    ("j" "向下循环切换窗口" my/window-select-down)
-    ("k" "向上循环切换窗口" my/window-select-up)
-    ("l" "向右循环切换窗口" my/window-select-right)
-    ("C-w" "Ace Window：选择窗口" ace-window)]
-   ["   空间分割"
-    ("a" "左侧分割，留在原窗口" my/window-split-left)
-    ("d" "右侧分割，留在原窗口" my/window-split-right)
-    ("w" "上方分割，留在原窗口" my/window-split-up)
-    ("s" "下方分割，留在原窗口" my/window-split-down)
-    ("c" "左侧分割并切换" my-split-left-and-switch)
-    ("b" "右侧分割并切换" my-split-right-and-switch)
-    ("f" "上方分割并切换" my-split-above-and-switch)
-    ("v" "下方分割并切换" my-split-below-and-switch)]
-   ["   布局与尺寸"
-    ("m" "与目标窗口交换" ace-swap-window)
-    ("q" "关闭当前窗口" delete-window)
-    ("x" "关闭目标窗口" ace-delete-window)
-    ("o" "关闭其它窗口" delete-other-windows)
-    ("z" "Zoom 当前窗口/恢复布局" zoom-window-zoom)
-    ("=" "均分编辑窗口" my/balance-editor-windows)
-    ("r" "调整窗口尺寸" hydra-window-resize/body)]])
+;; 中文说明：Hydra 保持在窗口操作状态，直到 q、RET、ESC 或 C-g 明确退出。
+;; C-c w 的同一批命令仍由 `my-window-map' 提供 Which-Key 可发现的直接键位。
+(defhydra hydra-window-menu (:hint nil)
+  "
+选择与移动                         空间分割                              布局与尺寸
+_h_: 左  _j_: 下  _k_: 上  _l_: 右  _C-w_: Ace   _a_: 左  _d_: 右  _w_: 上  _s_: 下   _m_: 交换  _t_: 关闭  _x_: 删除
+                                           _c_: 左切换  _b_: 右切换  _f_: 上切换  _v_: 下切换   _o_: 仅留当前  _z_: Zoom  _=_: 均分  _r_: 调整  _q_: 退出
+"
+  ("h" my/window-select-left)
+  ("j" my/window-select-down)
+  ("k" my/window-select-up)
+  ("l" my/window-select-right)
+  ("C-w" ace-window)
+  ("a" my/window-split-left)
+  ("d" my/window-split-right)
+  ("w" my/window-split-up)
+  ("s" my/window-split-down)
+  ("c" my-split-left-and-switch)
+  ("b" my-split-right-and-switch)
+  ("f" my-split-above-and-switch)
+  ("v" my-split-below-and-switch)
+  ("m" ace-swap-window)
+  ("t" delete-window)
+  ("x" ace-delete-window)
+  ("o" delete-other-windows)
+  ("z" zoom-window-zoom)
+  ("=" my/balance-editor-windows)
+  ("r" hydra-window-resize/body :exit t)
+  ("<return>" nil :exit t)
+  ("q" nil :exit t))
 
-;; 中文说明：C-w 只负责打开上方 Transient，不经过 General；C-c w 的同一批
-;; 命令仍由 `my-window-map' 提供 Which-Key 可发现的直接键位。
-(defun my/window-menu-open ()
-  "Open the window menu after closing another managed root menu."
-  (interactive)
-  (my/transient-open #'my/window-menu))
-
-(keymap-global-set "C-w" #'my/window-menu-open)
+(keymap-global-set "C-w" #'hydra-window-menu/body)
 
 (with-eval-after-load 'general
   (my-window-def
@@ -274,9 +302,9 @@
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 普通 Buffer 的窗口命令可用 `C-w ...' 或 `C-c w ...'，两者等价。
-;; - `C-w' 打开严格三列的 Transient：第一列选择/移动，第二列空间分割，第三列
-;;   交换、关闭、布局和尺寸；按 ESC 或 C-g 退出。
-;; - `C-c w' 使用 General/Which-Key 的直接窗口命令，按键与 C-w Transient 对应。
+;; - `C-w' 打开严格三列的 Hydra：第一列选择/移动，第二列空间分割，第三列
+;;   交换、关闭、布局和尺寸；q、RET、ESC 或 C-g 退出，t 关闭当前窗口。
+;; - `C-c w' 使用 General/Which-Key 的直接窗口命令，按键与 C-w Hydra 对应。
 ;; - 小写 `a/d/w/s' 分割后会在新窗口用 Consult 选择已打开 Buffer，并自动回到来源窗口；
 ;;   `f/c/v/b' 分割后直接切换到新窗口。
 ;; - `r' 进入尺寸调整，随后用 h/j/k/l 或方向键调整，q 退出；选中 Treemacs 时使用专用宽度接口。
