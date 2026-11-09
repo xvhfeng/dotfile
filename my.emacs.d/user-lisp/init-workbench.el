@@ -62,8 +62,13 @@
     ("C-d -" "可视书签菜单"           "my/workbench-bm-menu"                 "个人工作台")
     ("C-d p" "View Mode 菜单"         "my/view-mode-menu"                    "个人工作台")
     ("M-c n" "跳转与文档菜单"         "my/workbench-navigation-menu"         "代码工作台")
-    ("M-c z" "代码折叠菜单"           "my/workbench-fold-menu"               "代码工作台"))
-  "自定义可交互 Transient 菜单的入口、名称、命令和适用范围。")
+    ("M-c z" "代码折叠菜单"           "my/workbench-fold-menu"               "代码工作台")
+    ("C-w r" "窗口尺寸菜单"           "hydra-window-resize/body"             "窗口菜单子菜单")
+    ("C-t e" "Embrace 菜单"           "my/embrace-menu/body"                 "Smartparens 子菜单")
+    ("无独立入口" "Consult 搜索历史"    "my/consult-search-history-menu"       "内部菜单")
+    ("Pinky 激活时" "Pinky 键位提示"   "my/pinky-transient-menu"              "被动提示面板")
+    ("Avy 跳转时" "Avy Dispatch 提示" "my/avy-dispatch-menu"                 "被动提示面板"))
+  "自定义 Transient、Hydra 与被动提示面板的入口、名称、命令和适用范围。")
 
 (defvar my/transient-menu-help-mode-map
   (let ((map (make-sparse-keymap)))
@@ -73,7 +78,7 @@
   "Keymap for `my/transient-menu-help-mode'.")
 
 (define-derived-mode my/transient-menu-help-mode special-mode "Transient 菜单帮助"
-  "显示所有自定义可交互 Transient 菜单的入口总览。"
+  "显示所有自定义 Transient、Hydra 与被动提示面板的入口总览。"
   (setq-local truncate-lines t))
 
 (defun my/transient-menu-help-buffer ()
@@ -83,7 +88,7 @@
       (let ((inhibit-read-only t))
         (erase-buffer)
         (my/transient-menu-help-mode)
-        (insert "自定义 Transient 菜单总览\n\n")
+        (insert "自定义 Transient / Hydra 菜单总览\n\n")
         (insert (format "%-10s %-24s %-42s %s\n"
                         "入口" "菜单" "命令" "适用范围"))
         (insert (make-string 96 ?─) "\n")
@@ -91,7 +96,7 @@
           (pcase-let ((`(,key ,name ,command ,scope) entry))
             (insert (format "%-10s %-24s %-42s %s\n"
                             key name command scope))))
-        (insert "\nPinky 与 Avy Dispatch 使用被动提示表，不是可交互的 Transient 入口。\n")
+        (insert "\nPinky 与 Avy Dispatch 是被动提示面板，仅展示按键，不接管输入。\n")
         (insert "按 q 或 ESC 关闭本帮助。\n")
         (goto-char (point-min))))
     buffer))
