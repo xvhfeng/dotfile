@@ -195,6 +195,7 @@
 ;;  _k_ / _<up>_    : 缩小高度 (Shrink)
 ;;  _j_ / _<down>_  : 放大高度 (Enlarge)
 ;;  _q_ / _<return>_: 退出 (Quit)
+;;  _<esc>_ / _<return>_: 退出 (Quit)
 ;;  "
     ("h" my/window-shrink-horizontally)
     ("l" my/window-enlarge-horizontally)
@@ -205,6 +206,7 @@
     ("<down>" enlarge-window)
     ("<up>" shrink-window)
     ("q" nil :exit t)
+    ("<esc>" nil :exit t)
     ("<return>" nil :exit t)))
 
 ;; ============================================================================
@@ -222,10 +224,11 @@ _h_ 向左循环切换窗口                 _a_ 左侧分割，留在原窗口 
 _j_ 向下循环切换窗口                 _d_ 右侧分割，留在原窗口             _t_ 关闭当前窗口
 _k_ 向上循环切换窗口                 _w_ 上方分割，留在原窗口             _x_ 关闭目标窗口
 _l_ 向右循环切换窗口                 _s_ 下方分割，留在原窗口             _o_ 关闭其它窗口
-_C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换                   _z_ Zoom 当前窗口/恢复布局
-                                      _b_ 右侧分割并切换                   _=_ 均分编辑窗口
-                                      _f_ 上方分割并切换                   _r_ 调整窗口尺寸
-                                      _v_ 下方分割并切换                   _q_ 退出菜单
+_C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换                  _z_ Zoom 当前窗口/恢复布局
+                                    _b_ 右侧分割并切换                  _=_ 均分编辑窗口
+                                    _f_ 上方分割并切换                  _r_ 调整窗口尺寸
+                                    _v_ 下方分割并切换                  _q_ 退出菜单
+                                                                      <esc> quit
 "
   ("h" my/window-select-left)
   ("j" my/window-select-down)
@@ -248,6 +251,7 @@ _C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换             
   ("=" my/balance-editor-windows)
   ("r" hydra-window-resize/body :exit t)
   ("<return>" nil :exit t)
+  ("<esc>" nil :exit t)
   ("q" nil :exit t))
 
 (keymap-global-set "C-w" #'hydra-window-menu/body)
