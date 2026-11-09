@@ -48,6 +48,7 @@
     ("C-w"   "窗口菜单"               "my/window-menu"                       "全局")
     ("M-3"   "Easy Kill 菜单"          "my/easy-kill-menu"                    "全局开关")
     ("C-,"   "多处编辑工作台"            "my/evil-multiedit-workbench/body"      "全局开关")
+    ("C-t"   "Smartparens 菜单"         "my/smartparens-workbench/body"         "全局开关")
     ("M-s"   "搜索与替换菜单"         "my/m-s-search-menu"                   "全局")
     ("C-t"   "Consult 导出结果菜单"   "my/consult-exported-results-menu"     "仅 Export/Collect 结果")
     ("C-c s m" "rg 搜索/替换菜单"     "my/rg-search-menu"                    "搜索前缀")

@@ -1,8 +1,8 @@
 ;;; init-editing.el --- Advanced Non-Evil Editing Suite -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; 本文件包含非-Evil（Emacs 原生快捷键模式）下的高效文本编辑与围栏符号增强方案。
-;; 提供了类似于 Vim 的 ci/ca/ys/cs/ds 快捷体验以及多光标、语义选区扩充。
+;; 本文件包含非-Evil（Emacs 原生快捷键模式）下的矩形选区、语义选区扩充
+;; 与 Iedit 多处编辑；围栏编辑配置位于 init-smartparens.el。
 
 ;;; Code:
 
@@ -126,27 +126,7 @@
   (define-key cua--rectangle-keymap (kbd "DEL") nil))
 
 ;; ============================================================================
-;; 1. Change-Inner: 实现类似 Vim 的 ci" / ca" / ci( / ca( 操作
-;; ============================================================================
-(use-package change-inner
-  :straight t
-  :general
-  ("M-i" '("change inner" . change-inner))
-  ("M-o" '("change outer" . change-outer)))
-
-;; ============================================================================
-;; ============================================================================
-;; 2. Embrace: 实现类似 Vim 的 ys / cs / ds (Surround 围栏符号增删改)
-;; ============================================================================
-(use-package embrace
-  :straight t
-  :config
-  ;; 为常见的 major-mode 启用官方内置的扩展配置 (例如 org-mode, elisp 等)
-  (add-hook 'org-mode-hook #'embrace-org-mode-hook)
-  (add-hook 'emacs-lisp-mode-hook #'embrace-emacs-lisp-mode-hook))
-
-;; ============================================================================
-;; 3. Expand-Region: 按语法结构/语义扩展/缩减选区
+;; 1. Expand-Region: 按语法结构/语义扩展/缩减选区
 ;; ============================================================================
 (use-package expand-region
   :straight t
@@ -205,9 +185,6 @@
     "M-3" '("Easy Kill 开关" . my/easy-kill-toggle))
 
   (my-leader-def
-    "e i" '("change inner" . change-inner)
-    "e o" '("change outer" . change-outer)
-    "e s" '("surround menu" . embrace-commander)
     "e r" '("replace surrounding pair" . my-surround-replace)
     "e R" '("replace paired surroundings" . my-surround-replace-pair)
     "e w" '("surround word" . my-surround-word)
@@ -223,8 +200,8 @@
 ;; ---------------------------------------------------------------------------
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
-;; - `M-i/M-o' 或 `C-c e i/o' 修改当前包围结构的内部/整体内容。
-;; - `C-c e s' 打开 Embrace 菜单；`C-c e r/R/w' 替换包围符、替换成对包围符或包围单词。
+;; - Smartparens 的内容修改命令与 Embrace 的安装、键位和菜单位于 init-smartparens.el。
+;; - `C-c e r/R/w' 替换包围符、替换成对包围符或包围单词。
 ;; - `C-=/C--' 或 `C-c e +/-' 按语法结构扩展/收缩选区。
 ;; - `C->/C-<' 标记下/上一个相同文本，`C-c C-<' 标记全部，`C-S-c C-S-c' 按行多光标。
 ;; - `C-;' 或 `C-c e e' 切换 Iedit；`C-c e f' 只编辑当前函数内的匹配项。
