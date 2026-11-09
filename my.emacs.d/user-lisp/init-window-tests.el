@@ -9,8 +9,10 @@
     `(progn ,(plist-get args :config))))
 
 (defmacro defhydra (name &rest _heads)
-  `(defun ,(intern (concat (symbol-name name) "/body")) ()
-     (interactive)))
+  `(progn
+     (put ',name 'my/hydra-hint ',(nth 1 _heads))
+     (defun ,(intern (concat (symbol-name name) "/body")) ()
+       (interactive))))
 (load (expand-file-name "init-window.el" (file-name-directory load-file-name))
       nil nil t)
 
@@ -45,5 +47,25 @@
   (should (fboundp 'hydra-window-menu/body))
   (should-not (fboundp 'my/window-menu))
   (should-not (fboundp 'my/window-menu-open)))
+
+(ert-deftest my/window-menu-hint-keeps-detailed-three-column-descriptions ()
+  "The window Hydra presents the former Transient groups and descriptions."
+  (let ((hint (get 'hydra-window-menu 'my/hydra-hint)))
+    (dolist (text '("选择与移动"
+                    "空间分割"
+                    "布局与尺寸"
+                    "向左循环切换窗口"
+                    "Ace Window：选择窗口"
+                    "左侧分割，留在原窗口"
+                    "右侧分割并切换"
+                    "与目标窗口交换"
+                    "关闭当前窗口"
+                    "关闭目标窗口"
+                    "关闭其它窗口"
+                    "Zoom 当前窗口/恢复布局"
+                    "均分编辑窗口"
+                    "调整窗口尺寸"
+                    "退出菜单"))
+      (should (string-match-p (regexp-quote text) hint)))))
 
 ;;; init-window-tests.el ends here
