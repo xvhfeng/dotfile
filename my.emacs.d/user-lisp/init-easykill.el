@@ -1,22 +1,20 @@
 ;;; init-easykill.el --- Easy Kill integration -*- lexical-binding: t; -*-
 
-(require 'transient)
-(require 'init-transient-lifecycle)
-
 (autoload 'easy-kill-region "easy-kill" nil t)
+(autoload 'easy-dup-after "easy-kill" nil t)
+(autoload 'easy-dup-before "easy-kill" nil t)
 ;; 1.5. Easy Kill：按对象选择、复制或标记文本
 ;; ============================================================================
-;; 中文说明：M-w 打开本配置的 Easy Kill 菜单，C-w 保留给窗口 Transient。
+;; 中文说明：M-3 打开本配置的 Easy Kill Hydra，C-w 保留给窗口 Hydra。
 ;; 在单层菜单中开始对象选择后，y/RET/M-w 确认复制候选，k 剪切候选。
 (use-package easy-kill
   :straight (:host github
              :repo "leoliu/easy-kill"
              :commit "98cbae5d8c378ad14d612d7c88a78484c49a80b8")
-  :commands (easy-kill easy-mark easy-dup easy-dup-before easy-kill-help
+  :commands (easy-kill easy-mark easy-dup easy-dup-after easy-dup-before easy-kill-help
                        easy-kill-abort easy-kill-region))
 
-;; Transient 在展示菜单前会校验每个后缀；即使 Easy Kill 尚未加载，也必须
-;; 让剪切候选命令作为可交互 autoload 可见。
+;; Easy Kill 尚未加载时也让菜单命令作为可交互 autoload 可见。
 (autoload 'easy-kill-region "easy-kill" nil t)
 
 (defun easy-kill-on-word (n)
@@ -43,34 +41,6 @@ N 保持 Easy Kill 的对象选择接口。"
   (and (boundp 'easy-kill-candidate)
        (overlayp easy-kill-candidate)
        (overlay-buffer easy-kill-candidate)))
-
-(defun my/easy-kill--content ()
-  "返回候选、活动选区或当前行的可插入文本。"
-  (cond
-   ((my/easy-kill-active-p)
-    (if (stringp (easy-kill-get candidate))
-        (easy-kill-get candidate)
-      (buffer-substring-no-properties (overlay-start easy-kill-candidate)
-                                      (overlay-end easy-kill-candidate))))
-   ((use-region-p) (buffer-substring-no-properties (region-beginning) (region-end)))
-   (t (buffer-substring-no-properties (line-beginning-position)
-                                      (line-beginning-position 2)))))
-
-(defun my/easy-kill-insert-after ()
-  "在候选、选区或当前行后插入其内容。"
-  (interactive)
-  (let ((text (my/easy-kill--content)))
-    (goto-char (if (my/easy-kill-active-p) (overlay-end easy-kill-candidate)
-                 (if (use-region-p) (region-end) (line-beginning-position 2))))
-    (insert text)))
-
-(defun my/easy-kill-insert-before ()
-  "在候选、选区或当前行前插入其内容。"
-  (interactive)
-  (let ((text (my/easy-kill--content)))
-    (goto-char (if (my/easy-kill-active-p) (overlay-start easy-kill-candidate)
-                 (if (use-region-p) (region-beginning) (line-beginning-position))))
-    (insert text)))
 
 (defun my/easy-kill-select ()
   "按当前菜单键直接启动 Easy Kill 并选择对应对象。"
@@ -107,23 +77,12 @@ N 保持 Easy Kill 的对象选择接口。"
 ;; 让 Easy Kill 的临时 keymap 在复制后销毁候选并运行退出钩子。
 (put 'my/easy-kill-copy-and-quit 'easy-kill-exit t)
 
-(require 'init-transient-lifecycle)
-
-(defun my/easy-kill-toggle ()
-  "用 M-3 打开或关闭 Easy Kill 菜单。"
-  (interactive)
-  (if (transient-active-prefix '(my/easy-kill-menu))
-      (my/transient-force-close :easy-kill-toggle)
-    (my/transient-open #'my/easy-kill-menu)))
-
 (defun my/easy-kill-cancel ()
-  "无条件退出 Easy Kill、Transient 与普通 Emacs 标记状态。"
+  "无条件退出 Easy Kill、Hydra 与普通 Emacs 标记状态。"
   (interactive)
   (when (my/easy-kill-active-p)
     (easy-kill-abort easy-kill-region))
-  (deactivate-mark)
-  (when (transient-active-prefix)
-    (my/transient-force-close :easy-kill-cancel)))
+  (deactivate-mark))
 
 (defun my/easy-mark-start ()
   "进入统一的 Easy Mark 状态。"
@@ -158,7 +117,7 @@ N 保持 Easy Kill 的对象选择接口。"
   (message "Easy Kill 中按 k 剪切当前候选；C-w 保留给窗口菜单"))
 
 (with-eval-after-load 'easy-kill
-  ;; 中文说明：C-w 已被全局窗口 Transient 使用。Easy Kill 临时状态中
+  ;; 中文说明：C-w 已被全局窗口 Hydra 使用。Easy Kill 临时状态中
   ;; k 剪切候选、m 标记候选、q 取消；原组合键仍可使用。
   (define-key easy-kill-base-map (kbd "k") #'easy-kill-region)
   (define-key easy-kill-base-map (kbd "m") #'easy-kill-mark-region)
@@ -170,14 +129,15 @@ N 保持 Easy Kill 的对象选择接口。"
   (define-key easy-kill-base-map (kbd "RET") #'my/easy-kill-copy-and-quit)
   (define-key easy-kill-base-map (kbd "M-w") #'my/easy-kill-copy-and-quit)
   (define-key easy-kill-base-map (kbd "y") #'my/easy-kill-copy-and-quit)
-  ;; Easy Mark 会接管 Transient 的临时 map；这些键必须也在其 base map 中。
+  ;; Easy Mark 会接管临时 map；这些键必须也在其 base map 中。
   (define-key easy-kill-base-map (kbd "=") #'my/easy-mark-expand)
   (define-key easy-kill-base-map (kbd "-") #'my/easy-mark-shrink)
   (define-key easy-kill-base-map (kbd "SPC") #'my/easy-mark-cycle)
-  ;; 中文说明：与全局同一按键构成开关式体验，临时状态中只执行取消。
-  (define-key easy-kill-base-map (kbd "M-3") #'my/easy-kill-toggle)
+  ;; 临时选择状态中，M-3 重新显示 Hydra；ESC 则取消候选并退出。
+  (define-key easy-kill-base-map (kbd "M-3") #'hydra-easy-kill-menu/body)
   (define-key easy-kill-base-map [escape] #'my/easy-kill-cancel))
 
+(when nil
 (transient-define-prefix my/easy-kill-menu ()
   "打开单层 Easy Kill 对象选择、复制与标记菜单。"
   :variable-pitch t
@@ -210,17 +170,62 @@ N 保持 Easy Kill 的对象选择接口。"
     ("<escape>" "取消选择" my/easy-kill-cancel)
     ("h" "查看 Kill Ring" consult-yank-from-kill-ring)
     ("?" "显示完整键位帮助" easy-kill-help :transient t)]])
+  )
 
-;; 在本模块中显式恢复全局入口，避免单独重载时丢失 M-w 绑定。
-(keymap-global-set "M-3" #'my/easy-kill-menu)
+(use-package hydra
+  :straight t
+  :demand t
+  :config
+  (defhydra hydra-easy-kill-menu (:hint nil)
+    "
+                                      Easy Kill
+================================================================================
+开始操作                             选择对象                              调整与完成
+--------------------------------------------------------------------------------
+_m_ 开始 Easy Mark                   _w_ 选择单词                          _=_ 扩展候选
+_]_ 复制当前对象到下方               _s_ 选择表达式                        _-_ 收缩候选
+_[_ 复制当前对象到上方               _l_ 选择列表                          _SPC_ 循环对象类型
+                                      _f_ 选择文件名                        _y_ 复制到 kill-ring 并退出
+                                      _d_ 选择函数                          _RET_ 复制到 kill-ring 并退出
+                                      _e_ 选择整行                          _k_ 剪切候选并退出
+                                                                            _h_ 查看 Kill Ring
+                                                                            _?_ 显示完整键位帮助
+                                                                            _q_ / _ESC_ 退出菜单
+"
+    ("m" my/easy-mark-start)
+    ("]" easy-dup-after)
+    ("[" easy-dup-before)
+    ("w" my/easy-kill-select)
+    ("s" my/easy-kill-select)
+    ("l" my/easy-kill-select)
+    ("f" my/easy-kill-select)
+    ("d" my/easy-kill-select)
+    ("e" my/easy-kill-select)
+    ("=" my/easy-mark-expand)
+    ("-" my/easy-mark-shrink)
+    ("SPC" my/easy-mark-cycle)
+    ("y" my/easy-kill-copy-and-quit :exit t)
+    ("RET" my/easy-kill-copy-and-quit :exit t)
+    ("k" easy-kill-region :exit t)
+    ("h" consult-yank-from-kill-ring)
+    ("?" easy-kill-help)
+    ("q" my/easy-kill-cancel :exit t)
+    ("<escape>" my/easy-kill-cancel :exit t)))
+
+;; 兼容工作台和旧配置入口；两者现在都直接打开 Hydra。
+(defalias 'my/easy-kill-menu #'hydra-easy-kill-menu/body)
+(defalias 'my/easy-kill-toggle #'hydra-easy-kill-menu/body)
+
+;; M-3 直接打开 Easy Kill Hydra。
+(keymap-global-set "M-3" #'hydra-easy-kill-menu/body)
 (with-eval-after-load 'general
-  (general-define-key "M-3" '("Easy Kill 菜单" . my/easy-kill-menu)))
+  (general-define-key "M-3" '("Easy Kill 菜单" . hydra-easy-kill-menu/body)))
 
 (defvar my/easy-kill-toggle-override-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "M-3") #'my/easy-kill-toggle)
+    (define-key map (kbd "M-3") #'hydra-easy-kill-menu/body)
     map)
-  "保证 M-3 优先于局部 keymap 的 Easy Kill toggle map。")
+  "保证 M-3 优先于局部 keymap 的 Easy Kill Hydra map。")
 (defvar my/easy-kill-toggle-emulation-alist
   `((t . ,my/easy-kill-toggle-override-map)))
 (add-to-list 'emulation-mode-map-alists 'my/easy-kill-toggle-emulation-alist)
