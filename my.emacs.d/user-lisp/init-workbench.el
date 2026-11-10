@@ -145,6 +145,20 @@
 (autoload 'my/select-whole-buffer "init-format" nil t)
 (autoload 'my/match-pair "init-mykey" nil t)
 (autoload 'my-clean-extra-lines-and-comments "init-mykey" nil t)
+(unless (fboundp 'my-evilnc-comment-or-uncomment-paragraphs)
+  (autoload 'my-evilnc-comment-or-uncomment-paragraphs "init-commenter" nil t))
+(unless (fboundp 'my/evilnc-copy-and-comment-lines)
+  (autoload 'my/evilnc-copy-and-comment-lines "init-commenter" nil t))
+(dolist (command '(evilnc-comment-or-uncomment-lines
+                   evilnc-comment-or-uncomment-html-tag
+                   evilnc-comment-or-uncomment-to-the-line
+                   evilnc-quick-comment-or-uncomment-to-the-line
+                   evilnc-comment-and-kill-ring-save
+                   evilnc-copy-to-line
+                   evilnc-kill-to-line
+                   evilnc-comment-box))
+  (unless (fboundp command)
+    (autoload command "evil-nerd-commenter" nil t)))
 (autoload 'my/toggle-mark-command "init-mykey" nil t)
 (autoload 'my/dirvish-open "init-dirvish" nil t)
 (autoload 'my/pinky-toggle "init-pinky" nil t)
@@ -432,7 +446,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 
 (transient-define-prefix my/code-workbench-menu ()
   "打开代码工作台：集中项目、版本控制、代码与诊断操作。"
-  :column-widths '(22 22 22 22 22)
+  :column-widths '(20 20 20 20 20 20)
   [["   项目与版本控制"
     ("p" "切换项目" project-switch-project)
     ("g" "Git 状态" magit-status)
@@ -459,6 +473,19 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("v" "选中文本块" evilmi-select-items)
     ("k" "删除文本块" evilmi-delete-items)
     ("h" "高亮当前文本项" evilmi-highlight-items)]
+   ["   代码注释"
+    ("t" "注释/取消行或选区" evilnc-comment-or-uncomment-lines)
+    ("P" "注释/取消当前段落" evilnc-comment-or-uncomment-paragraphs)
+    ("H" "注释/取消 HTML 段落" my-evilnc-comment-or-uncomment-paragraphs)
+    ("T" "注释/取消 HTML 标签" evilnc-comment-or-uncomment-html-tag)
+    ("E" "注释/取消至指定行" evilnc-comment-or-uncomment-to-the-line)
+    ("Q" "快速注释至指定行" evilnc-quick-comment-or-uncomment-to-the-line)
+    ("Y" "复制、插入并注释" my/evilnc-copy-and-comment-lines)
+    ("K" "注释并复制到 Kill Ring" evilnc-comment-and-kill-ring-save)
+    ("C" "复制至指定行" evilnc-copy-to-line)
+    ("D" "剪切至指定行" evilnc-kill-to-line)
+    ("B" "注释框" evilnc-comment-box)
+    ("M-;" "注释/取消行或选区" evilnc-comment-or-uncomment-lines)]
    ["   诊断"
     ("x" "当前诊断" flymake-show-buffer-diagnostics)
     ("y" "搜索诊断" my/workbench-project-diagnostics)
