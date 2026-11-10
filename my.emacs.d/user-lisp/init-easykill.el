@@ -116,6 +116,69 @@ N 保持 Easy Kill 的对象选择接口。"
   (interactive)
   (message "Easy Kill 中按 k 剪切当前候选；C-w 保留给窗口菜单"))
 
+(defun my/easy-kill--line-bounds (count direction)
+  "Return whole-line bounds for COUNT lines from point in DIRECTION.
+
+The current line is always included, regardless of point's column."
+  (unless (and (integerp count) (> count 0))
+    (user-error "行数必须是正整数"))
+  (save-excursion
+    (pcase direction
+      ('up
+       (let ((end (progn (forward-line 1) (point))))
+         (forward-line (- count))
+         (cons (line-beginning-position) end)))
+      ('down
+       (cons (line-beginning-position)
+             (progn (forward-line count) (point))))
+      (_ (error "未知行操作方向: %S" direction)))))
+
+(defun my/easy-kill--read-line-count (verb direction)
+  "Read a positive whole-line count for VERB in DIRECTION."
+  (read-number (format "向%s%s多少行（含当前行）: " direction verb) 1))
+
+(defun my/easy-kill--operate-lines (count direction operation)
+  "Copy or kill COUNT whole lines in DIRECTION without losing point context."
+  (pcase-let ((`(,beg . ,end) (my/easy-kill--line-bounds count direction))
+              (column (current-column))
+              (origin (copy-marker (point))))
+    (unwind-protect
+        (pcase operation
+          ('copy
+           (kill-ring-save beg end)
+           (goto-char origin))
+          ('kill
+           (kill-region beg end)
+           (goto-char origin)
+           ;; If downward deletion reaches EOB, retain the column on the
+           ;; preceding surviving line rather than creating whitespace.
+           (when (and (eobp) (> (point) (point-min)))
+             (forward-line -1))
+           (unless (= (point-min) (point-max))
+             (move-to-column column)))
+          (_ (error "未知行操作: %S" operation)))
+      (set-marker origin nil))))
+
+(defun my/easy-kill-copy-lines-up (count)
+  "Copy COUNT whole lines upward from the current line to the kill ring."
+  (interactive (list (my/easy-kill--read-line-count "复制" "上")))
+  (my/easy-kill--operate-lines count 'up 'copy))
+
+(defun my/easy-kill-copy-lines-down (count)
+  "Copy COUNT whole lines downward from the current line to the kill ring."
+  (interactive (list (my/easy-kill--read-line-count "复制" "下")))
+  (my/easy-kill--operate-lines count 'down 'copy))
+
+(defun my/easy-kill-kill-lines-up (count)
+  "Kill COUNT whole lines upward from the current line to the kill ring."
+  (interactive (list (my/easy-kill--read-line-count "剪切" "上")))
+  (my/easy-kill--operate-lines count 'up 'kill))
+
+(defun my/easy-kill-kill-lines-down (count)
+  "Kill COUNT whole lines downward from the current line to the kill ring."
+  (interactive (list (my/easy-kill--read-line-count "剪切" "下")))
+  (my/easy-kill--operate-lines count 'down 'kill))
+
 (with-eval-after-load 'easy-kill
   ;; 中文说明：C-w 已被全局窗口 Hydra 使用。Easy Kill 临时状态中
   ;; k 剪切候选、m 标记候选、q 取消；原组合键仍可使用。
@@ -180,17 +243,17 @@ N 保持 Easy Kill 的对象选择接口。"
     "
                                       Easy Kill
 ================================================================================
-开始操作                             选择对象                              调整与完成
+开始操作                  行操作                      选择对象                  调整与完成
 --------------------------------------------------------------------------------
-_m_ 开始 Easy Mark                 _w_ 选择单词                        _=_ 扩展候选
-_]_ 复制当前对象到下方               _s_ 选择表达式                        _-_ 收缩候选
-_[_ 复制当前对象到上方               _l_ 选择列表                          _SPC_ 循环对象类型
-                                   _f_ 选择文件名                        _y_ 复制到 kill-ring 并退出
-                                   _d_ 选择函数                          _RET_ 复制到 kill-ring 并退出
-                                   _e_ 选择整行                          _k_ 剪切候选并退出
-                                                                        _h_ 查看 Kill Ring
-                                                                        _?_ 显示完整键位帮助
-                                                                        _q_ / _ESC_ 退出菜单
+_m_ 开始 Easy Mark        _u_ 向上复制指定行          _w_ 选择单词              _=_ 扩展候选
+_]_ 复制当前对象到下方      _n_ 向下复制指定行          _s_ 选择表达式            _-_ 收缩候选
+_[_ 复制当前对象到上方      _v_ 向上剪切指定行          _l_ 选择列表              _SPC_ 循环对象类型
+                          _x_ 向下剪切指定行          _f_ 选择文件名            _y_ 复制到 kill-ring 并退出
+                                                       _d_ 选择函数              _RET_ 复制到 kill-ring 并退出
+                                                       _e_ 选择整行              _k_ 剪切候选并退出
+                                                                                   _h_ 查看 Kill Ring
+                                                                                   _?_ 显示完整键位帮助
+                                                                                   _q_ / _ESC_ 退出菜单
 "
     ("m" my/easy-mark-start)
     ("]" easy-dup-after)
@@ -209,6 +272,10 @@ _[_ 复制当前对象到上方               _l_ 选择列表                  
     ("k" easy-kill-region :exit t)
     ("h" consult-yank-from-kill-ring)
     ("?" easy-kill-help)
+    ("u" my/easy-kill-copy-lines-up :exit t)
+    ("n" my/easy-kill-copy-lines-down :exit t)
+    ("v" my/easy-kill-kill-lines-up :exit t)
+    ("x" my/easy-kill-kill-lines-down :exit t)
     ("q" my/easy-kill-cancel :exit t)
     ("<escape>" my/easy-kill-cancel :exit t)))
 
