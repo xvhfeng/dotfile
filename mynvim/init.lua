@@ -11,15 +11,7 @@ vim.g.loaded_netrwPlugin = 1
 
 if vim.fn.has("mac") == 1 then
 	vim.g.HOME_PATH = "/Users/" .. vim.fn.expand("$USER")
-	vim.cmd([[
-    let g:python_host_prog = '/usr/bin/python'
-    let g:python3_host_prog = '/opt/homebrew/bin/python3'
-    ]])
 elseif vim.fn.has("unix") == 1 then
-	vim.cmd([[
-    let g:python_host_prog = '/usr/bin/python'
-    let g:python3_host_prog = '/usr/bin/python3'
-    ]])
 	local username = vim.fn.system("whoami")
 	if string.find(username, "root") then
 		vim.g.HOME_PATH = "/root"
@@ -32,8 +24,13 @@ else
 	return
 end
 
+-- Keep Neovim's Python provider separate from project virtualenvs and asdf shims.
+local provider_python = vim.fn.stdpath("data") .. "/python3-provider/bin/python3"
+if vim.g.python3_host_prog == nil and vim.fn.executable(provider_python) == 1 then
+	vim.g.python3_host_prog = provider_python
+end
+
 local user_setting = {
-	python3_host_prog = "python3", -- add to your own python3 path
 	snips_author = "Bgm",
 	snips_email = "bgm.spk.xu@gmail.com",
 	snips_github = "https://github.com/xvhfeng",

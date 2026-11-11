@@ -55,6 +55,7 @@ plugins_configure.plugins_groups = { -- {{{
 			{ name = "bigfile", enable = true, desc = "解决大文件卡顿" },
 			-- { name = "wilder", enable = false, desc = "更好的命令行功能"},
 			{ name = "which-key", enable = true, desc = "vim的操作快捷键映射" },
+			{ name = "hydra.init", enable = true, desc = "窗口缩放 Hydra" },
 			--  { name="test", enable = true, desc="测试插件"},
 		},
 	},

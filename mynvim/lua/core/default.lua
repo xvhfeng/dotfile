@@ -5,7 +5,7 @@ default_setting["global"] = {
 
 vim.cmd("let maplocalleader=','")
 vim.cmd("let mapleader=','")
-vim.cmd("nnoremap ; :")
+-- vim.cmd("nnoremap ; :") -- Reserve ; as the Hydra menu prefix.
 --vim.cmd("vnoremap \\ ;")
 local global_func = require("util.global")
 

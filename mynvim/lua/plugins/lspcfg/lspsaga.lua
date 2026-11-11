@@ -9,11 +9,10 @@ plugin.core = {
 		{ "gf", "<cmd>Lspsaga finder<CR>", desc = "Toggle Lspsaga finder" },
 		{ "<leader>gf", "<cmd>Lspsaga finder imp<CR>", desc = "Toggle Lspsaga finder imp" },
 		{ "gx", "<cmd>Lspsaga code_action<CR>", desc = "Toggle Lspsaga code_action" },
-		{ "gr", "<cmd>Lspsaga rename<CR>", desc = "Toggle Lspsaga rename" },
 		-- { 'gd', '<cmd>Lspsaga goto_definition<CR>', desc = 'Toggle Lspsaga goto_definition' },
 		{ "gP", "<cmd>Lspsaga peek_definition<CR>", desc = "Toggle Lspsaga peek_definition" },
 		{
-			"gk",
+			"<leader>dk",
 			"<cmd>Lspsaga diagnostic_jump_prev<CR>",
 			desc = "Toggle Lspsaga diagnostic_jump_prev",
 		},
@@ -23,7 +22,7 @@ plugin.core = {
 			desc = "Toggle Lspsaga diagnostic_jump_next",
 		},
 		{
-			"gK",
+			"<leader>dK",
 			function()
 				require("lspsaga.diagnostic").goto_prev({
 					severity = vim.diagnostic.severity.ERROR,
@@ -40,7 +39,6 @@ plugin.core = {
 			end,
 			desc = "Toggle Lspsaga diagnostic_next ERROR",
 		},
-		{ "<leader>ol", "<cmd>Lspsaga outline<cr>", desc = "Toggle Lspsaga outline" },
 		{
 			"<leader>sl",
 			"<cmd>Lspsaga show_line_diagnostics<CR>",

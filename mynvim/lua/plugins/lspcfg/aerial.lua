@@ -2,6 +2,10 @@ local plugin = {}
 
 plugin.core = {
 	"stevearc/aerial.nvim",
+	cmd = { "AerialToggle", "AerialOpen", "AerialClose" },
+	keys = {
+		{ "<leader>ol", "<cmd>AerialToggle!<CR>", desc = "Toggle outline" },
+	},
 	-- opts = {},
 	-- Optional dependencies
 	dependencies = {

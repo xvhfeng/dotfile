@@ -41,6 +41,11 @@ local setup = function()
 	}
 
 	cmp.setup({
+		matching = {
+			-- nvim-cmp already matches letters case-insensitively; allow fuzzy matches
+			-- even when the first typed letter occurs inside the candidate.
+			disallow_partial_fuzzy_matching = false,
+		},
 		snippet = {
 			expand = function(args)
 				luasnip.lsp_expand(args.body) -- For `luasnip` users.
