@@ -9,7 +9,7 @@ plugin.core = {
 			--
 			--     -- 设置默认的工作目录（Neovim 启动时的目录）
 			detection_methods = { "pattern", "lsp" },
-			patterns = { ".git", ".hg", ".svn", ".project", ".root" },
+			patterns = { ".git", ".hg", ".svn", ".project", ".root", "projx" },
 		})
 		-- require('telescope').load_extension('projects')
 		-- require'telescope'.extensions.projects.projects{}

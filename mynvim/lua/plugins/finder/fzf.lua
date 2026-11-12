@@ -103,7 +103,7 @@ M.mapping = {
 		{
 			tag = { "<leader>a", "Fzf", usekey = true },
 			keymaps = {
-				{
+                {
 					"n",
 					"o",
 					function()

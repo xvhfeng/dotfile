@@ -7,7 +7,8 @@
   (use-package orderless
   :straight t
   :custom
-  (orderless-matching-styles '(orderless-literal orderless-regexp))
+  ;; 每个输入片段也可按字符顺序跳跃匹配，例如 abc 匹配 aXbYc。
+  (orderless-matching-styles '(orderless-literal orderless-regexp orderless-flex))
   ;; Orderless 负责普通候选；basic 作为兼容性后备。
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
