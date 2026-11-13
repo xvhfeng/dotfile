@@ -541,6 +541,8 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
    ["   笔记与帮助"
     ("l" "新建笔记" org-capture)
     ("g" "查看日程" org-agenda)
+    ("i" "Markdown 实时预览" my/markdown-toggle-live-preview)
+    ("o" "Markdown 导出并预览" my/markdown-export-and-preview)
     ("?" "Transient 菜单帮助" my/transient-menu-help)
     (";" "上下文动作" my/workbench-context-actions)
     ("!" "当前按键表" describe-bindings)

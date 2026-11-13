@@ -47,9 +47,9 @@
   :demand t
   :init
   (setq dashboard-projects-backend 'project-el
-        dashboard-items '((recents . 5)
+        dashboard-items '((recents . 15)
                           (bookmarks . 5)
-                          (projects . 5)))
+                          (projects . 7)))
   :config
   (dashboard-setup-startup-hook)
   ;; Treemacs keeps a separate project list; load it before Dashboard renders.
