@@ -2,6 +2,59 @@
 
 ;;; 中文导读：C/C++ 语言配置。使用 Emacs 内置 cc-mode 作为无 Tree-sitter 时的
 ;;; 稳定回退，Tree-sitter 可用时由全局 treesit-auto 自动切换，并接入 Eglot/Flymake。
+(require 'cl-lib)
+(require 'imenu)
+
+(defun my/c-imenu-list--contains-name-p (index name)
+  "Return non-nil if INDEX contains a leaf named NAME."
+  (cl-some (lambda (entry)
+             (if (imenu--subalist-p entry)
+                 (my/c-imenu-list--contains-name-p (cdr entry) name)
+               (equal (car entry) name)))
+           index))
+
+(defun my/c-imenu-list--macros ()
+  "Return `#define' entries from the current C buffer."
+  (let (entries)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward
+              "^[[:blank:]]*#[[:blank:]]*define[[:blank:]]+\\([[:alpha:]_][[:alnum:]_]*\\)"
+              nil t)
+        (let ((start (match-beginning 1))
+              (name (match-string-no-properties 1)))
+          (unless (nth 4 (syntax-ppss start))
+            (push (cons name (copy-marker start)) entries)))))
+    (nreverse entries)))
+
+(defun my/c-imenu-list--rescan (original &rest args)
+  "Add missing C functions and macros after ORIGINAL Imenu List rescan."
+  (apply original args)
+  (when (derived-mode-p 'c-mode 'c-ts-mode)
+    (let* ((native-index (if (derived-mode-p 'c-ts-mode)
+                             (cdr (assoc "Function" (treesit-simple-imenu)))
+                           (imenu-default-create-index-function)))
+           (functions (cl-remove-if
+                       (lambda (entry)
+                         (my/c-imenu-list--contains-name-p
+                          imenu--index-alist (car entry)))
+                       native-index))
+           (macros (cl-remove-if
+                    (lambda (entry)
+                      (my/c-imenu-list--contains-name-p
+                       imenu--index-alist (car entry)))
+                    (my/c-imenu-list--macros))))
+      (when functions
+        (setq imenu--index-alist
+              (append imenu--index-alist (list (cons "本地函数" functions)))))
+      (when macros
+        (setq imenu--index-alist
+              (append imenu--index-alist (list (cons "宏定义" macros)))))))
+  imenu--index-alist)
+
+(with-eval-after-load 'imenu-list
+  (advice-add 'imenu-list-rescan-imenu :around #'my/c-imenu-list--rescan))
+
 (defconst my/clangd-executable
   (or (and (eq system-type 'darwin)
            (file-executable-p "/opt/homebrew/opt/llvm/bin/clangd")
