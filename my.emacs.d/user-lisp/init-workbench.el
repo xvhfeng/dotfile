@@ -323,9 +323,9 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (my/workbench-call-on-demand 'consult 'consult-imenu "符号列表"))
 
 (defun my/workbench-outline-list ()
-  "按需加载 Consult，并显示当前 Buffer 的 Outline 标题。"
+  "按需加载 Consult，并显示当前 Buffer 的标题或语言符号。"
   (interactive)
-  (my/workbench-call-on-demand 'consult 'consult-outline "Outline 标题列表"))
+  (my/workbench-call-on-demand 'consult 'consult-outline "当前文件大纲"))
 
 (defun my/workbench-imenu-list-toggle ()
   "按需加载并切换 Imenu List 侧栏。"
@@ -470,7 +470,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("e" "编译" compile)]
    ["   大纲与代码结构"
     ("s" "符号列表" my/workbench-symbol-list)
-    ("o" "Outline 标题列表" my/workbench-outline-list)
+    ("o" "当前文件大纲" my/workbench-outline-list)
     ("l" "切换 Imenu List 侧栏" my/workbench-imenu-list-toggle)
     ("n" "跳转与文档" my/workbench-navigation-menu)
     ("z" "代码折叠" my/workbench-fold-menu)]

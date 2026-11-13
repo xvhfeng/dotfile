@@ -248,6 +248,39 @@ explicitly true during initialization.")
       (keymap-set imenu-list-major-mode-map "k" #'previous-line))
   (error (message "imenu-list 未加载：%s" (error-message-string err))))
 
+;; Code buffers use their mode/Eglot Imenu index for both sidebars and Consult.
+;; Document buffers keep `consult-outline' heading navigation unchanged.
+(defun my/consult-outline-language-index (original &rest args)
+  "Show the current language's symbols via Consult, or call ORIGINAL."
+  (if (and (derived-mode-p 'prog-mode 'yaml-mode 'yaml-ts-mode
+                           'html-mode 'html-ts-mode 'mhtml-mode 'mhtml-ts-mode
+                           'web-mode 'css-mode 'css-ts-mode
+                           'json-mode 'json-ts-mode)
+           (boundp 'imenu-create-index-function)
+           (functionp imenu-create-index-function))
+      (progn
+        (require 'consult-imenu)
+        (if (and (derived-mode-p 'c-mode 'c-ts-mode)
+               (fboundp 'my/c-imenu-list--rescan))
+            (let* ((source-index-function imenu-create-index-function)
+                   (imenu-create-index-function
+                    (lambda ()
+                      (let ((imenu--index-alist nil))
+                        (my/c-imenu-list--rescan
+                         (lambda ()
+                           (setq imenu--index-alist
+                                 (funcall source-index-function))))
+                        imenu--index-alist))))
+              (consult-imenu))
+          (consult-imenu)))
+    (apply original args)))
+
+(with-eval-after-load 'consult
+  (unless (advice-member-p #'my/consult-outline-language-index
+                           'consult-outline)
+    (advice-add 'consult-outline :around
+                #'my/consult-outline-language-index)))
+
 ;; 中文说明：Eglot 把 LSP `DocumentSymbol` 转为嵌套的 Imenu 索引，其中包含
 ;; “类型 → 方法/字段 → 内嵌类型”等父子关系。Imenu List 直接显示这棵原始树，
 ;; 不按 SymbolKind 重排为额外分类节点，避免破坏语言服务器给出的顺序和层级。
