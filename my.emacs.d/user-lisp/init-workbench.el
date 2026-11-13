@@ -111,7 +111,8 @@
 
 ;; Transient 会在打开菜单时校验每个后缀命令。为延迟加载的第三方包预先注册
 ;; 自动加载，确保 Scratch 等尚未访问过代码/搜索功能的 Buffer 也能打开菜单。
-(dolist (command '(consult-find consult-recent-file consult-buffer consult-ripgrep consult-line))
+(dolist (command '(consult-find consult-recent-file consult-buffer consult-ripgrep
+                   consult-line consult-outline))
   (autoload command "consult" nil t)
   ;; 兼容早期受管字节码中的 Transient 后缀：它们可能将裸命令符号编译为
   ;; 变量引用。函数和值命名空间独立，赋同名符号值不会影响命令调用。
@@ -321,6 +322,11 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
   (interactive)
   (my/workbench-call-on-demand 'consult 'consult-imenu "符号列表"))
 
+(defun my/workbench-outline-list ()
+  "按需加载 Consult，并显示当前 Buffer 的 Outline 标题。"
+  (interactive)
+  (my/workbench-call-on-demand 'consult 'consult-outline "Outline 标题列表"))
+
 (defun my/workbench-imenu-list-toggle ()
   "按需加载并切换 Imenu List 侧栏。"
   (interactive)
@@ -464,7 +470,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("e" "编译" compile)]
    ["   大纲与代码结构"
     ("s" "符号列表" my/workbench-symbol-list)
-    ("o" "切换 Outline 模式" outline-minor-mode)
+    ("o" "Outline 标题列表" my/workbench-outline-list)
     ("l" "切换 Imenu List 侧栏" my/workbench-imenu-list-toggle)
     ("n" "跳转与文档" my/workbench-navigation-menu)
     ("z" "代码折叠" my/workbench-fold-menu)]

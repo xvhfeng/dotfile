@@ -219,13 +219,33 @@ explicitly true during initialization.")
 
 ;; 方案 B: 侧边栏树状代码大纲 (Imenu-list)
 ;; 中文说明：大纲侧栏为可选界面；Consult Imenu 在该包不可用时仍可使用。
+(defvar-local my/imenu-list-last-preview-line nil
+  "Last Imenu List line previewed in the source buffer.")
+
+(defun my/imenu-list-follow-point ()
+  "Preview the symbol at point when moving through Imenu List."
+  (let ((line (line-number-at-pos)))
+    (unless (eql line my/imenu-list-last-preview-line)
+      (setq my/imenu-list-last-preview-line line)
+      (let ((entry (imenu-list--find-entry)))
+        (when (and entry (not (imenu--subalist-p entry)))
+          (imenu-list-display-entry))))))
+
+(defun my/imenu-list-enable-follow ()
+  "Follow Imenu List navigation while keeping focus in its sidebar."
+  (add-hook 'post-command-hook #'my/imenu-list-follow-point nil t))
+
 (condition-case err
     (use-package imenu-list
       :straight t
       :defer t
       :custom
       (imenu-list-auto-resize t)
-      (imenu-list-focus-after-activation t))
+      (imenu-list-focus-after-activation t)
+      :config
+      (add-hook 'imenu-list-major-mode-hook #'my/imenu-list-enable-follow)
+      (keymap-set imenu-list-major-mode-map "j" #'next-line)
+      (keymap-set imenu-list-major-mode-map "k" #'previous-line))
   (error (message "imenu-list 未加载：%s" (error-message-string err))))
 
 ;; 中文说明：Eglot 把 LSP `DocumentSymbol` 转为嵌套的 Imenu 索引，其中包含
