@@ -457,7 +457,8 @@ The physical-key dispatcher itself is excluded to avoid recursion."
     init-workbench
     init-mail
     init-debug
-    init-modeline)
+    init-modeline
+    init-dashboard)
   "Emacs 启动时按顺序加载的配置模块列表。")
 
 (my/require-modules my/init-modules)
