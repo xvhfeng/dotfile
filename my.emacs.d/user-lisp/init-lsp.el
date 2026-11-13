@@ -329,6 +329,53 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
     (user-error "Imenu List 尚未安装或加载")))
 
 (with-eval-after-load 'treemacs
+  ;; Treemacs 默认只用颜色区分 Git 状态；在文件名后补上醒目的符号。
+  ;; 使用注释接口，保留现有图标、文件名和其他插件的后缀。
+  (defconst my/treemacs-git-badge-source "my-git-badge")
+
+  (defun my/treemacs-git-badge (git-face)
+    "Return a visible suffix for Treemacs GIT-FACE, or nil."
+    (pcase git-face
+      ('treemacs-git-modified-face
+       (propertize " ●" 'face '(:foreground "#e0af68" :weight bold)))
+      ('treemacs-git-untracked-face
+       (propertize " ?" 'face '(:foreground "#ff9e64" :weight bold)))
+      ('treemacs-git-added-face
+       (propertize " ✚" 'face '(:foreground "#9ece6a" :weight bold)))
+      ('treemacs-git-renamed-face
+       (propertize " ↪" 'face '(:foreground "#9ece6a" :weight bold)))
+      ('treemacs-git-conflict-face
+       (propertize " !" 'face '(:foreground "#f7768e" :weight bold)))))
+
+  (defun my/treemacs-update-git-badges (button _path buffer _future)
+    "Update Git suffixes for immediate children of BUTTON in BUFFER."
+    (when (buffer-live-p buffer)
+      (with-current-buffer buffer
+        (let ((depth (1+ (button-get button :depth)))
+              (next button)
+              entries)
+          (while (and (setq next (next-button next))
+                      (>= (button-get next :depth) depth))
+            (when (= (button-get next :depth) depth)
+              (let* ((path (button-get next :path))
+                     (annotation (and path (treemacs-get-annotation path))))
+                (when path
+                  (push (cons path (and annotation
+                                        (treemacs-annotation->git-face annotation)))
+                        entries)))))
+          (dolist (entry entries)
+            (let ((badge (my/treemacs-git-badge (cdr entry))))
+              (if badge
+                  (treemacs-set-annotation-suffix
+                   (car entry) badge my/treemacs-git-badge-source)
+                (treemacs-remove-annotation-suffix
+                 (car entry) my/treemacs-git-badge-source))
+              (treemacs-apply-single-annotation (car entry))))))))
+
+  ;; Deferred Git 状态算完后才有最新 face，随后更新对应的后缀符号。
+  (advice-add #'treemacs--apply-annotations-deferred
+              :after #'my/treemacs-update-git-badges)
+
   ;; 中文说明：关闭 Treemacs 的标签自动跟随。该第三方实现把 Eglot 返回的整数
   ;; 位置传给 `marker-position`，会持续产生 `wrong-type-argument markerp`。
   ;; 此设置不影响 Treemacs 文件树、项目管理、Flymake 或 Imenu List 代码大纲。

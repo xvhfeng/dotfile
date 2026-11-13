@@ -228,7 +228,7 @@ _C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换             
   ("j" my/window-select-down)
   ("k" my/window-select-up)
   ("l" my/window-select-right)
-  ("C-w" ace-window :exit nil)
+  ("C-w" ace-window )
   ("a" my/window-split-left)
   ("d" my/window-split-right)
   ("w" my/window-split-up)
@@ -301,7 +301,6 @@ _C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换             
   (dimmer-configure-hydra)
   (dimmer-configure-magit)
   (dimmer-mode 1))
-
 
 (provide 'init-window)
 
