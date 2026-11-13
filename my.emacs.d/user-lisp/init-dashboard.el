@@ -41,17 +41,29 @@
     (dolist (item (treemacs-workspace->projects workspace))
       (my/dashboard-remember-treemacs-project item))))
 
+(defun my/dashboard-goto-first-recent-file ()
+  "Place point on the first recent-file entry in Dashboard."
+  (when (fboundp 'dashboard-jump-to-recents)
+    (dashboard-jump-to-recents)))
+
 (use-package dashboard
   :straight (:host github :repo "emacs-dashboard/dashboard")
   ;; `use-package-always-defer' is enabled globally; install startup hooks now.
   :demand t
   :init
-  (setq dashboard-projects-backend 'project-el
+  (setq dashboard-startup-banner
+        (expand-file-name "image/dashboard.jpg" user-emacs-directory)
+        dashboard-image-banner-max-width 300
+        dashboard-image-banner-max-height 300
+        dashboard-banner-logo-title "**-- Welcome to my turf! --**"
+        dashboard-footer-messages '("AI/BIBI is cheap，show me the code！")
+        dashboard-projects-backend 'project-el
         dashboard-items '((recents . 15)
                           (bookmarks . 5)
                           (projects . 7)))
   :config
   (dashboard-setup-startup-hook)
+  (add-hook 'dashboard-mode-hook #'my/dashboard-goto-first-recent-file)
   ;; Treemacs keeps a separate project list; load it before Dashboard renders.
   (require 'treemacs)
   (add-hook 'project-find-functions #'my/dashboard-find-treemacs-project t)
