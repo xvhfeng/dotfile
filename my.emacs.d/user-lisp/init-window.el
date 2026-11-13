@@ -187,16 +187,11 @@
   :config
   ;; 定义一个专门用于调整窗口大小的 Hydra 键盘态
   (defhydra hydra-window-resize (:hint nil)
-;;    "
-;;  ^Resizing Window^
-;;  -----------------------------------------
-;;  _h_ / _<left>_  : 缩小宽度 (Narrow)
-;;  _l_ / _<right>_ : 放大宽度 (Widen)
-;;  _k_ / _<up>_    : 缩小高度 (Shrink)
-;;  _j_ / _<down>_  : 放大高度 (Enlarge)
-;;  _q_ / _<return>_: 退出 (Quit)
-;;  _<esc>_ / _<return>_: 退出 (Quit)
-;;  "
+    "
+调整窗口大小
+_h_ / _<left>_ 缩小宽度    _l_ / _<right>_ 增加宽度
+_k_ / _<up>_ 缩小高度      _j_ / _<down>_ 增加高度
+_q_ / _<return>_ 退出"
     ("h" my/window-shrink-horizontally)
     ("l" my/window-enlarge-horizontally)
     ("j" enlarge-window)
@@ -206,15 +201,15 @@
     ("<down>" enlarge-window)
     ("<up>" shrink-window)
     ("q" nil :exit t)
-    ("<esc>" nil :exit t)
+    ;; ("<esc>" nil :exit t)
     ("<return>" nil :exit t)))
 
 ;; ============================================================================
 ;; 2. C-w 三列 Hydra，与 C-c w General/Which-Key 入口
 ;; ============================================================================
-;; 中文说明：Hydra 保持在窗口操作状态，直到 q、RET、ESC 或 C-g 明确退出。
+;; 一级菜单默认执行后退出；C-w、z、x、t、m 保持 Hydra 状态。
 ;; C-c w 的同一批命令仍由 `my-window-map' 提供 Which-Key 可发现的直接键位。
-(defhydra hydra-window-menu (:hint nil)
+(defhydra hydra-window-menu (:hint nil :color blue)
   "
                                      窗口操作
 ================================================================================
@@ -228,13 +223,12 @@ _C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换             
                                     _b_ 右侧分割并切换                  _=_ 均分编辑窗口
                                     _f_ 上方分割并切换                  _r_ 调整窗口尺寸
                                     _v_ 下方分割并切换                  _q_ 退出菜单
-                                                                      <esc> quit
 "
   ("h" my/window-select-left)
   ("j" my/window-select-down)
   ("k" my/window-select-up)
   ("l" my/window-select-right)
-  ("C-w" ace-window)
+  ("C-w" ace-window :exit nil)
   ("a" my/window-split-left)
   ("d" my/window-split-right)
   ("w" my/window-split-up)
@@ -243,15 +237,15 @@ _C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换             
   ("b" my-split-right-and-switch)
   ("f" my-split-above-and-switch)
   ("v" my-split-below-and-switch)
-  ("m" ace-swap-window)
-  ("t" delete-window)
-  ("x" ace-delete-window)
+  ("m" ace-swap-window :exit nil)
+  ("t" delete-window :exit nil)
+  ("x" ace-delete-window :exit nil)
   ("o" delete-other-windows)
-  ("z" zoom-window-zoom)
+  ("z" zoom-window-zoom :exit nil)
   ("=" my/balance-editor-windows)
   ("r" hydra-window-resize/body :exit t)
   ("<return>" nil :exit t)
-  ("<esc>" nil :exit t)
+  ;; ("<esc>" nil :exit t)
   ("q" nil :exit t))
 
 (keymap-global-set "C-w" #'hydra-window-menu/body)
@@ -315,8 +309,8 @@ _C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换             
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - 普通 Buffer 的窗口命令可用 `C-w ...' 或 `C-c w ...'，两者等价。
-;; - `C-w' 打开严格三列的 Hydra：第一列选择/移动，第二列空间分割，第三列
-;;   交换、关闭、布局和尺寸；q、RET、ESC 或 C-g 退出，t 关闭当前窗口。
+;; - `C-w' 打开三列 Hydra：C-w/z/x/t/m 执行后留在菜单，其余操作执行后退出；
+;;   r 切换到窗口尺寸菜单，q、RET、ESC 或 C-g 退出一级菜单。
 ;; - `C-c w' 使用 General/Which-Key 的直接窗口命令，按键与 C-w Hydra 对应。
 ;; - 小写 `a/d/w/s' 分割后会在新窗口用 Consult 选择已打开 Buffer，并自动回到来源窗口；
 ;;   `f/c/v/b' 分割后直接切换到新窗口。
