@@ -1,6 +1,7 @@
 ;;; init-window.el --- Window management with ace-window -*- lexical-binding: t; -*-
 
 (require 'windmove)
+(require 'cl-lib)
 
 ;; 中文说明：Zoom Window 将当前窗口临时最大化，再次调用会精确恢复调用前的
 ;; 完整窗口布局，适合需要专注查看 Consult 打开结果后快速回到原布局的场景。
@@ -140,6 +141,166 @@
   (interactive)
   (my/window-select-wrap 'right))
 
+(defun my/window--tree-contains-p (tree window)
+  "Return non-nil when WINDOW is a leaf in TREE."
+  (if (windowp tree)
+      (eq tree window)
+    (seq-some (lambda (child)
+                (my/window--tree-contains-p child window))
+              (cddr tree))))
+
+(defun my/window--swap-axis (direction)
+  "Return the `window-tree' split direction used by DIRECTION."
+  (if (memq direction '(left right)) nil t))
+
+(defun my/window--swap-target-indexes (source-index child-count direction)
+  "Return sibling indexes reachable from SOURCE-INDEX in DIRECTION."
+  (pcase direction
+    ('left (number-sequence 0 (1- source-index)))
+    ('up (number-sequence 0 (1- source-index)))
+    ('right (number-sequence (1+ source-index) (1- child-count)))
+    ('down (number-sequence (1+ source-index) (1- child-count)))))
+
+(defun my/window--swap-group-location (tree window direction &optional path)
+  "Return parent path, source index, and targets for WINDOW in DIRECTION."
+  (unless (windowp tree)
+    (let* ((children (cddr tree))
+           (source-index
+            (cl-position-if (lambda (child)
+                              (my/window--tree-contains-p child window))
+                            children)))
+      (when source-index
+        (or (my/window--swap-group-location
+             (nth source-index children) window direction
+             (append path (list source-index)))
+            (when (eq (car tree) (my/window--swap-axis direction))
+              (let ((targets (my/window--swap-target-indexes
+                              source-index (length children) direction)))
+                (when targets
+                  (list path source-index targets)))))))))
+
+(defun my/window--tree-node-at-path (tree path)
+  "Return the `window-tree' node addressed by PATH."
+  (dolist (index path tree)
+    (setq tree (nth index (cddr tree)))))
+
+(defun my/window--tree-leaves (tree)
+  "Return all leaf windows contained in TREE."
+  (if (windowp tree)
+      (list tree)
+    (apply #'append (mapcar #'my/window--tree-leaves (cddr tree)))))
+
+(defun my/window--select-group-target (tree parent-path targets)
+  "Select one of TARGETS below PARENT-PATH, using Ace Window if needed."
+  (if (= (length targets) 1)
+      (car targets)
+    (let* ((parent (my/window--tree-node-at-path tree parent-path))
+           (children (cddr parent))
+           (candidates
+            (apply #'append
+                   (mapcar (lambda (index)
+                             (my/window--tree-leaves (nth index children)))
+                           targets))))
+      (unless (fboundp 'aw-select)
+        (user-error "Ace Window 尚未加载"))
+      (when-let ((selected
+                  (cl-letf (((symbol-function 'aw-window-list)
+                             (lambda () candidates)))
+                    (aw-select " Ace - Select Layout Group"))))
+        (cl-find-if (lambda (index)
+                      (my/window--tree-contains-p
+                       (nth index children) selected))
+                    targets)))))
+
+(defun my/window--state-children (state)
+  "Return STATE's direct child states, or nil for a leaf state."
+  (let ((split (or (memq 'hc state) (memq 'vc state))))
+    (seq-drop-while
+     (lambda (entry)
+       (not (or (memq (car-safe entry) '(leaf hc vc))
+                (memq (car-safe (cdr-safe entry)) '(hc vc)))))
+     (cdr split))))
+
+(defun my/window--state-node-at-path (state path)
+  "Return the STATE node addressed by PATH of child indexes."
+  (dolist (index path state)
+    (setq state (nth index (my/window--state-children state)))))
+
+(defun my/window--state-with-last (state last)
+  "Return STATE marked as the final sibling exactly when LAST is non-nil."
+  (setq state (cl-remove-if (lambda (entry)
+                              (eq (car-safe entry) 'last))
+                            state))
+  (if last
+      (append state '((last . t)))
+    state))
+
+(defun my/window--swap-state-siblings (state parent-path left right)
+  "Swap LEFT and RIGHT child states below PARENT-PATH in STATE."
+  (let* ((parent (my/window--state-node-at-path state parent-path))
+         (children (my/window--state-children parent))
+         (left-cell (nthcdr left children))
+         (right-cell (nthcdr right children))
+         (left-state (car left-cell))
+         (right-state (car right-cell))
+         (last-index (1- (length children))))
+    (setcar left-cell (my/window--state-with-last right-state
+                                                   (= left last-index)))
+    (setcar right-cell (my/window--state-with-last left-state
+                                                    (= right last-index)))))
+
+(defun my/window--find-restored-window (buffer point)
+  "Find the restored window displaying BUFFER at POINT."
+  (or (seq-find (lambda (window)
+                  (and (eq (window-buffer window) buffer)
+                       (= (window-point window) point)))
+                (window-list nil 'nomini))
+      (seq-find (lambda (window)
+                  (eq (window-buffer window) buffer))
+                (window-list nil 'nomini))))
+
+(defun my/window-swap-group (direction)
+  "Swap the selected layout group with a sibling in DIRECTION."
+  (interactive)
+  (let* ((selected (selected-window))
+         (buffer (window-buffer selected))
+         (point (window-point selected))
+         (tree (car (window-tree)))
+         (location (my/window--swap-group-location
+                    tree selected direction)))
+    (if (null location)
+        (message "没有可交换的%s布局组" (symbol-name direction))
+      (pcase-let ((`(,parent-path ,source-index ,targets) location))
+        (if-let ((target-index (my/window--select-group-target
+                                tree parent-path targets)))
+          (let ((state (window-state-get nil)))
+            (my/window--swap-state-siblings
+             state parent-path source-index target-index)
+            (window-state-put state (frame-root-window))
+            (when-let ((restored (my/window--find-restored-window buffer point)))
+              (select-window restored)))
+          (message "已取消布局组交换"))))))
+
+(defun my/window-swap-group-left ()
+  "Swap the selected layout group with the group to its left."
+  (interactive)
+  (my/window-swap-group 'left))
+
+(defun my/window-swap-group-down ()
+  "Swap the selected layout group with the group below it."
+  (interactive)
+  (my/window-swap-group 'down))
+
+(defun my/window-swap-group-up ()
+  "Swap the selected layout group with the group above it."
+  (interactive)
+  (my/window-swap-group 'up))
+
+(defun my/window-swap-group-right ()
+  "Swap the selected layout group with the group to its right."
+  (interactive)
+  (my/window-swap-group 'right))
+
 (defun my/window--select-buffer-in-new-window (new-window origin-window)
   "在 NEW-WINDOW 选择 Buffer，完成或取消后回到 ORIGIN-WINDOW。"
   (select-window new-window)
@@ -223,11 +384,18 @@ _C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换             
                                     _b_ 右侧分割并切换                  _=_ 均分编辑窗口
                                     _f_ 上方分割并切换                  _r_ 调整窗口尺寸
                                     _v_ 下方分割并切换                  _q_ 退出菜单
+
+布局组交换
+_H_ 交换左侧布局组   _J_ 交换下方布局组   _K_ 交换上方布局组   _L_ 交换右侧布局组
 "
   ("h" my/window-select-left)
   ("j" my/window-select-down)
   ("k" my/window-select-up)
   ("l" my/window-select-right)
+  ("H" my/window-swap-group-left :exit nil)
+  ("J" my/window-swap-group-down :exit nil)
+  ("K" my/window-swap-group-up :exit nil)
+  ("L" my/window-swap-group-right :exit nil)
   ("C-w" ace-window )
   ("a" my/window-split-left)
   ("d" my/window-split-right)
@@ -257,6 +425,10 @@ _C-w_ Ace Window：选择窗口           _c_ 左侧分割并切换             
     "j" '("向下循环切换窗口" . my/window-select-down)
     "k" '("向上循环切换窗口" . my/window-select-up)
     "l" '("向右循环切换窗口" . my/window-select-right)
+    "H" '("交换左侧布局组" . my/window-swap-group-left)
+    "J" '("交换下方布局组" . my/window-swap-group-down)
+    "K" '("交换上方布局组" . my/window-swap-group-up)
+    "L" '("交换右侧布局组" . my/window-swap-group-right)
 
     ;; 第一列：方向移动与 C-w C-w 窗口选择。
     "C-w" '("Ace Window：选择窗口" . ace-window)
