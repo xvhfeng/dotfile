@@ -412,7 +412,9 @@ The physical-key dispatcher itself is excluded to avoid recursion."
     init-edit
     ;; Evil Nerd Commenter 提供跨语言的行、段落与复制/剪切注释命令。
     init-commenter
-    init-evil-multiedit
+    ;; Multiple Cursors is the sole multi-edit backend; do not load iedit-based
+    ;; evil-multiedit alongside it, because both own multi-cursor state and C-,.
+    init-multiple-cursors
     init-smartparens
     init-easykill
     init-separedit
