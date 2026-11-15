@@ -162,6 +162,14 @@
   ("C-=" '("expand selection" . expreg-expand))
   ("C--" '("contract selection" . expreg-contract)))
 
+(use-package home-row-expreg
+  :straight (:host github :repo "bommbo/home-row-expreg" :files ("*.el"))
+  :after expreg
+  :demand t)
+
+;; `C-c' is `my-leader-map', so bind the command in that prefix map directly.
+(keymap-set my-leader-map "=" #'home-row-expreg-expand-with-letters)
+
 ;; 另一个多光标的编辑软件，非常轻量
 (defun my/iedit-style-faces (&rest _)
   "让 Iedit 的可编辑与只读匹配项保持清晰、易辨认。"
