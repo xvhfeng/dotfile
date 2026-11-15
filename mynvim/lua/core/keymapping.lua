@@ -76,7 +76,7 @@ local function legacy_wk_to_spec(legacy_mappings)
 		end
 	end
 
-	if vim.tbl_islist(legacy_mappings) then
+	if vim.islist(legacy_mappings) then
 		for _, mappings in ipairs(legacy_mappings) do
 			add_entries(mappings)
 		end
