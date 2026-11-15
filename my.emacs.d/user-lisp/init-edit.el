@@ -128,11 +128,39 @@
 ;; ============================================================================
 ;; 1. Expand-Region: 按语法结构/语义扩展/缩减选区
 ;; ============================================================================
-(use-package expand-region
-  :straight t
+(defun my/expreg--path-bounds-at-point ()
+  "Return bounds of the path-like token at point, or nil."
+  (save-excursion
+    (let ((chars "A-Za-z0-9_.~/+-"))
+      (skip-chars-backward chars)
+      (let ((beg (point)))
+        (skip-chars-forward chars)
+        (when (< beg (point))
+          (cons beg (point)))))))
+
+(defun my/expreg-path-regions ()
+  "Return progressively larger regions for a path-like token at point."
+  (when-let ((bounds (my/expreg--path-bounds-at-point)))
+    (save-excursion
+      (goto-char (car bounds))
+      (let ((beg (point)) regions)
+        (when (looking-at "\\(?:~/?\\)?\\(?:\\.[[:alnum:]_-]+\\|[[:alnum:]_-]+\\)\\(?:\\.[[:alnum:]_-]+\\)*")
+          (push `(path-directory . ,(cons beg (match-end 0))) regions))
+        (goto-char beg)
+        (when (looking-at "\\(?:~/?\\)?\\(?:\\.[[:alnum:]_-]+\\|[[:alnum:]_-]+\\)\\(?:\\.[[:alnum:]_-]+\\)*/")
+          (push `(path-directory-slash . ,(cons beg (match-end 0))) regions))
+        (push `(path . ,bounds) regions)
+        regions))))
+
+(use-package expreg
+  :straight (:host github :repo "casouri/expreg")
+  :config
+  ;; These work in text, logs, paths, and code; Tree-sitter adds structure
+  ;; when a parser is present, without being required for plain text.
+  (add-to-list 'expreg-functions #'my/expreg-path-regions)
   :general
-  ("C-=" '("expand selection" . er/expand-region))
-  ("C--" '("contract selection" . er/contract-region)))
+  ("C-=" '("expand selection" . expreg-expand))
+  ("C--" '("contract selection" . expreg-contract)))
 
 ;; 另一个多光标的编辑软件，非常轻量
 (defun my/iedit-style-faces (&rest _)
@@ -188,8 +216,8 @@
     "e r" '("replace surrounding pair" . my-surround-replace)
     "e R" '("replace paired surroundings" . my-surround-replace-pair)
     "e w" '("surround word" . my-surround-word)
-    "e +" '("expand selection" . er/expand-region)
-    "e -" '("contract selection" . er/contract-region)
+    "e +" '("expand selection" . expreg-expand)
+    "e -" '("contract selection" . expreg-contract)
     "e e" '("iedit occurrences" . iedit-mode)
     "e f" '("iedit current function" . iedit-mode-toggle-on-function)
     ;; 中文说明：C-c e u 只切换矩形选区，不触发 CUA 全局剪切/复制/粘贴键。

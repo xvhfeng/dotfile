@@ -45,8 +45,8 @@
   "
 匹配: _n_ 下一词  _p_ 上一词  _h_ 下一符号  _l_ 上一符号  _a_ 全部匹配
 编辑: _m_ 添加光标  _s_ 选中/放弃匹配  _j_ 跳到下一个  _k_ 跳到上一个
-会话: _r_ 恢复上次  _q_ 结束多处编辑
-菜单: _C-,_ / ESC / _C-g_"
+会话: _r_ 恢复上次  _q_ 退出选择状态（结束多处编辑）
+菜单: _C-,_ 退出菜单（保留多处编辑状态） / ESC / _C-g_"
   ("n" evil-multiedit-match-and-next)
   ("p" evil-multiedit-match-and-prev)
   ("h" evil-multiedit-match-symbol-and-next)

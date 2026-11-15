@@ -9,3 +9,11 @@ transient
 elpa
 outputs
 .tool-versions
+.superpowers
+superpowers
+.mc-lists.el
+EASY-KILL-MENU-TEST-REPORT.md
+docs/multiple-cursors-workbench-keymap.txt
+go-env-backups/2026-10-26-goproxy.env
+recentf
+rime-ice/tests/test_zz_literal.sh
