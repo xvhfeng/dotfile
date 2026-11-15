@@ -18,6 +18,10 @@
 (defvar-local my/multiple-cursors-collected-positions nil
   "Marker and highlight-overlay pairs for keyboard multi-cursor editing.")
 
+(defface my/multiple-cursors-collected-position-face
+  '((t :background "yellow" :foreground "black" :weight bold))
+  "Highly visible face for a position collected before multi-cursor editing.")
+
 (defun my/multiple-cursors-clear-collected-positions ()
   "Discard all positions collected for keyboard multi-cursor editing."
   (interactive)
@@ -37,10 +41,11 @@
       (message "当前位置已在多光标定位点中")
     (let* ((marker (copy-marker (point)))
            (overlay (make-overlay (point) (min (1+ (point)) (point-max)))))
-      (overlay-put overlay 'face 'secondary-selection)
+      (overlay-put overlay 'face 'my/multiple-cursors-collected-position-face)
       (when (= (point) (point-max))
         (overlay-put overlay 'before-string
-                     (propertize "●" 'face 'secondary-selection)))
+                     (propertize "●" 'face
+                                 'my/multiple-cursors-collected-position-face)))
       (push (cons marker overlay) my/multiple-cursors-collected-positions))
     (message "已收集 %d 个多光标定位点"
              (length my/multiple-cursors-collected-positions))))
