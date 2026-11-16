@@ -11,6 +11,18 @@
 (autoload 'consult-yank-from-kill-ring "consult" nil t)
 
 ;; ============================================================================
+;; 0.25. EditorConfig：按项目根目录的 .editorconfig 应用编辑规则
+;; ============================================================================
+;; `editorconfig' 由 lisp/init-packages.el 通过 ELPA 安装，不交给 Straight
+;; 重复管理。全局模式会在打开文件时向上查找 .editorconfig 并应用缩进、换行、
+;; 编码和行尾空白规则。
+(use-package editorconfig
+  :straight nil
+  :demand t
+  :config
+  (editorconfig-mode 1))
+
+;; ============================================================================
 ;; 0.5. View Mode：当前 Buffer 的只读浏览开关
 ;; ============================================================================
 (use-package view
