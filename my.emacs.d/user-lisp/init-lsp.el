@@ -157,6 +157,11 @@ explicitly true during initialization.")
   (eglot-events-buffer-config '(:size 0 :format lisp))
 
   :config
+  ;; 保留 clangd/Eglot 的弃用诊断与 Flymake 提示，但不让该 overlay
+  ;; 给仍可使用的函数名加删除线或灰色前景。
+  (custom-set-faces
+   '(eglot-diagnostic-tag-deprecated-face
+     ((t (:inherit nil :foreground unspecified :strike-through nil)))))
   ;; 显式声明常见服务器命令，保证 Mason 安装到 mason/bin/ 后能被 Eglot 正确调用。
   (dolist (entry '((java-mode . my/jdtls-server-command)
                    (java-ts-mode . my/jdtls-server-command)
