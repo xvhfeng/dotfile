@@ -130,6 +130,7 @@
 (autoload 'flymake-show-buffer-diagnostics "flymake" nil t)
 (autoload 'org-capture "org-capture" nil t)
 (autoload 'org-agenda "org-agenda" nil t)
+(autoload 'my/org-workbench-menu "init-org" nil t)
 ;; 中文说明：终端保持延迟加载，工作台在 Scratch 等 Buffer 中打开时不会提前加载
 ;; vterm 的原生模块；用户选择终端项后才创建 vterm。
 (autoload 'vterm "vterm" nil t)
@@ -541,6 +542,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
    ["   笔记与帮助"
     ("l" "新建笔记" org-capture)
     ("g" "查看日程" org-agenda)
+    ("x" "Org 工作台" my/org-workbench-menu)
     ("i" "Markdown 实时预览" my/markdown-toggle-live-preview)
     ("o" "Markdown 导出并预览" my/markdown-export-and-preview)
     ("?" "Transient 菜单帮助" my/transient-menu-help)

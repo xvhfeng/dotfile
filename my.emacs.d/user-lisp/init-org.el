@@ -1,5 +1,8 @@
 ;;; init-org.el --- Org notes, tasks, agenda and Babel -*- lexical-binding: t; -*-
 
+(require 'transient)
+(eval-when-compile (require 'transient))
+
 (defgroup my-org nil
   "Personal Org workflow."
   :group 'org)
@@ -27,6 +30,182 @@
   (my/org-ensure-directories)
   (find-file (my/org-file "inbox.org")))
 
+(defun my/org-require-buffer ()
+  "确认当前 Buffer 是 Org 文档。"
+  (unless (derived-mode-p 'org-mode)
+    (user-error "请先打开 Org 文档")))
+
+(defun my/org-agenda-day ()
+  "从今天开始显示单日 Agenda。"
+  (interactive)
+  (my/org-ensure-directories)
+  (org-agenda-list nil (format-time-string "%Y-%m-%d") 'day))
+(defun my/org-agenda-week ()
+  "从本周一开始显示一周 Agenda。"
+  (interactive)
+  (my/org-ensure-directories)
+  (let ((org-agenda-start-on-weekday 1)
+        (org-agenda-start-day nil))
+    (org-agenda-list nil (format-time-string "%Y-%m-%d") 'week)))
+(defun my/org-agenda-month ()
+  "从本月一日开始显示整月 Agenda。"
+  (interactive)
+  (my/org-ensure-directories)
+  (org-agenda-list nil (format-time-string "%Y-%m-01") 'month))
+
+(defun my/org-calendar-agenda ()
+  "从月历当前日期打开 Agenda。"
+  (interactive)
+  (unless (derived-mode-p 'calendar-mode)
+    (user-error "请先打开月历并选择日期"))
+  (org-calendar-goto-agenda))
+
+(defun my/org-capture-inbox () (interactive) (org-capture nil "i"))
+(defun my/org-capture-todo () (interactive) (org-capture nil "t"))
+(defun my/org-capture-note () (interactive) (org-capture nil "n"))
+(defun my/org-capture-journal () (interactive) (org-capture nil "j"))
+
+(defun my/org-open-document ()
+  "打开统一 Org 目录下的文档。"
+  (interactive)
+  (my/org-ensure-directories)
+  (find-file (read-file-name "Org 文档: " my/org-directory)))
+
+(defun my/org-create-document ()
+  "在统一目录新建带 HTML/EPUB 元数据的 Org 文档。"
+  (interactive)
+  (my/org-ensure-directories)
+  (make-directory (my/org-file "docs/") t)
+  (let* ((directory (my/org-file "docs/"))
+         (title (read-string "文档标题: "))
+         (file (read-file-name "保存为: " directory nil nil nil
+                               (lambda (name)
+                                 (or (file-directory-p name)
+                                     (string-match-p "\\.org\\'" name))))))
+    (when (equal title "") (user-error "文档标题不能为空"))
+    (unless (string-suffix-p ".org" file)
+      (user-error "文档文件名必须以 .org 结尾"))
+    (unless (file-in-directory-p file my/org-directory)
+      (user-error "Org 文档必须位于 %s" my/org-directory))
+    (when (file-exists-p file) (user-error "文档已存在：%s" file))
+    (make-directory (file-name-directory file) t)
+    (require 'org-id)
+    ;; 已写入专用文档模板，避免全局 auto-insert 再弹窗或插入第二份模板。
+    (let ((find-file-hook (remove 'auto-insert find-file-hook)))
+      (find-file file))
+    (insert (format "#+TITLE: %s\n#+AUTHOR: %s\n#+DATE: %s\n#+UID: urn:uuid:%s\n#+LANGUAGE: zh-CN\n#+LATEX_HEADER: \\usepackage{ctex}\n\n* 概述\n"
+                    title user-full-name (format-time-string "%Y-%m-%d")
+                    (org-id-uuid)))
+    (save-buffer)))
+
+(defun my/org-search-all ()
+  "在统一 Org 目录内执行 Org QL 查询。"
+  (interactive)
+  (my/org-ensure-directories)
+  (require 'org-ql-search)
+  (let ((org-directory my/org-directory))
+    (org-ql-search 'directory (read-string "Org 查询: "))))
+
+(defun my/org-find-heading ()
+  "使用 Consult 跳转当前 Org 文档标题。"
+  (interactive)
+  (my/org-require-buffer)
+  (consult-org-heading))
+
+(defun my/org-refresh-appointments ()
+  "从 Agenda 文件更新 Emacs 预约提醒。"
+  (interactive)
+  (my/org-ensure-directories)
+  (require 'appt)
+  (appt-activate 1)
+  (org-agenda-to-appt t))
+
+(defvar my/org-appt-refresh-timer nil
+  "Org 文件保存后等待刷新的定时器。")
+
+(defun my/org-schedule-appt-refresh ()
+  "保存 Agenda 目录内的 Org 文件后延迟刷新提醒。"
+  (when (and buffer-file-name
+             (file-in-directory-p buffer-file-name my/org-directory))
+    (when (timerp my/org-appt-refresh-timer)
+      (cancel-timer my/org-appt-refresh-timer))
+    (setq my/org-appt-refresh-timer
+          (run-with-idle-timer 2 nil #'my/org-refresh-appointments))))
+
+(defun my/org-setup-appt-save-hook ()
+  "仅在 Org Buffer 中跟踪保存事件。"
+  (add-hook 'after-save-hook #'my/org-schedule-appt-refresh nil t))
+
+;; 启动完成后在空闲时初始化提醒，避免启动阶段同步扫描 Agenda。
+(defun my/org-start-appointments ()
+  (run-with-idle-timer 10 nil #'my/org-refresh-appointments))
+(add-hook 'emacs-startup-hook #'my/org-start-appointments)
+
+(defun my/org-epub-export ()
+  "导出当前 Org 文档为 EPUB。"
+  (interactive)
+  (my/org-require-buffer)
+  (unless (executable-find "zip") (user-error "EPUB 导出需要 zip"))
+  (require 'ox-epub)
+  (let ((output (org-epub-export-to-epub)))
+    (unless (and (stringp output) (file-exists-p output))
+      (user-error "EPUB 导出失败：%s" output))
+    output))
+
+(defun my/org-epub-without-auto-insert (original &rest arguments)
+  "仅在 ox-epub 生成临时文件时跳过自动模板。"
+  ;; 同时覆盖工作台和 `C-c C-e' 原生 EPUB 入口。
+  (let ((find-file-hook (remove 'auto-insert find-file-hook)))
+    (apply original arguments)))
+
+(defun my/org-html-export () (interactive) (my/org-require-buffer)
+       (org-html-export-to-html))
+(defun my/org-pdf-export ()
+  "导出当前 Org 文档为 PDF。"
+  (interactive)
+  (my/org-require-buffer)
+  (unless (or (executable-find "tectonic")
+              (executable-find "xelatex") (executable-find "pdflatex"))
+    (user-error "PDF 导出需要 TeX 引擎；请查看根目录 readme"))
+  ;; Tectonic 首次编译下载的宏包也放在受管 runtimes 内。
+  (let ((cache (my/runtime-file "tectonic/")))
+    (make-directory cache t)
+    (let ((process-environment
+           (cons (concat "TECTONIC_CACHE_DIR=" cache) process-environment)))
+      (org-latex-export-to-pdf))))
+
+(use-package ox-latex
+  :straight nil
+  :after org
+  :config
+  ;; Tectonic 是 XeTeX 引擎，直接生成同名 PDF；仅在已安装时接管 Org PDF。
+  (when (executable-find "tectonic")
+    (make-directory (my/runtime-file "tectonic/") t)
+    (setenv "TECTONIC_CACHE_DIR" (my/runtime-file "tectonic/"))
+    (setq org-latex-pdf-process '("tectonic -X compile --keep-logs %f"))))
+
+(defun my/org-insert-clipboard-image ()
+  "将剪贴板图片存入统一图片目录。"
+  (interactive)
+  (my/org-require-buffer)
+  (unless (executable-find "pngpaste")
+    (user-error "剪贴板图片需要 pngpaste：brew install pngpaste"))
+  (org-download-clipboard))
+
+(defun my/org-insert-screenshot ()
+  "截图并插入当前 Org 文档。"
+  (interactive)
+  (my/org-require-buffer)
+  (unless (executable-find "screencapture")
+    (user-error "截图需要 macOS screencapture"))
+  (org-download-screenshot))
+
+(defun my/org-insert-image-url ()
+  "从剪贴板的图片地址插入图片。"
+  (interactive)
+  (my/org-require-buffer)
+  (org-download-yank))
+
 (use-package org
   :straight nil
   :commands (org-agenda org-capture org-store-link org-switchb)
@@ -50,6 +229,7 @@
    "C-c -" '("toggle list item" . org-ctrl-c-minus))
   :hook
   ((org-mode . visual-line-mode)
+   (org-mode . my/org-setup-appt-save-hook)
    (org-babel-after-execute . org-redisplay-inline-images))
   :custom
   (org-directory my/org-directory)
@@ -179,12 +359,136 @@
   (org-modern-star 'replace)
   (org-modern-replace-stars "◉⦿⊚⊙∘"))
 
+;; 第三方包统一交给 Straight；首次启动会自动下载并构建。
+(use-package org-ql
+  :straight (:host github :repo "alphapapa/org-ql")
+  :commands org-ql-search
+  :custom (org-ql-search-directories-files-recursive t))
+
+(use-package org-appear
+  :straight (:host github :repo "awth13/org-appear")
+  :hook (org-mode . org-appear-mode))
+
+(use-package org-download
+  :straight (:host github :repo "abo-abo/org-download")
+  :commands (org-download-clipboard org-download-screenshot org-download-yank)
+  :init
+  ;; 该变量为 buffer-local；修改默认值让所有 Org 文档共用图片目录。
+  (setq-default org-download-image-dir (my/org-file "assets/"))
+  :custom
+  (org-download-method 'directory)
+  (org-download-screenshot-method "screencapture -i %s")
+  (org-download-heading-lvl nil))
+
+(use-package ox-epub
+  :straight (:host github :repo "ofosos/ox-epub")
+  :after ox
+  :demand t
+  :config
+  (unless (advice-member-p #'my/org-epub-without-auto-insert
+                           'org-epub-export-to-epub)
+    (advice-add 'org-epub-export-to-epub :around
+                #'my/org-epub-without-auto-insert)))
+
+;; 下面七组 Transient 与 Which-Key 共用相同命令，不改已有 Org 原生键位。
+(transient-define-prefix my/org-agenda-menu ()
+  "Org 日程、TODO 与提醒。"
+  [["   日程视图"
+    ("d" "按日查看" my/org-agenda-day)
+    ("w" "按周查看" my/org-agenda-week)
+    ("m" "按月查看" my/org-agenda-month)
+    ("c" "月历网格" calendar)]
+   ["   任务与提醒"
+    ("g" "月历所选日期" my/org-calendar-agenda)
+    ("t" "全部 TODO" org-todo-list)
+    ("r" "刷新提醒" my/org-refresh-appointments)
+    ("DEL" "返回 Org 工作台" transient-quit-one)]])
+
+(transient-define-prefix my/org-capture-menu ()
+  "使用现有的 Org Capture 模板。"
+  [["   快速记录"
+    ("i" "收件箱" my/org-capture-inbox)
+    ("t" "TODO" my/org-capture-todo)
+    ("n" "笔记" my/org-capture-note)
+    ("j" "日志" my/org-capture-journal)
+    ("DEL" "返回 Org 工作台" transient-quit-one)]])
+
+(transient-define-prefix my/org-structure-menu ()
+  "编辑 Org 标题和子树。"
+  [["   新增与层级"
+    ("n" "新增标题" org-insert-heading-respect-content)
+    ("c" "新增子标题" org-insert-subheading)
+    ("t" "新增 TODO 标题" org-insert-todo-heading-respect-content)
+    ("p" "提升子树层级" org-promote-subtree)
+    ("d" "降低子树层级" org-demote-subtree)]
+   ["   移动与折叠"
+    ("u" "上移子树" org-move-subtree-up)
+    ("j" "下移子树" org-move-subtree-down)
+    ("f" "折叠当前标题" org-cycle)
+    ("v" "切换全文显示" org-shifttab)
+    ("a" "归档子树" org-archive-subtree-default)
+    ("k" "剪切子树" org-cut-subtree)
+    ("DEL" "返回 Org 工作台" transient-quit-one)]])
+
+(transient-define-prefix my/org-document-menu ()
+  "打开或导出 Org 文档。"
+  [["   文档"
+    ("n" "新建 Org 文档" my/org-create-document)
+    ("o" "打开 Org 文档" my/org-open-document)
+    ("e" "导出菜单" org-export-dispatch)]
+   ["   直接导出"
+    ("h" "导出 HTML" my/org-html-export)
+    ("p" "导出 PDF" my/org-pdf-export)
+    ("u" "导出 EPUB" my/org-epub-export)
+    ("DEL" "返回 Org 工作台" transient-quit-one)]])
+
+(transient-define-prefix my/org-query-menu ()
+  "查找当前文档标题或跨文件查询。"
+  [["   查找"
+    ("h" "当前文档标题" my/org-find-heading)
+    ("q" "跨文件查询" my/org-search-all)
+    ("DEL" "返回 Org 工作台" transient-quit-one)]])
+
+(transient-define-prefix my/org-image-menu ()
+  "向 Org 文档插入图片。"
+  [["   图片"
+    ("c" "插入剪贴板图片" my/org-insert-clipboard-image)
+    ("s" "截图并插入" my/org-insert-screenshot)
+    ("y" "从图片地址插入" my/org-insert-image-url)
+    ("DEL" "返回 Org 工作台" transient-quit-one)]])
+
+(transient-define-prefix my/org-clock-menu ()
+  "Org 任务计时。"
+  [["   计时"
+    ("i" "开始计时" org-clock-in)
+    ("o" "结束计时" org-clock-out)
+    ("g" "跳转到计时任务" org-clock-goto)
+    ("c" "取消计时" org-clock-cancel)
+    ("DEL" "返回 Org 工作台" transient-quit-one)]])
+
+(transient-define-prefix my/org-workbench-menu ()
+  "完整 Org 工作台。"
+  :column-widths '(22 22 22 22)
+  [["   日程与记录"
+    ("a" "日程与 TODO" my/org-agenda-menu)
+    ("c" "快速捕获" my/org-capture-menu)]
+   ["   文档编辑"
+    ("s" "标题与结构" my/org-structure-menu)
+    ("d" "文档与导出" my/org-document-menu)]
+   ["   查找与图片"
+    ("q" "查找与查询" my/org-query-menu)
+    ("i" "插入图片" my/org-image-menu)]
+   ["   时间"
+    ("k" "任务计时" my/org-clock-menu)
+    ("DEL" "返回个人工作台" transient-quit-one)]])
+
 (with-eval-after-load 'which-key
   (which-key-add-keymap-based-replacements
     my-leader-map
     "n" "笔记 / Org"
     "n k" "Org 时钟"
-    "n s" "Org 子树"))
+    "n s" "Org 子树"
+    "n v" "Org 日周月视图"))
 
 (with-eval-after-load 'general
   (my-leader-def
@@ -195,12 +499,31 @@
     "n f" '("打开收件箱" . my/org-open-inbox)
     "n l" '("保存链接" . org-store-link)
     "n t" '("TODO 列表" . org-todo-list)
+    "n d" '("新建 Org 文档" . my/org-create-document)
+    "n v d" '("日视图" . my/org-agenda-day)
+    "n v w" '("周视图" . my/org-agenda-week)
+    "n v m" '("月视图" . my/org-agenda-month)
+    "n v c" '("月历网格" . calendar)
+    "n q" '("跨文件 Org 查询" . my/org-search-all)
+    "n h" '("当前文档标题" . my/org-find-heading)
+    "n r" '("刷新日程提醒" . my/org-refresh-appointments)
+    "n i" '("插入剪贴板图片" . my/org-insert-clipboard-image)
+    "n p" '("截图并插入" . my/org-insert-screenshot)
     "n k i" '("开始计时" . org-clock-in)
     "n k o" '("结束计时" . org-clock-out)
     "n k g" '("跳转到当前计时" . org-clock-goto)
     "n k c" '("取消计时" . org-clock-cancel)
     "n s k" '("剪切子树" . org-cut-subtree)
-    "n s a" '("归档子树" . org-archive-subtree-default)))
+    "n s a" '("归档子树" . org-archive-subtree-default)
+    "n s n" '("新增标题" . org-insert-heading-respect-content)
+    "n s c" '("新增子标题" . org-insert-subheading)
+    "n s t" '("新增 TODO 标题" . org-insert-todo-heading-respect-content)
+    "n s p" '("提升子树层级" . org-promote-subtree)
+    "n s d" '("降低子树层级" . org-demote-subtree)
+    "n s u" '("上移子树" . org-move-subtree-up)
+    "n s j" '("下移子树" . org-move-subtree-down)
+    "n s f" '("折叠当前标题" . org-cycle)
+    "n s v" '("切换全文显示" . org-shifttab)))
 
 (provide 'init-org)
 

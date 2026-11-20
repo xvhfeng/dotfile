@@ -22,7 +22,7 @@ alias proxyon="export all_proxy='127.0.0.1:1087';  export http_proxy='http://127
 alias proxyoff="unset all_proxy; unset http_proxy; unset https_proxy"
 alias node-nvm-load='export NVM_DIR="$HOME/.nvm"; [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh";[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"'
 alias ..='cd ..'
-alias anltr4="java -jar $HOME/myslef/codes/bin/antlr-4.13.2-complete.jar "
+alias anltr4="java -jar $HOME/myself/codes/bin/antlr-4.13.2-complete.jar "
 alias jupyter-lab='jupyter lab'
 # go back x directories
 b() {
@@ -204,7 +204,7 @@ alias ipinfo="curl ifconfig.me && curl ifconfig.me/host"
 alias where="ifconfig | grep inet"
 alias whereis="uname -n"
 
-#get my current ip and current localtion
+#get my current ip and current location
 getlocation() { lynx -dump http://www.ip-adress.com/ip_tracer/?QRY=$1\
     |grep address\
     |egrep 'city|state|country'\
@@ -254,8 +254,8 @@ alias git-push-to="git push origin "
 alias github="chrome \`git remote -v | grep github.com | grep fetch | head -1 | field 2 | sed 's/git:/http:/g'\`"
 #Show log of commits not dcommitted to svn
 alias notsvn="git log --branches --not --remotes --simplify-by-decoration --decorate --oneline"
-alias git-lg= "git log --all --graph --oneline --decorate"
-alias git-log="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias git-lg="git log --all --graph --oneline --decorate"
+alias git-log-all="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 deploy(){
 

@@ -34,3 +34,10 @@ brew install poppler ffmpegthumbnailer mediainfo vips p7zip imagemagick
 - imagemagick：字体预览
 已有依赖：coreutils（gls，目录排序）和 fd（大目录异步扫描）。EPUB 预览未启用，因为 Homebrew 没有 epub-thumbnailer 配方，避免出现缺少外部程序的错误。
 
+- Org 文档图片：`brew install pngpaste`
+  用于 `org-download-clipboard` 将 macOS 剪贴板中的图片写入 `~/org/assets/`。截图使用 macOS 自带的 `screencapture`，无需安装；EPUB 打包使用系统自带的 `zip`。
+
+- Org 文档 PDF：`brew install tectonic`
+  Tectonic 提供基于 XeTeX 的引擎，Org 使用它将 LaTeX 文件编译为 PDF；首次导出会下载所需 TeX 宏包。中文文档模板加载 `ctex`。若未安装 TeX 引擎，HTML 和 EPUB 导出仍可使用，PDF 菜单会提示缺失。
+  备选的 `brew install --cask basictex` 会调用系统安装器并要求管理员密码；当前机器未采用此方案。
+
