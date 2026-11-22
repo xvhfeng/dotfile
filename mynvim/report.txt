@@ -1,0 +1,313 @@
+Neovim 配置审计与优化报告
+审计日期：2026-11-22（Asia/Shanghai）
+
+一、总体结论
+
+当前配置功能覆盖完整，能够在本机 Neovim 0.12.6 正常启动。隔离状态目录审计中，lazy.nvim 解析到 114 个插件规格，加载了 92 个插件。
+
+配置并非最优，主要维护成本来自：
+
+1. 多个插件提供相同功能，尤其是 finder、Git、undo、彩虹括号、LSP UI 和折叠。
+2. 键位同时由自定义框架、lazy.nvim、插件内部映射三处维护，覆盖顺序不透明。
+3. 路径依赖 ~/.config/nvim 和用户名拼接，插件又下载到仓库 reps/，不利于 XDG、Docker 与跨机器复现。
+4. 系统依赖、Mason LSP、Conform formatter 分散管理，现有 deploy.sh 仅覆盖一部分 macOS 场景且会直接修改 ~/.bashrc。
+
+审计期间 fzf-lua 在无界面沙箱启动时无法创建本地 socket；这是沙箱限制，不代表普通终端中的 fzf-lua 配置存在故障。
+
+
+二、最高优先级优化项
+
+P0：迁移路径和插件数据目录
+
+问题：init.lua 手工拼接 /Users/$USER/.config/nvim 或 /home/$USER/.config/nvim；lazy.nvim 的插件根目录是仓库内 reps/。
+
+影响：不支持非标准 HOME/XDG、Docker 或配置目录迁移；插件升级会直接修改配置工作树。
+
+建议：
+
+  配置根目录：vim.fn.stdpath("config")
+  插件数据目录：vim.fn.stdpath("data") .. "/lazy"
+  状态/日志目录：vim.fn.stdpath("state")
+
+保留并提交 lazy-lock.json；不要把 lazy 自动下载的插件工作树当成配置仓库内容。
+
+P0：收敛折叠机制
+
+当前同时使用全局 marker 折叠、nvim-ufo 和 folding-hooks.lua。后者又再次调用 ufo.setup()，并重写 zf 与 <Space>。
+
+建议：代码折叠统一交给 nvim-ufo（LSP/Tree-sitter）；仅把 AddFoldMarkers 保留为显式命令。不要全局重写 <Space> 和 zf。
+
+P1：整理选项与可移植命令
+
+  - lazyredraw 在 default.lua 中被设置两次，后者覆盖前者。
+  - fileencodings 被设置两次，后者覆盖了更完整的中文编码列表。
+  - completeopt="longest,menu" 不适合现代 nvim-cmp；建议改为 menu,menuone,noselect。
+  - autochdir=true 会和 LSP、Git、Telescope、project.nvim 的项目根目录逻辑冲突；建议关闭。
+  - term://bash、Lspsaga 的 !chrome、Doxygen 中的个人/公司字段均被硬编码；应改为系统探测或放入不提交的 core/local.lua。
+  - Tree-sitter 的 sync_install=true 会阻塞前台；建议改为 false。
+
+
+三、插件重叠与精简建议
+
+1. 明确重复：建议二选一
+
+  功能                 当前重叠                                      推荐保留
+  -------------------  --------------------------------------------  --------------------------
+  Finder               Telescope + fzf-lua                           fzf-lua（或 Telescope）
+  彩虹括号             luochen1990/rainbow + rainbow-delimiters     rainbow-delimiters.nvim
+  Undo 树              undotree + vim-mundo                         undotree
+  文档/Doxygen         DoxygenToolkit + Neogen                      Neogen；仅需旧模板时留前者
+  代码大纲             Aerial + Lspsaga outline/finder              Aerial + 原生 LSP
+
+Finder 只保留一套。若偏好速度和终端体验，保留 fzf-lua；若依赖 Telescope 扩展生态，保留 Telescope。不要同时维护两套 files/buffers/grep/LSP picker 键位。
+
+删除旧 rainbow 后，还应删除 treesitter.lua 中旧 rainbow 配置块。Undotree 已按命令惰性加载，适合作为唯一 undo 树。
+
+2. 高度重叠：按个人工作流收敛
+
+  - Git：推荐“Neogit + Diffview”或“lazygit.nvim + Diffview”二选一作为主界面。Fugitive 可保留为命令行补充；vim-flog、gitv/GV、tig-explorer 是优先停用候选。
+  - Quickfix：保留原生 quickfix，选 Trouble 作为统一诊断/列表 UI。qf-helper、kickfix、preview 仅在确认有不可替代的过滤需求时保留其中一个。
+  - 项目跳转：project.nvim 负责项目根语义，autojump 负责 shell 历史语义。若只在 Neovim 内跳转项目，可停用 autojump 和其系统依赖。
+  - LSP UI：原生 LSP + Aerial + Trouble + 一个 finder 已够用。Lspsaga 应只留下真正频繁使用的功能，不要与所有原生入口平行存在。
+  - 窗口管理：保留 windowpicker + maximizer；Hydra 应承担临时 resize 模式。Hydra、winresizer 和 window.lua 不应重复管理同一组窗口动作。
+
+3. 其它冗余
+
+  - Neogit 同时声明 Telescope 与 fzf-lua 为可选依赖；收敛 finder 后同步删去另一项。
+  - nvim-ufo 已在自身 config 和 folding hooks 中 setup 两次，应只保留一处。
+  - 若未来迁移到 lualine，必须替换 vim-airline，而不是二者并用。
+
+
+四、键位优化方案
+
+已发现的问题：
+
+  - q 被映射为 <Nop>：避免误录宏，但同时完全失去宏功能。
+  - gf 被 Lspsaga finder 覆盖，失去“打开光标下文件”；gx 被 code action 覆盖，失去“打开 URL/URI”。
+  - K 先被映射为插入空行，后又被 nvim-ufo 覆盖为 hover；最终行为依赖加载顺序。gk 被用作 hover，不符合常见 Vim/LSP 习惯。
+  - gq 被重映射为 diagnostics loclist，覆盖正常模式格式化操作符。
+  - code action 同时存在 <Space>ca、gx、,ca 等入口，而全局 leader 是逗号。
+
+建议保留或恢复的 Vim/Neovim 默认语义：
+
+  K   -> vim.lsp.buf.hover
+  gd  -> definition
+  gD  -> declaration
+  gi  -> implementation
+  gr  -> references
+  gy  -> type definition
+  gra -> code action
+  grn -> rename
+  [d / ]d -> 上一个/下一个诊断
+  gl  -> 当前行诊断浮窗
+  gf / gx / gq / q -> 保留默认行为
+
+建议的 leader 约定（leader 继续使用逗号）：
+
+  ,f  Finder：,ff files；,fg grep；,fb buffers；,fr resume
+  ,g  Git：,gg 主 Git UI；,gd Diffview；,gl log；,gb blame
+  ,l  LSP：,ls Aerial；,lx Trouble；,lf format；,la code action
+  ,w  Window：,ww pick；,wm maximize；,wr Hydra resize
+  ,u  Undo：,ut Undotree
+  ,c  Code：,cf format；,cc comment；,cd doc comment；,cr rename/refactor
+
+建议将全部自定义映射移至 lua/core/keymaps.lua。每条 vim.keymap.set 必须有 desc；lazy.nvim 的 keys 仅作为惰性加载触发；which-key 只负责展示 group。localleader 建议使用反斜杠，而不是与 leader 同为逗号。
+
+
+五、菜单方案：Hydra 与 Transient 工作流
+
+当前 hydra.nvim 只有 setup()，没有定义 Hydra body/head，因此当前没有实际 Hydra 菜单。
+
+不建议再新增一个 which-key 类菜单插件。推荐职责如下：
+
+  - which-key：发现和记忆全局键位。当前插件可继续使用。
+  - hydra.nvim：实现临时操作菜单，最接近 Emacs transient 的工作流。
+
+建议优先实现窗口 Hydra：以 ,wr 进入；h/j/k/l 调整窗口大小；= 平衡窗口；o 最大化；q 或 Esc 退出。随后按需增加 Git diff、diagnostic、quickfix Hydra。这样可取代 winresizer 的重复职责。
+
+参考：
+  https://github.com/nvimtools/hydra.nvim
+  https://github.com/folke/which-key.nvim
+
+
+六、第三方依赖与安装命令
+
+1. 基础运行时
+
+组件                 macOS Homebrew                                  Debian/Ubuntu apt
+-------------------  ----------------------------------------------  -------------------------------------------------
+Neovim >= 0.11       brew install neovim                             sudo apt install neovim
+Git >= 2.19          brew install git                                sudo apt install git
+编译工具             xcode-select --install                          sudo apt install build-essential
+Make / CMake         brew install make cmake                         sudo apt install make cmake
+ripgrep              brew install ripgrep                            sudo apt install ripgrep
+fd                   brew install fd                                 sudo apt install fd-find
+fzf                  brew install fzf                                sudo apt install fzf
+SQLite3              brew install sqlite                             sudo apt install sqlite3 libsqlite3-dev
+Nerd Font（可选）    brew install --cask font-jetbrains-mono-nerd-font  发行版字体包或手动安装 Nerd Font
+
+Debian/Ubuntu 中 fd 的可执行文件通常叫 fdfind，NvimTree 当前配置要求 fd；安装后执行：
+
+  mkdir -p ~/.local/bin
+  ln -sf "$(command -v fdfind)" ~/.local/bin/fd
+
+旧 Ubuntu/Debian 仓库的 Neovim 可能低于 0.11；此时不要使用过旧 apt 包，应改用官方 release、AppImage 或可靠 PPA。
+
+2. 当前启用插件使用的系统工具
+
+工具                 macOS Homebrew                                  Debian/Ubuntu apt
+-------------------  ----------------------------------------------  -------------------------------------------------
+lazygit              brew install lazygit                            sudo apt install lazygit
+tig                  brew install tig                                sudo apt install tig
+autojump             brew install autojump                           sudo apt install autojump
+doxygen              brew install doxygen                            sudo apt install doxygen
+cpplint              brew install cpplint                            sudo apt install cpplint
+jq                   brew install jq                                 sudo apt install jq
+Python/pipx          brew install python pipx                        sudo apt install python3 python3-pip pipx
+pynvim               pipx install pynvim                             pipx install pynvim
+Node.js/npm          brew install node                               sudo apt install nodejs npm
+JDK 17+              brew install openjdk@21                         sudo apt install openjdk-21-jdk
+Go                   brew install go                                 sudo apt install golang-go
+clangd/clang-format  brew install llvm clang-format                  sudo apt install clangd clang-format
+
+tree-sitter CLI、bat、delta、lolcat、ast-grep 出现在旧 deploy.sh，但当前启用配置并非都硬依赖它们；应归为可选工具，而不是基础依赖。
+
+3. LSP 与 formatter
+
+Mason 自动安装的 LSP：
+
+  lua_ls, bashls, jdtls, clangd, cmake, eslint, ts_ls, marksman,
+  sqlls, yamlls, vimls, gopls, pylsp
+
+Mason 能自动安装包，但 Node、Java、Python 等运行时仍需由系统安装。Conform 当前使用的 formatter 还未纳入自动安装：
+
+  stylua       brew install stylua；Linux 推荐 cargo install stylua
+  goimports    go install golang.org/x/tools/cmd/goimports@latest
+  gofumpt      go install mvdan.cc/gofumpt@latest
+  prettier     npm install -g prettier @fsouza/prettierd
+  ruff         pipx install ruff
+  black        pipx install black
+  isort        pipx install isort
+  clang-format 见上表
+  jq/codespell brew install jq codespell；或 sudo apt install jq codespell
+
+Mason 参考：
+  https://github.com/mason-org/mason-lspconfig.nvim
+  https://mason-registry.dev/registry/list
+
+
+七、自动安装的推荐实现
+
+不要继续扩展现有 deploy.sh，使其同时无条件执行 brew、apt、sudo、npm、pip、Cargo 与 Go。建议拆成四层：
+
+  1. scripts/install-system.sh
+     探测 brew 或 apt-get，只安装基础工具；支持 --dry-run；不直接改写 ~/.bashrc。
+
+  2. scripts/install-language-tools.sh
+     按启用语言安装 Node、Python、Go 的项目外工具；Python 使用 pipx，Go 使用带版本的 go install。
+
+  3. Mason 工具声明
+     新增 WhoIsSethDaniel/mason-tool-installer.nvim，统一声明 LSP、formatter、linter。
+
+  4. scripts/bootstrap-nvim.sh
+     在运行时已安装且网络可用时执行：
+
+       nvim --headless '+Lazy! sync' '+MasonToolsInstallSync' '+qa'
+
+建议 Mason 工具清单：
+
+  stylua, gofumpt, goimports, prettierd, prettier, ruff, black, isort,
+  clang-format, jq, codespell
+
+不要在每次启动编辑器时联网安装。应由首次 bootstrap 或显式 :MasonToolsInstall 完成；Mason 包应和配置一同声明，而非靠手工安装记忆。
+
+
+八、Docker 可移植环境方案
+
+推荐分层：
+
+  不可变镜像
+    OS、Neovim、Git、编译工具、ripgrep、fd、fzf、Node、Python、Java、Go、Clang
+
+  只读配置挂载
+    init.lua、lua/、lazy-lock.json、脚本
+
+  可更新命名数据卷
+    lazy 插件、Mason 包、Tree-sitter parser、state/cache
+
+  可读写项目挂载
+    /workspace
+
+前提：先将插件目录从仓库 reps/ 迁移到 stdpath("data")。否则容器中的 :Lazy update 会直接修改配置仓库。
+
+Dockerfile 草案：
+
+  FROM debian:bookworm
+  ARG DEBIAN_FRONTEND=noninteractive
+  RUN apt-get update && apt-get install -y --no-install-recommends \
+      ca-certificates curl git make cmake build-essential \
+      ripgrep fd-find fzf sqlite3 jq \
+      python3 python3-pip pipx nodejs npm \
+      openjdk-21-jdk golang-go clangd clang-format \
+      lazygit tig doxygen cpplint bash \
+   && rm -rf /var/lib/apt/lists/*
+  # 安装官方 Neovim 0.12+ release；不要依赖可能过旧的 Debian 包。
+  ENV XDG_CONFIG_HOME=/config XDG_DATA_HOME=/data XDG_STATE_HOME=/state XDG_CACHE_HOME=/cache
+  WORKDIR /workspace
+  ENTRYPOINT ["nvim"]
+
+首次/更新 bootstrap：
+
+  docker run --rm -it \
+    -v "$PWD:/config/nvim:ro" \
+    -v mynvim-data:/data \
+    -v mynvim-state:/state \
+    -v mynvim-cache:/cache \
+    mynvim:latest \
+    --headless '+Lazy! sync' '+MasonToolsInstallSync' '+qa'
+
+日常 Linux 编辑：
+
+  docker run --rm -it --user "$(id -u):$(id -g)" \
+    -v "$PWD:/workspace" \
+    -v /path/to/mynvim:/config/nvim:ro \
+    -v mynvim-data:/data -v mynvim-state:/state -v mynvim-cache:/cache \
+    mynvim:latest README.md
+
+macOS Docker Desktop 可挂载项目和命名卷，但容器不会天然访问宿主剪贴板、GUI 浏览器、钥匙串或 Docker socket；这些能力必须按需额外集成。终端 Nerd Font 也必须装在宿主终端中。
+
+插件和配置更新流程：
+
+  1. 修改配置后提交 init.lua、lua/、脚本和 lazy-lock.json。
+  2. 只在受控环境执行 :Lazy update；检查启动后提交新的 lazy-lock.json。
+  3. 其他机器/容器只执行 :Lazy sync，避免版本漂移。
+  4. Mason 工具由声明式清单安装，数据卷缓存下载结果。
+  5. 系统依赖通过重建 Docker 镜像升级，而不是在运行中的编辑容器中 apt upgrade。
+  6. 每次更新运行：nvim --headless '+Lazy! sync' '+checkhealth' '+qa'。
+
+
+九、建议新增或替换的插件
+
+优先级  插件/动作                                      说明
+--------  ---------------------------------------------  ----------------------------------------------
+高        WhoIsSethDaniel/mason-tool-installer.nvim     统一安装 LSP、formatter、linter
+高        完善现有 conform.nvim                         不新增 formatter 框架；补齐工具安装与项目开关
+中        folke/flash.nvim（替换 Hop 时）               只在停用 Hop 后引入，避免 motion 重叠
+中        完善现有 trouble.nvim                         作为统一 diagnostics/quickfix UI
+中        lewis6991/gitsigns.nvim                       需要 gutter hunk 查看/操作时再引入
+低        nvim-lualine/lualine.nvim                     仅作为 vim-airline 的替换方案，不可并用
+
+当前不建议继续增加 finder、Git UI、outline、菜单或 undo 类插件。
+
+
+十、建议实施顺序
+
+  1. 提交当前可工作的 lazy-lock.json，并建立 headless 启动检查。
+  2. 用 stdpath() 重构路径，将插件下载目录迁出 reps/。
+  3. 分批停用明确重复项：rainbow、vim-mundo、一个 finder、Doxygen/Neogen 中的一套。
+  4. 收敛 Git、Quickfix/LSP UI、窗口管理插件。
+  5. 先恢复 gf、gx、gq、K 的默认/标准语义，再迁移全部自定义键位到单一 keymaps.lua。
+  6. 使用 mason-tool-installer 与跨平台脚本替代 deploy.sh。
+  7. 在路径重构后添加 Dockerfile、bootstrap 脚本和 CI/headless smoke test。
+
+本报告基于当前启用配置形成。建议每完成一组停用或迁移，都进行一次实际编辑工作流验证后再删除旧配置，避免一次性改动过大。
