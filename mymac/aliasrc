@@ -1,5 +1,6 @@
 #!/bin/bash
 
+alias gh="ghostty"
 alias lout="logout"
 alias c="clear"
 alias e="nvim"

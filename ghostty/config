@@ -1,0 +1,39 @@
+# 字体
+font-size = 16
+font-style = medium
+bold-is-bright = true
+theme = TokyoNight Moon
+font-family = "JetBrainsMono Nerd Font Mono"
+
+# 光标
+cursor-style = block
+cursor-style-blink = false
+
+
+# 剪贴板
+copy-on-select = clipboard
+clipboard-trim-trailing-spaces = true
+
+# 鼠标
+mouse-scroll-multiplier = 2
+mouse-hide-while-typing = true
+
+# 窗口
+initial-window = true
+resize-overlay = never
+background-opacity = 0.85
+window-save-state = always
+window-step-resize = false
+background-blur-radius = 15
+window-padding-balance = true
+confirm-close-surface = false
+
+# 行为
+auto-update = check
+auto-update-channel = stable
+quit-after-last-window-closed = true
+shell-integration-features = true
+
+# macos
+macos-option-as-alt = true
+macos-titlebar-style = transparent
