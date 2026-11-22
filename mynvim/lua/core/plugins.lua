@@ -95,6 +95,7 @@ plugins_configure.plugins_groups = { -- {{{
 			{ name = "window", enable = true, desc = "只是对于windows的key mapping的操作" },
 			{ name = "neoscroll", enable = true, desc = "光标不移动，底下的文字移动" },
 			{ name = "close-buffers", enable = true, desc = "快速关闭其它/隐藏/当前等buffer" },
+			{ name = "bmessage", enable = true, desc = "自动更新的消息 buffer" },
 			-- {name = "oil", enable = true, desc = "buffer模式管理文件夹"},
 		},
 	},

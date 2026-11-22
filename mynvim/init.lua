@@ -1,5 +1,4 @@
 vim.loader.enable()
-require("core.messages").setup()
 -- vim的宏很少用，并且经常q按错，首先就禁了再说
 vim.cmd([[
 nnoremap q <Nop>
