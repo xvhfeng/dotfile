@@ -1,39 +1,67 @@
-# 字体
+# ==========================================
+# 字体配置 (Font)
+# ==========================================
+language = zh_CN
 font-size = 16
 font-style = medium
 bold-is-bright = true
-theme = TokyoNight Moon
 font-family = "JetBrainsMono Nerd Font Mono"
+font-thicken = true
+fullscreen = true
 
-# 光标
+# ==========================================
+# 主题与外观 (Theme & Window)
+# ==========================================
+# 内置主题名称（可通过 ghostty +list-themes 查看所有可用主题）
+theme = JetBrains Islands Dark
+# theme = TokyoNight Moon
+
+# 窗口透明度与模糊（macOS 效果）
+background-opacity = 0.92
+background-blur = true
+background-blur-radius = 15
+
+# 窗口内边距与平衡
+window-padding-x = 12
+window-padding-y = 12
+window-padding-balance = true
+
+# 窗口装饰与样式
+window-decoration = true
+# 仅 Linux GTK 生效
+gtk-titlebar = false
+
+# 光标样式
 cursor-style = block
 cursor-style-blink = false
 
+# 窗口行为
+initial-window = true
+resize-overlay = never
+window-save-state = always
+window-step-resize = false
+
+# macOS 专属配置
+macos-option-as-alt = true
+macos-titlebar-style = transparent
+
+# ==========================================
+# 行为与性能 (Behavior & Performance)
+# ==========================================
+confirm-close-surface = false
+
+auto-update = check
+auto-update-channel = stable
+quit-after-last-window-closed = true
+
+# 按需启用 Shell 集成功能（避免直接写 true）
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
 
 # 剪贴板
 copy-on-select = clipboard
 clipboard-trim-trailing-spaces = true
 
-# 鼠标
+# 鼠标与滚动
 mouse-scroll-multiplier = 2
 mouse-hide-while-typing = true
-
-# 窗口
-initial-window = true
-resize-overlay = never
-background-opacity = 0.85
-window-save-state = always
-window-step-resize = false
-background-blur-radius = 15
-window-padding-balance = true
-confirm-close-surface = false
-
-# 行为
-auto-update = check
-auto-update-channel = stable
-quit-after-last-window-closed = true
-shell-integration-features = true
-
-# macos
-macos-option-as-alt = true
-macos-titlebar-style = transparent
+scrollback-limit = 10000
