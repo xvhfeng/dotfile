@@ -441,6 +441,8 @@ The physical-key dispatcher itself is excluded to avoid recursion."
     ;; Apheleia 显式格式化复用 Mason 管理的外部工具，不接管保存流程。
     init-format
     init-completion
+    ;; Emacs 内置 Hippie Expand 提供跨语言的手动词汇扩展。
+    init-hippie
     init-treesitter
     ;; 用点状引导线显示代码与 Web 文件的缩进层级，不改变文本或快捷键。
     init-indent-bars

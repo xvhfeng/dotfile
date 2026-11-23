@@ -1,6 +1,6 @@
 ;;; init-pinky.el --- Pinky 单键导航与被动 Transient 菜单 -*- lexical-binding: t; -*-
 
-;; Pinky 把常用导航改为单键。此模块通过全局 `C-j' 切换，
+;; Pinky 把常用导航改为单键。此模块仅保留手动激活命令，
 ;; 并复用 Transient 的排版能力显示精简键位表，但刻意不安装 Transient keymap，
 ;; 因而菜单显示时每个按键仍由 pinky-mode 直接处理。
 
@@ -147,37 +147,25 @@
   (pinky-mode-activate)
   (my/pinky-transient-show))
 
-(defun my/pinky-toggle ()
-  "用 M-j 切换 Pinky；关闭时一并退出插入或替换状态。"
-  (interactive)
-  (if (bound-and-true-p pinky-mode)
-      (my/pinky-deactivate)
-    (my/pinky-activate)))
-
-;; 使用 emulation map 让 M-j 的 Pinky 切换和 C-j 的剪切命令优先于 major-mode
-;; keymap，避免不同编辑 Buffer 获得不一致的行为。
+;; 此 emulation map 保留 C-j 的剪切优先级；M-j 的补全绑定由 init-lsp
+;; 安装到同一张 map，保证编程语言 major-mode 也不能抢占该键。
 (defvar-local my/pinky-activation-override-active t
-  "非 nil 时让 Pinky 的 C-j 激活键优先于 major-mode keymap。")
+  "非 nil 时让 C-j 剪切和 M-j 补全优先于 major-mode keymap。")
 
 (defvar my/pinky-activation-override-map
   (make-sparse-keymap)
-  "为 Pinky 激活键提供高优先级的 emulation keymap。")
+  "为 C-j 剪切和 M-j 补全提供高优先级的 emulation keymap。")
 
-;; M-j 是全局 Pinky 切换入口；C-j 交给 init-mykey 的上下文剪切命令。
-(keymap-global-set "M-j" #'my/pinky-toggle)
-(define-key my/pinky-activation-override-map (kbd "M-j") #'my/pinky-toggle)
+;; Pinky 开关已移除；清理热重载时可能残留的旧 M-j 映射。
+(define-key my/pinky-activation-override-map (kbd "M-j") nil)
 (define-key my/pinky-activation-override-map (kbd "C-j")
             #'my/cut-to-line-beginning-or-region)
 (with-eval-after-load 'general
-  (general-define-key "M-j" '("切换 Pinky 模式" . my/pinky-toggle))
   (general-define-key :keymaps 'my/pinky-activation-override-map
-                      "M-j" '("切换 Pinky 模式" . my/pinky-toggle)
                       "C-j" '("剪切选区或至行首" . my/cut-to-line-beginning-or-region)))
 (with-eval-after-load 'which-key
-  (which-key-add-keymap-based-replacements global-map "M-j" "切换 Pinky 模式")
   (which-key-add-keymap-based-replacements
-   my/pinky-activation-override-map "M-j" "切换 Pinky 模式"
-   "C-j" "剪切选区或至行首"))
+   my/pinky-activation-override-map "C-j" "剪切选区或至行首"))
 
 (defvar my/pinky-activation-emulation-alist
   `((my/pinky-activation-override-active

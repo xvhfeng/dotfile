@@ -503,6 +503,20 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; 5. 配合 General.el 集中绑定 Leader 键
 ;; ============================================================================
 (with-eval-after-load 'general
+  ;; M-j 手动触发当前 Buffer 的 CAPF：Eglot 已连接时优先使用语言服务器，
+  ;; 否则沿用该模式已有的补全源。复用高优先级 map，避免 major-mode 抢键。
+  (general-define-key "M-j" '("代码语义补全〔CAPF〕" . completion-at-point))
+  (when (boundp 'my/pinky-activation-override-map)
+    (general-define-key :keymaps 'my/pinky-activation-override-map
+                        "M-j" '("代码语义补全〔CAPF〕" . completion-at-point))))
+(with-eval-after-load 'which-key
+  (which-key-add-keymap-based-replacements
+   global-map "M-j" "代码语义补全〔CAPF〕")
+  (when (boundp 'my/pinky-activation-override-map)
+    (which-key-add-keymap-based-replacements
+     my/pinky-activation-override-map "M-j" "代码语义补全〔CAPF〕")))
+
+(with-eval-after-load 'general
   (my-leader-def
     ;; LSP 相关功能 (Code / LSP)
     "ca"  '("代码操作或快速修复" . eglot-code-actions)
@@ -527,6 +541,7 @@ Emacs may find an asdf shim without having the `asdf' command in its PATH."
 ;; ---------------------------------------------------------------------------
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
+;; - M-j 手动触发代码补全；Eglot 已连接时使用语言服务器候选。
 ;; - Eglot 为 lang/ 中配置的语言提供补全、跳转、重命名、格式化和 Flymake 诊断。
 ;; - `C-c c a/r/f/q'：代码动作、重命名、格式化、停止 LSP；`C-c c g d/r/b/f/h'：
 ;;   定义/引用/后退/前进/文档。

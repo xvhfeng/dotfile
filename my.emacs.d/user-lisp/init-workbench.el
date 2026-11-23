@@ -163,7 +163,6 @@
     (autoload command "evil-nerd-commenter" nil t)))
 (autoload 'my/toggle-mark-command "init-mykey" nil t)
 (autoload 'my/dirvish-open "init-dirvish" nil t)
-(autoload 'my/pinky-toggle "init-pinky" nil t)
 (autoload 'my/cua-rectangle-toggle "init-edit" nil t)
 (autoload 'my/easy-kill-menu "init-easykill" nil t)
 (autoload 'my/view-mode-menu "init-edit" nil t)
@@ -526,11 +525,12 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
     ("c" "清理空行与空注释" my-clean-extra-lines-and-comments)
     ("e" "批量编辑符号" my/workbench-edit-occurrences)
     ("h" "匹配成对符号或标签" my/match-pair)
+    ("H" "动态扩展〔Hippie〕" hippie-expand)
     ("=" "Easy Kill 菜单" my/easy-kill-menu)
     ("a" "可视撤销树" my/workbench-visual-undo)
     ("y" "KillRing历史" my/workbench-clipboard-history)
     ("-" "可视书签" my/workbench-bm-menu)
-    ("," "切换 Pinky 模式" my/pinky-toggle)]
+    ("," "代码语义补全〔CAPF〕" completion-at-point)]
    ["   选择"
     ("s" "选择整个文件" my/select-whole-buffer)
     ("u" "向上选择行" my-choose-up-lines)
@@ -640,7 +640,7 @@ SINGLE 非空时继续保持 Ibuffer 原有的只保留一个窗口语义。"
 ;; 使用说明
 ;; ---------------------------------------------------------------------------
 ;; - `C-d' 切换个人工作台，`C-c SPC' 是语义化入口；`ESC' 取消或退出。
-;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`M-j' 切换 Pinky。
+;;   子菜单按 BS 返回上一级，根菜单按 BS 关闭；`M-j' 触发代码补全。
 ;; - `M-c' 打开代码工作台，其中包含项目/Git、代码与诊断操作；在该菜单中再次
 ;;   按 `M-c' 关闭。Consult 导出结果 Buffer 的局部 C-t 菜单不受影响。
 ;; - 顶层菜单采用单字符键，优先使用小写；大写仅用于小写字母耗尽后的少数入口。
