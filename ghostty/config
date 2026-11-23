@@ -2,7 +2,7 @@
 # 字体配置 (Font)
 # ==========================================
 language = zh_CN
-font-size = 16
+font-size = 15
 font-style = medium
 bold-is-bright = true
 font-family = "JetBrainsMono Nerd Font Mono"
@@ -14,7 +14,7 @@ fullscreen = true
 # ==========================================
 # 内置主题名称（可通过 ghostty +list-themes 查看所有可用主题）
 theme = JetBrains Islands Dark
-# theme = TokyoNight Moon
+#theme = TokyoNight Moon
 
 # 窗口透明度与模糊（macOS 效果）
 background-opacity = 0.92

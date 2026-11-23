@@ -1,0 +1,2 @@
+[ -f ~/.config/ghostty/config ] && rm -rf ~/.config/ghostty/config
+mkdir -p ~/.config/ghostty && ln -snf "$(pwd)/config" ~/.config/ghostty/config
